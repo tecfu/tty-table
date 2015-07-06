@@ -14,6 +14,10 @@ npm install tec-table
 - Colors
 - Optional callbacks on column values
 
+## Example Output
+
+![Example](examples/images/example-1.png "Example") 
+
 ## Example Usage
 
 ```
@@ -71,11 +75,6 @@ var str1 = t1.render();
 
 console.log(str1);
 ```
-
-## Example Output
-
-![Example](examples/images/example-1.png "Example") 
-
 
 ## API Reference 
 <!--API-REF-->
