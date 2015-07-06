@@ -1,6 +1,6 @@
 {
   "name": "tec-table",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Command line table generator.",
   "main": "src/main.js",
   "scripts": {
