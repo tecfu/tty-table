@@ -2,7 +2,13 @@
 
 A table widget for CLI applications in nodejs.
 
-<b>Why</b>
+## Installation
+
+```
+npm install tec-table
+```
+
+## Why
 
 - Automatic text wrapping
 - Colors
