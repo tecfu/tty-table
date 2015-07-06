@@ -127,6 +127,12 @@ console.log(str); //outputs table
 
 <!--END-API-REF-->
 
+## Tests
+
+```
+grunt test
+```
+
 ## License
 
 [GPLv3 License](http://www.gnu.org/licenses/gpl-3.0.en.html)
