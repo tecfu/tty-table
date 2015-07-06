@@ -1,6 +1,6 @@
 {
   "name": "tec-table",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Command line table generator.",
   "main": "src/main.js",
   "scripts": {
@@ -18,7 +18,7 @@
 		"cli table"
   ],
   "author": "Tecfu",
-  "license": "ISC",
+  "license": "GPL3",
   "bugs": {
     "url": "https://github.com/tecfu/tec-table/issues"
   },

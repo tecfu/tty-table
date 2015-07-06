@@ -126,3 +126,9 @@ console.log(str); //outputs table
 ```
 
 <!--END-API-REF-->
+
+## License
+
+[GPLv3 License](http://www.gnu.org/licenses/gpl-3.0.en.html)
+
+Copyright 2015 Tecfu 
