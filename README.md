@@ -1,6 +1,6 @@
 # tty-table
 
-A table widget for CLI applications in nodejs.
+A terminal table widget for nodejs.
 
 ## Installation
 
@@ -13,6 +13,8 @@ npm install tty-table
 - Automatic text wrapping
 - Colors
 - Optional callbacks on column values
+- Header, body column alignment
+- Padding
 
 ## Example Output
 
