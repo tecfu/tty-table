@@ -129,7 +129,7 @@ console.log(str1);
 | Param | Type | Description |
 | --- | --- | --- |
 | header | <code>array</code> |  |
-| header.column | <code>object</code> |  |
+| header.column | <code>object</code> | Column options |
 | header.column.formatter | <code>function</code> | Runs a callback on each cell value in the parent column |
 | header.column.marginLeft | <code>number</code> | default: 0 |
 | header.column.marginTop | <code>number</code> | default: 0 |

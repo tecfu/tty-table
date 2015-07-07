@@ -372,7 +372,7 @@ var cls = function(){
 /**
  * @class Table
  * @param {array} header
- * @param {object} header.column
+ * @param {object} header.column									- Column options
  * @param {function} header.column.formatter			- Runs a callback on each cell value in the parent column 
  * @param {number} header.column.marginLeft				- default: 0
  * @param {number} header.column.marginTop				- default: 0			
