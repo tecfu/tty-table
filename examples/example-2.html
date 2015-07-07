@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+	<head>
+		<script src="../dist/tty-table.bundle.devel.js"></script>
+		<script>
+			//Remember: ASCI colors won't render in the browser!
+			var Table = require("tty-table");
+			var header = [
+				{
+					value : "item",
+					alignment : "left",
+					paddingLeft : 1,
+					width : 30
+				},
+				{
+					value : "price",
+					formatter : function(value){
+						var str = "$" + value.toFixed(2);
+						return str;
+					}
+				},
+				{
+					value : "organic"
+				}
+			];
+
+			var rows = [
+				["hamburger",2.50,"no"],
+				["el jefe's special cream sauce",0.10,"yes"],
+				["two tacos, rice and beans topped with cheddar cheese",9.80,"no"],
+				["apple slices",1.00,"yes"],
+				["ham sandwich",1.50,"no"],
+				["macaroni, ham and peruvian mozzarella",3.75,"no"]
+			];
+
+			//Example 1
+			var t1 = Table(header,rows,{
+				borderStyle : 2,
+				paddingBottom : 0,
+				headerAlignment : "center",
+				alignment : "center",
+			});
+			var str1 = t1.render();
+			//in console
+			console.log(str1);
+			//in html body
+			setTimeout(function(){
+				 document.getElementById('example').innerHTML = str1;
+			},500);
+		</script>
+	</head>
+	<body>
+		Also see console for an example there.
+		<pre>
+			<span id="example"></span>
+		</pre>
+	</body>
+</html>

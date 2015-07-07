@@ -1,14 +1,30 @@
 /**
  * To debug gruntfile:
  * node-debug $(which grunt) task
- */
+ */	
+
 
 module.exports = function(grunt) {
-	
-	global.grunt = grunt;
+
+	//Modules for browserify to ignore
+	var _ignore = '--ignore=path --ignore=request --ignore=http --ignore=fs --ignore=vm --ignore=process --ignore=lodash';
+
 
 	// Project configuration.
 	grunt.initConfig({
+		pkg: grunt.file.readJSON('package.json'),
+
+		options : {
+			timestamp : (function(){
+				//A FORMATTED TIMESTAMP STRING FOR BACKUP NAMING
+				var d = new Date(),dstr = '';
+				dstr = ('0' + d.getHours()).slice(-2)
+				+ ':' + ('0' + d.getMinutes()).slice(-2)
+				+ ':' + ('0' + d.getSeconds()).slice(-2);
+				return dstr;
+			}())
+		},
+		
 		mochaTest: {
 			test: {
 				options: {
@@ -19,17 +35,79 @@ module.exports = function(grunt) {
 				//can do some pre-test functions before they are run.
 				src: ['./test/mocha.conf.js']
 			}
+		},
+		
+		uglify: {
+			"min": {
+				options: {
+					banner: '/** \n<%= pkg.name %>: <%= pkg.description %> \nVersion: <%= pkg.version %> \nBuilt: <%= grunt.template.today("yyyy-mm-dd") %> <%= options.timestamp %>\nAuthor: <%= pkg.author %>  \n*/\n'
+					,mangle : true
+					,compress : true
+					,drop_debugger : false
+					,wrap : true
+				}
+				,files: {
+					'dist/<%= pkg.name %>.min.js': 'dist/<%= pkg.name %>.js',
+				}
+			},
+			"bundle-min": {
+				options: {
+					banner: '/** \n<%= pkg.name %>: <%= pkg.description %> \nVersion: <%= pkg.version %> \nBuilt: <%= grunt.template.today("yyyy-mm-dd") %> <%= options.timestamp %>\nAuthor: <%= pkg.author %>  \n*/\n'
+					,mangle : true
+					,compress : true
+					,drop_debugger : false
+					,wrap : true
+				}
+				,files: {
+					'dist/<%= pkg.name %>.bundle.min.js': 'dist/<%= pkg.name %>.bundle.js',
+				}
+			}
+		},
+	
+		shell: {
+			"browserify-prod-standalone": {
+				command: function () {
+					var cmd = 'browserify --debug --standalone=TtyTable '+_ignore+' -r ./src/main.js > ./dist/<%= pkg.name %>.js';
+					return cmd;
+				}
+			},
+			"browserify-devel-standalone": {
+				command: function () {
+					var cmd = 'browserify --debug --standalone=TtyTable '+_ignore+' -r ./src/main.js > ./dist/<%= pkg.name %>.devel.js';
+					return cmd;
+				}
+			},
+			"browserify-prod-bundle": {
+				command: function () {
+					var cmd = 'browserify '+_ignore+' -r ./src/main.js:<%= pkg.name %> > ./dist/<%= pkg.name %>.bundle.js';
+					return cmd;
+				}
+			},
+			"browserify-devel-bundle": {
+				command: function () {
+					var cmd = 'browserify --debug '+_ignore+' -r ./src/main.js:<%= pkg.name %> > ./dist/<%= pkg.name %>.bundle.devel.js';
+					return cmd;
+				}
+			},
+			"cleanup" : {
+				command: function(){
+					return "rm ./dist/<%= pkg.name %>.js ./dist/<%= pkg.name %>.bundle.js";
+				}
+			}
 		}
 	});
 
 	grunt.registerTask('doc','Documentation generation task',function(){
 		var gruntDeferred = this.async(), 
 				Orgy = require('orgy'),
-				deferred1 = Orgy.deferred(),
-				deferred2 = Orgy.deferred(),
-				queue = Orgy.queue([deferred1,deferred2]).done(function(){
-					gruntDeferred();
-				}),
+				deferred1 = Orgy.deferred({timeout : 20000}),
+				deferred2 = Orgy.deferred({timeout : 20000}),
+				queue = Orgy.queue([deferred1,deferred2],{
+									timeout : 20000
+								})
+								.done(function(){
+									gruntDeferred();
+								}),
 				fs = require('fs');
 		
 		//Get README
@@ -70,12 +148,15 @@ module.exports = function(grunt) {
 		});
 	});
 
+
+	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-shell');
 	grunt.loadNpmTasks('grunt-mocha-test');
 
 	grunt.registerTask('test', [
 		'mochaTest:test'
 	]);
-	
+
 	grunt.registerTask('t', [
 		'mochaTest:test'
 	]);
@@ -85,6 +166,12 @@ module.exports = function(grunt) {
 	]);
 
 	grunt.registerTask('default', [
+		'shell:browserify-prod-standalone',
+		'shell:browserify-devel-standalone',
+		'shell:browserify-prod-bundle',
+		'shell:browserify-devel-bundle',
+		'uglify',
+		'shell:cleanup',
 		'doc'
 	]);
 };

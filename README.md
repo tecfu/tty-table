@@ -1,11 +1,23 @@
 # tty-table
 
-A terminal table widget for nodejs.
+A terminal table widget for nodejs and the browser.
 
 ## Installation
 
+- Nodejs
+
 ```
 npm install tty-table
+```
+
+- Browser (via browserify)
+
+```
+<script src="tty-table.bundle.min.js"></script>
+<script>
+	var Table = require('tty-table');
+	...
+</script>
 ```
 
 ## Why
@@ -15,10 +27,24 @@ npm install tty-table
 - Optional callbacks on column values
 - Header, body column alignment
 - Padding
+- Works in the browser as well as nodejs
 
 ## Example Output
 
-![Example](examples/images/example-1.png "Example") 
+### Terminal
+![Terminal Example](examples/images/example-1.png "Terminal Example") 
+
+### Browser & Browser Console 
+![Browser Console Example](examples/images/example-2.png "Browser Console Example") 
+
+[Working example](http://htmlpreview.github.io/?https://raw.githubusercontent.com/tecfu/tty-table/master/examples/example-2.html)
+
+> Note that neither ASCI colors nor default borders are rendered in the browser.
+> An alternative border style, as shown below, can be used by setting the option:
+>
+> ```
+> borderStyle : 2
+> ```
 
 ## Example Usage
 

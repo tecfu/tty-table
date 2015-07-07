@@ -2,7 +2,6 @@ var chai = require("chai");
 var expect = chai.expect;
 var assert = chai.assert;
 var should = chai.should();
-var heredoc = require('heredoc');
 var fs = require('fs');
 
 //Test 1

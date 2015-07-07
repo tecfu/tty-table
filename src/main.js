@@ -41,6 +41,11 @@ var cls = function(){
 				{v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
 				{v: "│", l: "├", j: "┼", h: "─", r: "┤"},
 				{v: "│", l: "└", j: "┴", h: "─", r: "┘"}
+			],
+			[
+				{v: "|", l: "+", j: "+", h: "-", r: "+"},
+				{v: "|", l: "+", j: "+", h: "-", r: "+"},
+				{v: "|", l: "+", j: "+", h: "-", r: "+"}
 			]
 		]
 	};
@@ -250,7 +255,8 @@ var cls = function(){
 		//Add marginLeft to totalWidth
 		totalWidth += _public.options.marginLeft;
 
-		if(totalWidth > process.stdout.columns){
+		//Check process exists in case we are in browser
+		if(process && process.stdout && totalWidth > process.stdout.columns){
 			//recalculate proportionately to fit size
 			var prop = process.stdout.columns > totalWidth;
 			prop = prop.toFixed(2)-0.01;
