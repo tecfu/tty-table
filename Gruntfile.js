@@ -120,7 +120,7 @@ module.exports = function(grunt) {
 			encoding : 'utf-8'
 		});
 		example1 = example1.replace('../','tty-table');
-		example1 = '```\n' + example1 + '\n```';	
+		example1 = '\n```\n' + example1 + '\n```';	
 		readme = readme.replace(/<!--EXAMPLE-USAGE-->((?:.|[\r\n])*)<!--END-EXAMPLE-USAGE-->/m,
 				'<!--EXAMPLE-USAGE-->\n'+example1+'\n<!--END-EXAMPLE-USAGE-->');
 		deferred1.resolve();
@@ -140,7 +140,7 @@ module.exports = function(grunt) {
 
 
 			readme = readme.replace(/<!--API-REF-->((?:.|[\r\n])*)<!--END-API-REF-->/m,
-				'<!--API-REF-->\n'+str+'\n<!--END-API-REF-->');
+				'<!--API-REF-->\n\n'+str+'\n<!--END-API-REF-->');
 
 			fs.writeFileSync("./README.md",readme);
 

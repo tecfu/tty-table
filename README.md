@@ -49,6 +49,7 @@ npm install tty-table
 ## Example Usage
 
 <!--EXAMPLE-USAGE-->
+
 ```
 var Table = require('tty-table');
 var chalk = require('chalk');
@@ -113,6 +114,7 @@ console.log(str1);
 
 ## API Reference 
 <!--API-REF-->
+
 <a name="Table"></a>
 ## Table
 **Kind**: global class  
