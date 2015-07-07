@@ -129,21 +129,23 @@ console.log(str1);
 | Param | Type | Description |
 | --- | --- | --- |
 | header | <code>array</code> |  |
+| header.column | <code>object</code> |  |
+| header.column.formatter | <code>function</code> | Runs a callback on each cell value in the parent column |
+| header.column.marginLeft | <code>number</code> | default: 0 |
+| header.column.marginTop | <code>number</code> | default: 0 |
+| header.column.maxWidth | <code>number</code> | default: 20 |
+| header.column.paddingBottom | <code>number</code> | default: 0 |
+| header.column.paddingLeft | <code>number</code> | default: 0 |
+| header.column.paddingRight | <code>number</code> | default: 0 |
+| header.column.paddingTop | <code>number</code> | default: 0 |
+| header.column.alignment | <code>string</code> | default: "center" |
+| header.column.color | <code>string</code> | default: terminal default color |
+| header.column.headerAlignment | <code>string</code> | default: "center" |
+| header.column.headerColor | <code>string</code> | default: terminal default color |
 | rows | <code>array</code> |  |
 | options | <code>object</code> | Table options |
-| options.marginTop | <code>number</code> | default: 0 |
-| options.marginLeft | <code>number</code> | default: 0 |
-| options.maxWidth | <code>number</code> | default: 20 |
-| options.callback | <code>function</code> | default: null |
-| options.headerAlignment | <code>string</code> | default: "center" |
-| options.alignment | <code>string</code> | default: "center" |
-| options.paddingRight | <code>number</code> | default: 0 |
-| options.paddingLeft | <code>number</code> | default: 0 |
-| options.paddingBottom | <code>number</code> | default: 0 |
-| options.paddingTop | <code>number</code> | default: 0 |
-| options.color | <code>string</code> | default: terminal default color |
-| options.headerColor | <code>string</code> | default: terminal default color |
-| options.borderStyles | <code>number</code> | default: 1 (0 = no border) |
+| options.borderStyle | <code>number</code> | default: 1 (0 = no border)  Refers to the index of the desired character set. |
+| options.borderCharacters | <code>array</code> |  |
 
 **Example**  
 ```

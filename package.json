@@ -15,7 +15,9 @@
     "cli-table",
     "terminal table",
     "console table",
-    "cli table"
+    "cli table",
+		"console.table",
+		"ascii table"
   ],
   "author": "Tecfu",
   "license": "GPL3",

@@ -21,7 +21,7 @@ var cls = function(){
 		marginTop : 1,
 		marginLeft : 2,
 		maxWidth : 20,
-		callback : null,
+		formatter : null,
 		headerAlignment : "center",
 		alignment : "center",
 		paddingRight : 0,
@@ -31,7 +31,7 @@ var cls = function(){
 		color : false,
 		headerColor : false,
 		borderStyle : 1,
-		borderStyles : [
+		borderCharacters : [
 			[
 				{v: " ", l: " ", j: " ", h: " ", r: " "},
 				{v: " ", l: " ", j: " ", h: " ", r: " "},
@@ -320,7 +320,7 @@ var cls = function(){
 				part = ['header','body'],
 				bArr = [],
 				marginLeft = Array(_public.options.marginLeft + 1).join('\ '),
-				bS = _public.options.borderStyles[_public.options.borderStyle],
+				bS = _public.options.borderCharacters[_public.options.borderStyle],
 				borders = [];
 
 		//Borders
@@ -372,21 +372,26 @@ var cls = function(){
 /**
  * @class Table
  * @param {array} header
+ * @param {object} header.column
+ * @param {function} header.column.formatter			- Runs a callback on each cell value in the parent column 
+ * @param {number} header.column.marginLeft				- default: 0
+ * @param {number} header.column.marginTop				- default: 0			
+ * @param {number} header.column.maxWidth					- default: 20 
+ * @param {number} header.column.paddingBottom		- default: 0
+ * @param {number} header.column.paddingLeft			- default: 0
+ * @param {number} header.column.paddingRight			- default: 0
+ * @param {number} header.column.paddingTop				- default: 0	
+ * @param {string} header.column.alignment				- default: "center"
+ * @param {string} header.column.color						- default: terminal default color
+ * @param {string} header.column.headerAlignment	- default: "center" 
+ * @param {string} header.column.headerColor			- default: terminal default color
+ *
  * @param {array} rows
- * @param {object} options										- Table options 
- * @param {number} options.marginTop					- default: 0			
- * @param {number} options.marginLeft					- default: 0
- * @param {number} options.maxWidth						- default: 20 
- * @param {function} options.callback					- default: null
- * @param {string} options.headerAlignment		- default: "center"
- * @param {string} options.alignment					- default: "center"
- * @param {number} options.paddingRight				- default: 0
- * @param {number} options.paddingLeft				- default: 0
- * @param {number} options.paddingBottom			- default: 0
- * @param {number} options.paddingTop					- default: 0	
- * @param {string} options.color							- default: terminal default color
- * @param {string} options.headerColor				- default: terminal default color 
- * @param {number} options.borderStyles				- default: 1 (0 = no border)
+ *
+ * @param {object} options									- Table options 
+ * @param {number} options.borderStyle			- default: 1 (0 = no border) 
+ * Refers to the index of the desired character set. 
+ * @param {array} options.borderCharacters			 
  * @returns {Table}
  * @example
  * ```
