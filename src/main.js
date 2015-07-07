@@ -30,7 +30,6 @@ var cls = function(){
 		paddingTop : 0,
 		color : false,
 		headerColor : false,
-		gutter : 1,
 		borderStyle : 1,
 		borderStyles : [
 			[
@@ -39,12 +38,17 @@ var cls = function(){
 				{v: " ", l: " ", j: " ", h: " ", r: " "}
 			],
 			[
-				{v: "|", l: "┌", j: "┬", h: "─", r: "┐"},
-				{v: "|", l: "├", j: "┼", h: "─", r: "┤"},
-				{v: "|", l: "└", j: "┴", h: "─", r: "┘"}
+				{v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
+				{v: "│", l: "├", j: "┼", h: "─", r: "┤"},
+				{v: "│", l: "└", j: "┴", h: "─", r: "┘"}
 			]
 		]
 	};
+
+
+	//Constants
+	_private.GUTTER = 1;
+
 
 	_private.table = {
 		columns : [],
@@ -161,7 +165,7 @@ var cls = function(){
 				width = _private.table.columnWidths[columnIndex],
 				innerWidth = width - columnOptions.paddingLeft 
 										- columnOptions.paddingRight
-										- 1; //border/gutter
+										- _private.GUTTER; //border/gutter
 
 		//Break string into array of lines
 		wrap = wordwrap(innerWidth);
@@ -317,7 +321,8 @@ var cls = function(){
 		for(a=0;a<3;a++){
 			borders.push('');
 			_private.table.columnWidths.forEach(function(w,i,arr){
-				borders[a] += Array(w).join(bS[a].h) + ((i+1 !== arr.length) ? bS[a].j : bS[a].r);
+				borders[a] += Array(w).join(bS[a].h) 
+					+ ((i+1 !== arr.length) ? bS[a].j : bS[a].r);
 			});
 			borders[a] = bS[a].l + borders[a];
 			borders[a] = borders[a].split('');
@@ -362,21 +367,20 @@ var cls = function(){
  * @class Table
  * @param {array} header
  * @param {array} rows
- * @param {object} options									 - Table options 
- * @param {number} options.marginTop
- * @param {number} options.marginLeft
- * @param {number} options.maxWidth 
- * @param {function} options.callback
- * @param {string} options.headerAlignment
- * @param {string} options.alignment
- * @param {number} options.paddingRight
- * @param {number} options.paddingLeft
- * @param {number} options.paddingBottom 
- * @param {number} options.paddingTop
- * @param {string} options.color 
- * @param {string} options.headerColor 
- * @param {number} options.gutter 
- * @param {number} options.borderStyle 
+ * @param {object} options										- Table options 
+ * @param {number} options.marginTop					- default: 0			
+ * @param {number} options.marginLeft					- default: 0
+ * @param {number} options.maxWidth						- default: 20 
+ * @param {function} options.callback					- default: null
+ * @param {string} options.headerAlignment		- default: "center"
+ * @param {string} options.alignment					- default: "center"
+ * @param {number} options.paddingRight				- default: 0
+ * @param {number} options.paddingLeft				- default: 0
+ * @param {number} options.paddingBottom			- default: 0
+ * @param {number} options.paddingTop					- default: 0	
+ * @param {string} options.color							- default: terminal default color
+ * @param {string} options.headerColor				- default: terminal default color 
+ * @param {number} options.borderStyles				- default: 1 (0 = no border)
  * @returns {Table}
  * @example
  * ```
