@@ -13,9 +13,9 @@
   "keywords": [
     "table",
     "cli-table",
-		"terminal table",
-		"console table",
-		"cli table"
+    "terminal table",
+    "console table",
+    "cli table"
   ],
   "author": "Tecfu",
   "license": "GPL3",
@@ -35,6 +35,7 @@
     "grunt-jsdoc": "^0.6.7",
     "grunt-mocha": "^0.4.13",
     "grunt-mocha-test": "^0.12.7",
-    "mocha": "^2.2.5"
+    "mocha": "^2.2.5",
+    "orgy": "^2.0.6"
   }
 }

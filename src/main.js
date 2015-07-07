@@ -193,9 +193,9 @@ var cls = function(){
 			}
 			
 			//Left, Right Padding
-			line = Array(columnOptions.paddingLeft).join(' ') +
+			line = Array(columnOptions.paddingLeft + 1).join(' ') +
 						line +
-						Array(columnOptions.paddingRight).join(' ');
+						Array(columnOptions.paddingRight + 1).join(' ');
 			var lineLength = stripAnsi(line).length;
 
 			//Alignment 

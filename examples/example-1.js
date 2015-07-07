@@ -6,14 +6,12 @@ var header = [
 		value : "item",
 		headerColor : "cyan",
 		color: "yellow",
-		//headerAlignment : "center",
-		//alignment : "left",
-		//paddingLeft : 2,
+		alignment : "left",
+		paddingLeft : 1,
 		width : 30
 	},
 	{
 		value : "price",
-		//alignment : "center",
 		color : "red", 
 		formatter : function(value){
 			var str = "$" + value.toFixed(2);
@@ -57,4 +55,3 @@ var t1 = Table(header,rows,{
 });
 var str1 = t1.render();
 console.log(str1);
-
