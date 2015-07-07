@@ -41,7 +41,7 @@ module.exports = function(grunt) {
 		var example1 = fs.readFileSync('./examples/example-1.js',{
 			encoding : 'utf-8'
 		});
-		example1 = example1.replace('../','tec-table');
+		example1 = example1.replace('../','tty-table');
 		example1 = '```\n' + example1 + '\n```';	
 		readme = readme.replace(/<!--EXAMPLE-USAGE-->((?:.|[\r\n])*)<!--END-EXAMPLE-USAGE-->/m,
 				'<!--EXAMPLE-USAGE-->\n'+example1+'\n<!--END-EXAMPLE-USAGE-->');

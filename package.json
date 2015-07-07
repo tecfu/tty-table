@@ -1,6 +1,6 @@
 {
-  "name": "tec-table",
-  "version": "1.0.1",
+  "name": "tty-table",
+  "version": "1.0.0",
   "description": "Command line table generator.",
   "main": "src/main.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tecfu/tec-table.git"
+    "url": "https://github.com/tecfu/tty-table.git"
   },
   "keywords": [
     "table",
@@ -20,9 +20,9 @@
   "author": "Tecfu",
   "license": "GPL3",
   "bugs": {
-    "url": "https://github.com/tecfu/tec-table/issues"
+    "url": "https://github.com/tecfu/tty-table/issues"
   },
-  "homepage": "https://github.com/tecfu/tec-table",
+  "homepage": "https://github.com/tecfu/tty-table",
   "dependencies": {
     "chalk": "^1.1.0",
     "merge": "^1.2.0",

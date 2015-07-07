@@ -1,11 +1,11 @@
-# tec-table
+# tty-table
 
 A table widget for CLI applications in nodejs.
 
 ## Installation
 
 ```
-npm install tec-table
+npm install tty-table
 ```
 
 ## Why
@@ -22,7 +22,7 @@ npm install tec-table
 
 <!--EXAMPLE-USAGE-->
 ```
-var Table = require('tec-table');
+var Table = require('tty-table');
 var chalk = require('chalk');
 
 var header = [
@@ -117,7 +117,7 @@ console.log(str1);
 
 **Example**  
 ```
-var Table = require('tec-table');
+var Table = require('tty-table');
 Table(header,rows,options);
 ```
 <a name="Table.render"></a>

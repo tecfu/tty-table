@@ -384,7 +384,7 @@ var cls = function(){
  * @returns {Table}
  * @example
  * ```
- * var Table = require('tec-table');
+ * var Table = require('tty-table');
  * Table(header,rows,options);
  * ```
  *
