@@ -387,7 +387,7 @@ var cls = function(){
 
 /**
  * @class Table
- * @param {array} header
+ * @param {array} header													- [See example](#example-usage)
  * @param {object} header.column									- Column options
  * @param {function} header.column.formatter			- Runs a callback on each cell value in the parent column
  * @param {number} header.column.marginLeft				- default: 0
@@ -403,13 +403,35 @@ var cls = function(){
  * @param {string} header.column.headerAlign			- default: "center" 
  * @param {string} header.column.headerColor			- default: terminal default color
  *
- * @param {array} rows
+ * @param {array} rows											- [See example](#example-usage)
  *
  * @param {object} options									- Table options 
  * @param {number} options.borderStyle			- default: 1 (0 = no border) 
  * Refers to the index of the desired character set. 
- * @param {array} options.borderCharacters			 
+ * @param {array} options.borderCharacters	- [See @note](#note) 
  * @returns {Table}
+ * @note
+ * <a name="note"/>
+ * Default border character sets:
+ * ```
+ *	[
+ *		[
+ *			{v: " ", l: " ", j: " ", h: " ", r: " "},
+ *			{v: " ", l: " ", j: " ", h: " ", r: " "},
+ *			{v: " ", l: " ", j: " ", h: " ", r: " "}
+ *		],
+ *		[
+ *			{v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
+ *			{v: "│", l: "├", j: "┼", h: "─", r: "┤"},
+ *			{v: "│", l: "└", j: "┴", h: "─", r: "┘"}
+ *		],
+ *		[
+ *			{v: "|", l: "+", j: "+", h: "-", r: "+"},
+ *			{v: "|", l: "+", j: "+", h: "-", r: "+"},
+ *			{v: "|", l: "+", j: "+", h: "-", r: "+"}
+ *		]
+ *	]
+ * ```
  * @example
  * ```
  * var Table = require('tty-table');

@@ -108,7 +108,7 @@ var t1 = Table(header,rows,{
 	align : "center",
 	color : "white"
 });
-//intentionally omitted var for html include
+
 str1 = t1.render();
 console.log(str1);
 
@@ -167,6 +167,27 @@ console.log(str2);
 <a name="Table"></a>
 ## Table
 **Kind**: global class  
+**Note**: <a name="note"/>
+Default border character sets:
+```
+	[
+		[
+			{v: " ", l: " ", j: " ", h: " ", r: " "},
+			{v: " ", l: " ", j: " ", h: " ", r: " "},
+			{v: " ", l: " ", j: " ", h: " ", r: " "}
+		],
+		[
+			{v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
+			{v: "│", l: "├", j: "┼", h: "─", r: "┤"},
+			{v: "│", l: "└", j: "┴", h: "─", r: "┘"}
+		],
+		[
+			{v: "|", l: "+", j: "+", h: "-", r: "+"},
+			{v: "|", l: "+", j: "+", h: "-", r: "+"},
+			{v: "|", l: "+", j: "+", h: "-", r: "+"}
+		]
+	]
+```  
 
 * [Table](#Table)
   * [Table(header, rows, options)](#new_Table_new)
@@ -177,7 +198,7 @@ console.log(str2);
 
 | Param | Type | Description |
 | --- | --- | --- |
-| header | <code>array</code> |  |
+| header | <code>array</code> | [See example](#example-usage) |
 | header.column | <code>object</code> | Column options |
 | header.column.formatter | <code>function</code> | Runs a callback on each cell value in the parent column |
 | header.column.marginLeft | <code>number</code> | default: 0 |
@@ -192,10 +213,10 @@ console.log(str2);
 | header.column.color | <code>string</code> | default: terminal default color |
 | header.column.headerAlign | <code>string</code> | default: "center" |
 | header.column.headerColor | <code>string</code> | default: terminal default color |
-| rows | <code>array</code> |  |
+| rows | <code>array</code> | [See example](#example-usage) |
 | options | <code>object</code> | Table options |
 | options.borderStyle | <code>number</code> | default: 1 (0 = no border)  Refers to the index of the desired character set. |
-| options.borderCharacters | <code>array</code> |  |
+| options.borderCharacters | <code>array</code> | [See @note](#note) |
 
 **Example**  
 ```
