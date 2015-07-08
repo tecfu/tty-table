@@ -23,10 +23,11 @@ npm install tty-table
 ## Why
 
 - Automatic text wrapping
-- Colors
+- Colors (nodejs)
 - Optional callbacks on column values
 - Header, body column alignment
 - Padding
+- Pass rows as either arrays or objects
 - Works in the browser as well as nodejs
 
 ## Example Output
