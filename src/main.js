@@ -22,8 +22,8 @@ var cls = function(){
 		marginLeft : 2,
 		maxWidth : 20,
 		formatter : null,
-		headerAlignment : "center",
-		alignment : "center",
+		headerAlign : "center",
+		align : "center",
 		paddingRight : 0,
 		paddingLeft : 0,
 		paddingBottom : 0,
@@ -123,7 +123,7 @@ var cls = function(){
 		if(options && options.header){
 			cell = merge(true,_public.options,cell);
 			_private.table.columns.push(cell);
-			output = cell.value;
+			output = cell.alias || cell.value;
 			columnOptions = cell;
 		}	
 		else{
@@ -203,8 +203,8 @@ var cls = function(){
 						Array(columnOptions.paddingRight + 1).join(' ');
 			var lineLength = stripAnsi(line).length;
 
-			//Alignment 
-			var alignTgt = (rowType === 'header') ? "headerAlignment" : "alignment";
+			//align 
+			var alignTgt = (rowType === 'header') ? "headerAlign" : "align";
 			if(lineLength < width){
 				var spaceAvailable = width - lineLength; 
 				switch(true){
@@ -287,6 +287,10 @@ var cls = function(){
 	_private.setup = function(header,body,options){
 		
 		_public.options = merge(true,_private.defaults,options);
+
+		//backfixes for shortened option names
+		_public.options.align = _public.options.alignment || _public.options.align;
+		_public.options.headerAlign = _public.options.headerAlignment || _public.options.headerAlign;
 		
 		_private.table.columnWidths = _private.getColumnWidths(header);
 
@@ -373,7 +377,7 @@ var cls = function(){
  * @class Table
  * @param {array} header
  * @param {object} header.column									- Column options
- * @param {function} header.column.formatter			- Runs a callback on each cell value in the parent column 
+ * @param {function} header.column.formatter			- Runs a callback on each cell value in the parent column
  * @param {number} header.column.marginLeft				- default: 0
  * @param {number} header.column.marginTop				- default: 0			
  * @param {number} header.column.maxWidth					- default: 20 
@@ -381,9 +385,10 @@ var cls = function(){
  * @param {number} header.column.paddingLeft			- default: 0
  * @param {number} header.column.paddingRight			- default: 0
  * @param {number} header.column.paddingTop				- default: 0	
- * @param {string} header.column.alignment				- default: "center"
+ * @param {string} header.column.alias						- Alernate header column name
+ * @param {string} header.column.align						- default: "center"
  * @param {string} header.column.color						- default: terminal default color
- * @param {string} header.column.headerAlignment	- default: "center" 
+ * @param {string} header.column.headerAlign			- default: "center" 
  * @param {string} header.column.headerColor			- default: terminal default color
  *
  * @param {array} rows

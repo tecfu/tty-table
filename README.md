@@ -59,7 +59,7 @@ var header = [
 		value : "item",
 		headerColor : "cyan",
 		color: "yellow",
-		alignment : "left",
+		align : "left",
 		paddingLeft : 1,
 		width : 30
 	},
@@ -75,6 +75,7 @@ var header = [
 		}
 	},
 	{
+		alias : "Is organic?",	
 		value : "organic",
 		formatter : function(value){
 			if(value === 'yes'){
@@ -102,8 +103,8 @@ var rows = [
 var t1 = Table(header,rows,{
 	borderStyle : 1,
 	paddingBottom : 0,
-	headerAlignment : "center",
-	alignment : "center",
+	headerAlign : "center",
+	align : "center",
 	color : "white"
 });
 var str1 = t1.render();
@@ -138,9 +139,10 @@ console.log(str1);
 | header.column.paddingLeft | <code>number</code> | default: 0 |
 | header.column.paddingRight | <code>number</code> | default: 0 |
 | header.column.paddingTop | <code>number</code> | default: 0 |
-| header.column.alignment | <code>string</code> | default: "center" |
+| header.column.alias | <code>string</code> | Alernate header column name |
+| header.column.align | <code>string</code> | default: "center" |
 | header.column.color | <code>string</code> | default: terminal default color |
-| header.column.headerAlignment | <code>string</code> | default: "center" |
+| header.column.headerAlign | <code>string</code> | default: "center" |
 | header.column.headerColor | <code>string</code> | default: terminal default color |
 | rows | <code>array</code> |  |
 | options | <code>object</code> | Table options |

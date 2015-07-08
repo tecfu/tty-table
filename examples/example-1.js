@@ -6,7 +6,7 @@ var header = [
 		value : "item",
 		headerColor : "cyan",
 		color: "yellow",
-		alignment : "left",
+		align : "left",
 		paddingLeft : 1,
 		width : 30
 	},
@@ -22,6 +22,7 @@ var header = [
 		}
 	},
 	{
+		alias : "Is organic?",	
 		value : "organic",
 		formatter : function(value){
 			if(value === 'yes'){
@@ -49,8 +50,8 @@ var rows = [
 var t1 = Table(header,rows,{
 	borderStyle : 1,
 	paddingBottom : 0,
-	headerAlignment : "center",
-	alignment : "center",
+	headerAlign : "center",
+	align : "center",
 	color : "white"
 });
 var str1 = t1.render();
