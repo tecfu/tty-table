@@ -8,7 +8,7 @@
 			var header = [
 				{
 					value : "item",
-					alignment : "left",
+					align : "left",
 					paddingLeft : 1,
 					width : 30
 				},
@@ -20,6 +20,7 @@
 					}
 				},
 				{
+					alias : "Is organic?",
 					value : "organic"
 				}
 			];
@@ -37,8 +38,8 @@
 			var t1 = Table(header,rows,{
 				borderStyle : 2,
 				paddingBottom : 0,
-				headerAlignment : "center",
-				alignment : "center",
+				headerAlign : "center",
+				align : "center",
 			});
 			var str1 = t1.render();
 			//in console

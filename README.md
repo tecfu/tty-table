@@ -32,12 +32,12 @@ npm install tty-table
 ## Example Output
 
 ### Terminal
-![Terminal Example](examples/images/example-1.png "Terminal Example") 
+![Terminal Example](examples/images/node-example.png "Terminal Example") 
 
 ### Browser & Browser Console 
-![Browser Console Example](examples/images/example-2.png "Browser Console Example") 
+![Browser Console Example](examples/images/browser-example.png "Browser Console Example") 
 
-[Working example](http://htmlpreview.github.io/?https://raw.githubusercontent.com/tecfu/tty-table/master/examples/example-2.html)
+[Working example](http://htmlpreview.github.io/?https://raw.githubusercontent.com/tecfu/tty-table/master/examples/browser-example.html)
 
 > Note that neither ASCI colors nor default borders are rendered in the browser.
 > An alternative border style, as shown below, can be used by setting the option:
@@ -107,7 +107,8 @@ var t1 = Table(header,rows,{
 	align : "center",
 	color : "white"
 });
-var str1 = t1.render();
+//intentionally omitted var for html include
+str1 = t1.render();
 console.log(str1);
 
 ```

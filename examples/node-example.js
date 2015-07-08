@@ -54,5 +54,6 @@ var t1 = Table(header,rows,{
 	align : "center",
 	color : "white"
 });
-var str1 = t1.render();
+//intentionally omitted var for html include
+str1 = t1.render();
 console.log(str1);

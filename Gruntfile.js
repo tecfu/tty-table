@@ -116,7 +116,7 @@ module.exports = function(grunt) {
 		});	
 		
 		//Inject example usage into README
-		var example1 = fs.readFileSync('./examples/example-1.js',{
+		var example1 = fs.readFileSync('./examples/node-example.js',{
 			encoding : 'utf-8'
 		});
 		example1 = example1.replace('../','tty-table');
