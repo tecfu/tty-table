@@ -18,6 +18,10 @@ var cls = function(){
 
 
 	_private.defaults = {
+		defaultValue : function(){
+			return (typeof chalk !== 'undefined') ? chalk.red("#ERR") : "#ERR";
+			//return 'null';
+		}(),
 		marginTop : 1,
 		marginLeft : 2,
 		maxWidth : 20,
@@ -70,20 +74,27 @@ var cls = function(){
 	 */
 
 
-	_private.buildRow = function(input,options){
+	_private.buildRow = function(row,options){
 		options = options || {};
 		var minRowHeight = 0;
 		
 		//support both rows passed as an array 
 		//and rows passed as an object
-		var row;
-		if(typeof input === 'object' && !(input instanceof Array)){
+		if(typeof row === 'object' && !(row instanceof Array)){
 			row =	_private.table.columns.map(function(object){
-				return input[object.value] || "#ERR";		
+				return row[object.value] || null;		
 			});
 		}
 		else{
-			row = input;
+			//Enforce row size
+			var difL = _private.table.columnWidths.length - row.length;
+			if(difL > 0){
+				row = row.concat(Array.apply(null, new Array(difL))
+															.map(function(){return null})); 
+			}
+			else if(difL < 0){
+				row = row.length(_private.table.columnWidths.length);
+			}
 		}
 
 		//get row as array of cell arrays
@@ -140,16 +151,21 @@ var cls = function(){
 		}	
 		else{
 			columnOptions = _private.table.columns[columnIndex];
-			if(typeof cell === 'object'){	
+			if(typeof cell === 'object' && cell !== null){	
 				columnOptions = merge(true,columnOptions,cell);		
-				cell = value;			
+				output = cell.value;
 			}	
-		
-			if(typeof columnOptions.formatter === 'function'){
-				output = columnOptions.formatter(cell);
-			}
 			else{
 				output = cell;
+			}
+
+			//Replace undefined/null cell values with placeholder
+			output = (typeof output === 'undefined' || output === null) ? 
+				_public.options.defaultValue : output;
+						
+			//Run formatter
+			if(typeof columnOptions.formatter === 'function'){
+				output = columnOptions.formatter(output);
 			}
 		}
 		
