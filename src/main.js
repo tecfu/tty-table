@@ -70,10 +70,22 @@ var cls = function(){
 	 */
 
 
-	_private.buildRow = function(row,options){
+	_private.buildRow = function(input,options){
 		options = options || {};
 		var minRowHeight = 0;
 		
+		//support both rows passed as an array 
+		//and rows passed as an object
+		var row;
+		if(typeof input === 'object' && !(input instanceof Array)){
+			row =	_private.table.columns.map(function(object){
+				return input[object.value] || "#ERR";		
+			});
+		}
+		else{
+			row = input;
+		}
+
 		//get row as array of cell arrays
 		var cArrs = row.map(function(cell,index){
 			var c = _private.buildCell(cell,index,options);

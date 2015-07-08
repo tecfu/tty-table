@@ -93,6 +93,11 @@ module.exports = function(grunt) {
 				command: function(){
 					return "rm ./dist/<%= pkg.name %>.js ./dist/<%= pkg.name %>.bundle.js";
 				}
+			},
+			"save_test_output" : {
+				command: function(){
+					return "node examples/node-example.js --color=always > examples/node-example-output.txt";
+				}
 			}
 		}
 	});
@@ -163,6 +168,10 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('test-travis', [
 		'mochaTest:test'
+	]);
+
+	grunt.registerTask('g', [
+		'shell:save_test_output'
 	]);
 
 	grunt.registerTask('default', [
