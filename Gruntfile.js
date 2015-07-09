@@ -94,10 +94,11 @@ module.exports = function(grunt) {
 					return "rm ./dist/<%= pkg.name %>.js ./dist/<%= pkg.name %>.bundle.js";
 				}
 			},
-			"save_test_output" : {
-				command: function(){
-					return "node examples/node-example.js --color=always > examples/node-example-output.txt";
-				}
+			'save_test_output': {
+				command: [
+					"node examples/node-example.js --color=always > examples/node-example-output.txt",
+					"node examples/null-undefined.js --color=always > examples/null-undefined-output.txt"
+				].join('&&')
 			}
 		}
 	});
