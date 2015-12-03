@@ -201,7 +201,7 @@ var cls = function(){
 										- _private.GUTTER; //border/gutter
 
 		//Break string into array of lines
-		wrap = wordwrap(innerWidth);
+		var wrap = wordwrap.hard(innerWidth);
 		string = wrap(string); 
 
 		var strArr = string.split('\n');
@@ -229,7 +229,7 @@ var cls = function(){
 			line = Array(columnOptions.paddingLeft + 1).join(' ') +
 						line +
 						Array(columnOptions.paddingRight + 1).join(' ');
-			var lineLength = stripAnsi(line).length;
+			var lineLength = stripAnsi(line.replace(/[\u3007\u3400-\u4DB5\u4E00-\u9FCB\uE815-\uE864]|[\uD840-\uD87F][\uDC00-\uDFFF]/g,'XX')).length;
 
 			//align 
 			var alignTgt = (rowType === 'header') ? "headerAlign" : "align";
