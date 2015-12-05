@@ -193,6 +193,10 @@ var cls = function(){
 		return chalk[color](str);
 	};
 
+	_private.calculateLength = function (line) {
+		return stripAnsi(line.replace(/[^\x00-\xff]/g,'XX')).length;
+	};
+
 	_private.wrapCellContent = function(value,columnIndex,columnOptions,rowType){
 		var string = value.toString(),
 				width = _private.table.columnWidths[columnIndex],
@@ -200,9 +204,29 @@ var cls = function(){
 										- columnOptions.paddingRight
 										- _private.GUTTER; //border/gutter
 
-		//Break string into array of lines
-		var wrap = wordwrap.hard(innerWidth);
-		string = wrap(string); 
+		if (string.length < _private.calculateLength(string)) {
+			// wrap Asian characters
+			var count = 0;
+			var start = 0;
+			var characters = string.split('');
+
+			string = characters.reduce(function (prev, value, i) {
+				count += _private.calculateLength(value);
+				if (count > innerWidth) {
+					prev.push(string.slice(start, i));
+					start = i;
+					count = 0;
+				} else if (characters.length === i + 1) {
+					prev.push(string.slice(start));
+				}
+
+				return prev;
+			}, []).join('\n');
+		} else {
+			//Break string into array of lines
+			var wrap = wordwrap.hard(innerWidth);
+			string = wrap(string);
+		}
 
 		var strArr = string.split('\n');
 
@@ -229,7 +253,7 @@ var cls = function(){
 			line = Array(columnOptions.paddingLeft + 1).join(' ') +
 						line +
 						Array(columnOptions.paddingRight + 1).join(' ');
-			var lineLength = stripAnsi(line.replace(/[\u3007\u3400-\u4DB5\u4E00-\u9FCB\uE815-\uE864]|[\uD840-\uD87F][\uDC00-\uDFFF]/g,'XX')).length;
+			var lineLength = _private.calculateLength(line);
 
 			//align 
 			var alignTgt = (rowType === 'header') ? "headerAlign" : "align";
