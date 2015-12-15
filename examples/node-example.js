@@ -6,8 +6,8 @@ var header = [
 		value : "item",
 		headerColor : "cyan",
 		color: "yellow",
-		align : "left",
-		paddingLeft : 1,
+		align : "right",
+		paddingRight : 5,
 		width : 30
 	},
 	{

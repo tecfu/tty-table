@@ -1,7 +1,7 @@
 var merge = require("merge"),
 		chalk = require("chalk"),
 		stripAnsi = require("strip-ansi"),
-		wordwrap = require("wordwrap");
+		wrap = require("word-wrap");
 
 
 var cls = function(){
@@ -198,14 +198,23 @@ var cls = function(){
 	};
 
 	_private.wrapCellContent = function(value,columnIndex,columnOptions,rowType){
+	
+		//Equalize padding for centered lines 
+		if(columnOptions[alignTgt] === 'center'){	
+			columnOptions.paddingLeft = columnOptions.paddingRight =
+				Math.max(columnOptions.paddingRight,columnOptions.paddingLeft,0);
+		}
+
 		var string = value.toString(),
 				width = _private.table.columnWidths[columnIndex],
-				innerWidth = width - columnOptions.paddingLeft 
-										- columnOptions.paddingRight
-										- _private.GUTTER; //border/gutter
+				innerWidth = width - columnOptions.paddingLeft -
+										columnOptions.paddingRight -
+										_private.GUTTER; //border/gutter
+		
+		var alignTgt = (rowType === 'header') ? "headerAlign" : "align";
 
 		if (string.length < _private.calculateLength(string)) {
-			// wrap Asian characters
+			//Wrap Asian characters
 			var count = 0;
 			var start = 0;
 			var characters = string.split('');
@@ -223,16 +232,48 @@ var cls = function(){
 				return prev;
 			}, []).join('\n');
 		} else {
-			//Break string into array of lines
-			var wrap = wordwrap.hard(innerWidth);
-			string = wrap(string);
+			
+			string = wrap(string,{
+				width : innerWidth - 
+								columnOptions.paddingLeft -
+								columnOptions.paddingRight,
+				trim : true,
+				indent : ''
+			});
 		}
 
+		//Break string into array of lines
 		var strArr = string.split('\n');
 
 		//Format each line
 		strArr = strArr.map(function(line){
 
+			line = line.trim();	
+			var lineLength = _private.calculateLength(line);
+
+			//align 
+			if(lineLength < width){
+				var emptySpace = width - lineLength; 
+				switch(true){
+					case(columnOptions[alignTgt] === 'center'):
+						emptySpace --;
+						var padBoth = Math.floor(emptySpace / 2), 
+								padRemainder = emptySpace % 2;
+						line = Array(padBoth + 1).join(' ') + 
+							line +
+							Array(padBoth + 1 + padRemainder).join(' ');
+						break;
+					case(columnOptions[alignTgt] === 'right'):
+						line = Array(emptySpace - columnOptions.paddingRight).join(' ') + 
+									 line + 
+									 Array(columnOptions.paddingRight + 1).join(' ');
+						break;
+					default:
+						line = Array(columnOptions.paddingLeft + 1).join(' ') +
+									 line + Array(emptySpace - columnOptions.paddingLeft).join(' ');
+				}
+			}
+			
 			//Apply colors
 			switch(true){
 				case(rowType === 'header'):
@@ -247,35 +288,6 @@ var cls = function(){
 					line = _private.colorizeLine(_public.options.color,line);
 					break;
 				default:
-			}
-			
-			//Left, Right Padding
-			line = Array(columnOptions.paddingLeft + 1).join(' ') +
-						line +
-						Array(columnOptions.paddingRight + 1).join(' ');
-			var lineLength = _private.calculateLength(line);
-
-			//align 
-			var alignTgt = (rowType === 'header') ? "headerAlign" : "align";
-			if(lineLength < width){
-				var spaceAvailable = width - lineLength; 
-				switch(true){
-					case(columnOptions[alignTgt] === 'center'):
-						var even = (spaceAvailable %2 === 0);
-						spaceAvailable = (even) ? spaceAvailable : 
-							spaceAvailable - 1;
-						if(spaceAvailable > 1){
-							line = Array(spaceAvailable/2).join(' ') + 
-								line +
-								Array(spaceAvailable/2 + ((even)?1:2)).join(' ');
-						}
-						break;
-					case(columnOptions[alignTgt] === 'right'):
-						line = Array(spaceAvailable).join(' ') + line;
-						break;
-					default:
-						line = line + Array(spaceAvailable).join(' ');
-				}
 			}
 			
 			return line;
@@ -383,8 +395,8 @@ var cls = function(){
 		for(a=0;a<3;a++){
 			borders.push('');
 			_private.table.columnWidths.forEach(function(w,i,arr){
-				borders[a] += Array(w).join(bS[a].h) 
-					+ ((i+1 !== arr.length) ? bS[a].j : bS[a].r);
+				borders[a] += Array(w).join(bS[a].h) +
+					((i+1 !== arr.length) ? bS[a].j : bS[a].r);
 			});
 			borders[a] = bS[a].l + borders[a];
 			borders[a] = borders[a].split('');
