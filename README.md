@@ -166,6 +166,68 @@ console.log(str2);
 ## API Reference 
 <!--API-REF-->
 
+<a name="Table"></a>
+## Table ⇒ <code>[Table](#Table)</code>
+**Kind**: global class  
+**Note**: <a name="note"/>
+Default border character sets:
+```
+	[
+		[
+			{v: " ", l: " ", j: " ", h: " ", r: " "},
+			{v: " ", l: " ", j: " ", h: " ", r: " "},
+			{v: " ", l: " ", j: " ", h: " ", r: " "}
+		],
+		[
+			{v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
+			{v: "│", l: "├", j: "┼", h: "─", r: "┤"},
+			{v: "│", l: "└", j: "┴", h: "─", r: "┘"}
+		],
+		[
+			{v: "|", l: "+", j: "+", h: "-", r: "+"},
+			{v: "|", l: "+", j: "+", h: "-", r: "+"},
+			{v: "|", l: "+", j: "+", h: "-", r: "+"}
+		]
+	]
+```  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| header | <code>array</code> | [See example](#example-usage) |
+| header.column | <code>object</code> | Column options |
+| header.column.formatter | <code>function</code> | Runs a callback on each cell value in the parent column |
+| header.column.marginLeft | <code>number</code> | default: 0 |
+| header.column.marginTop | <code>number</code> | default: 0 |
+| header.column.maxWidth | <code>number</code> | default: 20 |
+| header.column.paddingBottom | <code>number</code> | default: 0 |
+| header.column.paddingLeft | <code>number</code> | default: 0 |
+| header.column.paddingRight | <code>number</code> | default: 0 |
+| header.column.paddingTop | <code>number</code> | default: 0 |
+| header.column.alias | <code>string</code> | Alernate header column name |
+| header.column.align | <code>string</code> | default: "center" |
+| header.column.color | <code>string</code> | default: terminal default color |
+| header.column.headerAlign | <code>string</code> | default: "center" |
+| header.column.headerColor | <code>string</code> | default: terminal default color |
+| rows | <code>array</code> | [See example](#example-usage) |
+| options | <code>object</code> | Table options |
+| options.borderStyle | <code>number</code> | default: 1 (0 = no border)  Refers to the index of the desired character set. |
+| options.borderCharacters | <code>array</code> | [See @note](#note) |
+
+**Example**  
+```
+var Table = require('tty-table');
+Table(header,rows,options);
+```
+<a name="Table.render"></a>
+### Table.render() ⇒ <code>String</code>
+Renders a table to a string
+
+**Kind**: static method of <code>[Table](#Table)</code>  
+**Example**  
+```
+var str = t1.render(); 
+console.log(str); //outputs table
+```
 
 <!--END-API-REF-->
 
