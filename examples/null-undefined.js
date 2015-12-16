@@ -76,19 +76,4 @@ var t2 = Table(header,rows,{
 });
 
 var str2 = t2.render();
-
-//Allow arg to be passed that saves output to text file for unit testing.
-var program = require('commander');
-program
-	.option('-s, --save','Save test output to text file.')
-	.parse(process.argv);
-
 console.log(str2);
-
-if(program.save){
-	var fs = require('fs');
-	var filename = __filename.split('.')[0];
-	filename = filename + '-output2.txt';
-	fs.writeFileSync(filename,str1 + '\n' + str2);
-	console.log('Wrote output to text file: ' + filename + '\n');
-}

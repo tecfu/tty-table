@@ -93,14 +93,48 @@ module.exports = function(grunt) {
 				command: function(){
 					return "rm ./dist/<%= pkg.name %>.js ./dist/<%= pkg.name %>.bundle.js";
 				}
-			},
-			'save_test_output': {
-				command: [
-					"node examples/node-example.js --color=always > examples/node-example-output.txt",
-					"node examples/null-undefined.js --color=always > examples/null-undefined-output.txt"
-				].join('&&')
-			}
+			}	
 		}
+	});
+
+	grunt.registerTask('save-test-outputs','Saves the ouptuts of all unit tests to file.',function(){
+	
+		var glob = require('glob');
+		var exec = require('child_process').exec, child;
+		var gruntDeferred = this.async();
+		var jobQueue = [];
+		var Orgy = require('orgy');
+		var fs = require('fs');	
+
+		//Get list of all test scripts
+		var list = glob.sync('examples/*.js'); 
+		list.forEach(function(element,index,array){
+			
+			//Create a deferred for each run, which is pushed into a queue.
+			var deferred = Orgy.deferred();
+			jobQueue.push(deferred);
+
+			child = exec('node ./'+element+' --color=always',
+			function (error, stdout, stderr) {
+				if (error !== null) {
+					grunt.log.error('Exec error: ' + error);
+				}
+				var subname = element.split('.')[0];
+				filename = subname + '-output.txt';
+				fs.writeFileSync(filename,stdout);
+				grunt.log.write('Wrote output to text file: ' + filename + '\n');
+				deferred.resolve();
+			});
+		});
+
+		//Resolve grunt deferred only after jobQueue is complete.
+		Orgy.queue(jobQueue,[{
+			timeout : 1000	
+		}])
+		.done(function(){
+			gruntDeferred();
+		});
+
 	});
 
 	grunt.registerTask('doc','Documentation generation task',function(){
@@ -167,12 +201,12 @@ module.exports = function(grunt) {
 		'mochaTest:test'
 	]);
 
-	grunt.registerTask('test-travis', [
-		'mochaTest:test'
+	grunt.registerTask('st',[
+		'save-test-outputs'
 	]);
 
-	grunt.registerTask('g', [
-		'shell:save_test_output'
+	grunt.registerTask('test-travis', [
+		'mochaTest:test'
 	]);
 
 	grunt.registerTask('default', [

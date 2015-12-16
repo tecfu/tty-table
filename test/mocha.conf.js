@@ -3,49 +3,31 @@ var expect = chai.expect;
 var assert = chai.assert;
 var should = chai.should();
 var fs = require('fs');
+var glob = require('glob');
 
-//Basic test
-describe('Basic test.',function(){
-	it('Should match saved output.',function(deferred){
+//Get list of all test scripts
+var list = glob.sync('examples/*.js'); 
 
-		var exec = require('child_process').exec, child;
+list.forEach(function(element,index,array){
+	
+	//Matching test
+	describe(element,function(){
+		it('Should match ' + element + '-output.txt',function(deferred){
 
-		child = exec('node ./examples/node-example.js --color=always',
-		function (error, stdout, stderr) {
-			//console.log('stdout: ' + stdout);
-			//console.log('stderr: ' + stderr);
-			if (error !== null) {
-				grunt.log.error('Exec error: ' + error);
-			}
-			
-			/* Comparison code generated with:
-			node examples/node-example.js --color=always > examples/node-example-output.txt
-			*/
-			var expected1 = fs.readFileSync('./examples/node-example-output.txt',{encoding : 'utf-8'}); 
-			stdout.should.equal(expected1);
-			deferred();
+			var exec = require('child_process').exec, child;
+
+			child = exec('node ./'+element+' --color=always',
+			function (error, stdout, stderr) {
+				//console.log('stdout: ' + stdout);
+				//console.log('stderr: ' + stderr);
+				if (error !== null) {
+					grunt.log.error('Exec error: ' + error);
+				}
+				var subname = element.split('.')[0];
+				var expected1 = fs.readFileSync('./'+subname+'-output.txt',{encoding : 'utf-8'}); 
+				stdout.should.equal(expected1);
+				deferred();
+			});
 		});
 	});
 });
-
-//Null values test
-describe('Testing null and undefined row values.',function(){
-	it('Should match saved output.',function(deferred){
-
-		var exec = require('child_process').exec, child;
-
-		child = exec('node ./examples/null-undefined.js --color=always',
-		function (error, stdout, stderr) {
-			//console.log('stdout: ' + stdout);
-			//console.log('stderr: ' + stderr);
-			if (error !== null) {
-				grunt.log.error('Exec error: ' + error);
-			}
-			
-			var expected1 = fs.readFileSync('./examples/null-undefined-output.txt',{encoding : 'utf-8'}); 
-			stdout.should.equal(expected1);
-			deferred();
-		});
-	});
-});
-
