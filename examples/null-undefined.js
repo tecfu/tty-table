@@ -18,7 +18,7 @@ var rows = [
 	["el jefe's special cream sauce",0.10],
 	["two tacos, rice and beans topped with cheddar cheese",9.80,""],
 	["apple slices",1.00,"yes"],
-	[null,1.50,"no"],
+	[null,1.50,"no","extra element","another extra element"],
 	["macaroni, ham and peruvian mozzarella",3.75,"no"]
 ];
 

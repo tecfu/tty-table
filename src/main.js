@@ -89,11 +89,13 @@ var cls = function(){
 			//Enforce row size
 			var difL = _private.table.columnWidths.length - row.length;
 			if(difL > 0){
+				//Add null element to array
 				row = row.concat(Array.apply(null, new Array(difL))
 															.map(function(){return null})); 
 			}
 			else if(difL < 0){
-				row = row.length(_private.table.columnWidths.length);
+				//Truncate array
+				row.length = _private.table.columnWidths.length;
 			}
 		}
 
