@@ -322,7 +322,7 @@ var cls = function(){
 		//Check process exists in case we are in browser
 		if(process && process.stdout && totalWidth > process.stdout.columns){
 			//recalculate proportionately to fit size
-			var prop = process.stdout.columns > totalWidth;
+			var prop = process.stdout.columns / totalWidth;
 			prop = prop.toFixed(2)-0.01;
 			widths = widths.map(function(value){
 				return Math.floor(prop*value);
