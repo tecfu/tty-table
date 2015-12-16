@@ -28,9 +28,9 @@ npm install tty-table
 - Header, body column alignment
 - Padding
 - Pass rows as either arrays or objects
-- Works in the browser as well as nodejs
+- [Works in the browser as well as nodejs](http://htmlpreview.github.io/?https://raw.githubusercontent.com/tecfu/tty-table/master/examples/browser-example.html)
 - [Supports Asian characters](https://github.com/tecfu/tty-table/pull/5) 
-- Responsive
+- [Responsive](https://github.com/tecfu/tty-table/issues/4)
 
 ## Example Output
 
@@ -173,6 +173,12 @@ console.log(str2);
 
 ```
 grunt test
+```
+
+## Saving the output of new tests
+
+```
+grunt st
 ```
 
 ## License
