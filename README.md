@@ -29,6 +29,8 @@ npm install tty-table
 - Padding
 - Pass rows as either arrays or objects
 - Works in the browser as well as nodejs
+- [Supports Asian characters](https://github.com/tecfu/tty-table/pull/5) 
+- Responsive
 
 ## Example Output
 
