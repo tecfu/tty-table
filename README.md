@@ -1,5 +1,7 @@
 # tty-table
 
+[![Build Status](https://travis-ci.org/tecfu/tty-table.svg?branch=master)](https://travis-ci.org/tecfu/tty-table) [![Dependency Status](https://david-dm.org/tecfu/tty-table.png)](https://david-dm.org/tecfu/tty-table) [![NPM version](https://badge.fury.io/js/tty-table.svg)](http://badge.fury.io/js/tty-table) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
+
 A terminal table widget for nodejs and the browser.
 
 ## Installation
