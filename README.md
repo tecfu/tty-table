@@ -33,6 +33,7 @@ npm install tty-table
 - [Works in the browser as well as nodejs](http://htmlpreview.github.io/?https://raw.githubusercontent.com/tecfu/tty-table/master/examples/browser-example.html)
 - [Supports Asian characters](https://github.com/tecfu/tty-table/pull/5) 
 - [Responsive](https://github.com/tecfu/tty-table/issues/4)
+- [Footer Support](https://github.com/tecfu/tty-table/issues/6)
 
 ## Example Output
 
@@ -45,7 +46,7 @@ npm install tty-table
 [Working example](http://htmlpreview.github.io/?https://raw.githubusercontent.com/tecfu/tty-table/master/examples/browser-example.html)
 
 > Note that neither ASCI colors nor default borders are rendered in the browser.
-> An alternative border style, as shown below, can be used by setting the option:
+> An alternative border style, as shown below, should be used by setting the following option:
 >
 > ```
 > borderStyle : 2
