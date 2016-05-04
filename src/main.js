@@ -1,7 +1,7 @@
-var merge = require("merge"),
-		chalk = require("chalk"),
-		stripAnsi = require("strip-ansi"),
-		wrap = require("word-wrap");
+var Merge = require("merge"),
+		Chalk = require("chalk"),
+		StripAnsi = require("strip-ansi"),
+		Wrap = require("word-wrap");
 
 
 var cls = function(){
@@ -18,15 +18,15 @@ var cls = function(){
 
 
 	_private.defaults = {
-		defaultValue : function(){
-			return (typeof chalk !== 'undefined') ? chalk.red("#ERR") : "#ERR";
-			//return 'null';
-		}(),
+		defaultValue : (function(){
+			return (typeof Chalk !== 'undefined') ? Chalk.red("#ERR") : "#ERR";
+		}()),
 		marginTop : 1,
 		marginLeft : 2,
 		maxWidth : 20,
 		formatter : null,
 		headerAlign : "center",
+		footerAlign : "center",
 		align : "center",
 		paddingRight : 0,
 		paddingLeft : 0,
@@ -34,6 +34,7 @@ var cls = function(){
 		paddingTop : 0,
 		color : false,
 		headerColor : false,
+		footerColor : false,
 		borderStyle : 1,
 		borderCharacters : [
 			[
@@ -54,11 +55,10 @@ var cls = function(){
 		]
 	};
 
-
-	//Constants
 	_private.GUTTER = 1;
-
-
+	
+	_private.header = []; //saved so cell options can be merged into 
+												//column options
 	_private.table = {
 		columns : [],
 		columnWidths : [],
@@ -74,8 +74,7 @@ var cls = function(){
 	 */
 
 
-	_private.buildRow = function(row,options){
-		options = options || {};
+	_private.buildRow = function(row,rowType){
 		var minRowHeight = 0;
 		
 		//support both rows passed as an array 
@@ -86,33 +85,36 @@ var cls = function(){
 			});
 		}
 		else{
-			//Enforce row size
+			//equalize array lengths
 			var difL = _private.table.columnWidths.length - row.length;
 			if(difL > 0){
-				//Add null element to array
+				//add empty element to array
 				row = row.concat(Array.apply(null, new Array(difL))
 															.map(function(){return null})); 
 			}
 			else if(difL < 0){
-				//Truncate array
+				//truncate array
 				row.length = _private.table.columnWidths.length;
 			}
 		}
 
 		//get row as array of cell arrays
 		var cArrs = row.map(function(cell,index){
-			var c = _private.buildCell(cell,index,options);
+			var c = _private.buildCell(cell,index,rowType);
 			var cellArr = c.cellArr;
-			if(options.header){
+			if(rowType === 'header'){
 				_private.table.columnInnerWidths.push(c.width);
 			}
-			minRowHeight = (minRowHeight < cellArr.length) ? cellArr.length : minRowHeight;
+			minRowHeight = (minRowHeight < cellArr.length) ? 
+				cellArr.length : minRowHeight;
 			return cellArr;
 		});
 
 		//Adjust minRowHeight to reflect vertical row padding
-		minRowHeight = (options.header) ? minRowHeight : minRowHeight + 
-			(_public.options.paddingBottom + _public.options.paddingTop);
+		minRowHeight = (rowType === 'header') ? minRowHeight :
+			minRowHeight + 
+			(_public.options.paddingBottom + 
+			 _public.options.paddingTop);
 
 		//convert array of cell arrays to array of lines
 		var lines = Array.apply(null,{length:minRowHeight})
@@ -120,9 +122,9 @@ var cls = function(){
 
 		cArrs.forEach(function(cellArr,a){
 			var whiteline = Array(_private.table.columnWidths[a]).join('\ ');
-			if(!options.header){
+			if(rowType ==='body'){
 				//Add whitespace for top padding
-				for(i=0; i<_public.options.paddingTop; i++){
+				for(var i=0; i<_public.options.paddingTop; i++){
 					cellArr.unshift(whiteline);
 				}
 				
@@ -132,97 +134,156 @@ var cls = function(){
 				}
 			}	
 			for(var b=0; b<minRowHeight; b++){	
-				lines[b].push((typeof cellArr[b] != 'undefined') ? cellArr[b] : whiteline);
+				lines[b].push((typeof cellArr[b] !== 'undefined') ? 
+											cellArr[b] : whiteline);
 			}
 		});
 
 		return lines;
 	};
 
-	_private.buildCell = function(cell,columnIndex,options){
+	_private.buildCell = function(cell,columnIndex,rowType){
 
-		//Pull column options	
-		var output;
-		options = options || {};
+		var cellValue, 
+				cellOptions = Merge(true,
+														_public.options,
+														(rowType === 'body') ? 
+															_private.header[columnIndex] : {}, //ignore columnOptions for footer
+														cell);		
 		
-		if(options && options.header){
-			cell = merge(true,_public.options,cell);
+		if(rowType === 'header'){
+			cell = Merge(true,_public.options,cell);
 			_private.table.columns.push(cell);
-			output = cell.alias || cell.value;
-			columnOptions = cell;
+			cellValue = cell.alias || cell.value;
 		}	
 		else{
-			columnOptions = _private.table.columns[columnIndex];
 			if(typeof cell === 'object' && cell !== null){	
-				columnOptions = merge(true,columnOptions,cell);		
-				output = cell.value;
+				cellValue = cell.value;
 			}	
 			else{
-				output = cell;
+				cellValue = cell;
 			}
 
 			//Replace undefined/null cell values with placeholder
-			output = (typeof output === 'undefined' || output === null) ? 
-				_public.options.defaultValue : output;
+			cellValue = (typeof cellValue === 'undefined' || cellValue === null) ? 
+				_public.options.defaultValue : cellValue;
 						
 			//Run formatter
-			if(typeof columnOptions.formatter === 'function'){
-				output = columnOptions.formatter(output);
+			if(typeof cellOptions.formatter === 'function'){
+				cellValue = cellOptions.formatter(cellValue);
 			}
 		}
 		
-		//Automatic text wrap
-		var wrapObj  = _private.wrapCellContent(output,columnIndex,columnOptions,
-										(options && options.header) ? "header" : "body");
-		output = wrapObj.output;
-		
+		//colorize cellValue
+		cellValue = _private.colorizeCell(cellValue,cellOptions,rowType);	
+
+		//textwrap cellValue
+		var WrapObj  = _private.wrapCellContent(cellValue,
+																						columnIndex,
+																						cellOptions,
+																						rowType);
+		cellValue = WrapObj.output;
+
 		//return as array of lines
 		return {
-			cellArr : output.split('\n'),
-			width : wrapObj.width
+			cellArr : cellValue.split('\n'),
+			width : WrapObj.width
 		};
 	};
 
+/*
 	_private.colorizeAllWords = function(color,str){
 		//Color each word in the cell so that line breaks don't break color 
 		var arr = str.replace(/(\S+)/gi,function(match){
-			return chalk[color](match)+'\ ';
+			return Chalk[color](match)+'\ ';
 		});
 		return arr;
 	};
+*/
 
-	_private.colorizeLine = function(color,str){
-		return chalk[color](str);
+	_private.colorizeCell = function(str,cellOptions,rowType){
+		
+		var color = false; //false will keep terminal default
+		
+		switch(true){
+			case(rowType === 'body'):
+				color = cellOptions.color || color;
+				break;
+			case(rowType === 'header'):
+				color = cellOptions.headerColor || color;	
+				break;
+			default:
+				color = cellOptions.footerColor || color;
+		}
+		
+		if (color){
+			str = Chalk[color](str);
+		}
+
+		return str;
 	};
 
 	_private.calculateLength = function (line) {
-		return stripAnsi(line.replace(/[^\x00-\xff]/g,'XX')).length;
+		return StripAnsi(line.replace(/[^\x00-\xff]/g,'XX')).length;
 	};
 
-	_private.wrapCellContent = function(value,columnIndex,columnOptions,rowType){
-	
-		//Equalize padding for centered lines 
-		if(columnOptions[alignTgt] === 'center'){	
-			columnOptions.paddingLeft = columnOptions.paddingRight =
-				Math.max(columnOptions.paddingRight,columnOptions.paddingLeft,0);
+	_private.wrapCellContent = function(cellValue,
+																			columnIndex,
+																			cellOptions,
+																			rowType){
+																				 
+		//remove ANSI color codes from the beginning and end of string
+		var string = cellValue.toString(), 
+				startAnsiRegexp = /^(\033\[[0-9;]*m)+/,
+				endAnsiRegexp = /(\033\[[0-9;]*m)+$/,
+				startMatches = string.match(startAnsiRegexp),
+				endMatches = string.match(endAnsiRegexp),
+				startFound = false,
+				endFound = false;
+		
+		if(startMatches instanceof Array && startMatches.length > 0){
+			startFound = true;
+			string = string.replace(startAnsiRegexp,'');
 		}
 
-		var string = value.toString(),
-				width = _private.table.columnWidths[columnIndex],
-				innerWidth = width - columnOptions.paddingLeft -
-										columnOptions.paddingRight -
+		if(endMatches instanceof Array && endMatches.length > 0){
+			endFound = true;	
+			string = string.replace(endAnsiRegexp,'');
+		}
+
+
+		var alignTgt;
+		switch(rowType){
+			case('header'):
+				alignTgt = "headerAlign"
+				break;
+			case('body'):
+				alignTgt = "align"
+				break;
+			default:
+				alignTgt = "footerAlign"
+				break;
+		}
+
+		//Equalize padding for centered lines 
+		if(cellOptions[alignTgt] === 'center'){	
+			cellOptions.paddingLeft = cellOptions.paddingRight =
+				Math.max(cellOptions.paddingRight,cellOptions.paddingLeft,0);
+		}
+
+		var width = _private.table.columnWidths[columnIndex],
+				innerWidth = width - cellOptions.paddingLeft -
+										cellOptions.paddingRight -
 										_private.GUTTER; //border/gutter
 		
-		var alignTgt = (rowType === 'header') ? "headerAlign" : "align";
-
-		if (string.length < _private.calculateLength(string)) {
+				if (string.length < _private.calculateLength(string)) {
 			//Wrap Asian characters
 			var count = 0;
 			var start = 0;
 			var characters = string.split('');
 
-			string = characters.reduce(function (prev, value, i) {
-				count += _private.calculateLength(value);
+			string = characters.reduce(function (prev, cellValue, i) {
+				count += _private.calculateLength(cellValue);
 				if (count > innerWidth) {
 					prev.push(string.slice(start, i));
 					start = i;
@@ -234,11 +295,10 @@ var cls = function(){
 				return prev;
 			}, []).join('\n');
 		} else {
-			
-			string = wrap(string,{
+			string = Wrap(string,{
 				width : innerWidth - 
-								columnOptions.paddingLeft -
-								columnOptions.paddingRight,
+								cellOptions.paddingLeft -
+								cellOptions.paddingRight,
 				trim : true,
 				indent : ''
 			});
@@ -253,11 +313,11 @@ var cls = function(){
 			line = line.trim();	
 			var lineLength = _private.calculateLength(line);
 
-			//align 
+			//alignment 
 			if(lineLength < width){
 				var emptySpace = width - lineLength; 
 				switch(true){
-					case(columnOptions[alignTgt] === 'center'):
+					case(cellOptions[alignTgt] === 'center'):
 						emptySpace --;
 						var padBoth = Math.floor(emptySpace / 2), 
 								padRemainder = emptySpace % 2;
@@ -265,33 +325,25 @@ var cls = function(){
 							line +
 							Array(padBoth + 1 + padRemainder).join(' ');
 						break;
-					case(columnOptions[alignTgt] === 'right'):
-						line = Array(emptySpace - columnOptions.paddingRight).join(' ') + 
+					case(cellOptions[alignTgt] === 'right'):
+						line = Array(emptySpace - cellOptions.paddingRight).join(' ') + 
 									 line + 
-									 Array(columnOptions.paddingRight + 1).join(' ');
+									 Array(cellOptions.paddingRight + 1).join(' ');
 						break;
 					default:
-						line = Array(columnOptions.paddingLeft + 1).join(' ') +
-									 line + Array(emptySpace - columnOptions.paddingLeft).join(' ');
+						line = Array(cellOptions.paddingLeft + 1).join(' ') +
+									 line + Array(emptySpace - cellOptions.paddingLeft).join(' ');
 				}
 			}
 			
-			//Apply colors
-			switch(true){
-				case(rowType === 'header'):
-					line = (columnOptions.color || _public.options.color) ? 
-						_private.colorizeLine(columnOptions.headerColor || _public.options.color,line) : 
-						line;
-					break;
-				case(typeof columnOptions.color === 'string'):
-					line = _private.colorizeLine(columnOptions.color,line);
-					break;
-				case(typeof _public.options.color === 'string'):
-					line = _private.colorizeLine(_public.options.color,line);
-					break;
-				default:
+			//put ANSI color codes BACK on the beginning and end of string
+			if(startFound){
+				line = startMatches[0] + line;
 			}
-			
+			if(endFound){
+				line = line + endMatches[0];
+			}
+
 			return line;
 		});
 
@@ -350,25 +402,32 @@ var cls = function(){
 	 */
 
 
-	_private.setup = function(header,body,options){
+	_private.setup = function(header,body,footer,options){
 		
-		_public.options = merge(true,_private.defaults,options);
-
+		_public.options = Merge(true,_private.defaults,options);
+		
 		//backfixes for shortened option names
 		_public.options.align = _public.options.alignment || _public.options.align;
 		_public.options.headerAlign = _public.options.headerAlignment || _public.options.headerAlign;
 		
 		_private.table.columnWidths = _private.getColumnWidths(header);
 
+		//Build header
+		_private.header = header; //save for merging columnOptions into cell options
 		header = [header];
 		_private.table.header = header.map(function(row){
-			return _private.buildRow(row,{
-				header:true
-			});
+			return _private.buildRow(row,'header');
 		});
 
+		//Build body
 		_private.table.body = body.map(function(row){
-			return _private.buildRow(row);
+			return _private.buildRow(row,'body');
+		});
+
+		//Build footer
+		footer = (footer.length > 0) ? [footer] : [];
+		_private.table.footer = footer.map(function(row){
+			return _private.buildRow(row,'footer');
 		});
 
 		return _public;
@@ -386,15 +445,15 @@ var cls = function(){
 	 * ```
 	*/
 	_public.render = function(){
+		
 		var str = '',
-				part = ['header','body'],
-				bArr = [],
+				part = ['header','body','footer'],
 				marginLeft = Array(_public.options.marginLeft + 1).join('\ '),
 				bS = _public.options.borderCharacters[_public.options.borderStyle],
 				borders = [];
 
 		//Borders
-		for(a=0;a<3;a++){
+		for(var a=0;a<3;a++){
 			borders.push('');
 			_private.table.columnWidths.forEach(function(w,i,arr){
 				borders[a] += Array(w).join(bS[a].h) +
@@ -407,13 +466,18 @@ var cls = function(){
 			borders[a] = marginLeft + borders[a] + '\n';
 		}
 		
+		//Top horizontal border
 		str += borders[0];
 
 		//Rows
+		var row;
 		part.forEach(function(p,i){
 			while(_private.table[p].length){
+				
 				row = _private.table[p].shift();
 			
+				if(row.length === 0) break;
+
 				row.forEach(function(line){
 					str = str 
 						+ marginLeft 
@@ -422,15 +486,25 @@ var cls = function(){
 						+ bS[1].v
 						+ '\n';
 				});
-				
-				//Joining border
-				if(!(i==1 && _private.table[p].length===0)){
-					str += borders[1];
-				}
-			}	
+			
+			  //Adds bottom horizontal row border
+				switch(true){
+					//If end of body and no footer, skip
+					case(_private.table[p].length === 0 
+							 && i === 1 
+							 && _private.table.footer.length === 0):
+						break;
+					//if end of footer, skip
+					case(_private.table[p].length === 0 
+							 && i === 2):
+						break;
+					default:
+						str += borders[1];
+				}	
+			}
 		});
 		
-		//Bottom border
+		//Bottom horizontal border
 		str += borders[2];
 
 		return Array(_public.options.marginTop + 1).join('\n') + str;
@@ -456,6 +530,8 @@ var cls = function(){
  * @param {string} header.column.color						- default: terminal default color
  * @param {string} header.column.headerAlign			- default: "center" 
  * @param {string} header.column.headerColor			- default: terminal default color
+ * @param {string} header.column.footerAlign			- default: "center" 
+ * @param {string} header.column.footerColor			- default: terminal default color
  *
  * @param {array} rows											- [See example](#example-usage)
  *
@@ -493,7 +569,13 @@ var cls = function(){
  * ```
  *
  */
-module.exports = function(header,rows,options){
-	var o = new cls();
-	return o._private.setup(header,rows,options);
+module.exports = function(){
+	var o = new cls(),
+			header = arguments[0], 
+			body = arguments[1], 
+			footer = (arguments[2] instanceof Array) ? arguments[2] : [], 
+			options = (typeof arguments[3] === 'object') ? arguments[3] : 
+				(typeof arguments[2] === 'object') ? arguments[2] : {};
+	
+	return o._private.setup(header,body,footer,options);
 };

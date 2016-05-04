@@ -65,8 +65,8 @@ var header = [
 		headerColor : "cyan",
 		color: "yellow",
 		align : "left",
-		paddingRight : 5,
-		width : 30
+//		paddingRight : 5,
+//		width : 30
 	},
 	{
 		value : "price",
@@ -169,7 +169,8 @@ console.log(str2);
 <!--API-REF-->
 
 <a name="Table"></a>
-## Table ⇒ <code>[Table](#Table)</code>
+
+## Table
 **Kind**: global class  
 **Note**: <a name="note"/>
 Default border character sets:
@@ -193,6 +194,14 @@ Default border character sets:
 	]
 ```  
 
+* [Table](#Table)
+    * [Table(header, rows, options)](#new_Table_new)
+    * [.render()](#Table.render) ⇒ <code>String</code>
+
+<a name="new_Table_new"></a>
+
+### Table(header, rows, options)
+
 | Param | Type | Description |
 | --- | --- | --- |
 | header | <code>array</code> | [See example](#example-usage) |
@@ -210,6 +219,8 @@ Default border character sets:
 | header.column.color | <code>string</code> | default: terminal default color |
 | header.column.headerAlign | <code>string</code> | default: "center" |
 | header.column.headerColor | <code>string</code> | default: terminal default color |
+| header.column.footerAlign | <code>string</code> | default: "center" |
+| header.column.footerColor | <code>string</code> | default: terminal default color |
 | rows | <code>array</code> | [See example](#example-usage) |
 | options | <code>object</code> | Table options |
 | options.borderStyle | <code>number</code> | default: 1 (0 = no border)  Refers to the index of the desired character set. |
@@ -221,6 +232,7 @@ var Table = require('tty-table');
 Table(header,rows,options);
 ```
 <a name="Table.render"></a>
+
 ### Table.render() ⇒ <code>String</code>
 Renders a table to a string
 

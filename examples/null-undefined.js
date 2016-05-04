@@ -1,8 +1,12 @@
+var Chalk = require('chalk');
 var Table = require('../');
 
 var header = [
 	{
 		value : "item",
+		formatter : function(value){
+			return Chalk.cyan(value);
+		}
 	},
 	{
 		value : "price",
@@ -22,17 +26,27 @@ var rows = [
 	["macaroni, ham and peruvian mozzarella",3.75,"no"]
 ];
 
-var t1 = Table(header,rows,{
+var footer = [
+	"TOTAL",
+	(function(){
+		return rows.reduce(function(prev,curr){
+			return prev+curr[1]
+		},0)
+	}()),
+	'N/A'];
+
+var t1 = Table(header,rows,footer,{
 	borderStyle : 1,
 	paddingBottom : 0,
 	headerAlign : "center",
 	align : "center",
-	color : "white"
+	color : "green",
+	footerColor : "yellow",
+	footerAlign : "right"
 });
 
 str1 = t1.render();
 console.log(str1);
-
 
 //Example with objects as rows 
 var rows = [
@@ -72,7 +86,8 @@ var t2 = Table(header,rows,{
 	paddingBottom : 0,
 	headerAlign : "center",
 	align : "center",
-	color : "white"
+	color : "cyan",
+	headerColor : "yellow"
 });
 
 var str2 = t2.render();

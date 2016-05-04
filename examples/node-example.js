@@ -7,8 +7,8 @@ var header = [
 		headerColor : "cyan",
 		color: "yellow",
 		align : "left",
-		paddingRight : 5,
-		width : 30
+//		paddingRight : 5,
+//		width : 30
 	},
 	{
 		value : "price",
