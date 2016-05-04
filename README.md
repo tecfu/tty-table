@@ -56,7 +56,7 @@ npm install tty-table
 <!--EXAMPLE-USAGE-->
 
 ```
-var Table = require('tty-table');
+var Table = require('../');
 var chalk = require('chalk');
 
 var header = [
@@ -105,7 +105,21 @@ var rows = [
 	["macaroni, ham and peruvian mozzarella",3.75,"no"]
 ];
 
-var t1 = Table(header,rows,{
+var footer = [
+	"TOTAL",
+	(function(){
+		return rows.reduce(function(prev,curr){
+			return prev+curr[1]
+		},0)
+	}()),
+	(function(){
+		var total = rows.reduce(function(prev,curr){
+			return prev+((curr[2]==='yes') ? 1 : 0);
+		},0);
+		return (total/rows.length*100).toFixed(2) + "%";
+	}())];
+
+var t1 = Table(header,rows,footer,{
 	borderStyle : 1,
 	paddingBottom : 0,
 	headerAlign : "center",
@@ -116,8 +130,7 @@ var t1 = Table(header,rows,{
 str1 = t1.render();
 console.log(str1);
 
-
-//Example with objects as rows 
+//You can also pass an array of objects as rows 
 var rows = [
 	{
 		item : "hamburger",
@@ -151,16 +164,7 @@ var rows = [
 	}
 ];
 
-var t2 = Table(header,rows,{
-	borderStyle : 1,
-	paddingBottom : 0,
-	headerAlign : "center",
-	align : "center",
-	color : "white"
-});
-
-var str2 = t2.render();
-console.log(str2);
+...
 
 ```
 <!--END-EXAMPLE-USAGE-->
