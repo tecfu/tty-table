@@ -4,27 +4,46 @@
 		<script src="../dist/tty-table.bundle.devel.js"></script>
 		<script>
 			//Remember: ASCI colors won't render in the browser!
+			//in html body
 			var Table = require("tty-table");
+
 			var header = [
 				{
 					value : "item",
+					headerColor : "cyan",
+					color: "yellow",
 					align : "left",
-					paddingLeft : 1,
-					width : 30
+			//		paddingRight : 5,
+			//		width : 30
 				},
 				{
 					value : "price",
+					color : "red", 
 					formatter : function(value){
 						var str = "$" + value.toFixed(2);
+						if(value > 5){
+							//str = chalk.underline.green(str);
+						}
 						return str;
 					}
 				},
 				{
-					alias : "Is organic?",
-					value : "organic"
+					alias : "Is organic?",	
+					value : "organic",
+					formatter : function(value){
+						if(value === 'yes'){
+							//value = chalk.stripColor(value);
+							//value = chalk.green(value);
+						}
+						else{
+							//value = chalk.white.bgRed(value);
+						}
+						return value;
+					}
 				}
 			];
 
+			//Example with arrays as rows 
 			var rows = [
 				["hamburger",2.50,"no"],
 				["el jefe's special cream sauce",0.10,"yes"],
@@ -34,17 +53,31 @@
 				["macaroni, ham and peruvian mozzarella",3.75,"no"]
 			];
 
-			//Example 1
-			var t1 = Table(header,rows,{
+			var footer = [
+				"TOTAL",
+				(function(){
+					return rows.reduce(function(prev,curr){
+						return prev+curr[1]
+					},0)
+				}()),
+				(function(){
+					var total = rows.reduce(function(prev,curr){
+						return prev+((curr[2]==='yes') ? 1 : 0);
+					},0);
+					return (total/rows.length*100).toFixed(2) + "%";
+				}())];
+
+			var t1 = Table(header,rows,footer,{
 				borderStyle : 2,
 				paddingBottom : 0,
 				headerAlign : "center",
 				align : "center",
+				color : "white"
 			});
-			var str1 = t1.render();
-			//in console
+
+			str1 = t1.render();
 			console.log(str1);
-			//in html body
+	
 			setTimeout(function(){
 				 document.getElementById('example').innerHTML = str1;
 			},500);

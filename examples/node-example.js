@@ -47,7 +47,21 @@ var rows = [
 	["macaroni, ham and peruvian mozzarella",3.75,"no"]
 ];
 
-var t1 = Table(header,rows,{
+var footer = [
+	"TOTAL",
+	(function(){
+		return rows.reduce(function(prev,curr){
+			return prev+curr[1]
+		},0)
+	}()),
+	(function(){
+		var total = rows.reduce(function(prev,curr){
+			return prev+((curr[2]==='yes') ? 1 : 0);
+		},0);
+		return (total/rows.length*100).toFixed(2) + "%";
+	}())];
+
+var t1 = Table(header,rows,footer,{
 	borderStyle : 1,
 	paddingBottom : 0,
 	headerAlign : "center",
