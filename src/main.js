@@ -56,9 +56,9 @@ var cls = function(){
 	};
 
 	_private.GUTTER = 1;
-	
 	_private.header = []; //saved so cell options can be merged into 
 												//column options
+	_private.headerEmpty = false;
 	_private.table = {
 		columns : [],
 		columnWidths : [],
@@ -154,7 +154,7 @@ var cls = function(){
 		if(rowType === 'header'){
 			cell = Merge(true,_public.options,cell);
 			_private.table.columns.push(cell);
-			cellValue = cell.alias || cell.value;
+			cellValue = cell.alias || cell.value || '';
 		}	
 		else{
 			if(typeof cell === 'object' && cell !== null){	
@@ -355,9 +355,12 @@ var cls = function(){
 		};
 	};
 
-	_private.getColumnWidths = function(row){
-		//Widths as prescribed
-		var widths = row.map(function(cell){
+	_private.getColumnWidths = function(header){
+		
+		var widths = [];
+		
+		//check for manually set widths
+		widths = header.map(function(cell){
 			if(typeof cell === 'object' && typeof cell.width !=='undefined'){
 				return cell.width;
 			}
@@ -373,7 +376,7 @@ var cls = function(){
 		//Add marginLeft to totalWidth
 		totalWidth += _public.options.marginLeft;
 
-		//Check process exists in case we are in browser
+		//Check process exists in case we are in bheaderser
 		if(process && process.stdout && totalWidth > process.stdout.columns){
 			//recalculate proportionately to fit size
 			var prop = process.stdout.columns / totalWidth;
@@ -410,22 +413,49 @@ var cls = function(){
 		_public.options.align = _public.options.alignment || _public.options.align;
 		_public.options.headerAlign = _public.options.headerAlignment || _public.options.headerAlign;
 		
+		//make sure header is an array of empty objects if does not exist	
+		if(typeof header === 'undefined' 
+			 || !(header instanceof Array)
+			 || header.length === 0){
+
+				//note that header was not passed with values
+				_private.headerEmpty = true;
+
+				//create an array with same length as first row in body
+				//& populate array with default maxWidth
+				header = Array
+					.apply(null, Array(body[0].length))
+					.map(Boolean)
+					.map(function(){
+						return {
+							//default the width
+							width:_public.options.maxWidth
+						}
+					});
+		}
+		
 		_private.table.columnWidths = _private.getColumnWidths(header);
-
-		//Build header
-		_private.header = header; //save for merging columnOptions into cell options
+	
+		//save for merging columnOptions into cell options
+		_private.header = header; 
+		
+		//match header geometry of with body array	
 		header = [header];
-		_private.table.header = header.map(function(row){
-			return _private.buildRow(row,'header');
-		});
 
-		//Build body
+		//build header 
+		if(_private.headerEmpty === false){
+			_private.table.header = header.map(function(row){
+				return _private.buildRow(row,'header');
+			});
+		}
+
+		//build body
 		_private.table.body = body.map(function(row){
 			return _private.buildRow(row,'body');
 		});
 
 		//Build footer
-		footer = (footer.length > 0) ? [footer] : [];
+		footer = (footer instanceof Array && footer.length > 0) ? [footer] : [];
 		_private.table.footer = footer.map(function(row){
 			return _private.buildRow(row,'footer');
 		});
@@ -514,61 +544,61 @@ var cls = function(){
 
 
 /**
- * @class Table
- * @param {array} header													- [See example](#example-usage)
- * @param {object} header.column									- Column options
- * @param {function} header.column.formatter			- Runs a callback on each cell value in the parent column
- * @param {number} header.column.marginLeft				- default: 0
- * @param {number} header.column.marginTop				- default: 0			
- * @param {number} header.column.maxWidth					- default: 20 
- * @param {number} header.column.paddingBottom		- default: 0
- * @param {number} header.column.paddingLeft			- default: 0
- * @param {number} header.column.paddingRight			- default: 0
- * @param {number} header.column.paddingTop				- default: 0	
- * @param {string} header.column.alias						- Alernate header column name
- * @param {string} header.column.align						- default: "center"
- * @param {string} header.column.color						- default: terminal default color
- * @param {string} header.column.headerAlign			- default: "center" 
- * @param {string} header.column.headerColor			- default: terminal default color
- * @param {string} header.column.footerAlign			- default: "center" 
- * @param {string} header.column.footerColor			- default: terminal default color
- *
- * @param {array} rows											- [See example](#example-usage)
- *
- * @param {object} options									- Table options 
- * @param {number} options.borderStyle			- default: 1 (0 = no border) 
- * Refers to the index of the desired character set. 
- * @param {array} options.borderCharacters	- [See @note](#note) 
- * @returns {Table}
- * @note
- * <a name="note"/>
- * Default border character sets:
- * ```
- *	[
- *		[
- *			{v: " ", l: " ", j: " ", h: " ", r: " "},
- *			{v: " ", l: " ", j: " ", h: " ", r: " "},
- *			{v: " ", l: " ", j: " ", h: " ", r: " "}
- *		],
- *		[
- *			{v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
- *			{v: "│", l: "├", j: "┼", h: "─", r: "┤"},
- *			{v: "│", l: "└", j: "┴", h: "─", r: "┘"}
- *		],
- *		[
- *			{v: "|", l: "+", j: "+", h: "-", r: "+"},
- *			{v: "|", l: "+", j: "+", h: "-", r: "+"},
- *			{v: "|", l: "+", j: "+", h: "-", r: "+"}
- *		]
- *	]
- * ```
- * @example
- * ```
- * var Table = require('tty-table');
- * Table(header,rows,options);
- * ```
- *
- */
+* @class Table
+* @param {array} header													- [See example](#example-usage)
+* @param {object} header.column									- Column options
+* @param {function} header.column.formatter			- Runs a callback on each cell value in the parent column
+* @param {number} header.column.marginLeft				- default: 0
+* @param {number} header.column.marginTop				- default: 0			
+* @param {number} header.column.maxWidth					- default: 20 
+* @param {number} header.column.paddingBottom		- default: 0
+* @param {number} header.column.paddingLeft			- default: 0
+* @param {number} header.column.paddingRight			- default: 0
+* @param {number} header.column.paddingTop				- default: 0	
+* @param {string} header.column.alias						- Alernate header column name
+* @param {string} header.column.align						- default: "center"
+* @param {string} header.column.color						- default: terminal default color
+* @param {string} header.column.headerAlign			- default: "center" 
+* @param {string} header.column.headerColor			- default: terminal default color
+* @param {string} header.column.footerAlign			- default: "center" 
+* @param {string} header.column.footerColor			- default: terminal default color
+*
+* @param {array} rows											- [See example](#example-usage)
+*
+* @param {object} options									- Table options 
+* @param {number} options.borderStyle			- default: 1 (0 = no border) 
+* Refers to the index of the desired character set. 
+* @param {array} options.borderCharacters	- [See @note](#note) 
+* @returns {Table}
+* @note
+* <a name="note"/>
+* Default border character sets:
+* ```
+*	[
+*		[
+*			{v: " ", l: " ", j: " ", h: " ", r: " "},
+*			{v: " ", l: " ", j: " ", h: " ", r: " "},
+*			{v: " ", l: " ", j: " ", h: " ", r: " "}
+*		],
+*		[
+*			{v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
+*			{v: "│", l: "├", j: "┼", h: "─", r: "┤"},
+*			{v: "│", l: "└", j: "┴", h: "─", r: "┘"}
+*		],
+*		[
+*			{v: "|", l: "+", j: "+", h: "-", r: "+"},
+*			{v: "|", l: "+", j: "+", h: "-", r: "+"},
+*			{v: "|", l: "+", j: "+", h: "-", r: "+"}
+*		]
+*	]
+* ```
+* @example
+* ```
+* var Table = require('tty-table');
+* Table(header,rows,options);
+* ```
+*
+*/
 module.exports = function(){
 	var o = new cls(),
 			header = arguments[0], 
@@ -579,3 +609,39 @@ module.exports = function(){
 	
 	return o._private.setup(header,body,footer,options);
 };
+
+
+if (require.main === module) {
+	
+	//run as terminal application
+	var data = '';
+	process.stdin.resume();
+	process.stdin.setEncoding('utf8');
+	process.stdin.on('data', function(chunk) {
+		data += chunk;
+	});
+	process.stdin.on('end', function() {
+		//check if data is csv	
+		var csv = require('csv');
+
+		csv.parse(data, function(err, data){
+			
+			//validate csv	
+			if(typeof data === 'undefined'){
+				console.error("CSV parse error");
+				process.exit();
+			}
+		
+			//run table
+			var o = new cls(),
+			header = [], 
+			body = data, 
+			//footer = [], 
+			options = {};
+	
+			var table = o._private.setup(header,body,options);
+			console.log(table.render());
+		});
+	});
+
+}
