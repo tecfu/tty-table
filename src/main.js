@@ -612,36 +612,65 @@ module.exports = function(){
 
 
 if (require.main === module) {
-	
+
 	//run as terminal application
-	var data = '';
+	
+	//get arguments
+	var argv = require('minimist')(process.argv.slice(2));	
+
+	//check format of input data
+	var dataFormat = 'csv' //default
+
+	if(argv.format){
+		dataFormat = argv.format
+	}
+
+	switch(true){
+		case(dataFormat==='json'):
+			break;
+		default:
+			var csv = require('csv');
+	}
+
+	//because diffent dataFormats 
+	var runTable = function(input){
+		//run table
+		var o = new cls(),
+		header = [], 
+		body = input, 
+		//footer = [], 
+		options = {};
+		var table = o._private.setup(header,body,options);
+		console.log(table.render());
+	};
+
 	process.stdin.resume();
 	process.stdin.setEncoding('utf8');
 	process.stdin.on('data', function(chunk) {
-		data += chunk;
+
+		//handle dataFormats
+		switch(true){
+			case(dataFormat==='json'):	
+				var data = JSON.parse(chunk);
+				if(data === null){
+					console.error("JSON parse error");
+					process.exit();
+				}
+				runTable(data);
+				break;
+			default:
+				csv.parse(chunk, function(err, data){
+					//validate csv	
+					if(typeof data === 'undefined'){
+						console.error("CSV parse error");
+						process.exit();
+					}
+					runTable(data);
+				});
+		}
 	});
+
 	process.stdin.on('end', function() {
-		//check if data is csv	
-		var csv = require('csv');
-
-		csv.parse(data, function(err, data){
-			
-			//validate csv	
-			if(typeof data === 'undefined'){
-				console.error("CSV parse error");
-				process.exit();
-			}
-		
-			//run table
-			var o = new cls(),
-			header = [], 
-			body = data, 
-			//footer = [], 
-			options = {};
-	
-			var table = o._private.setup(header,body,options);
-			console.log(table.render());
-		});
+		//nothing
 	});
-
 }
