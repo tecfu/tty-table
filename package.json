@@ -27,6 +27,7 @@
   "homepage": "https://github.com/tecfu/tty-table",
   "dependencies": {
     "chalk": "^1.1.0",
+    "csv": "^0.4.6",
     "merge": "^1.2.0",
     "strip-ansi": "^3.0.0",
     "word-wrap": "^1.1.0"
