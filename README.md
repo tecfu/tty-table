@@ -57,7 +57,7 @@ npm install tty-table
 <!--EXAMPLE-USAGE-->
 
 ```
-var Table = require('../');
+var Table = require('tty-table');
 var chalk = require('chalk');
 
 var header = [
@@ -131,7 +131,8 @@ var t1 = Table(header,rows,footer,{
 str1 = t1.render();
 console.log(str1);
 
-//You can also pass an array of objects as rows 
+
+//Example with objects as rows 
 var rows = [
 	{
 		item : "hamburger",
@@ -165,7 +166,16 @@ var rows = [
 	}
 ];
 
-...
+var t2 = Table(header,rows,{
+	borderStyle : 1,
+	paddingBottom : 0,
+	headerAlign : "center",
+	align : "center",
+	color : "white"
+});
+
+var str2 = t2.render();
+console.log(str2);
 
 ```
 <!--END-EXAMPLE-USAGE-->
@@ -201,7 +211,7 @@ Default border character sets:
 
 * [Table](#Table)
     * [Table(header, rows, options)](#new_Table_new)
-    * [.render()](#Table.render) ⇒ <code>String</code>
+    * [.this.render()](#Table.this.render) ⇒ <code>String</code>
 
 <a name="new_Table_new"></a>
 
@@ -234,11 +244,12 @@ Default border character sets:
 **Example**  
 ```
 var Table = require('tty-table');
-Table(header,rows,options);
+var t1 = Table(header,rows,options);
+console.log(t1.render()); 
 ```
-<a name="Table.render"></a>
+<a name="Table.this.render"></a>
 
-### Table.render() ⇒ <code>String</code>
+### Table.this.render() ⇒ <code>String</code>
 Renders a table to a string
 
 **Kind**: static method of <code>[Table](#Table)</code>  

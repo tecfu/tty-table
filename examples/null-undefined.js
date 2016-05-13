@@ -45,7 +45,7 @@ var t1 = Table(header,rows,footer,{
 	footerAlign : "right"
 });
 
-str1 = t1.render();
+var str1 = t1.render();
 console.log(str1);
 
 //Example with objects as rows 
