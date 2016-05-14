@@ -12,7 +12,10 @@ module.exports = (function(){
 			break;
 		default:
 			//default adapter
+			var start = new Date();	
 			adapter = require('./default-adapter.js');	
+			var time = new Date() - start;
+			console.log('TIME: '+time);
 		}
 	return adapter;
 })()

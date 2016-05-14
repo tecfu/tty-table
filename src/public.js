@@ -75,11 +75,8 @@ Cls.setup = function(){
 
 	Config.table.header = arguments[0]; 
 	
-	//Cls.concat(arguments[1]); 
-	arguments[1].forEach(function(val){
-		Cls.push(val)
-	});
-
+	Config.table.body = arguments[1];	
+	
 	Config.table.footer = (arguments[2] instanceof Array) ? arguments[2] : [];
 
 	//backfixes for shortened option names
@@ -143,9 +140,12 @@ Cls.render = function(){
 			return Render.buildRow(Config,row,'header');
 		});
 	}
-
+	
+	//combine body rows added by constructor & instance.push	
+	Config.table.body = [].concat(Config.table.body,Cls.slice(0));
+	
 	//stringify body
-	Config.table.body = Cls.map(function(row){
+	Config.table.body = Config.table.body.map(function(row){
 		return Render.buildRow(Config,row,'body');
 	});
 
