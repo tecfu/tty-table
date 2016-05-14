@@ -1,6 +1,10 @@
 var Merge = require("merge");
 var Format = require('./format.js');
 var Render = require('./render.js');
+var Cls = {};
+
+//make sure config is unique for each export
+var Config; 
 
 /**
 * @class Table
@@ -59,144 +63,146 @@ var Render = require('./render.js');
 * ```
 *
 */
-var Table = function(){
+Cls.setup = function(){
+
+	Config = require('./config.js');
+	var header = arguments[0], 
+		body = arguments[1], 
+		footer = (arguments[2] instanceof Array) ? arguments[2] : [], 
+		options = (typeof arguments[3] === 'object') ? arguments[3] : 
+			(typeof arguments[2] === 'object') ? arguments[2] : {};
 	
-	var Config = require('./config.js');
+	Config = Merge(true,Config,options);
 	
-	this.setup = function(header,body,footer,options){
-		
-		Config = Merge(true,Config,options);
-		
-		//backfixes for shortened option names
-		Config.align = Config.alignment || Config.align;
-		Config.headerAlign = Config.headerAlignment || Config.headerAlign;
-		
-		//make sure header is an array of empty objects if does not exist	
-		if(typeof header === 'undefined' 
-			 || !(header instanceof Array)
-			 || header.length === 0){
+	//backfixes for shortened option names
+	Config.align = Config.alignment || Config.align;
+	Config.headerAlign = Config.headerAlignment || Config.headerAlign;
+	
+	//make sure header is an array of empty objects if does not exist	
+	if(typeof header === 'undefined' 
+		 || !(header instanceof Array)
+		 || header.length === 0){
 
-				//note that header was not passed with values
-				Config.headerEmpty = true;
+			//note that header was not passed with values
+			Config.headerEmpty = true;
 
-				//create an array with same length as first row in body
-				//& populate array with default maxWidth
-				header = Array
-					.apply(null, Array(body[0].length))
-					.map(Boolean)
-					.map(function(){
-						return {
-							//default the width
-							width : Config.maxWidth
-						}
-					});
-		}
-		
-		Config.table.columnWidths = Format.getColumnWidths(Config,header);
+			//create an array with same length as first row in body
+			//& populate array with default maxWidth
+			header = Array
+				.apply(null, Array(body[0].length))
+				.map(Boolean)
+				.map(function(){
+					return {
+						//default the width
+						width : Config.maxWidth
+					}
+				});
+	}
+	
+	Config.table.columnWidths = Format.getColumnWidths(Config,header);
 
-		//save for merging columnOptions into cell options
-		Config.columnOptions = header; 
-		
-		//match header geometry of with body array	
-		header = [header];
+	//save for merging columnOptions into cell options
+	Config.columnOptions = header; 
+	
+	//match header geometry of with body array	
+	header = [header];
 
-		//build header 
-		if(Config.headerEmpty === false){
-			Config.table.header = header.map(function(row){
-				return Render.buildRow(Config,row,'header');
-			});
-		}
-
-		//build body
-		Config.table.body = body.map(function(row){
-			return Render.buildRow(Config,row,'body');
+	//build header 
+	if(Config.headerEmpty === false){
+		Config.table.header = header.map(function(row){
+			return Render.buildRow(Config,row,'header');
 		});
-
-		//Build footer
-		footer = (footer instanceof Array && footer.length > 0) ? [footer] : [];
-		Config.table.footer = footer.map(function(row){
-			return Render.buildRow(Config,row,'footer');
-		});
-
-		return this;
 	}
 
+	//build body
+	Config.table.body = body.map(function(row){
+		return Render.buildRow(Config,row,'body');
+	});
 
-	/**
-	 * Renders a table to a string
-	 * @returns {String}
-	 * @memberof Table 
-	 * @example 
-	 * ```
-	 * var str = t1.render(); 
-	 * console.log(str); //outputs table
-	 * ```
-	*/
-	this.render = function(){
-		
-		var str = '',
-				part = ['header','body','footer'],
-				marginLeft = Array(Config.marginLeft + 1).join('\ '),
-				bS = Config.borderCharacters[Config.borderStyle],
-				borders = [];
+	//Build footer
+	footer = (footer instanceof Array && footer.length > 0) ? [footer] : [];
+	Config.table.footer = footer.map(function(row){
+		return Render.buildRow(Config,row,'footer');
+	});
 
-		//Borders
-		for(var a=0;a<3;a++){
-			borders.push('');
-			Config.table.columnWidths.forEach(function(w,i,arr){
-				borders[a] += Array(w).join(bS[a].h) +
-					((i+1 !== arr.length) ? bS[a].j : bS[a].r);
-			});
-			borders[a] = bS[a].l + borders[a];
-			borders[a] = borders[a].split('');
-			borders[a][borders[a].length1] = bS[a].r;
-			borders[a] = borders[a].join('');
-			borders[a] = marginLeft + borders[a] + '\n';
-		}
-		
-		//Top horizontal border
-		str += borders[0];
-
-		//Rows
-		var row;
-		part.forEach(function(p,i){
-			while(Config.table[p].length){
-				
-				row = Config.table[p].shift();
-			
-				if(row.length === 0) {break}
-
-				row.forEach(function(line){
-					str = str 
-						+ marginLeft 
-						+ bS[1].v
-						+	line.join(bS[1].v) 
-						+ bS[1].v
-						+ '\n';
-				});
-			
-				//Adds bottom horizontal row border
-				switch(true){
-					//If end of body and no footer, skip
-					case(Config.table[p].length === 0 
-							 && i === 1 
-							 && Config.table.footer.length === 0):
-						break;
-					//if end of footer, skip
-					case(Config.table[p].length === 0 
-							 && i === 2):
-						break;
-					default:
-						str += borders[1];
-				}	
-			}
-		});
-		
-		//Bottom horizontal border
-		str += borders[2];
-
-		return Array(Config.marginTop + 1).join('\n') + str;
-	}	
+	return Cls;
 }
 
-module.exports = Table;
+
+/**
+ * Renders a table to a string
+ * @returns {String}
+ * @memberof Table 
+ * @example 
+ * ```
+ * var str = t1.render(); 
+ * console.log(str); //outputs table
+ * ```
+*/
+Cls.render = function(){
+	
+	var str = '',
+			part = ['header','body','footer'],
+			marginLeft = Array(Config.marginLeft + 1).join('\ '),
+			bS = Config.borderCharacters[Config.borderStyle],
+			borders = [];
+
+	//Borders
+	for(var a=0;a<3;a++){
+		borders.push('');
+		Config.table.columnWidths.forEach(function(w,i,arr){
+			borders[a] += Array(w).join(bS[a].h) +
+				((i+1 !== arr.length) ? bS[a].j : bS[a].r);
+		});
+		borders[a] = bS[a].l + borders[a];
+		borders[a] = borders[a].split('');
+		borders[a][borders[a].length1] = bS[a].r;
+		borders[a] = borders[a].join('');
+		borders[a] = marginLeft + borders[a] + '\n';
+	}
+	
+	//Top horizontal border
+	str += borders[0];
+
+	//Rows
+	var row;
+	part.forEach(function(p,i){
+		while(Config.table[p].length){
+			
+			row = Config.table[p].shift();
+		
+			if(row.length === 0) {break}
+
+			row.forEach(function(line){
+				str = str 
+					+ marginLeft 
+					+ bS[1].v
+					+	line.join(bS[1].v) 
+					+ bS[1].v
+					+ '\n';
+			});
+		
+			//Adds bottom horizontal row border
+			switch(true){
+				//If end of body and no footer, skip
+				case(Config.table[p].length === 0 
+						 && i === 1 
+						 && Config.table.footer.length === 0):
+					break;
+				//if end of footer, skip
+				case(Config.table[p].length === 0 
+						 && i === 2):
+					break;
+				default:
+					str += borders[1];
+			}	
+		}
+	});
+	
+	//Bottom horizontal border
+	str += borders[2];
+
+	return Array(Config.marginTop + 1).join('\n') + str;
+}	
+
+module.exports = Cls;

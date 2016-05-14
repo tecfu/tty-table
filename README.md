@@ -211,7 +211,7 @@ Default border character sets:
 
 * [Table](#Table)
     * [Table(header, rows, options)](#new_Table_new)
-    * [.this.render()](#Table.this.render) ⇒ <code>String</code>
+    * [.Cls.render()](#Table.Cls.render) ⇒ <code>String</code>
 
 <a name="new_Table_new"></a>
 
@@ -247,9 +247,9 @@ var Table = require('tty-table');
 var t1 = Table(header,rows,options);
 console.log(t1.render()); 
 ```
-<a name="Table.this.render"></a>
+<a name="Table.Cls.render"></a>
 
-### Table.this.render() ⇒ <code>String</code>
+### Table.Cls.render() ⇒ <code>String</code>
 Renders a table to a string
 
 **Kind**: static method of <code>[Table](#Table)</code>  

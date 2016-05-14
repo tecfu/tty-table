@@ -100,7 +100,7 @@ Render.buildCell = function(config,cell,columnIndex,rowType){
 				//cell is assumed to be a scalar
 				cellValue = cell;
 		}
-debugger;				
+		
 		//run formatter
 		if(typeof cellOptions.formatter === 'function'){
 			cellValue = cellOptions.formatter(cellValue);
