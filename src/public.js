@@ -1,7 +1,9 @@
 var Merge = require("merge");
 var Format = require('./format.js');
 var Render = require('./render.js');
-var Cls = {};
+
+//table body inherits from Array
+var Cls = Object.create(Array.prototype);
 
 //make sure config is unique for each export
 var Config; 
@@ -66,64 +68,52 @@ var Config;
 Cls.setup = function(){
 
 	Config = require('./config.js');
-	var header = arguments[0], 
-		body = arguments[1], 
-		footer = (arguments[2] instanceof Array) ? arguments[2] : [], 
-		options = (typeof arguments[3] === 'object') ? arguments[3] : 
+	
+	var	options = (typeof arguments[3] === 'object') ? arguments[3] : 
 			(typeof arguments[2] === 'object') ? arguments[2] : {};
-	
 	Config = Merge(true,Config,options);
+
+	Config.table.header = arguments[0]; 
 	
+	//Cls.concat(arguments[1]); 
+	arguments[1].forEach(function(val){
+		Cls.push(val)
+	});
+
+	Config.table.footer = (arguments[2] instanceof Array) ? arguments[2] : [];
+
 	//backfixes for shortened option names
 	Config.align = Config.alignment || Config.align;
 	Config.headerAlign = Config.headerAlignment || Config.headerAlign;
 	
-	//make sure header is an array of empty objects if does not exist	
-	if(typeof header === 'undefined' 
-		 || !(header instanceof Array)
-		 || header.length === 0){
+	//make sure Config.table.header is an array of empty objects if does not exist	
+	if(typeof Config.table.header === 'undefined' 
+		 || !(Config.table.header instanceof Array)
+		 || Config.table.header.length === 0){
 
-			//note that header was not passed with values
-			Config.headerEmpty = true;
+		//note that header was not passed with values
+		Config.headerEmpty = true;
 
-			//create an array with same length as first row in body
-			//& populate array with default maxWidth
-			header = Array
-				.apply(null, Array(body[0].length))
-				.map(Boolean)
-				.map(function(){
-					return {
-						//default the width
-						width : Config.maxWidth
-					}
-				});
+		//create an array with same length as first row in body
+		//& populate array with default maxWidth
+		Config.table.header = Array
+			.apply(null, Array(Cls[0].length))
+			.map(Boolean)
+			.map(function(){
+				return {
+					//default the width
+					width : Config.maxWidth
+				}
+			});
 	}
 	
-	Config.table.columnWidths = Format.getColumnWidths(Config,header);
+	Config.table.columnWidths = Format.getColumnWidths(Config,Config.table.header);
 
-	//save for merging columnOptions into cell options
-	Config.columnOptions = header; 
+	//save a copy for merging columnOptions into cell options
+	Config.columnOptions = Config.table.header.slice(0); 
 	
 	//match header geometry of with body array	
-	header = [header];
-
-	//build header 
-	if(Config.headerEmpty === false){
-		Config.table.header = header.map(function(row){
-			return Render.buildRow(Config,row,'header');
-		});
-	}
-
-	//build body
-	Config.table.body = body.map(function(row){
-		return Render.buildRow(Config,row,'body');
-	});
-
-	//Build footer
-	footer = (footer instanceof Array && footer.length > 0) ? [footer] : [];
-	Config.table.footer = footer.map(function(row){
-		return Render.buildRow(Config,row,'footer');
-	});
+	Config.table.header = [Config.table.header];
 
 	return Cls;
 }
@@ -147,7 +137,25 @@ Cls.render = function(){
 			bS = Config.borderCharacters[Config.borderStyle],
 			borders = [];
 
-	//Borders
+	//stringify header 
+	if(Config.headerEmpty === false){
+		Config.table.header = Config.table.header.map(function(row){
+			return Render.buildRow(Config,row,'header');
+		});
+	}
+
+	//stringify body
+	Config.table.body = Cls.map(function(row){
+		return Render.buildRow(Config,row,'body');
+	});
+
+	//stringify footer
+	Config.table.footer = (Config.table.footer instanceof Array && Config.table.footer.length > 0) ? [Config.table.footer] : [];
+	Config.table.footer = Config.table.footer.map(function(row){
+		return Render.buildRow(Config,row,'footer');
+	});
+
+	//add borders
 	for(var a=0;a<3;a++){
 		borders.push('');
 		Config.table.columnWidths.forEach(function(w,i,arr){

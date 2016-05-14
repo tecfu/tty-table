@@ -47,6 +47,7 @@ Config.table = {
 	columnInnerWidths : [],
 	header : [],
 	body : [],
+	footer : [],
 	height : 0
 };
 

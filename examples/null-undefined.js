@@ -1,6 +1,6 @@
 var Chalk = require('chalk');
 var Table = require('../');
-debugger;
+
 var header = [
 	{
 		value : "item",
