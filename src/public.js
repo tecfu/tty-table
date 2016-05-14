@@ -66,6 +66,16 @@ var Config;
 *
 */
 Cls.setup = function(){
+	
+	//check if adapter required
+	if(typeof arguments[0] === 'string'){
+		switch(true){
+			case(arguments[0] === 'cli-table'):
+				return require('./cli-table-adapter.js');
+			default:
+				console.error("Adapter: "+arguments[0]+" not recognized.");
+		}
+	}
 
 	Config = require('./config.js');
 	
@@ -73,9 +83,9 @@ Cls.setup = function(){
 			(typeof arguments[2] === 'object') ? arguments[2] : {};
 	Config = Merge(true,Config,options);
 
-	Config.table.header = arguments[0]; 
+	Config.table.header = arguments[0] || []; 
 	
-	Config.table.body = arguments[1];	
+	Config.table.body = arguments[1] || [];	
 	
 	Config.table.footer = (arguments[2] instanceof Array) ? arguments[2] : [];
 
@@ -142,7 +152,7 @@ Cls.render = function(){
 	}
 	
 	//combine body rows added by constructor & instance.push	
-	Config.table.body = [].concat(Config.table.body,Cls.slice(0));
+	Config.table.body = [].concat(Config.table.body,this.slice(0));
 	
 	//stringify body
 	Config.table.body = Config.table.body.map(function(row){

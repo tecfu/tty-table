@@ -2,16 +2,13 @@ var Public = require('./public.js');
 
 var Table = function(options){
 
-	//inherit from Array
-	Table.prototype.toString = Public.render;
-
 	//option translations
 	
 	//translate header	
-	this.header = [];	
-	if(options.head){
+	var header = [];	
+	if(options.head && options.head instanceof Array){
 		options.head.forEach(function(val){
-			this.header.push({
+			header.push({
 				value : val	
 			});
 		});
@@ -20,15 +17,20 @@ var Table = function(options){
 	//translate columnWidths
 	if(options.columnWidths){
 		options.columnWidths.forEach(function(val,i){
-			this.header[i].width = val;		
+			header[i].width = val;		
 		});
 	}
+
+	//@todo translate all other options
+	options = {};
 	
-	//@todo translate styles
+	//inherited from prototype
+	this.setup(header,[],[],options);
 
+	//inherited from prototype
+	this.toString = this.render.bind(this);
 
-	this.toString = Public.render();
+}
 
-}.apply(null,arguments);
-
+Table.prototype.__proto__ = Public;
 module.exports = Table;
