@@ -45,6 +45,10 @@ var t1 = Table(header,rows,footer,{
 	footerAlign : "right"
 });
 
+t1.push(
+	["chocolate cake",4.65,"no"]
+);
+
 var str1 = t1.render();
 console.log(str1);
 

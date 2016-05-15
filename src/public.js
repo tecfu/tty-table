@@ -220,6 +220,9 @@ Cls.render = function(){
 	//Bottom horizontal border
 	str += borders[2];
 
+	//remove all rows in prototype array
+	this.splice(0,this.length);
+	
 	return Array(Config.marginTop + 1).join('\n') + str;
 }	
 
