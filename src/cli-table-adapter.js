@@ -14,9 +14,9 @@ var Table = function(options){
 		});
 	}
 
-	//translate columnWidths
-	if(options.columnWidths){
-		options.columnWidths.forEach(function(val,i){
+	//translate colWidths
+	if(options.colWidths){
+		options.colWidths.forEach(function(val,i){
 			header[i].width = val;		
 		});
 	}

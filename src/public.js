@@ -85,6 +85,7 @@ Cls.setup = function(){
 
 	Config.table.header = arguments[0] || []; 
 	
+	//@todo splice arguments[1] || [] into Cls and use Cls in all places Config.table.body is used now
 	Config.table.body = arguments[1] || [];	
 	
 	Config.table.footer = (arguments[2] instanceof Array) ? arguments[2] : [];

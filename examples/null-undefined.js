@@ -10,9 +10,11 @@ var header = [
 	},
 	{
 		value : "price",
+		width : 10
 	},
 	{
 		value : "organic",
+		width : 10
 	}
 ];
 
