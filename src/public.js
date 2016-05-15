@@ -66,16 +66,6 @@ var Config;
 *
 */
 Cls.setup = function(){
-	
-	//check if adapter required
-	if(typeof arguments[0] === 'string'){
-		switch(true){
-			case(arguments[0] === 'cli-table'):
-				return require('./cli-table-adapter.js');
-			default:
-				console.error("Adapter: "+arguments[0]+" not recognized.");
-		}
-	}
 
 	Config = require('./config.js');
 	
