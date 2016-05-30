@@ -31,17 +31,19 @@ var Table = function(options){
 		});
 	}
 
-	//style - padding
-	if(options['padding-left']){
-		options.paddingLeft = options['padding-left'];
-	}
-	
-	if(options['padding-right']){
-		options.paddingRight = options['padding-right'];
-	}
-	
-	//style - color
+	//style
 	options.style = options.style || {};
+
+	//style - padding
+	if(options.style['padding-left']){
+		options.paddingLeft = options.style['padding-left'];
+	}
+	
+	if(options.style['padding-right']){
+		options.paddingRight = options.style['padding-right'];
+	}
+	
+	//style - colors
 	if(options.style.head && options.style.head instanceof Array){
 		options.headerColor = options.style.head[0];	
 	}
@@ -50,6 +52,11 @@ var Table = function(options){
 		options.color = options.style.body[0];	
 	}
 	
+	//style - compact
+	if(options.style.compact){
+		options.compact = true;
+	}
+
 	//@todo style - border color
 	
 	//inherited from prototype
