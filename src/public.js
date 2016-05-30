@@ -69,51 +69,36 @@ Cls.setup = function(){
 
 	Config = require('./config.js');
 	
+	var data = Cls;
+
 	var	options = (typeof arguments[3] === 'object') ? arguments[3] : 
 			(typeof arguments[2] === 'object') ? arguments[2] : {};
-	Config = Merge(true,Config,options);
 
-	Config.table.header = arguments[0] || []; 
-	
-	//@todo splice arguments[1] || [] into Cls and use Cls in all places Config.table.body is used now
-	Config.table.body = arguments[1] || [];	
-	
-	Config.table.footer = (arguments[2] instanceof Array) ? arguments[2] : [];
+	Config = Merge(true,Config,options);
 
 	//backfixes for shortened option names
 	Config.align = Config.alignment || Config.align;
+	
 	Config.headerAlign = Config.headerAlignment || Config.headerAlign;
-	
-	//make sure Config.table.header is an array of empty objects if does not exist	
-	if(typeof Config.table.header === 'undefined' 
-		 || !(Config.table.header instanceof Array)
-		 || Config.table.header.length === 0){
 
-		//note that header was not passed with values
-		Config.headerEmpty = true;
-
-		//create an array with same length as first row in body
-		//& populate array with default maxWidth
-		Config.table.header = Array
-			.apply(null, Array(Cls[0].length))
-			.map(Boolean)
-			.map(function(){
-				return {
-					//default the width
-					width : Config.maxWidth
-				}
-			});
-	}
+	Config.table.header = arguments[0] || []; 
 	
-	Config.table.columnWidths = Format.getColumnWidths(Config,Config.table.header);
+	//save a copy for merging columnSettings into cell options
+	Config.columnSettings = Config.table.header.slice(0); 
 
-	//save a copy for merging columnOptions into cell options
-	Config.columnOptions = Config.table.header.slice(0); 
-	
-	//match header geometry of with body array	
+	//match header geometry with body array	
 	Config.table.header = [Config.table.header];
+	
+	//pushed body data into instance prototype
+	if(arguments[1] && arguments[1] instanceof Array){
+		arguments[1].forEach(function(val){
+			data.push(val);
+		});
+	}	
 
-	return Cls;
+	Config.table.footer = (arguments[2] instanceof Array) ? arguments[2] : [];
+	
+	return data;
 }
 
 
@@ -129,92 +114,12 @@ Cls.setup = function(){
 */
 Cls.render = function(){
 	
-	var str = '',
-			part = ['header','body','footer'],
-			marginLeft = Array(Config.marginLeft + 1).join('\ '),
-			bS = Config.borderCharacters[Config.borderStyle],
-			borders = [];
+	var data = this;
 
-	//stringify header 
-	if(Config.headerEmpty === false){
-		Config.table.header = Config.table.header.map(function(row){
-			return Render.buildRow(Config,row,'header');
-		});
-	}
-	
-	//combine body rows added by constructor & instance.push	
-	Config.table.body = [].concat(Config.table.body,this.slice(0));
-	
-	//stringify body
-	Config.table.body = Config.table.body.map(function(row){
-		return Render.buildRow(Config,row,'body');
-	});
+	//get sring output
+	var output = Render.stringifyData.call(this,Config,data);
 
-	//stringify footer
-	Config.table.footer = (Config.table.footer instanceof Array && Config.table.footer.length > 0) ? [Config.table.footer] : [];
-	Config.table.footer = Config.table.footer.map(function(row){
-		return Render.buildRow(Config,row,'footer');
-	});
-
-	//add borders
-	for(var a=0;a<3;a++){
-		borders.push('');
-		Config.table.columnWidths.forEach(function(w,i,arr){
-			borders[a] += Array(w).join(bS[a].h) +
-				((i+1 !== arr.length) ? bS[a].j : bS[a].r);
-		});
-		borders[a] = bS[a].l + borders[a];
-		borders[a] = borders[a].split('');
-		borders[a][borders[a].length1] = bS[a].r;
-		borders[a] = borders[a].join('');
-		borders[a] = marginLeft + borders[a] + '\n';
-	}
-	
-	//Top horizontal border
-	str += borders[0];
-
-	//Rows
-	var row;
-	part.forEach(function(p,i){
-		while(Config.table[p].length){
-			
-			row = Config.table[p].shift();
-		
-			if(row.length === 0) {break}
-
-			row.forEach(function(line){
-				str = str 
-					+ marginLeft 
-					+ bS[1].v
-					+	line.join(bS[1].v) 
-					+ bS[1].v
-					+ '\n';
-			});
-		
-			//Adds bottom horizontal row border
-			switch(true){
-				//If end of body and no footer, skip
-				case(Config.table[p].length === 0 
-						 && i === 1 
-						 && Config.table.footer.length === 0):
-					break;
-				//if end of footer, skip
-				case(Config.table[p].length === 0 
-						 && i === 2):
-					break;
-				default:
-					str += borders[1];
-			}	
-		}
-	});
-	
-	//Bottom horizontal border
-	str += borders[2];
-
-	//remove all rows in prototype array
-	this.splice(0,this.length);
-	
-	return Array(Config.marginTop + 1).join('\n') + str;
+	return output;
 }	
 
 module.exports = Cls;

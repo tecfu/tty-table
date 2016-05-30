@@ -5,14 +5,15 @@ var header = [
 	{
 		value : "item",
 		headerColor : "cyan",
-		color: "yellow",
+		color: "white",
 		align : "left",
-//		paddingRight : 5,
-//		width : 30
+		paddingLeft : 5,
+		width : 30
 	},
 	{
 		value : "price",
 		color : "red", 
+		width : 10,
 		formatter : function(value){
 			var str = "$" + value.toFixed(2);
 			if(value > 5){
@@ -24,10 +25,10 @@ var header = [
 	{
 		alias : "Is organic?",	
 		value : "organic",
+		width : 15,
 		formatter : function(value){
 			if(value === 'yes'){
-				value = chalk.stripColor(value);
-				value = chalk.green(value);
+				value = chalk.black.bgGreen(value);
 			}
 			else{
 				value = chalk.white.bgRed(value);

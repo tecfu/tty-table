@@ -2,6 +2,8 @@ var Public = require('./src/public.js');
 
 var Table = function(options){
 
+	options = options || {};
+
 	//translations
 	
 	//header	

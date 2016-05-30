@@ -1,11 +1,8 @@
-var Chalk = require('chalk');
 var Config = {
-	defaultValue : (function(){
-		return (typeof Chalk !== 'undefined') ? Chalk.red("#ERR") : "#ERR";
-	}()),
+	defaultValue : "[32m[37m[41m #ERROR  [49m[32m[39m",
 	marginTop : 1,
 	marginLeft : 2,
-	maxWidth : 20,
+	width : 20,
 	formatter : null,
 	headerAlign : "center",
 	footerAlign : "center",
@@ -15,7 +12,7 @@ var Config = {
 	paddingBottom : 0,
 	paddingTop : 0,
 	color : false,
-	headerColor : false,
+	headerColor : "yellow",
 	footerColor : false,
 	borderStyle : 1,
 	borderCharacters : [
@@ -34,21 +31,23 @@ var Config = {
 			{v: "|", l: "+", j: "+", h: "-", r: "+"},
 			{v: "|", l: "+", j: "+", h: "-", r: "+"}
 		]
-	]
+	],
+	tableType : null //horizontal,vertical,cross
 };
 
 Config.GUTTER = 1;
 //save so cell options can be merged into column options
-Config.columnOptions = []; 
+Config.columnSettings = []; 
 Config.headerEmpty = false;
 Config.table = {
 	columns : [],
 	columnWidths : [],
 	columnInnerWidths : [],
-	header : [],
-	body : [],
-	footer : [],
-	height : 0
+	header : '', //post-rendered strings.
+	body : '', 
+	footer : '',
+	height : 0,
+	typeLocked : false //once a table type is selected can't switch
 };
 
 module.exports = Config;

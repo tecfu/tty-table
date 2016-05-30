@@ -52,7 +52,7 @@ Format.wrapCellContent = function(config,cellValue,columnIndex,cellOptions,
 									cellOptions.paddingRight -
 									config.GUTTER; //border/gutter
 	
-			if (string.length < Format.calculateLength(string)) {
+	if (string.length < Format.calculateLength(string)) {
 		//Wrap Asian characters
 		var count = 0;
 		var start = 0;
@@ -87,6 +87,7 @@ Format.wrapCellContent = function(config,cellValue,columnIndex,cellOptions,
 	strArr = strArr.map(function(line){
 
 		line = line.trim();	
+	
 		var lineLength = Format.calculateLength(line);
 
 		//alignment 
@@ -131,32 +132,46 @@ Format.wrapCellContent = function(config,cellValue,columnIndex,cellOptions,
 	};
 }
 
-Format.getColumnWidths = function(config,header){
+Format.getColumnWidths = function(config,rows){
 	
 	var widths = [];
+	var source; //source of columns	
 	
-	//check for manually set widths
-	widths = header.map(function(cell){
+	//check widths on header settings if exists
+	if(config.table.header[0] && config.table.header[0].length > 0){
+		source = config.table.header[0];
+	}
+	else if(rows.length > 0){
+		source = rows[0];
+	}
+	else {
+		return [];
+	}
+if(source.length === 0) debugger;
+	widths = source.map(function(cell){
 		if(typeof cell === 'object' && typeof cell.width !=='undefined'){
 			return cell.width;
 		}
 		else{
-			return config.maxWidth;
+			return config.width;
 		}
 	});
 
 	//Check to make sure widths will fit the current display, or resize.
 	var totalWidth = widths.reduce(function(prev,curr){
-		return prev+curr;
+		return prev + curr;
 	});
+	
 	//Add marginLeft to totalWidth
 	totalWidth += config.marginLeft;
 
-	//Check process exists in case we are in bheaderser
+	//Check process exists in case we are in browser
 	if(process && process.stdout && totalWidth > process.stdout.columns){
 		//recalculate proportionately to fit size
 		var prop = process.stdout.columns / totalWidth;
+	
 		prop = prop.toFixed(2)-0.01;
+	
 		widths = widths.map(function(value){
 			return Math.floor(prop*value);
 		});
