@@ -81,8 +81,14 @@ Cls.setup = function(){
 	
 	Config.headerAlign = Config.headerAlignment || Config.headerAlign;
 
-	Config.table.header = arguments[0] || []; 
-	
+	if(arguments[0] && arguments[0] instanceof Array && arguments[0].length){
+		Config.table.header = arguments[0]; 
+	}
+	else{
+		Config.table.header = []; 
+		Config.headerEmpty = true;
+	}
+
 	//save a copy for merging columnSettings into cell options
 	Config.columnSettings = Config.table.header.slice(0); 
 

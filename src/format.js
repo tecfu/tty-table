@@ -147,7 +147,7 @@ Format.getColumnWidths = function(config,rows){
 	else {
 		return [];
 	}
-if(source.length === 0) debugger;
+	
 	widths = source.map(function(cell){
 		if(typeof cell === 'object' && typeof cell.width !=='undefined'){
 			return cell.width;

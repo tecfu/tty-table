@@ -28,9 +28,14 @@ Render.stringifyData = function(Config,data){
 	Config.table.columnWidths = Format.getColumnWidths(Config,data);
 	
 	//stringify header 
-	sections.header = Config.table.header.map(function(row){
-		return Render.buildRow(Config,row,'header');
-	});
+	if(!Config.headerEmpty){
+		sections.header = Config.table.header.map(function(row){
+			return Render.buildRow(Config,row,'header');
+		});
+	}
+	else{
+		sections.header = [];
+	}
 
 	//stringify body
 	sections.body = data.map(function(row){
@@ -221,10 +226,10 @@ Render.getRowFormat = function(row){
 	
 	//rows passed as an object
 	if(typeof row === 'object' && !(row instanceof Array)){
-
-		if(Object.keys(row).length === 1){
+		var keys = Object.keys(row);
+		if(keys.length === 1){
 			//detected cross table
-			var key = Object.keys[0];
+			var key = keys[0];
 			if(row[key] instanceof Array){
 				type = 'automattic-cross';
 			}
@@ -246,6 +251,7 @@ Render.getRowFormat = function(row){
 	return type;
 };
 
+//@todo For rotating horizontal data into a vertical table
 //Assumes all rows are same length
 Render.verticalizeMatrix = function(config,inputArray){
 
@@ -276,8 +282,16 @@ Render.transformRows = function(config,rows){
 	var output = [];
 	switch(config.rowFormat){
 		case('automattic-cross'):
+			//@todo assign header styles to first column
+			output = rows.map(function(obj){
+				var arr = [];
+				var key = Object.keys(obj)[0];
+				arr.push(key);
+				return arr.concat(obj[key]);
+			});
 			break;
 		case('automattic-vertical'):	
+			//@todo assign header styles to first column
 			output = rows.map(function(value){
 				var key = Object.keys(value)[0];
 				return [key,value[key]];

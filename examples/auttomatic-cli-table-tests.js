@@ -1,7 +1,7 @@
 //var Table = require('cli-table');
 var Table = require('../cli-table-adapter.js');
 
-/* col widths */
+/* col widths /
 var table = new Table({
 head: ['Rel', 'Change', 'By', 'When']
 , colWidths: [6, 21, 25, 17]
@@ -12,7 +12,7 @@ table.push(
 );
 console.log(table.toString());
 
-/* compact */
+/* compact /
  var table = new Table({
  head: ['Rel', 'Change', 'By', 'When']
  , colWidths: [6, 21, 25, 17]
@@ -26,12 +26,12 @@ console.log(table.toString());
  );
  console.log(table.toString());
 
-/* headless */
+/* headless /
 var headless_table = new Table();
 headless_table.push(['v0.1', 'Testing something cool', 'rauchg@gmail.com', '7 minutes ago']);
 console.log(headless_table.toString());
 
-/* vertical */
+/* vertical /
 var vertical_table = new Table({
 	style : {
 		head : ['green']
