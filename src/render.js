@@ -282,7 +282,10 @@ Render.transformRows = function(config,rows){
 	var output = [];
 	switch(config.rowFormat){
 		case('automattic-cross'):
-			//@todo assign header styles to first column
+			//assign header styles to first column
+			config.columnSettings[0] = config.columnSettings[0] || {};
+			config.columnSettings[0].color = config.headerColor;
+			
 			output = rows.map(function(obj){
 				var arr = [];
 				var key = Object.keys(obj)[0];
@@ -291,7 +294,10 @@ Render.transformRows = function(config,rows){
 			});
 			break;
 		case('automattic-vertical'):	
-			//@todo assign header styles to first column
+			//assign header styles to first column
+			config.columnSettings[0] = config.columnSettings[0] || {};
+			config.columnSettings[0].color = config.headerColor;
+		
 			output = rows.map(function(value){
 				var key = Object.keys(value)[0];
 				return [key,value[key]];
