@@ -43,7 +43,7 @@ npm install tty-table
 - Optional callbacks on column values
 - Header, body column alignment
 - Padding
-- Pass rows as either arrays or objects
+- Passing of rows as either arrays or objects
 - Colors (not supported in browser)
 - [Footer](https://github.com/tecfu/tty-table/issues/6)
 - [Works in the browser as well as nodejs](https://cdn.rawgit.com/tecfu/tty-table/master/examples/browser-example.html)
@@ -51,7 +51,12 @@ npm install tty-table
 
 ## Example Output
 
-### Terminal
+### Terminal Application 
+(npm i -g tty-table)
+
+![Terminal Application Example](https://cloud.githubusercontent.com/assets/7478359/15691533/39f5fed4-273e-11e6-81a6-533bd8dbd1c4.gif "Terminal Application Example") 
+
+### Nodejs Module
 ![Terminal Example](https://cloud.githubusercontent.com/assets/7478359/15691679/07142030-273f-11e6-8f1e-25728d558a2d.png "Terminal Example") 
 
 ### Browser & Browser Console 
