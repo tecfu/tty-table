@@ -3,6 +3,10 @@
   "version": "2.0.0",
   "description": "Command line table generator.",
   "main": "src/main.js",
+	"bin": {
+		"tty-table": "src/terminal-adapter.js"
+	},
+	"preferGlobal": false,
   "scripts": {
     "test": "grunt t"
   },
@@ -12,6 +16,7 @@
   },
   "keywords": [
     "table",
+		"table in bash",
     "cli-table",
     "terminal table",
     "console table",
@@ -20,7 +25,7 @@
     "ascii table"
   ],
   "author": "Tecfu",
-  "license": "GPL3",
+  "license": "LGPL-3.0",
   "bugs": {
     "url": "https://github.com/tecfu/tty-table/issues"
   },

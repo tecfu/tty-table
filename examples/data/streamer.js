@@ -12,3 +12,8 @@ setInterval(function(){
 	var string = JSON.stringify(array);
 	console.log(string);
 },500)	
+
+process.stdout.on('error',function(){
+	process.exit(1);
+});
+
