@@ -64,7 +64,7 @@ npm install tty-table
 ### Browser & Browser Console 
 ![Browser Console Example](https://cloud.githubusercontent.com/assets/7478359/15691676/043a47ea-273f-11e6-8889-df03e8a25e26.png "Browser Console Example") 
 
-[Working example](https://cdn.rawgit.com/tecfu/tty-table/master/examples/browser-example.html)
+[Working Example in Browser](https://cdn.rawgit.com/tecfu/tty-table/master/examples/browser-example.html)
 
 > Note that neither ASCI colors nor default borders are rendered in the browser.
 > An alternative border style, as shown below, should be used by setting the following option:
