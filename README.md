@@ -38,6 +38,8 @@ npm install tty-table
 	- [Supports Asian characters](https://github.com/tecfu/tty-table/pull/5) 
 	- [Automatically resizes to terminal width](https://github.com/tecfu/tty-table/issues/4)
 
+- See the [docs here](docs/automattic-cli-table.md).
+
 ### Beyond that, the native API also supports:
 
 - Optional callbacks on column values
