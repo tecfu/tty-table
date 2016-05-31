@@ -1,8 +1,9 @@
 # Automattic/cli-table Adapter
 
-### tty-table is now fully compatible with the popular but buggy and unmaintained [Automattic/cli-table](https://github.com/Automattic/cli-table)
+- tty-table can be used as a drop-in replacement for [Automattic/cli-table](https://github.com/Automattic/cli-table)
 
-### Sampe Usage:
+### Sample Usage 
+(from Automattic/cli-table README.md):
 
 ```
 
