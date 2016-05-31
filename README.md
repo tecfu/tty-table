@@ -31,7 +31,7 @@ npm install tty-table
 
 ## Why would someone do such a thing?
 
-### Drop-in replacement for [Automattic/cli-table](docs/automattic-cli-table.md)
+### Drop-in replacement for [Automattic/cli-table](docs/automattic-cli-table.md):
 
 - Fixes these known issues with Automattic/cli-table:
 	- Automatic text wrapping
