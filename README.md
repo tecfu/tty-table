@@ -33,19 +33,18 @@ npm install tty-table
 
 ### Drop-in replacement for [Automattic/cli-table](docs/automattic-cli-table.md)
 
-- Fixes known issues with Automattic/cli-table
-- Adds the following new features to Automattic/cli-table:
+- Fixes these known issues with Automattic/cli-table:
 	- Automatic text wrapping
 	- [Supports Asian characters](https://github.com/tecfu/tty-table/pull/5) 
 	- [Automatically resizes to terminal width](https://github.com/tecfu/tty-table/issues/4)
 
 ### Beyond that, the native API also supports:
 
-- Colors (nodejs)
 - Optional callbacks on column values
 - Header, body column alignment
 - Padding
 - Pass rows as either arrays or objects
+- Colors (not supported in browser)
 - [Footer](https://github.com/tecfu/tty-table/issues/6)
 - [Works in the browser as well as nodejs](http://htmlpreview.github.io/?https://raw.githubusercontent.com/tecfu/tty-table/master/examples/browser-example.html)
 - [Can be run as a standalone terminal application](docs/terminal.md)
@@ -299,4 +298,4 @@ grunt st
 
 [GPLv3 License](http://www.gnu.org/licenses/gpl-3.0.en.html)
 
-Copyright 2015, Tecfu. 
+Copyright 2015-2016, Tecfu. 
