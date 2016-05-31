@@ -1,5 +1,5 @@
 var Merge = require("merge");
-var Format = require('./format.js');
+//var Format = require('./format.js');
 var Render = require('./render.js');
 
 //table body inherits from Array
@@ -12,21 +12,21 @@ var Config;
 * @class Table
 * @param {array} header													- [See example](#example-usage)
 * @param {object} header.column									- Column options
-* @param {function} header.column.formatter			- Runs a callback on each cell value in the parent column
-* @param {number} header.column.marginLeft				- default: 0
-* @param {number} header.column.marginTop				- default: 0			
-* @param {number} header.column.maxWidth					- default: 20 
-* @param {number} header.column.paddingBottom		- default: 0
-* @param {number} header.column.paddingLeft			- default: 0
-* @param {number} header.column.paddingRight			- default: 0
-* @param {number} header.column.paddingTop				- default: 0	
 * @param {string} header.column.alias						- Alernate header column name
 * @param {string} header.column.align						- default: "center"
 * @param {string} header.column.color						- default: terminal default color
-* @param {string} header.column.headerAlign			- default: "center" 
-* @param {string} header.column.headerColor			- default: terminal default color
 * @param {string} header.column.footerAlign			- default: "center" 
 * @param {string} header.column.footerColor			- default: terminal default color
+* @param {function} header.column.formatter			- Runs a callback on each cell value in the parent column
+* @param {string} header.column.headerAlign			- default: "center" 
+* @param {string} header.column.headerColor			- default: terminal's default color
+* @param {number} header.column.marginLeft			- default: 0
+* @param {number} header.column.marginTop				- default: 0			
+* @param {number} header.column.maxWidth				- default: 20 
+* @param {number} header.column.paddingBottom		- default: 0
+* @param {number} header.column.paddingLeft			- default: 0
+* @param {number} header.column.paddingRight		- default: 0
+* @param {number} header.column.paddingTop			- default: 0	
 *
 * @param {array} rows											- [See example](#example-usage)
 *
@@ -34,6 +34,8 @@ var Config;
 * @param {number} options.borderStyle			- default: 1 (0 = no border) 
 * Refers to the index of the desired character set. 
 * @param {array} options.borderCharacters	- [See @note](#note) 
+* @param {array} options.borderColor			- default: terminal's default color
+
 * @returns {Table}
 * @note
 * <a name="note"/>
@@ -91,6 +93,19 @@ Cls.setup = function(){
 
 	//save a copy for merging columnSettings into cell options
 	Config.columnSettings = Config.table.header.slice(0); 
+
+	//if borderColor is called, lets do it now
+	if(Config.borderColor !== null){
+		var Chalk = require('chalk')
+		
+		Config.borderCharacters[Config.borderStyle] = 
+			Config.borderCharacters[Config.borderStyle].map(function(obj){
+				Object.keys(obj).forEach(function(key){
+					 obj[key] = Chalk[Config.borderColor](obj[key]);
+				})
+				return obj;
+			});
+	}
 
 	//match header geometry with body array	
 	Config.table.header = [Config.table.header];

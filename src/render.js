@@ -27,7 +27,7 @@ Render.stringifyData = function(Config,data){
 		
 	Config.table.columnWidths = Format.getColumnWidths(Config,data);
 	
-	//stringify header 
+	//stringify header cells
 	if(!Config.headerEmpty){
 		sections.header = Config.table.header.map(function(row){
 			return Render.buildRow(Config,row,'header');
@@ -37,12 +37,12 @@ Render.stringifyData = function(Config,data){
 		sections.header = [];
 	}
 
-	//stringify body
+	//stringify body cells
 	sections.body = data.map(function(row){
 		return Render.buildRow(Config,row,'body');
 	});
 
-	//stringify footer
+	//stringify footer cells
 	sections.footer = (Config.table.footer instanceof Array && Config.table.footer.length > 0) ? [Config.table.footer] : [];
 	
 	sections.footer = sections.footer.map(function(row){
@@ -50,7 +50,7 @@ Render.stringifyData = function(Config,data){
 	});
 
 	//add borders
-	for(var a=0;a<3;a++){
+	for(var a=0; a<3; a++){
 		borders.push('');
 		Config.table.columnWidths.forEach(function(w,i,arr){
 			borders[a] += Array(w).join(borderStyle[a].h) +
@@ -68,33 +68,44 @@ Render.stringifyData = function(Config,data){
 
 	//rows
 	var row;
+
+	//for each section (header,body,footer)
 	Object.keys(sections).forEach(function(p,i){
 		
+		//for each row in the section
 		while(sections[p].length){
 			
 			row = sections[p].shift();
-		
-			if(row.length === 0) {break}
+			
+			//if(row.length === 0) {break}
 
 			row.forEach(function(line){
+				//vertical row borders
 				output = output 
 					+ marginLeft 
-					+ borderStyle[1].v
+					//left vertical border
+					+ borderStyle[1].v 
+					//join cells on vertical border
 					+	line.join(borderStyle[1].v) 
+					//right vertical border
 					+ borderStyle[1].v
+					//end of line
 					+ '\n';
 			});
 		
-			//Adds bottom horizontal row border
+			//bottom horizontal row border
 			switch(true){
-				//If end of body and no footer, skip
+				//skip if end of body and no footer
 				case(sections[p].length === 0 
 						 && i === 1 
 						 && sections.footer.length === 0):
 					break;
-				//if end of footer, skip
+				//skip if end of footer
 				case(sections[p].length === 0 
 						 && i === 2):
+					break;
+				//skip if compact
+			  case(Config.compact && p === 'body' && !row.empty):
 					break;
 				default:
 					output += borders[1];
@@ -114,19 +125,28 @@ Render.stringifyData = function(Config,data){
 Render.buildRow = function(config,row,rowType){
 
 	var minRowHeight = 0;
+	
+	//tag row as empty if empty
+	//(used) for compact tables
+	if(row.length === 0 && config.compact){
+		row.empty = true;
+		return row;
+	}
+
+	//check for diffeerences in line length
 	var difL = config.table.columnWidths.length - row.length;
 
 	if(difL > 0){
 		//add empty element to array
 		row = row.concat(Array.apply(null, new Array(difL))
-													//.map(function(){return null})); 
-													.map(function(){return ''})); 
+													.map(function(){return null})); 
+													//.map(function(){return ''})); 
 	}
 	else if(difL < 0){
 		//truncate array
 		row.length = config.table.columnWidths.length;
 	}
-
+	
 	//get row as array of cell arrays
 	var cArrs = row.map(function(cell,index){
 		
@@ -142,8 +162,8 @@ Render.buildRow = function(config,row,rowType){
 	
 		return cellArr;
 	});
-
-	//Adjust minRowHeight to reflect vertical row padding
+	
+	//adjust minRowHeight to reflect vertical row padding
 	minRowHeight = (rowType === 'header') ? minRowHeight :
 		minRowHeight + (config.paddingBottom + config.paddingTop);
 

@@ -17,10 +17,11 @@ var Config = {
 		]
 	],
 	align : "center",
+	borderColor : null,
 	borderStyle : 1,
 	color : false,
 	compact : false,
-	defaultValue : "[32m[37m[41m #ERROR  [49m[32m[39m",
+	defaultValue : "[32m[37m[41m ?  [49m[32m[39m",
 	footerAlign : "center",
 	footerColor : false,
 	formatter : null,

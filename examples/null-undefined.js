@@ -20,6 +20,7 @@ var header = [
 
 //Example with arrays as rows 
 var rows = [
+	[],	
 	["hamburger",2.50,null],
 	["el jefe's special cream sauce",0.10],
 	["two tacos, rice and beans topped with cheddar cheese",9.80,""],
@@ -32,7 +33,7 @@ var footer = [
 	"TOTAL",
 	(function(){
 		return rows.reduce(function(prev,curr){
-			return prev+curr[1]
+			return (typeof curr[1] === 'number') ? prev+curr[1] : prev
 		},0)
 	}()),
 	'N/A'];
@@ -56,6 +57,7 @@ console.log(str1);
 
 //Example with objects as rows 
 var rows = [
+	{},
 	{
 		item : "hamburger",
 		price : 2.50,

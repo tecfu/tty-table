@@ -27,6 +27,10 @@ var header = [
 		value : "organic",
 		width : 15,
 		formatter : function(value){
+			
+			//will convert an empty string to 0	
+			//value = value * 1;
+			
 			if(value === 'yes'){
 				value = chalk.black.bgGreen(value);
 			}
@@ -64,6 +68,7 @@ var footer = [
 
 var t1 = Table(header,rows,footer,{
 	borderStyle : 1,
+	borderColor : "blue",
 	paddingBottom : 0,
 	headerAlign : "center",
 	align : "center",

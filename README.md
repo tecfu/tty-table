@@ -64,14 +64,15 @@ var header = [
 	{
 		value : "item",
 		headerColor : "cyan",
-		color: "yellow",
+		color: "white",
 		align : "left",
-//		paddingRight : 5,
-//		width : 30
+		paddingLeft : 5,
+		width : 30
 	},
 	{
 		value : "price",
 		color : "red", 
+		width : 10,
 		formatter : function(value){
 			var str = "$" + value.toFixed(2);
 			if(value > 5){
@@ -83,10 +84,14 @@ var header = [
 	{
 		alias : "Is organic?",	
 		value : "organic",
+		width : 15,
 		formatter : function(value){
+			
+			//will convert an empty string to 0	
+			//value = value * 1;
+			
 			if(value === 'yes'){
-				value = chalk.stripColor(value);
-				value = chalk.green(value);
+				value = chalk.black.bgGreen(value);
 			}
 			else{
 				value = chalk.white.bgRed(value);
@@ -122,6 +127,7 @@ var footer = [
 
 var t1 = Table(header,rows,footer,{
 	borderStyle : 1,
+	borderColor : "blue",
 	paddingBottom : 0,
 	headerAlign : "center",
 	align : "center",
@@ -221,7 +227,14 @@ Default border character sets:
 | --- | --- | --- |
 | header | <code>array</code> | [See example](#example-usage) |
 | header.column | <code>object</code> | Column options |
+| header.column.alias | <code>string</code> | Alernate header column name |
+| header.column.align | <code>string</code> | default: "center" |
+| header.column.color | <code>string</code> | default: terminal default color |
+| header.column.footerAlign | <code>string</code> | default: "center" |
+| header.column.footerColor | <code>string</code> | default: terminal default color |
 | header.column.formatter | <code>function</code> | Runs a callback on each cell value in the parent column |
+| header.column.headerAlign | <code>string</code> | default: "center" |
+| header.column.headerColor | <code>string</code> | default: terminal's default color |
 | header.column.marginLeft | <code>number</code> | default: 0 |
 | header.column.marginTop | <code>number</code> | default: 0 |
 | header.column.maxWidth | <code>number</code> | default: 20 |
@@ -229,17 +242,11 @@ Default border character sets:
 | header.column.paddingLeft | <code>number</code> | default: 0 |
 | header.column.paddingRight | <code>number</code> | default: 0 |
 | header.column.paddingTop | <code>number</code> | default: 0 |
-| header.column.alias | <code>string</code> | Alernate header column name |
-| header.column.align | <code>string</code> | default: "center" |
-| header.column.color | <code>string</code> | default: terminal default color |
-| header.column.headerAlign | <code>string</code> | default: "center" |
-| header.column.headerColor | <code>string</code> | default: terminal default color |
-| header.column.footerAlign | <code>string</code> | default: "center" |
-| header.column.footerColor | <code>string</code> | default: terminal default color |
 | rows | <code>array</code> | [See example](#example-usage) |
 | options | <code>object</code> | Table options |
 | options.borderStyle | <code>number</code> | default: 1 (0 = no border)  Refers to the index of the desired character set. |
 | options.borderCharacters | <code>array</code> | [See @note](#note) |
+| options.borderColor | <code>array</code> | default: terminal's default color |
 
 **Example**  
 ```
