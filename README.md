@@ -6,7 +6,14 @@ A terminal table widget for nodejs and the browser.
 
 ## Installation
 
-- Nodejs
+- As a terminal application:
+
+```
+$ sudo apt-get install nodejs //if not already installed
+$ npm install tty-table -g
+```
+
+- As a Nodejs module:
 
 ```
 npm install tty-table
@@ -22,26 +29,34 @@ npm install tty-table
 </script>
 ```
 
-## Why
+## Why would someone do such a thing?
 
-- Automatic text wrapping
+### Drop-in replacement for [Automattic/cli-table](docs/automattic-cli-table.md)
+
+- Fixes known issues with Automattic/cli-table
+- Adds the following new features to Automattic/cli-table:
+	- Automatic text wrapping
+	- [Supports Asian characters](https://github.com/tecfu/tty-table/pull/5) 
+	- [Automatically resizes to terminal width](https://github.com/tecfu/tty-table/issues/4)
+
+### Beyond that, the native API also supports:
+
 - Colors (nodejs)
 - Optional callbacks on column values
 - Header, body column alignment
 - Padding
 - Pass rows as either arrays or objects
+- [Footer](https://github.com/tecfu/tty-table/issues/6)
 - [Works in the browser as well as nodejs](http://htmlpreview.github.io/?https://raw.githubusercontent.com/tecfu/tty-table/master/examples/browser-example.html)
-- [Supports Asian characters](https://github.com/tecfu/tty-table/pull/5) 
-- [Automatically resizes to terminal width](https://github.com/tecfu/tty-table/issues/4)
-- [Footer support](https://github.com/tecfu/tty-table/issues/6)
+- [Can be run as a standalone terminal application](docs/terminal.md)
 
 ## Example Output
 
 ### Terminal
-![Terminal Example](examples/images/node-example.png "Terminal Example") 
+![Terminal Example](https://cloud.githubusercontent.com/assets/7478359/15691679/07142030-273f-11e6-8f1e-25728d558a2d.png "Terminal Example") 
 
 ### Browser & Browser Console 
-![Browser Console Example](examples/images/browser-example.png "Browser Console Example") 
+![Browser Console Example](https://cloud.githubusercontent.com/assets/7478359/15691676/043a47ea-273f-11e6-8889-df03e8a25e26.png "Browser Console Example") 
 
 [Working example](http://htmlpreview.github.io/?https://raw.githubusercontent.com/tecfu/tty-table/master/examples/browser-example.html)
 
@@ -52,7 +67,7 @@ npm install tty-table
 > borderStyle : 2
 > ```
 
-## Example Usage
+## Default API Usage
 
 <!--EXAMPLE-USAGE-->
 
@@ -186,7 +201,7 @@ console.log(str2);
 ```
 <!--END-EXAMPLE-USAGE-->
 
-## API Reference 
+## Default API Reference 
 <!--API-REF-->
 
 <a name="Table"></a>

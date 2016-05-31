@@ -31,7 +31,8 @@ if(argv.format){
 }
 
 switch(true){
-	case(dataFormat==='json'):
+	case(dataFormat.toString().match(/json/i) !== null):
+		dataFormat = 'json';
 		break;
 	default:
 		var csv = require('csv');
