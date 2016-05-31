@@ -1,9 +1,9 @@
-# Using tty-table as a Command Line Application:
+# Using tty-table as a terminal application:
 
 ## Installation
 
 ```
-$ sudo apt-get install nodejs //if not already installed
+$ sudo apt-get install nodejs 
 $ npm install tty-table -g
 ```
 
