@@ -9,7 +9,6 @@ module.exports = function(grunt) {
 	//Modules for browserify to ignore
 	var _ignore = '--ignore=path --ignore=request --ignore=http --ignore=fs --ignore=vm --ignore=process --ignore=lodash';
 
-
 	// Project configuration.
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
@@ -187,7 +186,6 @@ module.exports = function(grunt) {
 			deferred2.resolve();
 		});
 	});
-
 
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-shell');
