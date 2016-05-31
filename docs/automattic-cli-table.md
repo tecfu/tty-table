@@ -57,3 +57,8 @@ cross_table.push({ "Header #3": ["Value 1", "Value 2"] },
 console.log(cross_table.toString());
 
 ```
+
+- Outputs: 
+
+![Automattic/cli-table Example Output](https://cloud.githubusercontent.com/assets/7478359/15693270/c901a0ce-2748-11e6-8fcb-e946b6c608f1.png "Automattic/cli-table Output Example") 
+
