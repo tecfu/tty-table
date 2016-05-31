@@ -6,7 +6,7 @@ A terminal table widget for nodejs and the browser.
 
 ## Installation
 
-- As a terminal application:
+- As a [terminal application](docs/terminal.md):
 
 ```
 $ sudo apt-get install nodejs //if not already installed
