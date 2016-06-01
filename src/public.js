@@ -34,7 +34,10 @@ var Config;
 * @param {number} options.borderStyle			- default: 1 (0 = no border) 
 * Refers to the index of the desired character set. 
 * @param {array} options.borderCharacters	- [See @note](#note) 
-* @param {array} options.borderColor			- default: terminal's default color
+* @param {string} options.borderColor			- default: terminal's default color
+* @param {string,number} options.defaultErrorValue - default: 'ERROR!'
+* @param {string,number} options.defaultValue - default: '?'
+* @param {boolean} options.errorOnNull		- default: false
 
 * @returns {Table}
 * @note
