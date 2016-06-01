@@ -35,8 +35,8 @@ var Config;
 * Refers to the index of the desired character set. 
 * @param {array} options.borderCharacters	- [See @note](#note) 
 * @param {string} options.borderColor			- default: terminal's default color
-* @param {string,number} options.defaultErrorValue - default: 'ERROR!'
-* @param {string,number} options.defaultValue - default: '?'
+* @param {mixed} options.defaultErrorValue - default: 'ERROR!'
+* @param {mixed} options.defaultValue - default: '?'
 * @param {boolean} options.errorOnNull		- default: false
 
 * @returns {Table}
