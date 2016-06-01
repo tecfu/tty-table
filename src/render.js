@@ -148,9 +148,14 @@ Render.buildRow = function(config,row,rowType){
 	}
 	
 	//get row as array of cell arrays
-	var cArrs = row.map(function(cell,index){
+	//can't use es5 row functions (map, forEach because of 
+	//potential ellision; by which [1,,3] will only iterate 1,3
+	var cArrs = [];
+	var rowLength = row.length;
+	
+	for(var index=0; index<rowLength; index++){
 		
-		var c = Render.buildCell(config,cell,index,rowType);
+		var c = Render.buildCell(config,row[index],index,rowType);
 		var cellArr = c.cellArr;
 		
 		if(rowType === 'header'){
@@ -160,8 +165,8 @@ Render.buildRow = function(config,row,rowType){
 		minRowHeight = (minRowHeight < cellArr.length) ? 
 			cellArr.length : minRowHeight;
 	
-		return cellArr;
-	});
+		cArrs.push(cellArr);
+	}
 	
 	//adjust minRowHeight to reflect vertical row padding
 	minRowHeight = (rowType === 'header') ? minRowHeight :
@@ -210,7 +215,7 @@ Render.buildCell = function(config,cell,columnIndex,rowType){
 		switch(true){	
 			case(typeof cell === 'undefined' || cell === null):
 				//replace undefined/null cell values with placeholder
-				cellValue = config.defaultValue;
+				cellValue = (config.errorOnNull) ? config.defaultErrorValue : config.defaultValue;
 				break;
 			case(typeof cell === 'object' && typeof cell.value !== 'undefined'):	
 				cellValue = cell.value;
