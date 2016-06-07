@@ -1,6 +1,8 @@
 ---
 sudo: required
 
+language: nodejs
+
 env:
   # Test package on all supported OSes.
   - distribution: centos
@@ -17,7 +19,7 @@ before_install:
   # Pull container
   - 'sudo docker pull ${distribution}:${version}'
   # Customize container
-  - 'sudo docker build --file=tests/Dockerfile.${distribution}-${version} --tag=${distribution}-${version}:tty-table tests'
+  - 'sudo docker build --file=docker/Dockerfile.${distribution}-${version} --tag=${distribution}-${version}:tty-table tests'
 
 script:
   - 'grunt t'
