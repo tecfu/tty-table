@@ -1,6 +1,8 @@
 ---
 sudo: required
 
+language: node_js
+
 env:
   # Test package on all supported OSes.
   - distribution: centos

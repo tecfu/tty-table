@@ -13,7 +13,8 @@ RUN npm install tty-table
 RUN npm install grunt-cli -g
 
 # Install dev dependencies
-RUN cd node_modules/tty-table
+WORKDIR /node_modules/tty-table
+ADD . /node_modules/tty-table
 RUN npm install
 
 # Run unit tests
