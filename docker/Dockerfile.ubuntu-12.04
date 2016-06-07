@@ -1,6 +1,5 @@
 FROM ubuntu:12.04
 
- Because there is no package cache in the image, you need to run:
 RUN apt-get update
 
 # Install nodejs 
