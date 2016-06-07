@@ -4,7 +4,7 @@ FROM ubuntu:14.04
 RUN apt-get -qq update
 
 # Setup virtual framebuffer
-RUN apt-get install xvfb
+RUN apt-get install -y xvfb
 # RUN sh -e /etc/init.d/xvfb start
 RUN Xvfb :1 -screen 0 1024x768x16
 RUN export DISPLAY=:1.0
