@@ -1,24 +1,23 @@
-language: node_js
-node_js:
-  - "5"
-  - "4.0"
-  - "0.12"
-  - "0.11"
-  - "0.10"
-before_install: 
-  - npm install
-  - npm install -g grunt-cli
-before_script:
-  - npm rebuild
-  - export DISPLAY=:99.0
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sh -e /etc/init.d/xvfb start; fi
-script: 
-  - grunt test-travis
-matrix:
-  include:
-    - os: linux
-      dist: trusty
-    - os: linux
-      dist: centos
-    - os: osx
-    - osx_image: xcode7.2
+---
+sudo: required
+
+env:
+  # Test package on all supported OSes.
+  - distribution: centos
+    version: 7
+  - distribution: ubuntu
+    version: 14.04
+  - distribution: ubuntu
+    version: 12.04
+
+services:
+  - docker
+
+before_install:
+  # Pull container
+  - 'sudo docker pull ${distribution}:${version}'
+  # Customize container
+  - 'sudo docker build --file=tests/Dockerfile.${distribution}-${version} --tag=${distribution}-${version}:tty-table tests'
+
+script:
+  - 'grunt t'

@@ -1,0 +1,21 @@
+FROM ubuntu:12.04
+
+ Because there is no package cache in the image, you need to run:
+RUN apt-get update
+
+# Install nodejs 
+RUN apt-get install -y nodejs npm
+#RUN ln -s /usr/bin/nodejs /usr/bin/node
+
+# Install tty-table
+RUN npm install tty-table
+
+# Install grunt
+RUN npm install grunt-cli -g
+
+# Install dev dependencies
+RUN cd node_modules/tty-table
+RUN npm install
+
+# Run unit tests
+RUN grunt t
