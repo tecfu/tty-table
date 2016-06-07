@@ -1,11 +1,10 @@
-FROM ubuntu:14.04
+FROM centos:7
 
-# Because there is no package cache in the image, you need to run:
-RUN apt-get -qq update
+RUN yum install -y epel-release
 
 # Install nodejs 
-RUN apt-get install -y nodejs npm
-RUN ln -s /usr/bin/nodejs /usr/bin/node
+RUN yum install -y nodejs npm
+# RUN ln -s /usr/bin/nodejs /usr/bin/node
 
 # Install tty-table
 RUN npm install tty-table
