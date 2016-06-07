@@ -10,9 +10,17 @@ $ npm install tty-table -g
 ## Example Usage
 
 
+### Inline
+
+- Pipe some inline data to tty-table:
+
+```
+echo '[["name","price"],["aapl",92.50],["ibm",120.15]]' | tty-table --format=json
+```
+
 ### Files
 
-- Output a csv file to tty-table via the command line:
+- Pipe a csv file to tty-table via the command line:
 
 ```
 $ cat examples/data/data.csv | tty-table 
@@ -20,7 +28,7 @@ $ cat examples/data/data.csv | tty-table
 
 ### Streams
 
-- Stream JSON to tty-table via the command line:
+- Pipe a stream JSON to tty-table via the command line:
 
 ```
 $ node examples/data/streamer.js | tty-table --format==JSON
