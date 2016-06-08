@@ -5,8 +5,12 @@ language: node_js
 
 env:
   # Test package on all supported OSes.
+  - distribution: centos
+    version: 7
   - distribution: ubuntu
     version: 14.04
+  - distribution: ubuntu
+    version: 12.04
 
 services:
   - docker
@@ -15,7 +19,7 @@ before_install:
   # Pull container
   - 'sudo docker pull ${distribution}:${version}'
   # Customize container
-  - 'sudo docker build --file=docker/Dockerfile.${distribution}-${version} --tag=${distribution}-${version}:tty-table .'
+  - 'sudo docker build --force-rm --file=docker/Dockerfile.${distribution}-${version} --tag=${distribution}-${version}:tty-table .'
 
 script:
-  - 'grunt t'
+  - 'grunt --base node_modules/tty-table t'
