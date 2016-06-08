@@ -16,16 +16,18 @@ services:
   - docker
 
 before_install:
-  # Setup virtual frambuffer
+  # Setup virtual framebuffer
   #
   # Pull container
   - 'sudo docker pull ${distribution}:${version}'
   # Customize container
   - 'sudo docker build --force-rm --file=docker/Dockerfile.${distribution}-${version} --tag=${distribution}-${version}:tty-table .'
+  # Save container state
+  - 'sudo docker commit -m "must save state" -a "tecfu" $(sudo docker -ps -lq) ${distribution}-${version}:s1'
 
 before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
 
 script:
-  - 'sudo docker run ${distribution}:${version} grunt --base /node_modules/tty-table t'
+  - 'sudo docker run ${distribution}-${version}:s1 grunt --base /node_modules/tty-table t'
