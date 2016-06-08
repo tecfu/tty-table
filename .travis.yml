@@ -28,4 +28,4 @@ before_script:
   - sh -e /etc/init.d/xvfb start
 
 script:
-  - 'grunt --base node_modules/tty-table t'
+  - 'sudo docker run ${distribution}:${version} grunt --base /node_modules/tty-table t'
