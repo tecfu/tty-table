@@ -22,7 +22,10 @@ before_install:
   - 'sudo docker pull ${distribution}:${version}'
   # Customize container
   - 'sudo docker build --force-rm --file=docker/Dockerfile.${distribution}-${version} --tag=${distribution}-${version}:tty-table .'
-  # Save container state
+  
+  - 'sudo docker ps -lq'
+
+    # Save container state 
   - 'sudo docker commit -m "must save state" -a "tecfu" $(sudo docker ps -lq) tecfu/${distribution}-${version}:s1'
 
 before_script:
