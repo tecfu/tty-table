@@ -16,21 +16,17 @@ services:
   - docker
 
 before_install:
-  # Setup virtual framebuffer
-  #
-  # Pull container
+  # Pull base image
   - 'sudo docker pull ${distribution}:${version}'
-  # Customize container
+  # Create custom image named: ${distribution}-${version}:tty-table 
   - 'sudo docker build --force-rm --file=docker/Dockerfile.${distribution}-${version} --tag=${distribution}-${version}:tty-table .'
   
-  - 'sudo docker ps -lq'
-
-    # Save container state 
-  - 'sudo docker commit -m "must save state" -a "tecfu" $(sudo docker ps -lq) tecfu/${distribution}-${version}:s1'
-
 before_script:
+  # Create virtual framebuffer so display output can be read with 
+  # correct dimensions by test suite
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
 
 script:
-  - 'sudo docker run ${distribution}-${version}:s1 grunt --base /node_modules/tty-table t'
+  # Create a container from the custom image and run tests on it
+  - 'sudo docker run --name="${distribution}-${version}" ${distribution}-${version}:tty-table grunt --base /node_modules/tty-table t'
