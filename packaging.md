@@ -1,6 +1,6 @@
 # Building distributable packages
 
-***Recommended*** [FPM](https://github.com/jordansissel/fpm)
+***Recommended: [FPM](https://github.com/jordansissel/fpm)***
 
 - Arch Linux
 
