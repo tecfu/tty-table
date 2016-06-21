@@ -32,6 +32,11 @@ npm install tty-table
 ## Why would someone do such a thing?
 
 ### Drop-in replacement for [Automattic/cli-table](docs/automattic-cli-table.md):
+```
+var Table = require('tty-table')('automattic-cli-table');
+//now runs with same syntax as Automattic/cli-table
+...
+```
 
 - Fixes these known issues with Automattic/cli-table:
 	- Automatic text wrapping

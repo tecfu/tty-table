@@ -1,5 +1,5 @@
 //var Table = require('cli-table');
-var Table = require('../automattic-cli-table.js');
+var Table = require('../')('automattic-cli-table');
 
 /* col widths */
 var table = new Table({
