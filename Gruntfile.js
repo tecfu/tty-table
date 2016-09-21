@@ -64,6 +64,12 @@ module.exports = function(grunt) {
 		},
 	
 		shell: {
+			"generate-vim-tags-file": {
+				command: function (){
+					var cmd = `find . -type f -iregex ".*\\.js$" -not -path "./node_modules/*" -exec jsctags {} -f \\; | sed '/^$/d' | sort > tags`; 
+					return cmd;
+				}
+			},
 			"browserify-prod-standalone": {
 				command: function () {
 					var cmd = 'browserify --debug --standalone=TtyTable '+_ignore+' -r ./src/main.js > ./dist/<%= pkg.name %>.js';
@@ -93,7 +99,19 @@ module.exports = function(grunt) {
 					return "rm ./dist/<%= pkg.name %>.js ./dist/<%= pkg.name %>.bundle.js";
 				}
 			}	
-		}
+		},
+	
+		//regenerate tags file on file save
+		watch: {
+			scripts: {
+				files: ['**/*.js'],
+				tasks: ['shell:generate-vim-tags-file'],
+				options: {
+					spawn: true,
+					reload: false
+				}
+			}
+		}	
 	});
 
 	grunt.registerTask('save-test-outputs','Saves the ouptuts of all unit tests to file.',function(){
@@ -187,9 +205,14 @@ module.exports = function(grunt) {
 		});
 	});
 
+	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-shell');
 	grunt.loadNpmTasks('grunt-mocha-test');
+
+	grunt.registerTask('tags', [
+		'shell:generate-vim-tags-file',
+	]);
 
 	grunt.registerTask('test', [
 		'mochaTest:test'
