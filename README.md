@@ -309,6 +309,14 @@ grunt test
 grunt st
 ```
 
+## Dev Tips
+
+- To generate vim tags on file save (make sure [jsctags](https://github.com/ramitos/jsctags) is installed globally)
+
+```
+grunt watch
+```
+
 ## [Packaging as a distributable](packaging.md)
 
 
