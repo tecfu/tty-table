@@ -311,7 +311,13 @@ grunt st
 
 ## Dev Tips
 
-- To generate vim tags on file save (make sure [jsctags](https://github.com/ramitos/jsctags) is installed globally)
+- To generate vim tags (make sure [jsctags](https://github.com/ramitos/jsctags) is installed globally)
+
+```
+grunt tags
+```
+
+- To generate vim tags on file save 
 
 ```
 grunt watch
