@@ -113,7 +113,7 @@ Render.stringifyData = function(Config,data){
 		}
 	});
 	
-	//Bottom horizontal border
+	//bottom horizontal border
 	output += borders[2];
 	
 	//remove all rows in prototype array
@@ -180,12 +180,12 @@ Render.buildRow = function(config,row,rowType){
 		var whiteline = Array(config.table.columnWidths[a]).join('\ ');
 		
 		if(rowType ==='body'){
-			//Add whitespace for top padding
+			//add whitespace for top padding
 			for(var i=0; i<config.paddingTop; i++){
 				cellArr.unshift(whiteline);
 			}
 			
-			//Add whitespace for bottom padding
+			//add whitespace for bottom padding
 			for(i=0; i<config.paddingBottom; i++){
 				cellArr.push(whiteline);
 			}
@@ -235,8 +235,13 @@ Render.buildCell = function(config,cell,columnIndex,rowType){
 	cellValue = Style.colorizeCell(cellValue,cellOptions,rowType);	
 
 	//textwrap cellValue
-	var WrapObj  = Format.wrapCellContent(config,cellValue,columnIndex,
-																				cellOptions,rowType);
+	var WrapObj  = Format.wrapCellContent(
+		config,
+		cellValue,
+		columnIndex,
+		cellOptions,
+		rowType
+	);
 	cellValue = WrapObj.output;
 
 	//return as array of lines
@@ -277,10 +282,10 @@ Render.getRowFormat = function(row){
 };
 
 //@todo For rotating horizontal data into a vertical table
-//Assumes all rows are same length
+//assumes all rows are same length
 Render.verticalizeMatrix = function(config,inputArray){
 
-	//Grow to # arrays equal to number of columns in input array
+	//grow to # arrays equal to number of columns in input array
 	var outputArray = [];
 	var headers = config.table.columns;
 

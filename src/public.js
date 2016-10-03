@@ -72,7 +72,7 @@ var Config;
 */
 Cls.setup = function(){
 
-	//Check if adapter called
+	//check if adapter called
 	if(Object.keys(arguments).length === 1 &&
 		 typeof arguments[0] === 'string'){
 		return require('../'+arguments[0]);

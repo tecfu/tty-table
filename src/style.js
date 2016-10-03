@@ -24,7 +24,7 @@ exports.colorizeCell = function(str,cellOptions,rowType){
 
 /*
 exports.colorizeAllWords = function(color,str){
-	//Color each word in the cell so that line breaks don't break color 
+	//color each word in the cell so that line breaks don't break color 
 	var arr = str.replace(/(\S+)/gi,function(match){
 		return Chalk[color](match)+'\ ';
 	});

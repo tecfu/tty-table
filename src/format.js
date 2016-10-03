@@ -6,29 +6,37 @@ Format.calculateLength = function(line) {
 	return StripAnsi(line.replace(/[^\x00-\xff]/g,'XX')).length;
 }
 
-Format.wrapCellContent = function(config,cellValue,columnIndex,cellOptions,
-																 rowType){
+Format.wrapCellContent = function(
+	config,
+	cellValue,
+	columnIndex,
+	cellOptions,
+	rowType
+){
 
-	//remove ANSI color codes from the beginning and end of string
-	var string = cellValue.toString(), 
-			startAnsiRegexp = /^(\033\[[0-9;]*m)+/,
-			endAnsiRegexp = /(\033\[[0-9;]*m)+$/,
-			startMatches = string.match(startAnsiRegexp),
-			endMatches = string.match(endAnsiRegexp),
-			startFound = false,
-			endFound = false;
-	
-	if(startMatches instanceof Array && startMatches.length > 0){
-		startFound = true;
-		string = string.replace(startAnsiRegexp,'');
-	}
+	//coerce cell value to string
+	var string = cellValue.toString(); 
 
-	if(endMatches instanceof Array && endMatches.length > 0){
-		endFound = true;	
-		string = string.replace(endAnsiRegexp,'');
-	}
+	//ANSI chararacters that demarcate the start of a line
+	var startAnsiRegexp = /^(\033\[[0-9;]*m)+/;
+
+	//store matches
+	var startMatches = string.match(startAnsiRegexp) || [''];
+
+	//remove ANSI start-of-line chars 
+	var string = string.replace(startAnsiRegexp,'');
+
+	//ANSI chararacters that demarcate the end of a line
+	var endAnsiRegexp = /(\033\[[0-9;]*m)+$/;
+
+	//store matches
+	var endMatches = string.match(endAnsiRegexp) || [''];
+
+	//remove ANSI end-of-line chars 
+	string = string.replace(endAnsiRegexp,'');
 
 	var alignTgt;
+
 	switch(rowType){
 		case('header'):
 			alignTgt = "headerAlign"
@@ -41,19 +49,20 @@ Format.wrapCellContent = function(config,cellValue,columnIndex,cellOptions,
 			break;
 	}
 
-	//Equalize padding for centered lines 
+	//equalize padding for centered lines 
 	if(cellOptions[alignTgt] === 'center'){	
 		cellOptions.paddingLeft = cellOptions.paddingRight =
 			Math.max(cellOptions.paddingRight,cellOptions.paddingLeft,0);
 	}
 
-	var width = config.table.columnWidths[columnIndex],
-			innerWidth = width - cellOptions.paddingLeft -
-									cellOptions.paddingRight -
-									config.GUTTER; //border/gutter
+	var columnWidth = config.table.columnWidths[columnIndex];
 	
+	//innerWidth is the width available for text within the cell
+	var innerWidth = columnWidth - cellOptions.paddingLeft - cellOptions.paddingRight - config.GUTTER; 
+
+	//check for asian characters
 	if (string.length < Format.calculateLength(string)) {
-		//Wrap Asian characters
+		//assume Asian characters - wrap
 		var count = 0;
 		var start = 0;
 		var characters = string.split('');
@@ -70,7 +79,9 @@ Format.wrapCellContent = function(config,cellValue,columnIndex,cellOptions,
 
 			return prev;
 		}, []).join('\n');
-	} else {
+	} 
+	//assume latin characters
+	else {
 		string = Wrap(string,{
 			width : innerWidth - 
 							cellOptions.paddingLeft -
@@ -80,10 +91,10 @@ Format.wrapCellContent = function(config,cellValue,columnIndex,cellOptions,
 		});
 	}
 
-	//Break string into array of lines
+	//break string into array of lines
 	var strArr = string.split('\n');
 
-	//Format each line
+	//format each line
 	strArr = strArr.map(function(line){
 
 		line = line.trim();	
@@ -91,8 +102,8 @@ Format.wrapCellContent = function(config,cellValue,columnIndex,cellOptions,
 		var lineLength = Format.calculateLength(line);
 
 		//alignment 
-		if(lineLength < width){
-			var emptySpace = width - lineLength; 
+		if(lineLength < columnWidth){
+			var emptySpace = columnWidth - lineLength; 
 			switch(true){
 				case(cellOptions[alignTgt] === 'center'):
 					emptySpace --;
@@ -114,12 +125,8 @@ Format.wrapCellContent = function(config,cellValue,columnIndex,cellOptions,
 		}
 		
 		//put ANSI color codes BACK on the beginning and end of string
-		if(startFound){
-			line = startMatches[0] + line;
-		}
-		if(endFound){
-			line = line + endMatches[0];
-		}
+		line = startMatches[0] + line;
+		line = line + endMatches[0];
 
 		return line;
 	});
@@ -157,15 +164,15 @@ Format.getColumnWidths = function(config,rows){
 		}
 	});
 
-	//Check to make sure widths will fit the current display, or resize.
+	//check to make sure widths will fit the current display, or resize.
 	var totalWidth = widths.reduce(function(prev,curr){
 		return prev + curr;
 	});
 	
-	//Add marginLeft to totalWidth
+	//add marginLeft to totalWidth
 	totalWidth += config.marginLeft;
 
-	//Check process exists in case we are in browser
+	//check process exists in case we are in browser
 	if(process && process.stdout && totalWidth > process.stdout.columns){
 		//recalculate proportionately to fit size
 		var prop = process.stdout.columns / totalWidth;
