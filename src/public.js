@@ -38,6 +38,8 @@ var Config;
 * @param {mixed} options.defaultErrorValue - default: 'ERROR!'
 * @param {mixed} options.defaultValue - default: '?'
 * @param {boolean} options.errorOnNull		- default: false
+* Cell values are truncated when 'truncate' set to a string, length > 0
+* @param {mixed} options.truncate - default: false
 
 * @returns {Table}
 * @note

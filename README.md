@@ -275,7 +275,8 @@ Default border character sets:
 | options.borderColor | <code>string</code> | default: terminal's default color |
 | options.defaultErrorValue | <code>mixed</code> | default: 'ERROR!' |
 | options.defaultValue | <code>mixed</code> | default: '?' |
-| options.errorOnNull | <code>boolean</code> | default: false |
+| options.errorOnNull | <code>boolean</code> | default: false Cell values are truncated when 'truncate' set to a string, length > 0 |
+| options.truncate | <code>mixed</code> | default: false |
 
 **Example**  
 ```
