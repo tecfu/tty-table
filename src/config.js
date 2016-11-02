@@ -36,6 +36,7 @@ var Config = {
 	paddingRight : 0,
 	paddingTop : 0,
 	tableType : null,
+	truncate: false,
 	width : 20,
 };
 
