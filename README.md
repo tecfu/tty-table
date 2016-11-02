@@ -303,11 +303,14 @@ console.log(str); //outputs table
 grunt test
 ```
 
-## Saving the output of new tests
+## Saving the output of new unit tests 
 
 ```
 grunt st
 ```
+- Because: 
+
+`node script.js --color=always`
 
 ## Dev Tips
 
