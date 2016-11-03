@@ -66,7 +66,7 @@ module.exports = function(grunt) {
 		shell: {
 			"generate-vim-tags-file": {
 				command: function (){
-					var cmd = `find . -name '*.js' -path './src/*' -exec jsctags {} -f \\; | sed '/^$/d' | sort > tags`; 
+					var cmd = `find . -name '*.js' -path './src/*' | xargs jsctags {} -f | sed '/^$/d' | sort > tags`; 
 					return cmd;
 				}
 			},
