@@ -1,9 +1,11 @@
 var StripAnsi = require("strip-ansi");
 var Wrap = require("word-wrap");
+var Wcwidth = require("wcwidth");
 var Format = {};
 
 Format.calculateLength = function(line) {
-	return StripAnsi(line.replace(/[^\x00-\xff]/g,'XX')).length;
+	//return StripAnsi(line.replace(/[^\x00-\xff]/g,'XX')).length;
+	return Wcwidth(line);
 }
 
 Format.wrapCellContent = function(
