@@ -3,10 +3,10 @@
   "version": "2.2.2",
   "description": "Command line table generator.",
   "main": "src/main.js",
-	"bin": {
-		"tty-table": "src/terminal-adapter.js"
-	},
-	"preferGlobal": false,
+  "bin": {
+    "tty-table": "src/terminal-adapter.js"
+  },
+  "preferGlobal": false,
   "scripts": {
     "test": "grunt t"
   },
@@ -16,7 +16,7 @@
   },
   "keywords": [
     "table",
-		"table in bash",
+    "table in bash",
     "cli-table",
     "terminal table",
     "console table",
@@ -36,6 +36,7 @@
     "merge": "^1.2.0",
     "minimist": "^1.2.0",
     "strip-ansi": "^3.0.0",
+    "wcwidth": "^1.0.1",
     "word-wrap": "^1.1.0"
   },
   "devDependencies": {
