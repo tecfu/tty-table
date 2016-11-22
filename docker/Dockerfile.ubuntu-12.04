@@ -1,4 +1,4 @@
-FROM ubuntu:12.04.3
+FROM ubuntu:12.04.2
 
 # Because there is no package cache in the image, you need to run:
 RUN apt-get update
