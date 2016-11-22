@@ -1,4 +1,4 @@
-FROM ubuntu:14.04.3
+FROM ubuntu:14.04.5
 
 # Because there is no package cache in the image, you need to run:
 RUN apt-get update
