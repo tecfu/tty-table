@@ -29,4 +29,4 @@ before_script:
 
 script:
   # Create a container from the custom image and run tests on it
-  - 'sudo docker run --name="${distribution}-${version}" ${distribution}-${version}:tty-table grunt --base /node_modules/tty-table t'
+  - 'sudo docker run --name="${distribution}-${version}" ${distribution}-${version}:tty-table'
