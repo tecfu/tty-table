@@ -31,7 +31,7 @@ npm install tty-table
 
 ## Why would someone do such a thing?
 
-### Drop-in replacement for [Automattic/cli-table](docs/automattic-cli-table.md):
+### Drop-in replacement for the unmaintained [Automattic/cli-table](docs/automattic-cli-table.md):
 ```
 var Table = require('tty-table')('automattic-cli-table');
 //now runs with same syntax as Automattic/cli-table
