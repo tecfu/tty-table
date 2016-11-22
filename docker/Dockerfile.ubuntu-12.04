@@ -1,4 +1,4 @@
-FROM ubuntu:12.04
+FROM ubuntu:12.04.3
 
 # Because there is no package cache in the image, you need to run:
 RUN apt-get update
@@ -9,13 +9,15 @@ RUN apt-add-repository ppa:chris-lea/node.js
 RUN apt-get update
 RUN apt-get install -y nodejs
 
-RUN npm install tty-table
+# Install tty-table
+RUN apt-get install git -y
+RUN git clone https://www.github.com/tecfu/tty-table
 
 # Install grunt
 RUN npm install grunt-cli -g
 
 # Install dev dependencies
-WORKDIR /node_modules/tty-table
+WORKDIR /tty-table
 RUN npm install
 
 # Run unit tests
