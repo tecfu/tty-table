@@ -273,6 +273,7 @@ Default border character sets:
 | options.borderStyle | <code>number</code> | default: 1 (0 = no border)  Refers to the index of the desired character set. |
 | options.borderCharacters | <code>array</code> | [See @note](#note) |
 | options.borderColor | <code>string</code> | default: terminal's default color |
+| options.compact | <code>boolean</code> | default: false Removes horizontal lines when true. |
 | options.defaultErrorValue | <code>mixed</code> | default: 'ERROR!' |
 | options.defaultValue | <code>mixed</code> | default: '?' |
 | options.errorOnNull | <code>boolean</code> | default: false |
