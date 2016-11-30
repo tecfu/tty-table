@@ -119,7 +119,12 @@ Render.stringifyData = function(Config,data){
 	//remove all rows in prototype array
 	this.splice(0,this.length);
 	
-	return Array(Config.marginTop + 1).join('\n') + output;
+	var finalOutput = Array(Config.marginTop + 1).join('\n') + output;
+
+	//record the height of the output
+	this.height = finalOutput.split(/\r\n|\r|\n/).length;
+	
+	return finalOutput;
 };
 
 Render.buildRow = function(config,row,rowType){
@@ -175,7 +180,6 @@ Render.buildRow = function(config,row,rowType){
 	//convert array of cell arrays to array of lines
 	var lines = Array.apply(null,{length:minRowHeight})
 									 .map(Function.call,function(){return []});
-
 	cArrs.forEach(function(cellArr,a){
 		var whiteline = Array(config.table.columnWidths[a]).join('\ ');
 		
@@ -235,18 +239,12 @@ Render.buildCell = function(config,cell,columnIndex,rowType){
 	cellValue = Style.colorizeCell(cellValue,cellOptions,rowType);	
 
 	//textwrap cellValue
-	var WrapObj  = Format.wrapCellContent(
-		config,
-		cellValue,
-		columnIndex,
-		cellOptions,
-		rowType
-	);
-	cellValue = WrapObj.output;
+	var WrapObj  = Format.wrapCellContent(config, cellValue, columnIndex, cellOptions, rowType);
+	//cellValue = WrapObj.output.join('\n');
 
 	//return as array of lines
 	return {
-		cellArr : cellValue.split('\n'),
+		cellArr : WrapObj.output,
 		width : WrapObj.width
 	};
 };

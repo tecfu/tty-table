@@ -127,10 +127,8 @@ Format.wrapCellContent = function(
 		return line;
 	});
 
-	string = strArr.join('\n');
-	
 	return {
-		output : string,
+		output : strArr,
 		width : innerWidth
 	};
 }
