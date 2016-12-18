@@ -50,6 +50,7 @@ Render.stringifyData = function(Config,data){
 	});
 
 	//add borders
+	//0=header, 1=body, 2=footer
 	for(var a=0; a<3; a++){
 		borders.push('');
 		Config.table.columnWidths.forEach(function(w,i,arr){
@@ -60,7 +61,8 @@ Render.stringifyData = function(Config,data){
 		borders[a] = borders[a].split('');
 		borders[a][borders[a].length1] = borderStyle[a].r;
 		borders[a] = borders[a].join('');
-		borders[a] = marginLeft + borders[a] + '\n';
+		//no trailing space on footer
+		borders[a] = (a<2) ? marginLeft + borders[a] + '\n' : marginLeft + borders[a];
 	}
 	
 	//top horizontal border
