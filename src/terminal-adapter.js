@@ -50,15 +50,18 @@ var runTable = function(input){
 	var Table = require('./public.js');
 	var t1 = Table.setup(header,body,options);
 	
+	//hide cursor
+	console.log('\u001b[?25l');
+	
 	//wipe existing if already rendered
 	if(alreadyRendered){
+
+		//move cursor up number to the top of the previous print
+		//before deleting
+		console.log('\u001b['+(previousHeight+3)+'A');
 		
 		//delete to end of terminal
 		console.log('\u001b[0J');
-		
-		//move cursor up number to the top of the previous print
-		//before outputing
-		console.log('\u001b['+(previousHeight+2)+'A');
 	}
 	else{
 		alreadyRendered = true;
@@ -106,6 +109,5 @@ process.stdin.on('data', function(chunk) {
 
 process.stdin.on('end', function() {
 	//nothing
-	
 });
 
