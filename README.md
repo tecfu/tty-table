@@ -21,7 +21,7 @@ npm install tty-table
 
 - Browser (via browserify)
 
-```
+```html
 <script src="tty-table.bundle.min.js"></script>
 <script>
 	var Table = require('tty-table');
@@ -32,7 +32,7 @@ npm install tty-table
 ## Why would someone do such a thing?
 
 ### Drop-in replacement for the unmaintained [Automattic/cli-table](docs/automattic-cli-table.md):
-```
+```js
 var Table = require('tty-table')('automattic-cli-table');
 //now runs with same syntax as Automattic/cli-table
 ...
@@ -82,7 +82,7 @@ var Table = require('tty-table')('automattic-cli-table');
 
 <!--EXAMPLE-USAGE-->
 
-```
+```js
 var Table = require('tty-table');
 var chalk = require('chalk');
 
@@ -280,7 +280,7 @@ Default border character sets:
 | options.truncate | <code>mixed</code> | default: false  Cell values are truncated when 'truncate' set to a string, length > 0 |
 
 **Example**  
-```
+```js
 var Table = require('tty-table');
 var t1 = Table(header,rows,options);
 console.log(t1.render()); 
@@ -292,7 +292,7 @@ Renders a table to a string
 
 **Kind**: static method of <code>[Table](#Table)</code>  
 **Example**  
-```
+```js
 var str = t1.render(); 
 console.log(str); //outputs table
 ```
