@@ -24,8 +24,8 @@ npm install tty-table
 ```
 <script src="tty-table.bundle.min.js"></script>
 <script>
-	var Table = require('tty-table');
-	...
+ var Table = require('tty-table');
+ ...
 </script>
 ```
 
