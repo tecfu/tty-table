@@ -67,7 +67,7 @@ var Table = require('tty-table')('automattic-cli-table');
 ![Terminal Example](https://cloud.githubusercontent.com/assets/7478359/15691679/07142030-273f-11e6-8f1e-25728d558a2d.png "Terminal Example") 
 
 ### Browser & Browser Console 
-![Browser Console Example](https://cloud.githubusercontent.com/assets/7478359/15691676/043a47ea-273f-11e6-8889-df03e8a25e26.png "Browser Console Example") 
+![Browser Console Example](https://cloud.githubusercontent.com/assets/7478359/25214897/df99d2e8-254e-11e7-962f-743890292a24.png) 
 
 [Working Example in Browser](https://cdn.rawgit.com/tecfu/tty-table/master/examples/browser-example.html)
 
