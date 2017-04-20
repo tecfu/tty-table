@@ -9,7 +9,7 @@ A terminal table widget for nodejs and the browser.
 - As a [terminal application](docs/terminal.md):
 
 ```
-$ sudo apt-get install nodejs //if not already installed
+$ sudo apt-get install nodejs 
 $ npm install tty-table -g
 ```
 
