@@ -22,6 +22,7 @@ if(argv.help){
 
 //note that this is the first run
 var alreadyRendered = false;
+var previousHeight = 0;
 
 //check format of input data
 var dataFormat = 'csv' //default
@@ -49,18 +50,29 @@ var runTable = function(input){
 	var Table = require('./public.js');
 	var t1 = Table.setup(header,body,options);
 	
+	//hide cursor
+	console.log('\u001b[?25l');
+	
 	//wipe existing if already rendered
 	if(alreadyRendered){
+
+		//move cursor up number to the top of the previous print
+		//before deleting
+		console.log('\u001b['+(previousHeight+3)+'A');
+		
 		//delete to end of terminal
 		console.log('\u001b[0J');
-
-		//move cursor up number of spaces equal to table height + 1
-		console.log('\u001b['+(input.length+7)+'A');
 	}
 	else{
 		alreadyRendered = true;
 	}
+	
 	console.log(t1.render());
+	
+	//reset the previous height to the height of this output
+	//for when we next clear the print
+	previousHeight = t1.height;
+
 };
 
 process.stdin.resume();
@@ -97,6 +109,5 @@ process.stdin.on('data', function(chunk) {
 
 process.stdin.on('end', function() {
 	//nothing
-	
 });
 
