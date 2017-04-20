@@ -127,14 +127,10 @@ var header = [
  }
 ];
 
-//Example with arrays as rows 
+//Using arrays for rows 
 var rows = [
  ["hamburger",2.50,"no"],
- ["el jefe's special cream sauce",0.10,"yes"],
- ["two tacos, rice and beans topped with cheddar cheese",9.80,"no"],
- ["apple slices",1.00,"yes"],
- ["ham sandwich",1.50,"no"],
- ["macaroni, ham and peruvian mozzarella",3.75,"no"]
+ ["el jefe's special cream sauce",0.10,"yes"]
 ];
 
 var footer = [
@@ -164,7 +160,7 @@ str1 = t1.render();
 console.log(str1);
 
 
-//Example with objects as rows 
+//Using objects for rows 
 var rows = [
  {
   item : "hamburger",
@@ -175,26 +171,6 @@ var rows = [
   item : "el jefe's special cream sauce",
   price : 0.10,
   organic : "yes"
- },
- {
-  item : "two tacos, rice and beans topped with cheddar cheese",
-  price : 9.80,
-  organic : "no"
- },
- {
-  item : "apple slices",
-  price : 1.00,
-  organic : "yes" 
- }, 
- {
-  item : "ham sandwich",
-  price : 1.50,
-  organic : "no"
- },
- {
-  item : "macaroni, ham and peruvian mozzarella",
-  price : 3.75,
-  organic : "no"
  }
 ];
 
