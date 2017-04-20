@@ -335,4 +335,4 @@ grunt watch
 
 [GPLv3 License](http://www.gnu.org/licenses/gpl-3.0.en.html)
 
-Copyright 2015-2016, Tecfu. 
+Copyright 2015-2017, Tecfu. 
