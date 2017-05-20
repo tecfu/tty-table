@@ -1,5 +1,6 @@
-var StripAnsi = require("strip-ansi");
-var Wrap = require("word-wrap");
+//var StripAnsi = require("strip-ansi");
+//var Wrap = require("word-wrap");
+var Wrap = require("smartwrap");
 var Wcwidth = require("wcwidth");
 var Format = {};
 
@@ -163,12 +164,14 @@ Format.handleAsianChars = function(string,cellOptions,innerWidth){
 }
 
 Format.handleLatinChars = function(string,cellOptions,innerWidth){
+	var calculatedWidth = innerWidth - 
+												cellOptions.paddingLeft -
+												cellOptions.paddingRight;
 	var outstring = Wrap(string,{
-		width : innerWidth - 
-						cellOptions.paddingLeft -
-						cellOptions.paddingRight,
-		trim : true,
-		indent : ''
+		width : calculatedWidth,
+		trim : true//,
+		//indent : '',
+		//cut : true
 	});
 
 	return outstring;
