@@ -2,8 +2,6 @@
  * To debug gruntfile:
  * node-debug $(which grunt) task
  */	
-
-
 module.exports = function(grunt) {
 
 	//Modules for browserify to ignore
@@ -120,15 +118,15 @@ module.exports = function(grunt) {
 		var exec = require('child_process').exec, child;
 		var gruntDeferred = this.async();
 		var jobQueue = [];
-		var Orgy = require('orgy');
+		var orgy = require('orgy');
 		var fs = require('fs');	
 
 		//Get list of all test scripts
 		var list = glob.sync('examples/*.js'); 
-		list.forEach(function(element,index,array){
+		list.forEach(function(element){
 			
 			//Create a deferred for each run, which is pushed into a queue.
-			var deferred = Orgy.deferred();
+			var deferred = orgy.deferred();
 			jobQueue.push(deferred);
 
 			child = exec('node ./'+element+' --color=always',
@@ -137,7 +135,7 @@ module.exports = function(grunt) {
 					grunt.log.error('Exec error: ' + error);
 				}
 				var subname = element.split('.')[0];
-				filename = subname + '-output.txt';
+				var filename = subname + '-output.txt';
 				fs.writeFileSync(filename,stdout);
 				grunt.log.write('Wrote output to text file: ' + filename + '\n');
 				deferred.resolve();
@@ -145,7 +143,7 @@ module.exports = function(grunt) {
 		});
 
 		//Resolve grunt deferred only after jobQueue is complete.
-		Orgy.queue(jobQueue,[{
+		orgy.queue(jobQueue,[{
 			timeout : 1000	
 		}])
 		.done(function(){
@@ -156,10 +154,10 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('doc','Documentation generation task',function(){
 		var gruntDeferred = this.async(), 
-				Orgy = require('orgy'),
-				deferred1 = Orgy.deferred({timeout : 20000}),
-				deferred2 = Orgy.deferred({timeout : 20000}),
-				queue = Orgy.queue([deferred1,deferred2],{
+				orgy = require('orgy'),
+				deferred1 = orgy.deferred({timeout : 20000}),
+				deferred2 = orgy.deferred({timeout : 20000}),
+				queue = orgy.queue([deferred1,deferred2],{
 									timeout : 20000
 								})
 								.done(function(){
@@ -179,7 +177,7 @@ module.exports = function(grunt) {
 		example1 = example1.replace('../','tty-table');
 		example1 = '\n```\n' + example1 + '\n```';	
 		readme = readme.replace(/<!--EXAMPLE-USAGE-->((?:.|[\r\n])*)<!--END-EXAMPLE-USAGE-->/m,
-				'<!--EXAMPLE-USAGE-->\n'+example1+'\n<!--END-EXAMPLE-USAGE-->');
+			'<!--EXAMPLE-USAGE-->\n'+example1+'\n<!--END-EXAMPLE-USAGE-->');
 		deferred1.resolve();
 	
 		//Inject public API reference	
@@ -235,7 +233,7 @@ module.exports = function(grunt) {
 		'shell:browserify-devel-standalone',
 		'shell:browserify-prod-bundle',
 		'shell:browserify-devel-bundle',
-		'uglify',
+		//'uglify',
 		'shell:cleanup',
 		'doc'
 	]);
