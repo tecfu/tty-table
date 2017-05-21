@@ -47,7 +47,7 @@ var Config;
 * @note
 * <a name="note"/>
 * Default border character sets:
-* ```
+* ```js
 *	[
 *		[
 *			{v: " ", l: " ", j: " ", h: " ", r: " "},
@@ -67,7 +67,7 @@ var Config;
 *	]
 * ```
 * @example
-* ```
+* ```js
 * var Table = require('tty-table');
 * var t1 = Table(header,rows,options);
 * console.log(t1.render()); 
@@ -141,7 +141,7 @@ Cls.setup = function(){
  * @returns {String}
  * @memberof Table 
  * @example 
- * ```
+ * ```js
  * var str = t1.render(); 
  * console.log(str); //outputs table
  * ```
