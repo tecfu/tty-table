@@ -7,6 +7,8 @@ module.exports = function(grunt) {
 	//Modules for browserify to ignore
 	var _ignore = '--ignore=path --ignore=request --ignore=http --ignore=fs --ignore=vm --ignore=process --ignore=lodash';
 
+	var banner = '/** \n<%= pkg.name %>: <%= pkg.description %> \nVersion: <%= pkg.version %> \nBuilt: <%= grunt.template.today("yyyy-mm-dd") %> <%= options.timestamp %>\nAuthor: <%= pkg.author %>  \n*/\n';
+
 	// Project configuration.
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
@@ -34,33 +36,6 @@ module.exports = function(grunt) {
 			}
 		},
 		
-		uglify: {
-			"min": {
-				options: {
-					banner: '/** \n<%= pkg.name %>: <%= pkg.description %> \nVersion: <%= pkg.version %> \nBuilt: <%= grunt.template.today("yyyy-mm-dd") %> <%= options.timestamp %>\nAuthor: <%= pkg.author %>  \n*/\n'
-					,mangle : true
-					,compress : true
-					,drop_debugger : false
-					,wrap : true
-				}
-				,files: {
-					'dist/<%= pkg.name %>.min.js': 'dist/<%= pkg.name %>.js',
-				}
-			},
-			"bundle-min": {
-				options: {
-					banner: '/** \n<%= pkg.name %>: <%= pkg.description %> \nVersion: <%= pkg.version %> \nBuilt: <%= grunt.template.today("yyyy-mm-dd") %> <%= options.timestamp %>\nAuthor: <%= pkg.author %>  \n*/\n'
-					,mangle : true
-					,compress : true
-					,drop_debugger : false
-					,wrap : true
-				}
-				,files: {
-					'dist/<%= pkg.name %>.bundle.min.js': 'dist/<%= pkg.name %>.bundle.js',
-				}
-			}
-		},
-	
 		shell: {
 			"generate-vim-tags-file": {
 				command: function (){
@@ -70,25 +45,13 @@ module.exports = function(grunt) {
 			},
 			"browserify-prod-standalone": {
 				command: function () {
-					var cmd = 'browserify --debug --standalone=TtyTable '+_ignore+' -r ./src/main.js > ./dist/<%= pkg.name %>.js';
+					var cmd = 'browserify --standalone=TtyTable '+_ignore+' -r ./src/main.js > ./dist/<%= pkg.name %>.js -t [ babelify --presets [ es2015 babili] ] -p [ browserify-banner --template "'+banner+'"]';
 					return cmd;
 				}
 			},
 			"browserify-devel-standalone": {
 				command: function () {
-					var cmd = 'browserify --debug --standalone=TtyTable '+_ignore+' -r ./src/main.js > ./dist/<%= pkg.name %>.devel.js';
-					return cmd;
-				}
-			},
-			"browserify-prod-bundle": {
-				command: function () {
-					var cmd = 'browserify '+_ignore+' -r ./src/main.js:<%= pkg.name %> > ./dist/<%= pkg.name %>.bundle.js';
-					return cmd;
-				}
-			},
-			"browserify-devel-bundle": {
-				command: function () {
-					var cmd = 'browserify --debug '+_ignore+' -r ./src/main.js:<%= pkg.name %> > ./dist/<%= pkg.name %>.bundle.devel.js';
+					var cmd = 'browserify --debug --standalone=TtyTable '+_ignore+' -r ./src/main.js > ./dist/<%= pkg.name %>.devel.js -t [ babelify --presets [ es2015 babili] ]';
 					return cmd;
 				}
 			},
@@ -157,13 +120,13 @@ module.exports = function(grunt) {
 				orgy = require('orgy'),
 				deferred1 = orgy.deferred({timeout : 20000}),
 				deferred2 = orgy.deferred({timeout : 20000}),
-				queue = orgy.queue([deferred1,deferred2],{
-									timeout : 20000
-								})
-								.done(function(){
-									gruntDeferred();
-								}),
 				fs = require('fs');
+				orgy.queue([deferred1,deferred2],{
+					timeout : 20000
+				})
+				.done(function(){
+					gruntDeferred();
+				});
 		
 		//Get README
 		var readme = fs.readFileSync("./README.md",{
@@ -177,7 +140,7 @@ module.exports = function(grunt) {
 		example1 = example1.replace('../','tty-table');
 		example1 = '\n```\n' + example1 + '\n```';	
 		readme = readme.replace(/<!--EXAMPLE-USAGE-->((?:.|[\r\n])*)<!--END-EXAMPLE-USAGE-->/m,
-			'<!--EXAMPLE-USAGE-->\n'+example1+'\n<!--END-EXAMPLE-USAGE-->');
+		'<!--EXAMPLE-USAGE-->\n'+example1+'\n<!--END-EXAMPLE-USAGE-->');
 		deferred1.resolve();
 	
 		//Inject public API reference	
@@ -193,7 +156,6 @@ module.exports = function(grunt) {
 			var str = stdout.replace(/new /g,'')
 											.replace(/_public\./g,'');
 
-
 			readme = readme.replace(/<!--API-REF-->((?:.|[\r\n])*)<!--END-API-REF-->/m,
 				'<!--API-REF-->\n\n'+str+'\n<!--END-API-REF-->');
 
@@ -204,7 +166,6 @@ module.exports = function(grunt) {
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-shell');
 	grunt.loadNpmTasks('grunt-mocha-test');
 
@@ -231,9 +192,6 @@ module.exports = function(grunt) {
 	grunt.registerTask('default', [
 		'shell:browserify-prod-standalone',
 		'shell:browserify-devel-standalone',
-		'shell:browserify-prod-bundle',
-		'shell:browserify-devel-bundle',
-		//'uglify',
 		'shell:cleanup',
 		'doc'
 	]);
