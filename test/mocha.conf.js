@@ -4,12 +4,13 @@ var assert = chai.assert;
 var should = chai.should();
 var fs = require('fs');
 var glob = require('glob');
+var grunt = require('grunt');
 
 //Get list of all test scripts
-var list = glob.sync('examples/*.js'); 
+var list = glob.sync('examples/*.js');
 
 list.forEach(function(element,index,array){
-	
+
 	//Matching test
 	describe(element,function(){
 		it('Should match ' + element + '-output.txt',function(deferred){
@@ -24,7 +25,7 @@ list.forEach(function(element,index,array){
 					grunt.log.error('Exec error: ' + error);
 				}
 				var subname = element.split('.')[0];
-				var expected1 = fs.readFileSync('./'+subname+'-output.txt',{encoding : 'utf-8'}); 
+				var expected1 = fs.readFileSync('./'+subname+'-output.txt',{encoding : 'utf-8'});
 				stdout.should.equal(expected1);
 				deferred();
 			});
