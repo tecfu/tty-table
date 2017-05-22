@@ -39,6 +39,16 @@ switch(true){
 		var csv = require('csv');
 }
 
+//sometimes users need to speciy delimiter or special options
+var formatterOptions = {};
+if(dataFormat === 'csv'){
+	Object.keys(argv).forEach(function(key){
+		if(key.substr(0,3)==='csv'){
+			formatterOptions[key.substr(4,key.length)] = argv[key]	
+		}
+	});
+}
+
 //because diffent dataFormats 
 var runTable = function(input){
 	
@@ -94,7 +104,7 @@ process.stdin.on('data', function(chunk) {
 			runTable(data);
 			break;
 		default:
-			csv.parse(chunk, function(err, data){
+			csv.parse(chunk,formatterOptions,function(err, data){
 				//validate csv	
 				if(typeof data === 'undefined'){
 					var msg = "CSV parse error.";
