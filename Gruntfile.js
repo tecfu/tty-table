@@ -37,12 +37,6 @@ module.exports = function(grunt) {
 		},
 		
 		shell: {
-			"generate-vim-tags-file": {
-				command: function (){
-					var cmd = 'find . -name "*.js" -path "./src/*" | xargs jsctags {} -f | sed "/^$/d" | sort > tags'; 
-					return cmd;
-				}
-			},
 			"browserify-prod-standalone": {
 				command: function () {
 					var cmd = 'browserify --standalone=TtyTable '+_ignore+' -r ./src/main.js > ./dist/<%= pkg.name %>.js -t [ babelify --presets [ es2015 babili] ] -p [ browserify-banner --template "'+banner+'"]';
@@ -59,7 +53,19 @@ module.exports = function(grunt) {
 				command: function(){
 					return "rm ./dist/<%= pkg.name %>.js ./dist/<%= pkg.name %>.bundle.js";
 				}
-			}	
+			},
+			"generate-vim-tags-file": {
+				command: function (){
+					var cmd = 'find . -name "*.js" -path "./src/*" | xargs jsctags {} -f | sed "/^$/d" | sort > tags'; 
+					return cmd;
+				}
+			},
+			"get-node-version": {
+				command: function (){
+					var cmd = 'echo "Fetching node version...\n" && node --version'; 
+					return cmd;
+				}
+			},	
 		},
 	
 		//regenerate tags file on file save
@@ -190,6 +196,7 @@ module.exports = function(grunt) {
 	]);
 
 	grunt.registerTask('default', [
+		'shell:get-node-version',
 		'shell:browserify-prod-standalone',
 		'shell:browserify-devel-standalone',
 		'shell:cleanup',

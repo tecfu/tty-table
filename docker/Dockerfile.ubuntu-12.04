@@ -4,8 +4,9 @@ FROM ubuntu:12.04.5
 RUN apt-get update
 
 # Install nodejs 
-RUN apt-get -y install software-properties-common python-software-properties bzip2
-RUN apt-add-repository ppa:chris-lea/node.js
+RUN apt-get install curl -y
+RUN apt-get install python-software-properties -y
+RUN curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
 RUN apt-get update
 RUN apt-get install -y nodejs
 
@@ -21,4 +22,5 @@ WORKDIR /tty-table
 RUN npm install
 
 # Run unit tests
+RUN node -v
 RUN grunt t

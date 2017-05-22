@@ -3,14 +3,17 @@ sudo: required
 
 language: node_js
 
+node_js:
+  - "node"
+
 env:
   # Test package on all supported OSes.
   - distribution: centos
     version: 7
   - distribution: ubuntu
-    version: 14.04
-  - distribution: ubuntu
     version: 12.04
+  - distribution: ubuntu
+    version: 14.04
 
 services:
   - docker
@@ -19,7 +22,7 @@ before_install:
   # Pull base image
   - 'sudo docker pull ${distribution}:${version}'
   # Create custom image named: ${distribution}-${version}:tty-table 
-  - 'sudo docker build --force-rm --file=docker/Dockerfile.${distribution}-${version} --tag=${distribution}-${version}:tty-table .'
+  - 'sudo docker build --no-cache=true --file=docker/Dockerfile.${distribution}-${version} --tag=${distribution}-${version}:tty-table .'
   
 before_script:
   # Create virtual framebuffer so display output can be read with 
