@@ -4,11 +4,11 @@ FROM ubuntu:14.04.5
 RUN apt-get update
 
 # Install nodejs
-#RUN apt-get install curl -y
-#RUN apt-get install python-software-properties -y
-#RUN curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
-#RUN apt-get update
-#RUN apt-get install -y nodejs
+RUN apt-get install curl -y
+RUN apt-get install python-software-properties -y
+RUN curl -sL https://deb.nodesource.com/setup_7.x | bash -
+RUN apt-get update
+RUN apt-get install -y nodejs
 
 # Install tty-table
 RUN apt-get install git -y

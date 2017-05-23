@@ -1,10 +1,10 @@
 ---
 sudo: required
 
-language: node_js
+#language: node_js
 
-node_js:
-  - "node"
+#node_js:
+#  - "node"
 
 env:
   # Test package on all supported OSes.
