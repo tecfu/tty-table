@@ -100,7 +100,8 @@ process.stdin.on('data', function(chunk) {
 });
 
 process.stdin.on('end', function() {
-	//nothing
+	//show cursor
+	console.log('\u001b[?25h');
 });
 
 //run help only at the end
