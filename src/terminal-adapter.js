@@ -1,24 +1,11 @@
 #!/usr/bin/env node
-
+var yargs = require('yargs');
 var Chalk = require('chalk');
 var sendError = function(msg){
 	msg = '\ntty-table says: ' + msg + '\n';
 	console.log(msg);
 	process.exit(1);
 };
-
-//get arguments
-var argv = require('minimist')(process.argv.slice(2));	
-
-//check if help called
-if(argv.help){
-	var msg = '\n';
-			msg += Chalk.bgBlack.green('OPTIONS')+'\n';
-			msg += '-------\n\n'; 
-			msg += '--format (JSON,csv)\n';
-	console.log(msg);
-	process.exit();
-}
 
 //note that this is the first run
 var alreadyRendered = false;
@@ -27,8 +14,8 @@ var previousHeight = 0;
 //check format of input data
 var dataFormat = 'csv' //default
 
-if(argv.format){
-	dataFormat = argv.format
+if(yargs.argv.format){
+	dataFormat = yargs.argv.format
 }
 
 switch(true){
@@ -37,16 +24,6 @@ switch(true){
 		break;
 	default:
 		var csv = require('csv');
-}
-
-//sometimes users need to speciy delimiter or special options
-var formatterOptions = {};
-if(dataFormat === 'csv'){
-	Object.keys(argv).forEach(function(key){
-		if(key.substr(0,3)==='csv'){
-			formatterOptions[key.substr(4,key.length)] = argv[key]	
-		}
-	});
 }
 
 //because diffent dataFormats 
@@ -96,14 +73,19 @@ process.stdin.on('data', function(chunk) {
 				var data = JSON.parse(chunk);
 			}
 			catch(e){
-				var msg = "JSON parse error.";
-				msg = Chalk.bgRed.white(msg);
+				var msg = Chalk.bgRed.white(msg);
 				msg = msg + "\n\nPlease check to make sure that your input data consists of JSON or specify a different format with the --format flag.";
 				sendError(msg);
 			}
 			runTable(data);
 			break;
 		default:
+			var formatterOptions = {};
+			Object.keys(yargs.argv).forEach(function(key){
+				if(key.slice(0,4) === 'csv-'){
+					formatterOptions[key.slice(4)] = yargs.argv[key];
+				}
+			});
 			csv.parse(chunk,formatterOptions,function(err, data){
 				//validate csv	
 				if(typeof data === 'undefined'){
@@ -121,3 +103,5 @@ process.stdin.on('end', function() {
 	//nothing
 });
 
+//run help only at the end
+//yargs.argv.help();
