@@ -1,8 +1,14 @@
 #!/usr/bin/env node
 var yargs = require('yargs');
+yargs.epilog('Copyright github.com/tecfu 2017');
+yargs.option('format');
+yargs.describe('format','Set input data format');
+yargs.choices('format',['json','csv']);
+yargs.default('format','csv');
+
 var Chalk = require('chalk');
 var sendError = function(msg){
-	msg = '\ntty-table says: ' + msg + '\n';
+	msg = '\ntty-table error: ' + msg + '\n';
 	console.log(msg);
 	process.exit(1);
 };
@@ -11,15 +17,9 @@ var sendError = function(msg){
 var alreadyRendered = false;
 var previousHeight = 0;
 
-//check format of input data
-var dataFormat = 'csv' //default
-
-if(yargs.argv.format){
-	dataFormat = yargs.argv.format
-}
-
+var dataFormat = 'csv';
 switch(true){
-	case(dataFormat.toString().match(/json/i) !== null):
+	case(yargs.argv.format.toString().match(/json/i) !== null):
 		dataFormat = 'json';
 		break;
 	default:
@@ -105,4 +105,4 @@ process.stdin.on('end', function() {
 });
 
 //run help only at the end
-//yargs.argv.help();
+yargs.argv = yargs.help('h').argv;
