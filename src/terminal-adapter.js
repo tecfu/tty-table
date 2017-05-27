@@ -1,34 +1,34 @@
 #!/usr/bin/env node
 var yargs = require('yargs');
 yargs.epilog('Copyight github.com/tecfu 2017');
+//yargs.option('format');
+//yargs.describe('format','Set input data format');
+//yargs.choices('format',['json','csv']);
+//yargs.default('format','csv');
+//node-csv-parse options
+yargs.option('csv-delimiter',{
+	describe:'Set the field delimiter. One character only.', 
+	default:','
+});
+yargs.option('csv-rowDelimiter',{
+	describe:'String used to delimit record rows or a special constant; special constants are "auto","unix","max","windows","unicode".',
+	default:"'"
+});
+yargs.option('escape',{
+	describe:'Set the escape character. One character only.',
+	default:'"'
+});
+yargs.option('format',{
+	describe:'Set input data format',
+	choices:['json','csv'],
+	default:'csv'
+});
 yargs.version(function(){
 	var fs = require('fs');
 	var path =__dirname+'/../package.json';
 	var contents = fs.readFileSync(path,'utf-8');
 	var json = JSON.parse(contents);
 	return json.version;
-});
-//yargs.option('format');
-//yargs.describe('format','Set input data format');
-//yargs.choices('format',['json','csv']);
-//yargs.default('format','csv');
-yargs.option('format',{
-	describe:'Set input data format',
-	choices:['json','csv'],
-	default:'csv'
-});
-//node-csv-parse options
-yargs.option('csv-delimiter',{
-	describe:'Set the field delimiter. One character only.', 
-	default:','
-});
-yargs.option('escape',{
-	describe:'Set the escape character. One character only.',
-	default:'"'
-});
-yargs.option('csv-rowDelimiter',{
-	describe:'String used to delimit record rows or a special constant; special constants are "auto","unix","max","windows","unicode".',
-	default:"'"
 });
 
 var Chalk = require('chalk');
