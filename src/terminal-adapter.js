@@ -1,11 +1,6 @@
 #!/usr/bin/env node
 var yargs = require('yargs');
 yargs.epilog('Copyight github.com/tecfu 2017');
-//yargs.option('format');
-//yargs.describe('format','Set input data format');
-//yargs.choices('format',['json','csv']);
-//yargs.default('format','csv');
-//node-csv-parse options
 yargs.option('csv-delimiter',{
 	describe:'Set the field delimiter. One character only.', 
 	default:','
