@@ -8,14 +8,14 @@ A terminal table widget for nodejs and the browser.
 
 - As a [terminal application](docs/terminal.md):
 
-```
+```sh
 $ sudo apt-get install nodejs 
 $ npm install tty-table -g
 ```
 
 - As a Nodejs module:
 
-```
+```sh
 npm install tty-table
 ```
 
@@ -221,7 +221,7 @@ console.log(str2);
 **Kind**: global class  
 **Note**: <a name="note"/>
 Default border character sets:
-```
+```js
 	[
 		[
 			{v: " ", l: " ", j: " ", h: " ", r: " "},
@@ -301,13 +301,13 @@ console.log(str); //outputs table
 
 ## Running tests
 
-```
+```sh
 grunt test
 ```
 
 ## Saving the output of new unit tests 
 
-```
+```sh
 grunt st
 ```
 - Because: 
@@ -318,13 +318,13 @@ grunt st
 
 - To generate vim tags (make sure [jsctags](https://github.com/ramitos/jsctags) is installed globally)
 
-```
+```sh
 grunt tags
 ```
 
 - To generate vim tags on file save 
 
-```
+```sh
 grunt watch
 ```
 
