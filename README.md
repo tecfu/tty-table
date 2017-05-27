@@ -82,7 +82,7 @@ var Table = require('tty-table')('automattic-cli-table');
 
 <!--EXAMPLE-USAGE-->
 
-```
+```js
 var Table = require('tty-table');
 var chalk = require('chalk');
 
@@ -238,7 +238,7 @@ Default border character sets:
 | options.truncate | <code>mixed</code> | default: false  Cell values are truncated when 'truncate' set to a string, length > 0 |
 
 **Example**  
-```
+```js
 var Table = require('tty-table');
 var t1 = Table(header,rows,options);
 console.log(t1.render()); 
@@ -250,7 +250,7 @@ Renders a table to a string
 
 **Kind**: static method of <code>[Table](#Table)</code>  
 **Example**  
-```
+```js
 var str = t1.render(); 
 console.log(str); //outputs table
 ```
