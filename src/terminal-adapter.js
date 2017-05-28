@@ -5,13 +5,13 @@ yargs.option('csv-delimiter',{
 	describe:'Set the field delimiter. One character only.', 
 	default:','
 });
+yargs.option('csv-escape',{
+	describe:'Set the escape character. One character only.',
+	default:'"'
+});
 yargs.option('csv-rowDelimiter',{
 	describe:'String used to delimit record rows or a special constant; special constants are "auto","unix","max","windows","unicode".',
 	default:"'"
-});
-yargs.option('escape',{
-	describe:'Set the escape character. One character only.',
-	default:'"'
 });
 yargs.option('format',{
 	describe:'Set input data format',
