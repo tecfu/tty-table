@@ -119,7 +119,23 @@ process.stdin.on('data', function(chunk) {
 	}
 });
 
-process.stdin.on('end', function() {
+if (process.platform === "win32") {
+  var rl = require("readline").createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  rl.on("SIGINT", function () {
+    process.emit("SIGINT");
+  });
+}
+
+process.on("SIGINT", function () {
+  //graceful shutdown
+  process.exit();
+});
+
+process.on('exit', function() {
 	//show cursor
 	console.log('\u001b[?25h');
 });
