@@ -34,7 +34,6 @@
     "chalk": "^1.1.0",
     "csv": "^1.1.1",
     "merge": "^1.2.0",
-    "minimist": "^1.2.0",
     "smartwrap": "^1.0.3",
     "strip-ansi": "^3.0.0",
     "wcwidth": "^1.0.1",
@@ -54,7 +53,6 @@
     "grunt-mocha": "^1.0.4",
     "grunt-mocha-test": "^0.13.2",
     "grunt-shell": "^2.1.0",
-    "mocha": "^3.4.1",
-    "orgy": "^2.0.6"
+    "mocha": "^3.4.1"
   }
 }
