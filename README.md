@@ -63,7 +63,7 @@ var Table = require('tty-table')('automattic-cli-table');
 
 ![Static](https://cloud.githubusercontent.com/assets/7478359/15691679/07142030-273f-11e6-8f1e-25728d558a2d.png "Static Example") 
 
-![Streaming](https://cloud.githubusercontent.com/assets/7478359/15691533/39f5fed4-273e-11e6-81a6-533bd8dbd1c4.gif "Streaming Example") 
+![Streaming](https://cloud.githubusercontent.com/assets/7478359/26528893/88e38e38-4369-11e7-8125-05df0259511e.gif "Streaming Example") 
 
 ### Browser & Browser Console 
 
