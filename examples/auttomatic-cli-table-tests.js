@@ -33,9 +33,9 @@ console.log(headless_table.toString());
 
 /* vertical */
 var vertical_table = new Table({
-	style : {
-		head : ['green']
-	}
+  style : {
+    head : ['green']
+  }
 });
 vertical_table.push({ "Some Key": "Some Value"},
 { "Another much longer key": "And its corresponding longer value"}
