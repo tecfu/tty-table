@@ -19,6 +19,9 @@ yargs.option('format',{
   choices:['json','csv'],
   default:'csv'
 });
+yargs.option('options\u2010\u002A',{
+  describe:'Specify an optional setting where * is the setting name. See README.md for a complete list.'
+});
 yargs.version(function(){
   let fs = require('fs');
   let path =__dirname+'/../package.json';
@@ -47,13 +50,37 @@ switch(true){
     let csv = require('csv');
 }
 
+//look for options-* 
+let options = {};
+Object.keys(yargs.argv).forEach(function(key){
+  let keyParts = key.split('-');
+  if(keyParts[0]==='options'){
+    options[keyParts[1]]=yargs.argv[key];
+  }
+});
+
+//look for header-n-*
+//Object.keys(yargs.argv).forEach(function(key){
+//  let keyParts = key.split('-');
+//  if(keyParts[0] === 'header'){
+//    //find out which column we're setting an option on
+//    let column = keyParts[1];
+//    if(typeof header[column] === 'undefined'){
+//      header[column] = {}
+//    }
+//    header[column][keyParts[2]] = yargs.argv[key];
+//  }
+//});
+
+//if header is specified, we'll need to have a size on it
+
+
 //because diffent dataFormats 
 let runTable = function(input){
   
   let header = [], 
-  body = input, 
+  body = input; 
   //footer = [], 
-  options = {};
 
   let Table = require('./public.js');
   let t1 = Table.setup(header,body,options);
