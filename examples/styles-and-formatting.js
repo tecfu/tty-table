@@ -72,7 +72,8 @@ var t1 = Table(header,rows,footer,{
   paddingBottom : 0,
   headerAlign : "center",
   align : "center",
-  color : "white"
+  color : "white",
+  truncate: "..."
 });
 
 str1 = t1.render();

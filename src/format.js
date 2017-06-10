@@ -1,8 +1,8 @@
-//var StripAnsi = require("strip-ansi");
-//var Wrap = require("word-wrap");
-var Wrap = require("smartwrap");
-var Wcwidth = require("wcwidth");
-var Format = {};
+//let StripAnsi = require("strip-ansi");
+//let Wrap = require("word-wrap");
+let Wrap = require("smartwrap");
+let Wcwidth = require("wcwidth");
+let Format = {};
 
 Format.calculateLength = function(line) {
   //return StripAnsi(line.replace(/[^\x00-\xff]/g,'XX')).length;
@@ -18,27 +18,27 @@ Format.wrapCellContent = function(
 ){
   
   //coerce cell value to string
-  var string = cellValue.toString(); 
+  let string = cellValue.toString(); 
 
   //ANSI chararacters that demarcate the start of a line
-  var startAnsiRegexp = /^(\033\[[0-9;]*m)+/;
+  let startAnsiRegexp = /^(\033\[[0-9;]*m)+/;
 
   //store matching ANSI characters
-  var startMatches = string.match(startAnsiRegexp) || [''];
+  let startMatches = string.match(startAnsiRegexp) || [''];
 
   //remove ANSI start-of-line chars 
   string = string.replace(startAnsiRegexp,'');
 
   //ANSI chararacters that demarcate the end of a line
-  var endAnsiRegexp = /(\033\[[0-9;]*m)+$/;
+  let endAnsiRegexp = /(\033\[[0-9;]*m)+$/;
 
   //store matching ANSI characters so can be later re-attached
-  var endMatches = string.match(endAnsiRegexp) || [''];
+  let endMatches = string.match(endAnsiRegexp) || [''];
 
   //remove ANSI end-of-line chars 
   string = string.replace(endAnsiRegexp,'');
 
-  var alignTgt;
+  let alignTgt;
 
   switch(rowType){
     case('header'):
@@ -58,10 +58,10 @@ Format.wrapCellContent = function(
       Math.max(cellOptions.paddingRight,cellOptions.paddingLeft,0);
   }
 
-  var columnWidth = config.table.columnWidths[columnIndex];
+  let columnWidth = config.table.columnWidths[columnIndex];
   
   //innerWidth is the width available for text within the cell
-  var innerWidth = columnWidth -
+  let innerWidth = columnWidth -
    cellOptions.paddingLeft -
    cellOptions.paddingRight -
    config.GUTTER; 
@@ -89,22 +89,22 @@ Format.wrapCellContent = function(
   }
 
   //break string into array of lines
-  var strArr = string.split('\n');
+  let strArr = string.split('\n');
 
   //format each line
   strArr = strArr.map(function(line){
 
     line = line.trim();  
   
-    var lineLength = Format.calculateLength(line);
+    let lineLength = Format.calculateLength(line);
 
     //alignment 
     if(lineLength < columnWidth){
-      var emptySpace = columnWidth - lineLength; 
+      let emptySpace = columnWidth - lineLength; 
       switch(true){
         case(cellOptions[alignTgt] === 'center'):
           emptySpace --;
-          var padBoth = Math.floor(emptySpace / 2), 
+          let padBoth = Math.floor(emptySpace / 2), 
               padRemainder = emptySpace % 2;
           line = Array(padBoth + 1).join(' ') + 
             line +
@@ -135,7 +135,7 @@ Format.wrapCellContent = function(
 }
 
 Format.handleTruncatedValue = function(string,cellOptions,innerWidth){
-  var outstring = string;
+  let outstring = string;
   if(innerWidth < outstring.length){
     outstring = outstring.substring(0,innerWidth - cellOptions.truncate.length);
     outstring = outstring + cellOptions.truncate;
@@ -144,11 +144,11 @@ Format.handleTruncatedValue = function(string,cellOptions,innerWidth){
 }
 
 Format.handleAsianChars = function(string,cellOptions,innerWidth){
-  var count = 0;
-  var start = 0;
-  var characters = string.split('');
+  let count = 0;
+  let start = 0;
+  let characters = string.split('');
 
-  var outstring = characters.reduce(function (prev, cellValue, i) {
+  let outstring = characters.reduce(function (prev, cellValue, i) {
     count += Format.calculateLength(cellValue);
     if (count > innerWidth) {
       prev.push(string.slice(start, i));
@@ -164,10 +164,10 @@ Format.handleAsianChars = function(string,cellOptions,innerWidth){
 }
 
 Format.handleLatinChars = function(string,cellOptions,innerWidth){
-  var calculatedWidth = innerWidth - 
+  let calculatedWidth = innerWidth - 
                         cellOptions.paddingLeft -
                         cellOptions.paddingRight;
-  var outstring = Wrap(string,{
+  let outstring = Wrap(string,{
     width : calculatedWidth,
     trim : true//,
     //indent : '',
@@ -179,8 +179,8 @@ Format.handleLatinChars = function(string,cellOptions,innerWidth){
 
 Format.getColumnWidths = function(config,rows){
   
-  var widths = [];
-  var source; //source of columns  
+  let widths = [];
+  let source; //source of columns  
   
   //check widths on header settings if exists
   if(config.table.header[0] && config.table.header[0].length > 0){
@@ -203,7 +203,7 @@ Format.getColumnWidths = function(config,rows){
   });
 
   //check to make sure widths will fit the current display, or resize.
-  var totalWidth = widths.reduce(function(prev,curr){
+  let totalWidth = widths.reduce(function(prev,curr){
     return prev + curr;
   });
   
@@ -213,7 +213,7 @@ Format.getColumnWidths = function(config,rows){
   //check process exists in case we are in browser
   if(process && process.stdout && totalWidth > process.stdout.columns){
     //recalculate proportionately to fit size
-    var prop = process.stdout.columns / totalWidth;
+    let prop = process.stdout.columns / totalWidth;
   
     prop = prop.toFixed(2)-0.01;
   

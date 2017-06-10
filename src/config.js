@@ -1,4 +1,4 @@
-var Config = {
+let Config = {
   borderCharacters : [
     [
       {v: " ", l: " ", j: " ", h: " ", r: " "},

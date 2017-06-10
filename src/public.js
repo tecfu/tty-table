@@ -40,7 +40,14 @@ let Config;
 * @param {mixed} options.defaultValue - default: '?'
 * @param {boolean} options.errorOnNull    - default: false
 * @param {mixed} options.truncate - default: false 
-* Cell values are truncated when 'truncate' set to a string, length > 0
+* <br/>
+* When this property is set to a string, cell contents will be truncated by that string instead of wrapped when they extend beyond of the width of the cell. 
+* <br/>
+* For example if: 
+* <br/>
+* <code>"truncate":"..."</code>
+* <br/>
+* the cell will be truncated with "..."
 
 * @returns {Table}
 * @note

@@ -1,8 +1,8 @@
-var Chalk = require("chalk");
+let Chalk = require("chalk");
 
 exports.colorizeCell = function(str,cellOptions,rowType){
   
-  var color = false; //false will keep terminal default
+  let color = false; //false will keep terminal default
   
   switch(true){
     case(rowType === 'body'):
@@ -25,7 +25,7 @@ exports.colorizeCell = function(str,cellOptions,rowType){
 /*
 exports.colorizeAllWords = function(color,str){
   //color each word in the cell so that line breaks don't break color 
-  var arr = str.replace(/(\S+)/gi,function(match){
+  let arr = str.replace(/(\S+)/gi,function(match){
     return Chalk[color](match)+'\ ';
   });
   return arr;

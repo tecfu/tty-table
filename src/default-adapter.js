@@ -1,4 +1,4 @@
-var Public = require('./public.js');
+let Public = require('./public.js');
 module.exports = (function(){
   return Public.setup;
 })()

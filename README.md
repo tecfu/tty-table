@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/tecfu/tty-table.svg?branch=master)](https://travis-ci.org/tecfu/tty-table) [![Dependency Status](https://david-dm.org/tecfu/tty-table.png)](https://david-dm.org/tecfu/tty-table) [![NPM version](https://badge.fury.io/js/tty-table.svg)](http://badge.fury.io/js/tty-table) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
 
-A terminal table widget for nodejs and the browser.
+Display yout data in a table using a terminal, browser, or browser console.
 
 ## Installation
 
-- As a [terminal application](docs/terminal.md):
+- To install as a [terminal application](docs/terminal.md):
 
 ```sh
 $ sudo apt-get install nodejs 
@@ -16,7 +16,7 @@ $ npm install tty-table -g
 - As a Nodejs module:
 
 ```sh
-npm install tty-table
+$ npm install tty-table
 ```
 
 - Browser (via browserify)
@@ -31,21 +31,23 @@ npm install tty-table
 
 ## Why would someone do such a thing?
 
-### Drop-in replacement for the unmaintained [Automattic/cli-table](docs/automattic-cli-table.md):
+- Can be used as a bugfixed, drop-in replacement for the [unmaintained, but popular Automattic/cli-table](https://github.com/Automattic/cli-table/issues/91):
 ```js
 var Table = require('tty-table')('automattic-cli-table');
 //now runs with same syntax as Automattic/cli-table
 ...
 ```
 
-- Fixes these known issues with Automattic/cli-table:
-	- Automatic text wrapping
-	- [Supports Asian characters](https://github.com/tecfu/tty-table/pull/5) 
-	- [Automatically resizes to terminal width](https://github.com/tecfu/tty-table/issues/4)
+- Fixes these open issues with Automattic/cli-table:
+  - [Text alignment](https://github.com/Automattic/cli-table/issues/64)
+  - [Alternative table character sets](https://github.com/Automattic/cli-table/issues/10)
+  - [Automatic text wrapping](https://github.com/Automattic/cli-table/issues/35)
+  - [Wide character support](https://github.com/Automattic/cli-table/issues/82)
+  - [Chokes on null values](https://github.com/Automattic/cli-table/issues/65)
+  - [Automatically resize to terminal width](https://github.com/tecfu/tty-table/issues/4)
 
-- See the [docs here](docs/automattic-cli-table.md).
 
-### Beyond that, the native API also supports:
+### In addition to the fixes listed above, the native API also supports:
 
 - Optional callbacks on column values
 - Header, body column alignment
@@ -58,14 +60,23 @@ var Table = require('tty-table')('automattic-cli-table');
 
 ## Output Examples
 
-### Terminal 
-(npm i -g tty-table)
+### Terminal (Static)
+
+[examples/styles-and-formatting.js](examples/styles-and-formatting.js)
 
 ![Static](https://cloud.githubusercontent.com/assets/7478359/15691679/07142030-273f-11e6-8f1e-25728d558a2d.png "Static Example") 
+
+### Terminal (Streaming)
+
+```
+$ node examples/data/fake-stream.js | tty-table --format=json
+```
 
 ![Streaming](https://cloud.githubusercontent.com/assets/7478359/26528893/88e38e38-4369-11e7-8125-05df0259511e.gif "Streaming Example") 
 
 ### Browser & Browser Console 
+
+- [examples/browser-example.html](examples/browser-example.html)
 
 ![Browser Console Example](https://cloud.githubusercontent.com/assets/7478359/25214897/df99d2e8-254e-11e7-962f-743890292a24.png) 
 
@@ -78,98 +89,6 @@ var Table = require('tty-table')('automattic-cli-table');
 > borderStyle : 2
 > ```
 
-## Default API Usage
-
-<!--EXAMPLE-USAGE-->
-
-```js
-var Table = require('tty-table');
-var chalk = require('chalk');
-
-var header = [
- {
-  value : "item",
-  headerColor : "cyan",
-  color: "white",
-  align : "left",
-  paddingLeft : 5,
-  width : 30
- },
- {
-  value : "price",
-  color : "red", 
-  width : 10,
-  formatter : function(value){
-   var str = "$" + value.toFixed(2);
-   if(value > 5){
-    str = chalk.underline.green(str);
-   }
-   return str;
-  }
- }
-];
-
-//Example with arrays as rows 
-var rows = [
- ["hamburger",2.50,"no"],
- ["el jefe's special cream sauce",0.10,"yes"],
-];
-
-var footer = [
- "TOTAL",
- (function(){
-  return rows.reduce(function(prev,curr){
-   return prev+curr[1]
-  },0)
- }()),
- (function(){
-  var total = rows.reduce(function(prev,curr){
-   return prev+((curr[2]==='yes') ? 1 : 0);
-  },0);
-  return (total/rows.length*100).toFixed(2) + "%";
- }())];
-
-var t1 = Table(header,rows,footer,{
- borderStyle : 1,
- borderColor : "blue",
- paddingBottom : 0,
- headerAlign : "center",
- align : "center",
- color : "white"
-});
-
-str1 = t1.render();
-console.log(str1);
-
-
-//Example with objects as rows 
-var rows = [
- {
-  item : "hamburger",
-  price : 2.50,
-  organic : "no"
- },
- {
-  item : "el jefe's special cream sauce",
-  price : 0.10,
-  organic : "yes"
- }
-];
-
-var t2 = Table(header,rows,{
- borderStyle : 1,
- paddingBottom : 0,
- headerAlign : "center",
- align : "center",
- color : "white"
-});
-
-var str2 = t2.render();
-console.log(str2);
-
-```
-<!--END-EXAMPLE-USAGE-->
-
 ## Default API Reference 
 <!--API-REF-->
 
@@ -181,21 +100,21 @@ console.log(str2);
 Default border character sets:
 ```js
 [
- [
-  {v: " ", l: " ", j: " ", h: " ", r: " "},
-  {v: " ", l: " ", j: " ", h: " ", r: " "},
-  {v: " ", l: " ", j: " ", h: " ", r: " "}
- ],
- [
-  {v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
-  {v: "│", l: "├", j: "┼", h: "─", r: "┤"},
-  {v: "│", l: "└", j: "┴", h: "─", r: "┘"}
- ],
- [
-  {v: "|", l: "+", j: "+", h: "-", r: "+"},
-  {v: "|", l: "+", j: "+", h: "-", r: "+"},
-  {v: "|", l: "+", j: "+", h: "-", r: "+"}
- ]
+[
+ {v: " ", l: " ", j: " ", h: " ", r: " "},
+ {v: " ", l: " ", j: " ", h: " ", r: " "},
+ {v: " ", l: " ", j: " ", h: " ", r: " "}
+],
+[
+ {v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
+ {v: "│", l: "├", j: "┼", h: "─", r: "┤"},
+ {v: "│", l: "└", j: "┴", h: "─", r: "┘"}
+],
+[
+ {v: "|", l: "+", j: "+", h: "-", r: "+"},
+ {v: "|", l: "+", j: "+", h: "-", r: "+"},
+ {v: "|", l: "+", j: "+", h: "-", r: "+"}
+]
 ]
 ```  
 
@@ -235,12 +154,12 @@ Default border character sets:
 | options.defaultErrorValue | <code>mixed</code> | default: 'ERROR!' |
 | options.defaultValue | <code>mixed</code> | default: '?' |
 | options.errorOnNull | <code>boolean</code> | default: false |
-| options.truncate | <code>mixed</code> | default: false  Cell values are truncated when 'truncate' set to a string, length > 0 |
+| options.truncate | <code>mixed</code> | default: false  <br/> When this property is set to a string, cell contents will be truncated by that string instead of wrapped when they extend beyond of the width of the cell.  <br/> For example if:  <br/> <code>"truncate":"..."</code> <br/> the cell will be truncated with "..." |
 
 **Example**  
 ```js
-var Table = require('tty-table');
-var t1 = Table(header,rows,options);
+let Table = require('tty-table');
+let t1 = Table(header,rows,options);
 console.log(t1.render()); 
 ```
 <a name="Table.Cls.render"></a>
@@ -251,7 +170,7 @@ Renders a table to a string
 **Kind**: static method of <code>[Table](#Table)</code>  
 **Example**  
 ```js
-var str = t1.render(); 
+let str = t1.render(); 
 console.log(str); //outputs table
 ```
 
@@ -260,13 +179,13 @@ console.log(str); //outputs table
 ## Running tests
 
 ```sh
-grunt test
+$ grunt test
 ```
 
 ## Saving the output of new unit tests 
 
 ```sh
-grunt st
+$ grunt st
 ```
 - Because: 
 
@@ -277,13 +196,13 @@ grunt st
 - To generate vim tags (make sure [jsctags](https://github.com/ramitos/jsctags) is installed globally)
 
 ```sh
-grunt tags
+$ grunt tags
 ```
 
 - To generate vim tags on file save 
 
 ```sh
-grunt watch
+$ grunt watch
 ```
 
 ## [Packaging as a distributable](packaging.md)

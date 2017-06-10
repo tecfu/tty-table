@@ -1,14 +1,14 @@
-var Merge = require("merge");
-var Style = require("./style.js");
-var Format = require("./format.js");
-var Render = {};
+let Merge = require("merge");
+let Style = require("./style.js");
+let Format = require("./format.js");
+let Render = {};
 
 /**
  * Converts arrays of data into arrays of cell strings
  */
 Render.stringifyData = function(Config,data){
   
-  var sections = {
+  let sections = {
         header : [],
         body : [],
         footer : []
@@ -51,7 +51,7 @@ Render.stringifyData = function(Config,data){
 
   //add borders
   //0=header, 1=body, 2=footer
-  for(var a=0; a<3; a++){
+  for(let a=0; a<3; a++){
     borders.push('');
     Config.table.columnWidths.forEach(function(w,i,arr){
       borders[a] += Array(w).join(borderStyle[a].h) +
@@ -69,7 +69,7 @@ Render.stringifyData = function(Config,data){
   output += borders[0];
 
   //rows
-  var row;
+  let row;
 
   //for each section (header,body,footer)
   Object.keys(sections).forEach(function(p,i){
@@ -121,7 +121,7 @@ Render.stringifyData = function(Config,data){
   //remove all rows in prototype array
   this.splice(0,this.length);
   
-  var finalOutput = Array(Config.marginTop + 1).join('\n') + output;
+  let finalOutput = Array(Config.marginTop + 1).join('\n') + output;
 
   //record the height of the output
   this.height = finalOutput.split(/\r\n|\r|\n/).length;
@@ -131,7 +131,7 @@ Render.stringifyData = function(Config,data){
 
 Render.buildRow = function(config,row,rowType){
 
-  var minRowHeight = 0;
+  let minRowHeight = 0;
   
   //tag row as empty if empty
   //(used) for compact tables
@@ -141,7 +141,7 @@ Render.buildRow = function(config,row,rowType){
   }
 
   //check for diffeerences in line length
-  var difL = config.table.columnWidths.length - row.length;
+  let difL = config.table.columnWidths.length - row.length;
 
   if(difL > 0){
     //add empty element to array
@@ -157,13 +157,13 @@ Render.buildRow = function(config,row,rowType){
   //get row as array of cell arrays
   //can't use es5 row functions (map, forEach because of 
   //potential ellision; by which [1,,3] will only iterate 1,3
-  var cArrs = [];
-  var rowLength = row.length;
+  let cArrs = [];
+  let rowLength = row.length;
   
-  for(var index=0; index<rowLength; index++){
+  for(let index=0; index<rowLength; index++){
     
-    var c = Render.buildCell(config,row[index],index,rowType);
-    var cellArr = c.cellArr;
+    let c = Render.buildCell(config,row[index],index,rowType);
+    let cellArr = c.cellArr;
     
     if(rowType === 'header'){
       config.table.columnInnerWidths.push(c.width);
@@ -180,23 +180,23 @@ Render.buildRow = function(config,row,rowType){
     minRowHeight + (config.paddingBottom + config.paddingTop);
 
   //convert array of cell arrays to array of lines
-  var lines = Array.apply(null,{length:minRowHeight})
+  let lines = Array.apply(null,{length:minRowHeight})
                    .map(Function.call,function(){return []});
   cArrs.forEach(function(cellArr,a){
-    var whiteline = Array(config.table.columnWidths[a]).join('\ ');
+    let whiteline = Array(config.table.columnWidths[a]).join('\ ');
     
     if(rowType ==='body'){
       //add whitespace for top padding
-      for(var i=0; i<config.paddingTop; i++){
+      for(let i=0; i<config.paddingTop; i++){
         cellArr.unshift(whiteline);
       }
       
       //add whitespace for bottom padding
-      for(i=0; i<config.paddingBottom; i++){
+      for(let i=0; i<config.paddingBottom; i++){
         cellArr.push(whiteline);
       }
     }  
-    for(var b=0; b<minRowHeight; b++){  
+    for(let b=0; b<minRowHeight; b++){  
       lines[b].push((typeof cellArr[b] !== 'undefined') ? 
                     cellArr[b] : whiteline);
     }
@@ -206,7 +206,7 @@ Render.buildRow = function(config,row,rowType){
 }
 
 Render.buildCell = function(config,cell,columnIndex,rowType){
-  var cellValue, 
+  let cellValue, 
       cellOptions = Merge(true,config,
                           (rowType === 'body') ? 
                           config.columnSettings[columnIndex] : {}, //ignore columnSettings for footer
@@ -241,7 +241,7 @@ Render.buildCell = function(config,cell,columnIndex,rowType){
   cellValue = Style.colorizeCell(cellValue,cellOptions,rowType);  
 
   //textwrap cellValue
-  var WrapObj  = Format.wrapCellContent(config, cellValue, columnIndex, cellOptions, rowType);
+  let WrapObj  = Format.wrapCellContent(config, cellValue, columnIndex, cellOptions, rowType);
   //cellValue = WrapObj.output.join('\n');
 
   //return as array of lines
@@ -252,14 +252,14 @@ Render.buildCell = function(config,cell,columnIndex,rowType){
 };
 
 Render.getRowFormat = function(row){
-  var type;
+  let type;
   
   //rows passed as an object
   if(typeof row === 'object' && !(row instanceof Array)){
-    var keys = Object.keys(row);
+    let keys = Object.keys(row);
     if(keys.length === 1){
       //detected cross table
-      var key = keys[0];
+      let key = keys[0];
       if(row[key] instanceof Array){
         type = 'automattic-cross';
       }
@@ -286,8 +286,8 @@ Render.getRowFormat = function(row){
 Render.verticalizeMatrix = function(config,inputArray){
 
   //grow to # arrays equal to number of columns in input array
-  var outputArray = [];
-  var headers = config.table.columns;
+  let outputArray = [];
+  let headers = config.table.columns;
 
   //create a row for each heading, and prepend the row
   //with the heading name
@@ -309,7 +309,7 @@ Render.verticalizeMatrix = function(config,inputArray){
  */
 Render.transformRows = function(config,rows){
 
-  var output = [];
+  let output = [];
   switch(config.rowFormat){
     case('automattic-cross'):
       //assign header styles to first column
@@ -317,8 +317,8 @@ Render.transformRows = function(config,rows){
       config.columnSettings[0].color = config.headerColor;
       
       output = rows.map(function(obj){
-        var arr = [];
-        var key = Object.keys(obj)[0];
+        let arr = [];
+        let key = Object.keys(obj)[0];
         arr.push(key);
         return arr.concat(obj[key]);
       });
@@ -329,7 +329,7 @@ Render.transformRows = function(config,rows){
       config.columnSettings[0].color = config.headerColor;
     
       output = rows.map(function(value){
-        var key = Object.keys(value)[0];
+        let key = Object.keys(value)[0];
         return [key,value[key]];
       }); 
       break;
