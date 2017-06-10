@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-var yargs = require('yargs');
+
+let yargs = require('yargs');
 yargs.epilog('Copyight github.com/tecfu 2017');
 yargs.option('csv-delimiter',{
   describe:'Set the field delimiter. One character only.', 
@@ -19,43 +20,43 @@ yargs.option('format',{
   default:'csv'
 });
 yargs.version(function(){
-  var fs = require('fs');
-  var path =__dirname+'/../package.json';
-  var contents = fs.readFileSync(path,'utf-8');
-  var json = JSON.parse(contents);
+  let fs = require('fs');
+  let path =__dirname+'/../package.json';
+  let contents = fs.readFileSync(path,'utf-8');
+  let json = JSON.parse(contents);
   return json.version;
 });
 
-var Chalk = require('chalk');
-var sendError = function(msg){
+let Chalk = require('chalk');
+let sendError = function(msg){
   msg = '\ntty-table error: ' + msg + '\n';
   console.log(msg);
   process.exit(1);
 };
 
 //note that this is the first run
-var alreadyRendered = false;
-var previousHeight = 0;
+let alreadyRendered = false;
+let previousHeight = 0;
 
-var dataFormat = 'csv';
+let dataFormat = 'csv';
 switch(true){
   case(yargs.argv.format.toString().match(/json/i) !== null):
     dataFormat = 'json';
     break;
   default:
-    var csv = require('csv');
+    let csv = require('csv');
 }
 
 //because diffent dataFormats 
-var runTable = function(input){
+let runTable = function(input){
   
-  var header = [], 
+  let header = [], 
   body = input, 
   //footer = [], 
   options = {};
 
-  var Table = require('./public.js');
-  var t1 = Table.setup(header,body,options);
+  let Table = require('./public.js');
+  let t1 = Table.setup(header,body,options);
   
   //hide cursor
   console.log('\u001b[?25l');
@@ -89,18 +90,19 @@ process.stdin.on('data', function(chunk) {
   //handle dataFormats
   switch(true){
     case(dataFormat==='json'):  
+      let data,msg;
       try {
-        var data = JSON.parse(chunk);
+        data = JSON.parse(chunk);
       }
       catch(e){
-        var msg = Chalk.bgRed.white(msg);
+        msg = Chalk.bgRed.white(msg);
         msg = msg + "\n\nPlease check to make sure that your input data consists of JSON or specify a different format with the --format flag.";
         sendError(msg);
       }
       runTable(data);
       break;
     default:
-      var formatterOptions = {};
+      let formatterOptions = {};
       Object.keys(yargs.argv).forEach(function(key){
         if(key.slice(0,4) === 'csv-'){
           formatterOptions[key.slice(4)] = yargs.argv[key];
@@ -109,7 +111,7 @@ process.stdin.on('data', function(chunk) {
       csv.parse(chunk,formatterOptions,function(err, data){
         //validate csv  
         if(typeof data === 'undefined'){
-          var msg = "CSV parse error.";
+          let msg = "CSV parse error.";
           msg = Chalk.bgRed.white(msg);
           msg = msg + "\n\nPlease check to make sure that your input data consists of comma separated values or specify a different format with the --format flag.";
           sendError(msg);
@@ -120,7 +122,7 @@ process.stdin.on('data', function(chunk) {
 });
 
 if (process.platform === "win32") {
-  var rl = require("readline").createInterface({
+  let rl = require("readline").createInterface({
     input: process.stdin,
     output: process.stdout
   });
