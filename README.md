@@ -74,6 +74,11 @@ $ node examples/data/fake-stream.js | tty-table --format=json
 
 ![Streaming](https://cloud.githubusercontent.com/assets/7478359/26528893/88e38e38-4369-11e7-8125-05df0259511e.gif "Streaming Example") 
 
+- *See the built-in help for the terminal version of tty-table with: 
+```
+$ tty-table -h
+```
+
 ### Browser & Browser Console 
 
 - [examples/browser-example.html](examples/browser-example.html)
