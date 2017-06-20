@@ -90,7 +90,7 @@ module.exports = function(grunt) {
     var orgy = require('orgy');
     var fs = require('fs');  
 
-    //Get list of all test scripts
+    //Get list of all example scripts
     var list = glob.sync('examples/*.js'); 
     list.forEach(function(element){
       
