@@ -94,7 +94,7 @@ $ tty-table -h
 > borderStyle : 2
 > ```
 
-## Default API Reference 
+## API Reference 
 <!--API-REF-->
 
 <a name="Table"></a>
