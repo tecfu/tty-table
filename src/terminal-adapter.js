@@ -1,18 +1,17 @@
 #!/usr/bin/env node
-
+let csv = require('csv');
 let yargs = require('yargs');
 yargs.epilog('Copyight github.com/tecfu 2017');
 yargs.option('csv-delimiter',{
-  describe:'Set the field delimiter. One character only.', 
+  describe:'Set the field delimiter. One character only.',
   default:','
 });
 yargs.option('csv-escape',{
-  describe:'Set the escape character. One character only.',
-  default:'"'
+  describe:'Set the escape character. One character only.'
 });
 yargs.option('csv-rowDelimiter',{
-  describe:'String used to delimit record rows or a special constant; special constants are "auto","unix","max","windows","unicode".',
-  default:"'"
+  describe:'String used to delimit record rows. You can also use a special constant: "auto","unix","max","windows","unicode".',
+  default: '\n'
 });
 yargs.option('format',{
   describe:'Set input data format',
@@ -43,11 +42,12 @@ let previousHeight = 0;
 
 let dataFormat = 'csv';
 switch(true){
+  case(typeof yargs.argv.format === 'undefined'):
+    break;
   case(yargs.argv.format.toString().match(/json/i) !== null):
     dataFormat = 'json';
     break;
   default:
-    let csv = require('csv');
 }
 
 //look for options-* 
@@ -131,16 +131,18 @@ process.stdin.on('data', function(chunk) {
     default:
       let formatterOptions = {};
       Object.keys(yargs.argv).forEach(function(key){
-        if(key.slice(0,4) === 'csv-'){
+        if(key.slice(0,4) === 'csv-' && typeof(yargs.argv[key]) !== 'undefined'){
           formatterOptions[key.slice(4)] = yargs.argv[key];
         }
       });
+      
       csv.parse(chunk,formatterOptions,function(err, data){
         //validate csv  
         if(typeof data === 'undefined'){
           let msg = "CSV parse error.";
           msg = Chalk.bgRed.white(msg);
-          msg = msg + "\n\nPlease check to make sure that your input data consists of comma separated values or specify a different format with the --format flag.";
+          msg = msg + '\n\n' + err;
+          msg = msg + '\n\n' + 'Please check to make sure that your input data consists of valid comma separated values or specify a different format with the --format flag.';
           sendError(msg);
         }
         runTable(data);
