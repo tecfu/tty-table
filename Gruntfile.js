@@ -5,7 +5,7 @@
 module.exports = function(grunt) {
 
   //Modules for browserify to ignore
-  var _ignore = '--ignore=path --ignore=request --ignore=http --ignore=fs --ignore=vm --ignore=process --ignore=lodash';
+  var _ignore = '--ignore=path --ignore=request --ignore=http --ignore=fs --ignore=vm --ignore=process --ignore=lodash --ignore=yargs';
 
   var banner = '/** \n<%= pkg.name %>: <%= pkg.description %> \nVersion: <%= pkg.version %> \nBuilt: <%= grunt.template.today("yyyy-mm-dd") %> <%= options.timestamp %>\nAuthor: <%= pkg.author %>  \n*/\n';
 
@@ -49,11 +49,11 @@ module.exports = function(grunt) {
           return cmd;
         }
       },
-      "cleanup" : {
-        command: function(){
-          return "rm ./dist/<%= pkg.name %>.js ./dist/<%= pkg.name %>.bundle.js";
-        }
-      },
+      //"cleanup" : {
+      //  command: function(){
+      //    return "rm ./dist/<%= pkg.name %>.js ./dist/<%= pkg.name %>.bundle.js";
+      //  }
+      //},
       "generate-vim-tags-file": {
         command: function (){
           var cmd = 'find . -name "*.js" -path "./src/*" | xargs jsctags {} -f | sed "/^$/d" | sort > tags'; 
@@ -199,7 +199,7 @@ module.exports = function(grunt) {
     'shell:get-node-version',
     'shell:browserify-prod-standalone',
     'shell:browserify-devel-standalone',
-    'shell:cleanup',
+    //'shell:cleanup',
     'doc'
   ]);
 };
