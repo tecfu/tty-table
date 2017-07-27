@@ -5,7 +5,7 @@
 module.exports = function(grunt) {
 
   //Modules for browserify to ignore
-  var _ignore = '--ignore=path --ignore=request --ignore=http --ignore=fs --ignore=vm --ignore=process --ignore=lodash --ignore=yargs';
+  var _ignore = '--exclude=path --exclude=request --exclude=http --exclude=fs --exclude=vm --exclude=process --exclude=lodash --exclude=yargs';
 
   var banner = '/** \n<%= pkg.name %>: <%= pkg.description %> \nVersion: <%= pkg.version %> \nBuilt: <%= grunt.template.today("yyyy-mm-dd") %> <%= options.timestamp %>\nAuthor: <%= pkg.author %>  \n*/\n';
 
@@ -39,16 +39,29 @@ module.exports = function(grunt) {
     shell: {
       "browserify-prod-standalone": {
         command: function () {
-          var cmd = 'browserify --standalone=TtyTable '+_ignore+' -r ./src/main.js > ./dist/<%= pkg.name %>.js -t [ babelify --presets [ es2015 babili] ] -p [ browserify-banner --template "'+banner+'"]';
+          var cmd = 'browserify --standalone=TtyTable '+_ignore+' -r ./src/default-adapter.js > ./dist/<%= pkg.name %>.js -t [ babelify --presets [ es2015 babili] ] -p [ browserify-banner --template "'+banner+'"]';
           return cmd;
         }
       },
       "browserify-devel-standalone": {
         command: function () {
-          var cmd = 'browserify --debug --standalone=TtyTable '+_ignore+' -r ./src/main.js > ./dist/<%= pkg.name %>.devel.js -t [ babelify --presets [ es2015 babili] ]';
+          var cmd = 'browserify --debug --standalone=TtyTable '+_ignore+' -r ./src/default-adapter.js > ./dist/<%= pkg.name %>.devel.js -t [ babelify --presets [ es2015 babili] ]';
           return cmd;
         }
       },
+      "browserify-prod-bundle": {
+         command: function () {
+          var cmd = 'browserify '+_ignore+' -r ./src/default-adapter.js:<%= pkg.name %> > ./dist/<%= pkg.name %>.bundle.js -t [ babelify --presets [ es2015 babili] ]';
+            return cmd;
+          }
+         },
+      "browserify-devel-bundle": {
+        command: function () {
+          var cmd = 'browserify --debug '+_ignore+' -r ./src/default-adapter.js:<%= pkg.name %> > ./dist/<%= pkg.name %>.bundle.devel.js -t [ babelify --presets [ es2015 babili] ]';
+          return cmd;
+        }
+      },
+
       //"cleanup" : {
       //  command: function(){
       //    return "rm ./dist/<%= pkg.name %>.js ./dist/<%= pkg.name %>.bundle.js";
@@ -199,7 +212,9 @@ module.exports = function(grunt) {
     'shell:get-node-version',
     'shell:browserify-prod-standalone',
     'shell:browserify-devel-standalone',
+    'shell:browserify-prod-bundle',
+    'shell:browserify-devel-bundle',
     //'shell:cleanup',
-    'doc'
+    //'doc'
   ]);
 };
