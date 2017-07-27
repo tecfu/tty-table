@@ -5,7 +5,7 @@
 module.exports = function(grunt) {
 
   //Modules for browserify to ignore
-  var _ignore = '--exclude=path --exclude=request --exclude=http --exclude=fs --exclude=vm --exclude=process --exclude=lodash --exclude=yargs';
+  var _ignore = '--ignore=path --ignore=request --ignore=http --ignore=fs --ignore=vm --ignore=process --ignore=lodash --ignore=yargs';
 
   var banner = '/** \n<%= pkg.name %>: <%= pkg.description %> \nVersion: <%= pkg.version %> \nBuilt: <%= grunt.template.today("yyyy-mm-dd") %> <%= options.timestamp %>\nAuthor: <%= pkg.author %>  \n*/\n';
 
