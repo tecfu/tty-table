@@ -75,7 +75,7 @@ let runTable = function(input){
   body = input; 
   //footer = [], 
 
-  let Table = require('./public.js');
+  let Table = require('../src/public.js');
   let t1 = Table.setup(header,body,options);
   
   //hide cursor

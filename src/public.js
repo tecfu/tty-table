@@ -82,9 +82,9 @@ let Config;
 */
 Cls.setup = function(){
 
-  //check if syntax adapter called, i.e. github.com/Automattic/cli-table
+  //a syntax adapter was called. return the adapter.
   if(Object.keys(arguments).length === 1 && typeof arguments[0] === 'string'){
-    return require('../'+arguments[0]);
+    return require('../adapters/'+arguments[0]);
   }
 
   Config = require('./config.js');

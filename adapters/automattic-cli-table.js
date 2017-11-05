@@ -1,4 +1,4 @@
-var Public = require('./src/public.js');
+var Public = require('../src/public.js');
 
 var Table = function(options){
 

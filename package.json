@@ -4,7 +4,7 @@
   "description": "Command line table generator.",
   "main": "src/main.js",
   "bin": {
-    "tty-table": "src/terminal-adapter.js"
+    "tty-table": "adapters/terminal-adapter.js"
   },
   "preferGlobal": false,
   "scripts": {
