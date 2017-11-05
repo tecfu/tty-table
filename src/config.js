@@ -32,27 +32,26 @@ let Config = {
   marginLeft : 2,
   marginTop : 1,
   paddingBottom : 0,
-  paddingLeft : 0,
-  paddingRight : 0,
+  paddingLeft : 1,
+  paddingRight : 1,
   paddingTop : 0,
   tableType : null,
   truncate: false,
-  width : 20,
-};
-
-Config.GUTTER = 1;
-//save so cell options can be merged into column options
-Config.columnSettings = [];
-Config.headerEmpty = false;
-Config.table = {
-  body : '',
-  columnInnerWidths : [],
-  columnWidths : [],
-  columns : [],
-  footer : '',
-  header : '', //post-rendered strings.
-  height : 0,
-  typeLocked : false //once a table type is selected can't switch
+  width : "auto",
+  GUTTER : 1, //undocumented
+  columnSettings : [],
+  headerEmpty : false,
+  //save so cell options can be merged into column options
+  table : {
+    body : '',
+    columnInnerWidths : [],
+    columnWidths : [],
+    columns : [],
+    footer : '',
+    header : '', //post-rendered strings.
+    height : 0,
+    typeLocked : false //once a table type is selected can't switch
+  }
 };
 
 module.exports = Config;
