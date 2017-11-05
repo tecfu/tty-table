@@ -12,11 +12,11 @@ Render.stringifyData = function(Config,data){
         header : [],
         body : [],
         footer : []
-      },
-      output = '',
-      marginLeft = Array(Config.marginLeft + 1).join('\ '),
-      borderStyle = Config.borderCharacters[Config.borderStyle],
-      borders = [];
+      };
+  let output = '';
+  let marginLeft = Array(Config.marginLeft + 1).join('\ ');
+  let borderStyle = Config.borderCharacters[Config.borderStyle];
+  let borders = [];
 
   //because automattic/cli-table syntax infers table type based on 
   //how rows are passed (array of arrays, objects, etc)
@@ -30,7 +30,7 @@ Render.stringifyData = function(Config,data){
   //stringify header cells
   if(!Config.headerEmpty){
     sections.header = Config.table.header.map(function(row){
-      return Render.buildRow(Config,row,'header');
+      return buildRow(Config,row,'header');
     });
   }
   else{
@@ -39,14 +39,14 @@ Render.stringifyData = function(Config,data){
 
   //stringify body cells
   sections.body = data.map(function(row){
-    return Render.buildRow(Config,row,'body');
+    return buildRow(Config,row,'body');
   });
 
   //stringify footer cells
   sections.footer = (Config.table.footer instanceof Array && Config.table.footer.length > 0) ? [Config.table.footer] : [];
   
   sections.footer = sections.footer.map(function(row){
-    return Render.buildRow(Config,row,'footer');
+    return buildRow(Config,row,'footer');
   });
 
   //add borders
@@ -68,16 +68,13 @@ Render.stringifyData = function(Config,data){
   //top horizontal border
   output += borders[0];
 
-  //rows
-  let row;
-
   //for each section (header,body,footer)
   Object.keys(sections).forEach(function(p,i){
     
     //for each row in the section
     while(sections[p].length){
       
-      row = sections[p].shift();
+      let row = sections[p].shift();
       
       //if(row.length === 0) {break}
 
@@ -129,7 +126,7 @@ Render.stringifyData = function(Config,data){
   return finalOutput;
 };
 
-Render.buildRow = function(config,row,rowType){
+const buildRow = function(config,row,rowType){
 
   let minRowHeight = 0;
   
@@ -140,14 +137,12 @@ Render.buildRow = function(config,row,rowType){
     return row;
   }
 
-  //check for diffeerences in line length
+  //force row to have correct number of columns
   let difL = config.table.columnWidths.length - row.length;
-
   if(difL > 0){
     //add empty element to array
     row = row.concat(Array.apply(null, new Array(difL))
                           .map(function(){return null})); 
-                          //.map(function(){return ''})); 
   }
   else if(difL < 0){
     //truncate array
@@ -155,11 +150,10 @@ Render.buildRow = function(config,row,rowType){
   }
   
   //get row as array of cell arrays
-  //can't use es5 row functions (map, forEach because of 
-  //potential ellision; by which [1,,3] will only iterate 1,3
+  //can't use es5 row functions (map, forEach because i.e.
+  //[1,,3] will only iterate 1,3
   let cArrs = [];
   let rowLength = row.length;
-  
   for(let index=0; index<rowLength; index++){
     
     let c = Render.buildCell(config,row[index],index,rowType);

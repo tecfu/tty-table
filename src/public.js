@@ -1,4 +1,4 @@
-let Merge = require("merge");
+let Merge = require('merge');
 let Render = require('./render.js');
 
 //table body inherits from Array
@@ -19,13 +19,13 @@ let Config;
 * @param {function} header.column.formatter      - Runs a callback on each cell value in the parent column
 * @param {string} header.column.headerAlign      - default: "center" 
 * @param {string} header.column.headerColor      - default: terminal's default color
-* @param {number} header.column.marginLeft      - default: 0
+* @param {number} header.column.marginLeft       - default: 0
 * @param {number} header.column.marginTop        - default: 0      
-* @param {number} header.column.maxWidth        - default: 20 
+* @param {string||number} header.column.width    - default: "auto"
 * @param {number} header.column.paddingBottom    - default: 0
 * @param {number} header.column.paddingLeft      - default: 0
-* @param {number} header.column.paddingRight    - default: 0
-* @param {number} header.column.paddingTop      - default: 0  
+* @param {number} header.column.paddingRight     - default: 0
+* @param {number} header.column.paddingTop       - default: 0  
 *
 * @param {array} rows                      - [See example](#example-usage)
 *
@@ -83,15 +83,14 @@ let Config;
 Cls.setup = function(){
 
   //check if syntax adapter called, i.e. github.com/Automattic/cli-table
-  if(Object.keys(arguments).length === 1 &&
-     typeof arguments[0] === 'string'){
+  if(Object.keys(arguments).length === 1 && typeof arguments[0] === 'string'){
     return require('../'+arguments[0]);
   }
 
   Config = require('./config.js');
 
-  let  options = (typeof arguments[3] === 'object') ? arguments[3] : 
-      (typeof arguments[2] === 'object') ? arguments[2] : {};
+  let options = (typeof arguments[3] === 'object') ? arguments[3] : 
+    (typeof arguments[2] === 'object') ? arguments[2] : {};
 
   Config = Merge(true,Config,options);
 
