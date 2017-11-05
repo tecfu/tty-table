@@ -135,17 +135,8 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('doc','Documentation generation task',function(){
-    var gruntDeferred = this.async(), 
-        orgy = require('orgy'),
-        deferred1 = orgy.deferred({timeout : 20000}),
-        deferred2 = orgy.deferred({timeout : 20000}),
-        fs = require('fs');
-        orgy.queue([deferred1,deferred2],{
-          timeout : 20000
-        })
-        .done(function(){
-          gruntDeferred();
-        });
+    
+    const fs = require('fs');
     
     //Get README
     var readme = fs.readFileSync("./README.md",{
@@ -158,30 +149,26 @@ module.exports = function(grunt) {
     });
     example1 = example1.replace('../','tty-table');
     example1 = '\n```js\n' + example1 + '\n```';  
-    readme = readme.replace(/<!--EXAMPLE-USAGE-->((?:.|[\r\n])*)<!--END-EXAMPLE-USAGE-->/m,
-    '<!--EXAMPLE-USAGE-->\n'+example1+'\n<!--END-EXAMPLE-USAGE-->');
-    deferred1.resolve();
+    readme = readme.replace(
+      /<!--EXAMPLE-USAGE-->((?:.|[\r\n])*)<!--END-EXAMPLE-USAGE-->/m,
+      '<!--EXAMPLE-USAGE-->\n'+example1+'\n<!--END-EXAMPLE-USAGE-->'
+    );
   
-    //Inject public API reference  
-    var exec = require('child_process').exec, child;
-    child = exec('jsdoc2md "src/*.js"', function (error, stdout, stderr) {
-      //console.log('stdout: ' + stdout);
-      //console.log('stderr: ' + stderr);
-      if (error !== null) {
-        grunt.log.error('Exec error: ' + error);
-      }
-
-      //Reformat documentation to reflect correct method naming.
-      var str = stdout.replace(/new /g,'')
-                      .replace(/_public\./g,'');
-
-      readme = readme.replace(/<!--API-REF-->((?:.|[\r\n])*)<!--END-API-REF-->/m,
-        '<!--API-REF-->\n\n'+str+'\n<!--END-API-REF-->');
-
-      fs.writeFileSync("./README.md",readme);
-
-      deferred2.resolve();
+    const jsdoc2md = require('jsdoc-to-markdown');
+    let stdout = jsdoc2md.renderSync({
+      files: 'src/*.js'
     });
+
+    //Reformat documentation to reflect correct method naming.
+    var str = stdout.replace(/new /g,'').replace(/_public\./g,'');
+
+    readme = readme.replace(
+      /<!--API-REF-->((?:.|[\r\n])*)<!--END-API-REF-->/m,
+      '<!--API-REF-->\n\n'+str+'\n<!--END-API-REF-->'
+    );
+
+    //save
+    fs.writeFileSync("./README.md",readme);
   });
 
   grunt.loadNpmTasks('grunt-contrib-watch');
