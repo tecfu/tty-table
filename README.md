@@ -145,7 +145,7 @@ Default border character sets:
 | header.column.headerColor | <code>string</code> | default: terminal's default color |
 | header.column.marginLeft | <code>number</code> | default: 0 |
 | header.column.marginTop | <code>number</code> | default: 0 |
-| header.column.maxWidth | <code>number</code> | default: 20 |
+| header.column.width | <code>string</code> \| <code>number</code> | default: "auto" |
 | header.column.paddingBottom | <code>number</code> | default: 0 |
 | header.column.paddingLeft | <code>number</code> | default: 0 |
 | header.column.paddingRight | <code>number</code> | default: 0 |
@@ -172,7 +172,7 @@ console.log(t1.render());
 ### Table.Cls.render() ⇒ <code>String</code>
 Renders a table to a string
 
-**Kind**: static method of <code>[Table](#Table)</code>  
+**Kind**: static method of [<code>Table</code>](#Table)  
 **Example**  
 ```js
 let str = t1.render(); 
