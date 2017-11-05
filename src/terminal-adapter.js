@@ -21,13 +21,6 @@ yargs.option('format',{
 yargs.option('options\u2010\u002A',{
   describe:'Specify an optional setting where * is the setting name. See README.md for a complete list.'
 });
-yargs.version(function(){
-  let fs = require('fs');
-  let path =__dirname+'/../package.json';
-  let contents = fs.readFileSync(path,'utf-8');
-  let json = JSON.parse(contents);
-  return json.version;
-});
 
 let Chalk = require('chalk');
 let sendError = function(msg){
