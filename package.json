@@ -54,7 +54,7 @@
     "grunt-mocha": "^1.0.4",
     "grunt-mocha-test": "^0.13.3",
     "grunt-shell": "^2.1.0",
-    "jsdoc-to-markdown": "^3.0.0",
+    "jsdoc-to-markdown": "^3.0.1",
     "mocha": "^4.0.1",
     "orgy": "^2.2.0"
   }

@@ -156,11 +156,12 @@ module.exports = function(grunt) {
   
     const jsdoc2md = require('jsdoc-to-markdown');
     let jsdocData = jsdoc2md.getTemplateDataSync({
-      configure: __dirname + '/conf.json', //jsdoc config file path
-      files: 'src/*.js',
+      //configure: __dirname + '/conf.json', //jsdoc config file path
+      files: 'src/*.js'
     });
     let stdout = jsdoc2md.renderSync({
-      data: jsdocData
+      data: jsdocData,
+      "no-usage-stats": true
     });
 
     //Reformat documentation to reflect correct method naming.
