@@ -7,13 +7,11 @@ let Render = {};
  * Converts arrays of data into arrays of cell strings
  */
 Render.stringifyData = function(Config,data){
-  
   let sections = {
         header : [],
         body : [],
         footer : []
       };
-  let output = '';
   let marginLeft = Array(Config.marginLeft + 1).join('\ ');
   let borderStyle = Config.borderCharacters[Config.borderStyle];
   let borders = [];
@@ -25,7 +23,14 @@ Render.stringifyData = function(Config,data){
   //now translate them
   data = Render.transformRows(Config,data);
     
-  Config.table.columnWidths = Format.getColumnWidths(Config,data);
+  //when streaming values to tty-table, we don't want column widths to change
+  //from one data set to the next, so we save the first set of widths and reuse
+  if(!global.columnWidths){
+    global.columnWidths = Config.table.columnWidths = Format.getColumnWidths(Config,data);
+  }
+  else{
+    Config.table.columnWidths = global.columnWidths;
+  }
   
   //stringify header cells
   if(!Config.headerEmpty){
@@ -66,6 +71,7 @@ Render.stringifyData = function(Config,data){
   }
   
   //top horizontal border
+  let output = '';
   output += borders[0];
 
   //for each section (header,body,footer)
