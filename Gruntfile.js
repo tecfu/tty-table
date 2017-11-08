@@ -102,6 +102,7 @@ module.exports = function(grunt) {
     var jobQueue = [];
     var orgy = require('orgy');
     var fs = require('fs');  
+    var savedTestDir = __dirname + '/test/saved_test_outputs';
 
     //Get list of all example scripts
     var list = glob.sync('examples/*.js'); 
@@ -116,10 +117,11 @@ module.exports = function(grunt) {
         if (error !== null) {
           grunt.log.error('Exec error: ' + error);
         }
-        var subname = element.split('.')[0];
+        var subname = element.split('/').pop().split('.')[0];
         var filename = subname + '-output.txt';
-        fs.writeFileSync(filename,stdout);
-        grunt.log.write('Wrote output to text file: ' + filename + '\n');
+        var filepath = savedTestDir + '/' + filename;
+        fs.writeFileSync(filepath,stdout);
+        grunt.log.write('Wrote output to text file: ' + filepath + '\n');
         deferred.resolve();
       });
     });

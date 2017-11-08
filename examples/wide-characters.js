@@ -23,9 +23,6 @@ var rows = [
 
 var t1 = Table(header,rows,{
   borderStyle : 1,
-  paddingBottom : 0,
-  paddingLeft: 2,
-  paddingRight: 1,
   headerAlign : "right",
   align : "center",
   color : "white"

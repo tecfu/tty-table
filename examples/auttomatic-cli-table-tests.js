@@ -38,7 +38,7 @@ var vertical_table = new Table({
   }
 });
 vertical_table.push({ "Some Key": "Some Value"},
-{ "Another much longer key": "And its corresponding longer value"}
+  {"Another much longer key": "And its corresponding longer value"}
 );
 console.log(vertical_table.toString());
 
