@@ -105,21 +105,21 @@ $ tty-table -h
 Default border character sets:
 ```js
 [
-[
- {v: " ", l: " ", j: " ", h: " ", r: " "},
- {v: " ", l: " ", j: " ", h: " ", r: " "},
- {v: " ", l: " ", j: " ", h: " ", r: " "}
-],
-[
- {v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
- {v: "│", l: "├", j: "┼", h: "─", r: "┤"},
- {v: "│", l: "└", j: "┴", h: "─", r: "┘"}
-],
-[
- {v: "|", l: "+", j: "+", h: "-", r: "+"},
- {v: "|", l: "+", j: "+", h: "-", r: "+"},
- {v: "|", l: "+", j: "+", h: "-", r: "+"}
-]
+ [
+   {v: " ", l: " ", j: " ", h: " ", r: " "},
+   {v: " ", l: " ", j: " ", h: " ", r: " "},
+   {v: " ", l: " ", j: " ", h: " ", r: " "}
+ ],
+ [
+   {v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
+   {v: "│", l: "├", j: "┼", h: "─", r: "┤"},
+   {v: "│", l: "└", j: "┴", h: "─", r: "┘"}
+ ],
+ [
+   {v: "|", l: "+", j: "+", h: "-", r: "+"},
+   {v: "|", l: "+", j: "+", h: "-", r: "+"},
+   {v: "|", l: "+", j: "+", h: "-", r: "+"}
+ ]
 ]
 ```  
 
@@ -147,8 +147,8 @@ Default border character sets:
 | header.column.marginTop | <code>number</code> | default: 0 |
 | header.column.width | <code>string</code> \| <code>number</code> | default: "auto" |
 | header.column.paddingBottom | <code>number</code> | default: 0 |
-| header.column.paddingLeft | <code>number</code> | default: 0 |
-| header.column.paddingRight | <code>number</code> | default: 0 |
+| header.column.paddingLeft | <code>number</code> | default: 1 |
+| header.column.paddingRight | <code>number</code> | default: 1 |
 | header.column.paddingTop | <code>number</code> | default: 0 |
 | rows | <code>array</code> | [See example](#example-usage) |
 | options | <code>object</code> | Table options |

@@ -23,8 +23,8 @@ let Config;
 * @param {number} header.column.marginTop        - default: 0      
 * @param {string|number} header.column.width     - default: "auto"
 * @param {number} header.column.paddingBottom    - default: 0
-* @param {number} header.column.paddingLeft      - default: 0
-* @param {number} header.column.paddingRight     - default: 0
+* @param {number} header.column.paddingLeft      - default: 1
+* @param {number} header.column.paddingRight     - default: 1
 * @param {number} header.column.paddingTop       - default: 0  
 *
 * @param {array} rows                      - [See example](#example-usage)
@@ -55,21 +55,21 @@ let Config;
 * Default border character sets:
 * ```js
 *[
-* [
-*  {v: " ", l: " ", j: " ", h: " ", r: " "},
-*  {v: " ", l: " ", j: " ", h: " ", r: " "},
-*  {v: " ", l: " ", j: " ", h: " ", r: " "}
-* ],
-* [
-*  {v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
-*  {v: "│", l: "├", j: "┼", h: "─", r: "┤"},
-*  {v: "│", l: "└", j: "┴", h: "─", r: "┘"}
-* ],
-* [
-*  {v: "|", l: "+", j: "+", h: "-", r: "+"},
-*  {v: "|", l: "+", j: "+", h: "-", r: "+"},
-*  {v: "|", l: "+", j: "+", h: "-", r: "+"}
-* ]
+*  [
+*    {v: " ", l: " ", j: " ", h: " ", r: " "},
+*    {v: " ", l: " ", j: " ", h: " ", r: " "},
+*    {v: " ", l: " ", j: " ", h: " ", r: " "}
+*  ],
+*  [
+*    {v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
+*    {v: "│", l: "├", j: "┼", h: "─", r: "┤"},
+*    {v: "│", l: "└", j: "┴", h: "─", r: "┘"}
+*  ],
+*  [
+*    {v: "|", l: "+", j: "+", h: "-", r: "+"},
+*    {v: "|", l: "+", j: "+", h: "-", r: "+"},
+*    {v: "|", l: "+", j: "+", h: "-", r: "+"}
+*  ]
 *]
 * ```
 * @example
@@ -134,7 +134,6 @@ Cls.setup = function(){
   }  
 
   Config.table.footer = (arguments[2] instanceof Array) ? arguments[2] : [];
-  
   return Cls;
 }
 
