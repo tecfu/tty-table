@@ -124,3 +124,22 @@ var t2 = Table(header,rows,{
 
 var str2 = t2.render();
 console.log(str2);
+
+
+//template literals
+let header3 = [
+  { value: 'name', width: 30, headerAlign: 'left' },
+  { value: 'price', width: 30, headerAlign: 'left' }
+];
+
+const opts = {
+  align: 'left'
+};
+
+const data = [
+  [`apple ${chalk.red("mac")}`,92.50],
+  ["ibm",120.15]
+ ]
+
+let t3 = Table(header3,data, opts);
+console.log(t3.render()); 

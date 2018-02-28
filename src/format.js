@@ -1,4 +1,4 @@
-//let StripAnsi = require("strip-ansi");
+let StripAnsi = require("strip-ansi");
 //let Wrap = require("word-wrap");
 let Wrap = require("smartwrap");
 let Wcwidth = require("wcwidth");
@@ -6,7 +6,7 @@ let Format = {};
 
 Format.calculateLength = function(line) {
   //return StripAnsi(line.replace(/[^\x00-\xff]/g,'XX')).length;
-  return Wcwidth(line);
+  return Wcwidth(StripAnsi(line.replace(/[^\x00-\xff]/g,'XX')));
 }
 
 Format.wrapCellContent = function(
