@@ -6,36 +6,36 @@ let Render = {};
 /**
  * Converts arrays of data into arrays of cell strings
  */
-Render.stringifyData = function(Config,data){
+Render.stringifyData = function(config,data){
   let sections = {
         header : [],
         body : [],
         footer : []
       };
-  let marginLeft = Array(Config.marginLeft + 1).join('\ ');
-  let borderStyle = Config.borderCharacters[Config.borderStyle];
+  let marginLeft = Array(config.marginLeft + 1).join('\ ');
+  let borderStyle = config.borderCharacters[config.borderStyle];
   let borders = [];
 
   //because automattic/cli-table syntax infers table type based on 
   //how rows are passed (array of arrays, objects, etc)
-  Config.rowFormat = Render.getRowFormat(data[0] || []);
+  config.rowFormat = Render.getRowFormat(data[0] || [],config);
   
   //now translate them
-  data = Render.transformRows(Config,data);
+  data = Render.transformRows(config,data);
     
   //when streaming values to tty-table, we don't want column widths to change
   //from one data set to the next, so we save the first set of widths and reuse
   if(!global.columnWidths){
-    global.columnWidths = Config.table.columnWidths = Format.getColumnWidths(Config,data);
+    global.columnWidths = config.table.columnWidths = Format.getColumnWidths(config,data);
   }
   else{
-    Config.table.columnWidths = global.columnWidths;
+    config.table.columnWidths = global.columnWidths;
   }
   
   //stringify header cells
-  if(!Config.headerEmpty){
-    sections.header = Config.table.header.map(function(row){
-      return buildRow(Config,row,'header');
+  if(!config.headerEmpty){
+    sections.header = config.table.header.map(function(row){
+      return buildRow(config,row,'header');
     });
   }
   else{
@@ -44,21 +44,21 @@ Render.stringifyData = function(Config,data){
 
   //stringify body cells
   sections.body = data.map(function(row){
-    return buildRow(Config,row,'body');
+    return buildRow(config,row,'body');
   });
 
   //stringify footer cells
-  sections.footer = (Config.table.footer instanceof Array && Config.table.footer.length > 0) ? [Config.table.footer] : [];
+  sections.footer = (config.table.footer instanceof Array && config.table.footer.length > 0) ? [config.table.footer] : [];
   
   sections.footer = sections.footer.map(function(row){
-    return buildRow(Config,row,'footer');
+    return buildRow(config,row,'footer');
   });
 
   //add borders
   //0=header, 1=body, 2=footer
   for(let a=0; a<3; a++){
     borders.push('');
-    Config.table.columnWidths.forEach(function(w,i,arr){
+    config.table.columnWidths.forEach(function(w,i,arr){
       borders[a] += Array(w).join(borderStyle[a].h) +
         ((i+1 !== arr.length) ? borderStyle[a].j : borderStyle[a].r);
     });
@@ -110,7 +110,7 @@ Render.stringifyData = function(Config,data){
              && i === 2):
           break;
         //skip if compact
-        case(Config.compact && p === 'body' && !row.empty):
+        case(config.compact && p === 'body' && !row.empty):
           break;
         default:
           output += borders[1];
@@ -124,7 +124,7 @@ Render.stringifyData = function(Config,data){
   //remove all rows in prototype array
   this.splice(0,this.length);
   
-  let finalOutput = Array(Config.marginTop + 1).join('\n') + output;
+  let finalOutput = Array(config.marginTop + 1).join('\n') + output;
 
   //record the height of the output
   this.height = finalOutput.split(/\r\n|\r|\n/).length;
@@ -251,13 +251,13 @@ Render.buildCell = function(config,cell,columnIndex,rowType){
   };
 };
 
-Render.getRowFormat = function(row){
+Render.getRowFormat = function(row,config){
   let type;
   
   //rows passed as an object
   if(typeof row === 'object' && !(row instanceof Array)){
     let keys = Object.keys(row);
-    if(keys.length === 1){
+    if(config.adapter === 'automattic'){
       //detected cross table
       let key = keys[0];
       if(row[key] instanceof Array){
