@@ -1,6 +1,6 @@
 {
   "name": "tty-table",
-  "version": "2.5.8",
+  "version": "2.5.9",
   "description": "Command line table generator.",
   "main": "src/main.js",
   "bin": {
