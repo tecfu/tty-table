@@ -71,3 +71,37 @@ t3.push(
 var str1 = t3.render();
 console.log(str1);
 
+//test truncation with boolean false
+var t4 = Table(header,[],{
+  borderStyle : 1,
+  paddingBottom : 0,
+  headerAlign : "center",
+  align : "center",
+  color : "green",
+  truncate : false
+});
+
+t1.push(
+  ["chocolate cake",4.65,"no"]
+);
+
+var str4 = t4.render();
+console.log(str4);
+
+//test truncation with boolean false
+var t5 = Table(header,[],{
+  borderStyle : 1,
+  paddingBottom : 0,
+  headerAlign : "center",
+  align : "center",
+  color : "green",
+  truncate : true
+});
+
+t1.push(
+  ["chocolate cake",5.65,"no"]
+);
+
+var str5 = t5.render();
+console.log(str5);
+

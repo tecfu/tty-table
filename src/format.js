@@ -68,7 +68,11 @@ Format.wrapCellContent = function(
 
   switch(true){
     //no wrap, truncate
-    case(typeof config.truncate === 'string' && config.truncate.length > 0):
+    case((typeof config.truncate === 'string') || config.truncate === true):
+      if(config.truncate === true){
+        config.truncate = ''
+      }
+     
       string = Format.handleTruncatedValue(
         string,
         cellOptions,
