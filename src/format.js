@@ -6,7 +6,7 @@ let Format = {};
 
 Format.calculateLength = function(line) {
   //return StripAnsi(line.replace(/[^\x00-\xff]/g,'XX')).length;
-  return Wcwidth(StripAnsi(line.replace(/[^\x00-\xff]/g,'XX')));
+  return Wcwidth(StripAnsi(line));
 }
 
 Format.wrapCellContent = function(
@@ -80,7 +80,8 @@ Format.wrapCellContent = function(
       );
       break;
     //string has wide characters
-    case(string.length < Format.calculateLength(string)):
+    case(/[\uD800-\uDFFF]/.test(string)):
+    //case(string.length < Format.calculateLength(string)):
       string = Format.handleWideChars(
         string,
         cellOptions,

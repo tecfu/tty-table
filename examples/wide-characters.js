@@ -32,21 +32,34 @@ str1 = t1.render();
 console.log(str1);
 
 
-//var rows = [
-//  "abc",
-//  "abć",
-//  "ab한" 
-//];
-//
-//var t2 = Table(header,rows,{
-//  borderStyle : 2,
-//  paddingBottom : 0,
-//  paddingLeft: 2,
-//  paddingRight: 2,
-//  headerAlign : "right",
-//  align : "center",
-//  color : "white"
-//});
-//
-//str2 = t2.render();
-//console.log(str2);
+var header2 = [
+  {
+    value : "项目",
+  },
+  {
+    value : "价格",
+  },
+  {
+    value : "有机",
+  }
+];
+
+
+var rows2 = [
+  ["abc"],
+  ["abć"],
+  ["ab한"] 
+];
+
+var t2 = Table(header2,rows2,{
+  borderStyle : 2,
+  paddingBottom : 0,
+  paddingLeft: 2,
+  paddingRight: 2,
+  headerAlign : "right",
+  align : "center",
+  color : "white"
+});
+
+str2 = t2.render();
+console.log(str2);
