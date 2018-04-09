@@ -21,6 +21,8 @@ yargs.option('format',{
 yargs.option('options\u2010\u002A',{
   describe:'Specify an optional setting where * is the setting name. See README.md for a complete list.'
 });
+//run help only at the end
+yargs = yargs.help('h').argv;
 
 let Chalk = require('chalk');
 let sendError = function(msg){
@@ -35,9 +37,9 @@ let previousHeight = 0;
 
 let dataFormat = 'csv';
 switch(true){
-  case(typeof yargs.argv.format === 'undefined'):
+  case(typeof yargs.format === 'undefined'):
     break;
-  case(yargs.argv.format.toString().match(/json/i) !== null):
+  case(yargs.format.toString().match(/json/i) !== null):
     dataFormat = 'json';
     break;
   default:
@@ -45,15 +47,15 @@ switch(true){
 
 //look for options-* 
 let options = {};
-Object.keys(yargs.argv).forEach(function(key){
+Object.keys(yargs).forEach(function(key){
   let keyParts = key.split('-');
   if(keyParts[0]==='options'){
-    options[keyParts[1]]=yargs.argv[key];
+    options[keyParts[1]]=yargs[key];
   }
 });
 
 //look for header-n-*
-//Object.keys(yargs.argv).forEach(function(key){
+//Object.keys(yargs).forEach(function(key){
 //  let keyParts = key.split('-');
 //  if(keyParts[0] === 'header'){
 //    //find out which column we're setting an option on
@@ -61,7 +63,7 @@ Object.keys(yargs.argv).forEach(function(key){
 //    if(typeof header[column] === 'undefined'){
 //      header[column] = {}
 //    }
-//    header[column][keyParts[2]] = yargs.argv[key];
+//    header[column][keyParts[2]] = yargs[key];
 //  }
 //});
 
@@ -124,9 +126,9 @@ process.stdin.on('data', function(chunk) {
       break;
     default:
       let formatterOptions = {};
-      Object.keys(yargs.argv).forEach(function(key){
-        if(key.slice(0,4) === 'csv-' && typeof(yargs.argv[key]) !== 'undefined'){
-          formatterOptions[key.slice(4)] = yargs.argv[key];
+      Object.keys(yargs).forEach(function(key){
+        if(key.slice(0,4) === 'csv-' && typeof(yargs[key]) !== 'undefined'){
+          formatterOptions[key.slice(4)] = yargs[key];
         }
       });
       
@@ -164,6 +166,3 @@ process.on('exit', function() {
   //show cursor
   console.log('\u001b[?25h');
 });
-
-//run help only at the end
-//yargs.argv = yargs.help('h').argv;
