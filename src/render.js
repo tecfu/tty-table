@@ -26,10 +26,14 @@ Render.stringifyData = function(config,data){
   //when streaming values to tty-table, we don't want column widths to change
   //from one data set to the next, so we save the first set of widths and reuse
   if(!global.columnWidths){
-    global.columnWidths = config.table.columnWidths = Format.getColumnWidths(config,data);
+    global.columnWidths = {};
+  }
+  
+  if(global.columnWidths[config.tableId]){
+     config.table.columnWidths = global.columnWidths[config.tableId];
   }
   else{
-    config.table.columnWidths = global.columnWidths;
+     global.columnWidths[config.tableId] = config.table.columnWidths = Format.getColumnWidths(config,data);
   }
   
   //stringify header cells
@@ -125,7 +129,6 @@ Render.stringifyData = function(config,data){
 
   //record the height of the output
   config.height = finalOutput.split(/\r\n|\r|\n/).length;
-  
   return finalOutput;
 };
 

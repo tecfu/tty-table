@@ -1,5 +1,6 @@
 let Merge = require('merge');
 let Defaults = require('./config.js');
+let Counter = 0;
 
 /**
 * @class Table
@@ -165,6 +166,13 @@ let Factory = function(paramsArr){
   //footer
   config.table.footer = footer;
  
+  //counting table enables fixed column widths for streams, 
+  //variable widths for multiple tables simulateously 
+  if(config.terminalAdapter !== true){
+    Counter++; //fix columnwidths for streams
+  }
+  config.tableId = Counter;
+  
   //create a new object with an Array prototype
   let tableObject = Object.create(body);
   
@@ -185,8 +193,10 @@ let Factory = function(paramsArr){
     let Render = require('./render.js');
     //let configCopy = JSON.parse(JSON.stringify(this[_configKey]));
     //return Render.stringifyData(configCopy,this.slice(0));  //get string output
-    return Render.stringifyData(this[_configKey],this.slice(0));  //get string output
-}
+    let output = Render.stringifyData(this[_configKey],this.slice(0));  //get string output
+    tableObject.height = this[_configKey].height;
+    return output;
+  }
 
   return tableObject;
 }

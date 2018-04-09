@@ -76,6 +76,7 @@ let runTable = function(input){
   //footer = [], 
 
   let Table = require('../src/factory.js');
+  options.terminalAdapter = true;
   let t1 = Table(header,body,options);
   
   //hide cursor
@@ -165,4 +166,4 @@ process.on('exit', function() {
 });
 
 //run help only at the end
-yargs.argv = yargs.help('h').argv;
+//yargs.argv = yargs.help('h').argv;
