@@ -81,7 +81,7 @@ var t4 = Table(header,[],{
   truncate : false
 });
 
-t1.push(
+t4.push(
   ["chocolate cake",4.65,"no"]
 );
 
@@ -98,7 +98,7 @@ var t5 = Table(header,[],{
   truncate : true
 });
 
-t1.push(
+t5.push(
   ["chocolate cake",5.65,"no"]
 );
 

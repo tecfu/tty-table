@@ -65,7 +65,7 @@ Format.wrapCellContent = function(
    cellOptions.paddingLeft -
    cellOptions.paddingRight - 
    config.GUTTER; 
-
+  
   switch(true){
     //no wrap, truncate
     case((typeof config.truncate === 'string') || config.truncate === true):

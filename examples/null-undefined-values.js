@@ -100,3 +100,45 @@ var t2 = Table(header,rows,{
 
 var str2 = t2.render();
 console.log(str2);
+
+
+//var header3 = [
+//  {
+//    alias : "Is organic?",
+//    value : "organic",
+//    width : 15
+//  }
+//];
+//
+////Example with objects as rows3
+//var rows3 = [
+//  {
+//    organic : "no"
+//  },
+//  {
+//    organic : "yes"
+//  },
+//  {
+//    organic : "no"
+//  },
+//  {
+//    organic : "yes"
+//  },
+//  {
+//    organic : "no"
+//  },
+//  {
+//    organic : "no"
+//  }
+//];
+//
+//var t3 = Table(header3,rows3,{
+//  borderStyle : 1,
+//  paddingBottom : 0
+//});
+//
+//var str3 = t3.render();
+//console.log(str3);
+
+
+

@@ -85,10 +85,13 @@ module.exports = function(grunt) {
     watch: {
       scripts: {
         files: ['**/*.js'],
-        tasks: ['shell:generate-vim-tags-file'],
+        tasks: [
+          'shell:generate-vim-tags-file',
+          'mochaTest:test'
+        ],
         options: {
           spawn: true,
-          reload: false
+          livereload: true //defaults to port 35729
         }
       }
     }  

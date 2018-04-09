@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 let csv = require('csv');
 let yargs = require('yargs');
-yargs.epilog('Copyight github.com/tecfu 2017');
+yargs.epilog('Copyight github.com/tecfu 2018');
 yargs.option('csv-delimiter',{
   describe:'Set the field delimiter. One character only.',
   default:','
@@ -75,8 +75,8 @@ let runTable = function(input){
   body = input; 
   //footer = [], 
 
-  let Table = require('../src/public.js');
-  let t1 = Table.setup(header,body,options);
+  let Table = require('../src/factory.js');
+  let t1 = Table(header,body,options);
   
   //hide cursor
   console.log('\u001b[?25l');

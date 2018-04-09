@@ -120,20 +120,17 @@ Render.stringifyData = function(config,data){
   
   //bottom horizontal border
   output += borders[2];
-  
-  //remove all rows in prototype array
-  this.splice(0,this.length);
-  
+ 
   let finalOutput = Array(config.marginTop + 1).join('\n') + output;
 
   //record the height of the output
-  this.height = finalOutput.split(/\r\n|\r|\n/).length;
+  config.height = finalOutput.split(/\r\n|\r|\n/).length;
   
   return finalOutput;
 };
 
 const buildRow = function(config,row,rowType){
-
+  
   let minRowHeight = 0;
   
   //tag row as empty if empty
@@ -201,13 +198,14 @@ const buildRow = function(config,row,rowType){
                     cellArr[b] : whiteline);
     }
   });
-
+  
   return lines;
 }
 
 Render.buildCell = function(config,cell,columnIndex,rowType){
-  let cellValue, 
-      cellOptions = Merge(true,config,
+
+  let cellValue; 
+  let cellOptions = Merge(true,{},config,
                           (rowType === 'body') ? 
                           config.columnSettings[columnIndex] : {}, //ignore columnSettings for footer
                           cell);    
