@@ -39,25 +39,25 @@ module.exports = function(grunt) {
     shell: {
       "browserify-prod-standalone": {
         command: function () {
-          var cmd = 'browserify --standalone=TtyTable '+_ignore+' -r ./src/default-adapter.js > ./dist/<%= pkg.name %>.js -t [ babelify --presets [ es2015 babili] ] -p [ browserify-banner --template "'+banner+'"]';
+          var cmd = 'browserify --standalone=TtyTable '+_ignore+' -r ./adapters/default-adapter.js > ./dist/<%= pkg.name %>.js -t [ babelify --presets [ es2015 babili] ] -p [ browserify-banner --template "'+banner+'"]';
           return cmd;
         }
       },
       "browserify-devel-standalone": {
         command: function () {
-          var cmd = 'browserify --debug --standalone=TtyTable '+_ignore+' -r ./src/default-adapter.js > ./dist/<%= pkg.name %>.devel.js -t [ babelify --presets [ es2015 babili] ]';
+          var cmd = 'browserify --debug --standalone=TtyTable '+_ignore+' -r ./adapters/default-adapter.js > ./dist/<%= pkg.name %>.devel.js -t [ babelify --presets [ es2015 babili] ]';
           return cmd;
         }
       },
       "browserify-prod-bundle": {
          command: function () {
-          var cmd = 'browserify '+_ignore+' -r ./src/default-adapter.js:<%= pkg.name %> > ./dist/<%= pkg.name %>.bundle.js -t [ babelify --presets [ es2015 babili] ]';
+          var cmd = 'browserify '+_ignore+' -r ./adapters/default-adapter.js:<%= pkg.name %> > ./dist/<%= pkg.name %>.bundle.js -t [ babelify --presets [ es2015 babili] ]';
             return cmd;
           }
          },
       "browserify-devel-bundle": {
         command: function () {
-          var cmd = 'browserify --debug '+_ignore+' -r ./src/default-adapter.js:<%= pkg.name %> > ./dist/<%= pkg.name %>.bundle.devel.js -t [ babelify --presets [ es2015 babili] ]';
+          var cmd = 'browserify --debug '+_ignore+' -r ./adapters/default-adapter.js:<%= pkg.name %> > ./dist/<%= pkg.name %>.bundle.devel.js -t [ babelify --presets [ es2015 babili] ]';
           return cmd;
         }
       },
