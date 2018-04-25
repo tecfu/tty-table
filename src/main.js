@@ -1,5 +1,3 @@
-require('use-strict');
-
 if(require.main === module){
   //called directly in terminal
   require('./../adapters/terminal-adapter.js');

@@ -1,6 +1,6 @@
 {
   "name": "tty-table",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "Command line table generator.",
   "main": "src/main.js",
   "bin": {
@@ -36,7 +36,6 @@
     "merge": "^1.2.0",
     "smartwrap": "^1.0.9",
     "strip-ansi": "^4.0.0",
-    "use-strict": "^1.0.1",
     "wcwidth": "^1.0.1",
     "yargs": "^10.0.3"
   },
