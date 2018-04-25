@@ -32,12 +32,12 @@
   "homepage": "https://github.com/tecfu/tty-table",
   "dependencies": {
     "chalk": "^2.3.0",
-    "csv": "^2.0.0",
+    "csv": "^3.0.2",
     "merge": "^1.2.0",
     "smartwrap": "^1.0.9",
     "strip-ansi": "^4.0.0",
     "wcwidth": "^1.0.1",
-    "yargs": "^10.0.3"
+    "yargs": "^11.0.0"
   },
   "devDependencies": {
     "babel-preset-babili": "0.1.4",
@@ -53,8 +53,8 @@
     "grunt-mocha": "^1.0.4",
     "grunt-mocha-test": "^0.13.3",
     "grunt-shell": "^2.1.0",
-    "jsdoc-to-markdown": "^3.0.1",
-    "mocha": "^4.0.1",
+    "jsdoc-to-markdown": "^4.0.1",
+    "mocha": "^5.1.1",
     "orgy": "^2.2.0"
   }
 }
