@@ -207,8 +207,9 @@ const buildRow = function(config,row,rowType){
 
 Render.buildCell = function(config,cell,columnIndex,rowType){
 
-  let cellValue; 
-  let cellOptions = Merge(true,{},config,
+  let cellValue;
+  let merge = typeof Object.assign === 'function' ? Object.assign : Merge
+  let cellOptions = merge(true,{},config,
                           (rowType === 'body') ? 
                           config.columnSettings[columnIndex] : {}, //ignore columnSettings for footer
                           cell);    
