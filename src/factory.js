@@ -115,7 +115,7 @@ let Factory = function(paramsArr){
       break;
 
     //rows, options
-    case(paramsArr.length === 2 && typeof paramsArr[2] === 'object'): 
+    case(paramsArr.length === 2 && typeof paramsArr[1] === 'object'): 
       body.push(...paramsArr[0]); //creates new array to store our rows
       options = paramsArr[1];
       break;
