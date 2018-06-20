@@ -259,13 +259,13 @@ Format.getColumnWidths = function(config,rows){
     let prop = process.stdout.columns / totalWidth;
   
     prop = prop.toFixed(2)-0.01;
-		
-		// when process.stdout.columns is 0, width will be negative
-		if (prop > 0) {
-			widths = widths.map(function(value){
-				return Math.floor(prop*value);
-			});
-		}
+    
+    // when process.stdout.columns is 0, width will be negative
+    if (prop > 0) {
+      widths = widths.map(function(value){
+        return Math.floor(prop*value);
+      });
+    }
   
   }
 
