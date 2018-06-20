@@ -234,7 +234,8 @@ Format.getColumnWidths = function(config,rows){
       //'auto' sets column width to longest value in initial data set
         let columnOptions = (config.table.header[0][columnIndex])   
           ? config.table.header[0][columnIndex] : {};
-        result = Format.inferColumnWidth(columnOptions,rows,columnIndex);
+        let measurableRows = (rows.length) ? rows : config.table.header[0];
+        result = Format.inferColumnWidth(columnOptions,measurableRows,columnIndex);
 
         //add spaces for padding if not centered
         result = result + config.paddingLeft + config.paddingRight;
