@@ -215,6 +215,6 @@ $ grunt watch
 
 ## License
 
-[GPLv3 License](http://www.gnu.org/licenses/gpl-3.0.en.html)
+[MIT License](https://opensource.org/licenses/MIT)
 
 Copyright 2015-2017, Tecfu. 
