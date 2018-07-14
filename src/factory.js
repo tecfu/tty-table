@@ -141,7 +141,7 @@ let Factory = function(paramsArr){
   config.headerAlign = config.headerAlignment || config.headerAlign;
 
   //if borderColor is called, lets do it now
-  if(config.borderColor !== null){
+  if(!!config.borderColor){
     let Chalk = require('chalk')
     
     config.borderCharacters[config.borderStyle] = 
