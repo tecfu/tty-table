@@ -1,8 +1,14 @@
-# tty-table
-
+# tty-table 电传打字台
+-
 [![Build Status](https://travis-ci.org/tecfu/tty-table.svg?branch=master)](https://travis-ci.org/tecfu/tty-table) [![Dependency Status](https://david-dm.org/tecfu/tty-table.png)](https://david-dm.org/tecfu/tty-table) [![NPM version](https://badge.fury.io/js/tty-table.svg)](http://badge.fury.io/js/tty-table) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
 
+---
+
 Display yout data in a table using a terminal, browser, or browser console.
+
+使用终端，浏览器或浏览器控制台在表中显示您的数据
+
+---
 
 ## Installation
 
@@ -24,7 +30,7 @@ $ npm install tty-table
 ```html
 <script src="tty-table.bundle.min.js"></script>
 <script>
- var Table = require('tty-table');
+ let Table = require('tty-table');
  ...
 </script>
 ```
@@ -74,7 +80,7 @@ $ node examples/data/fake-stream.js | tty-table --format=json
 
 ![Streaming](https://cloud.githubusercontent.com/assets/7478359/26528893/88e38e38-4369-11e7-8125-05df0259511e.gif "Streaming Example") 
 
-- *See the built-in help for the terminal version of tty-table with: 
+- See the built-in help for the terminal version of tty-table with: 
 ```
 $ tty-table -h
 ```
@@ -217,4 +223,4 @@ $ grunt watch
 
 [MIT License](https://opensource.org/licenses/MIT)
 
-Copyright 2015-2017, Tecfu. 
+Copyright 2015-2018, Tecfu. 
