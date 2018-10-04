@@ -20,65 +20,97 @@ for (var i = 0, len = code.length; i < len; ++i) {
 revLookup['-'.charCodeAt(0)] = 62
 revLookup['_'.charCodeAt(0)] = 63
 
-function placeHoldersCount (b64) {
+function getLens (b64) {
   var len = b64.length
+
   if (len % 4 > 0) {
     throw new Error('Invalid string. Length must be a multiple of 4')
   }
 
-  // the number of equal signs (place holders)
-  // if there are two placeholders, than the two characters before it
-  // represent one byte
-  // if there is only one, then the three characters before it represent 2 bytes
-  // this is just a cheap hack to not do indexOf twice
-  return b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0
+  // Trim off extra bytes after placeholder bytes are found
+  // See: https://github.com/beatgammit/base64-js/issues/42
+  var validLen = b64.indexOf('=')
+  if (validLen === -1) validLen = len
+
+  var placeHoldersLen = validLen === len
+    ? 0
+    : 4 - (validLen % 4)
+
+  return [validLen, placeHoldersLen]
 }
 
+// base64 is 4/3 + up to two characters of the original data
 function byteLength (b64) {
-  // base64 is 4/3 + up to two characters of the original data
-  return (b64.length * 3 / 4) - placeHoldersCount(b64)
+  var lens = getLens(b64)
+  var validLen = lens[0]
+  var placeHoldersLen = lens[1]
+  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
+}
+
+function _byteLength (b64, validLen, placeHoldersLen) {
+  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
 }
 
 function toByteArray (b64) {
-  var i, l, tmp, placeHolders, arr
-  var len = b64.length
-  placeHolders = placeHoldersCount(b64)
+  var tmp
+  var lens = getLens(b64)
+  var validLen = lens[0]
+  var placeHoldersLen = lens[1]
 
-  arr = new Arr((len * 3 / 4) - placeHolders)
+  var arr = new Arr(_byteLength(b64, validLen, placeHoldersLen))
+
+  var curByte = 0
 
   // if there are placeholders, only get up to the last complete 4 chars
-  l = placeHolders > 0 ? len - 4 : len
+  var len = placeHoldersLen > 0
+    ? validLen - 4
+    : validLen
 
-  var L = 0
-
-  for (i = 0; i < l; i += 4) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)]
-    arr[L++] = (tmp >> 16) & 0xFF
-    arr[L++] = (tmp >> 8) & 0xFF
-    arr[L++] = tmp & 0xFF
+  for (var i = 0; i < len; i += 4) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 18) |
+      (revLookup[b64.charCodeAt(i + 1)] << 12) |
+      (revLookup[b64.charCodeAt(i + 2)] << 6) |
+      revLookup[b64.charCodeAt(i + 3)]
+    arr[curByte++] = (tmp >> 16) & 0xFF
+    arr[curByte++] = (tmp >> 8) & 0xFF
+    arr[curByte++] = tmp & 0xFF
   }
 
-  if (placeHolders === 2) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 2) | (revLookup[b64.charCodeAt(i + 1)] >> 4)
-    arr[L++] = tmp & 0xFF
-  } else if (placeHolders === 1) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 10) | (revLookup[b64.charCodeAt(i + 1)] << 4) | (revLookup[b64.charCodeAt(i + 2)] >> 2)
-    arr[L++] = (tmp >> 8) & 0xFF
-    arr[L++] = tmp & 0xFF
+  if (placeHoldersLen === 2) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 2) |
+      (revLookup[b64.charCodeAt(i + 1)] >> 4)
+    arr[curByte++] = tmp & 0xFF
+  }
+
+  if (placeHoldersLen === 1) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 10) |
+      (revLookup[b64.charCodeAt(i + 1)] << 4) |
+      (revLookup[b64.charCodeAt(i + 2)] >> 2)
+    arr[curByte++] = (tmp >> 8) & 0xFF
+    arr[curByte++] = tmp & 0xFF
   }
 
   return arr
 }
 
 function tripletToBase64 (num) {
-  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F]
+  return lookup[num >> 18 & 0x3F] +
+    lookup[num >> 12 & 0x3F] +
+    lookup[num >> 6 & 0x3F] +
+    lookup[num & 0x3F]
 }
 
 function encodeChunk (uint8, start, end) {
   var tmp
   var output = []
   for (var i = start; i < end; i += 3) {
-    tmp = ((uint8[i] << 16) & 0xFF0000) + ((uint8[i + 1] << 8) & 0xFF00) + (uint8[i + 2] & 0xFF)
+    tmp =
+      ((uint8[i] << 16) & 0xFF0000) +
+      ((uint8[i + 1] << 8) & 0xFF00) +
+      (uint8[i + 2] & 0xFF)
     output.push(tripletToBase64(tmp))
   }
   return output.join('')
@@ -88,30 +120,33 @@ function fromByteArray (uint8) {
   var tmp
   var len = uint8.length
   var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
-  var output = ''
   var parts = []
   var maxChunkLength = 16383 // must be multiple of 3
 
   // go through the array every three bytes, we'll deal with trailing stuff later
   for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
-    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
+    parts.push(encodeChunk(
+      uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)
+    ))
   }
 
   // pad the end with zeros, but make sure to not forget the extra bytes
   if (extraBytes === 1) {
     tmp = uint8[len - 1]
-    output += lookup[tmp >> 2]
-    output += lookup[(tmp << 4) & 0x3F]
-    output += '=='
+    parts.push(
+      lookup[tmp >> 2] +
+      lookup[(tmp << 4) & 0x3F] +
+      '=='
+    )
   } else if (extraBytes === 2) {
-    tmp = (uint8[len - 2] << 8) + (uint8[len - 1])
-    output += lookup[tmp >> 10]
-    output += lookup[(tmp >> 4) & 0x3F]
-    output += lookup[(tmp << 2) & 0x3F]
-    output += '='
+    tmp = (uint8[len - 2] << 8) + uint8[len - 1]
+    parts.push(
+      lookup[tmp >> 10] +
+      lookup[(tmp >> 4) & 0x3F] +
+      lookup[(tmp << 2) & 0x3F] +
+      '='
+    )
   }
-
-  parts.push(output)
 
   return parts.join('')
 }
@@ -165,7 +200,7 @@ function typedArraySupport () {
   // Can typed array instances can be augmented?
   try {
     var arr = new Uint8Array(1)
-    arr.__proto__ = {__proto__: Uint8Array.prototype, foo: function () { return 42 }}
+    arr.__proto__ = { __proto__: Uint8Array.prototype, foo: function () { return 42 } }
     return arr.foo() === 42
   } catch (e) {
     return false
@@ -173,26 +208,24 @@ function typedArraySupport () {
 }
 
 Object.defineProperty(Buffer.prototype, 'parent', {
+  enumerable: true,
   get: function () {
-    if (!(this instanceof Buffer)) {
-      return undefined
-    }
+    if (!Buffer.isBuffer(this)) return undefined
     return this.buffer
   }
 })
 
 Object.defineProperty(Buffer.prototype, 'offset', {
+  enumerable: true,
   get: function () {
-    if (!(this instanceof Buffer)) {
-      return undefined
-    }
+    if (!Buffer.isBuffer(this)) return undefined
     return this.byteOffset
   }
 })
 
 function createBuffer (length) {
   if (length > K_MAX_LENGTH) {
-    throw new RangeError('Invalid typed array length')
+    throw new RangeError('The value "' + length + '" is invalid for option "size"')
   }
   // Return an augmented `Uint8Array` instance
   var buf = new Uint8Array(length)
@@ -214,8 +247,8 @@ function Buffer (arg, encodingOrOffset, length) {
   // Common case.
   if (typeof arg === 'number') {
     if (typeof encodingOrOffset === 'string') {
-      throw new Error(
-        'If encoding is specified then the first argument must be a string'
+      throw new TypeError(
+        'The "string" argument must be of type string. Received type number'
       )
     }
     return allocUnsafe(arg)
@@ -224,7 +257,7 @@ function Buffer (arg, encodingOrOffset, length) {
 }
 
 // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
-if (typeof Symbol !== 'undefined' && Symbol.species &&
+if (typeof Symbol !== 'undefined' && Symbol.species != null &&
     Buffer[Symbol.species] === Buffer) {
   Object.defineProperty(Buffer, Symbol.species, {
     value: null,
@@ -237,19 +270,51 @@ if (typeof Symbol !== 'undefined' && Symbol.species &&
 Buffer.poolSize = 8192 // not used by this implementation
 
 function from (value, encodingOrOffset, length) {
-  if (typeof value === 'number') {
-    throw new TypeError('"value" argument must not be a number')
-  }
-
-  if (isArrayBuffer(value) || (value && isArrayBuffer(value.buffer))) {
-    return fromArrayBuffer(value, encodingOrOffset, length)
-  }
-
   if (typeof value === 'string') {
     return fromString(value, encodingOrOffset)
   }
 
-  return fromObject(value)
+  if (ArrayBuffer.isView(value)) {
+    return fromArrayLike(value)
+  }
+
+  if (value == null) {
+    throw TypeError(
+      'The first argument must be one of type string, Buffer, ArrayBuffer, Array, ' +
+      'or Array-like Object. Received type ' + (typeof value)
+    )
+  }
+
+  if (isInstance(value, ArrayBuffer) ||
+      (value && isInstance(value.buffer, ArrayBuffer))) {
+    return fromArrayBuffer(value, encodingOrOffset, length)
+  }
+
+  if (typeof value === 'number') {
+    throw new TypeError(
+      'The "value" argument must not be of type number. Received type number'
+    )
+  }
+
+  var valueOf = value.valueOf && value.valueOf()
+  if (valueOf != null && valueOf !== value) {
+    return Buffer.from(valueOf, encodingOrOffset, length)
+  }
+
+  var b = fromObject(value)
+  if (b) return b
+
+  if (typeof Symbol !== 'undefined' && Symbol.toPrimitive != null &&
+      typeof value[Symbol.toPrimitive] === 'function') {
+    return Buffer.from(
+      value[Symbol.toPrimitive]('string'), encodingOrOffset, length
+    )
+  }
+
+  throw new TypeError(
+    'The first argument must be one of type string, Buffer, ArrayBuffer, Array, ' +
+    'or Array-like Object. Received type ' + (typeof value)
+  )
 }
 
 /**
@@ -273,7 +338,7 @@ function assertSize (size) {
   if (typeof size !== 'number') {
     throw new TypeError('"size" argument must be of type number')
   } else if (size < 0) {
-    throw new RangeError('"size" argument must not be negative')
+    throw new RangeError('The value "' + size + '" is invalid for option "size"')
   }
 }
 
@@ -388,20 +453,16 @@ function fromObject (obj) {
     return buf
   }
 
-  if (obj) {
-    if (ArrayBuffer.isView(obj) || 'length' in obj) {
-      if (typeof obj.length !== 'number' || numberIsNaN(obj.length)) {
-        return createBuffer(0)
-      }
-      return fromArrayLike(obj)
+  if (obj.length !== undefined) {
+    if (typeof obj.length !== 'number' || numberIsNaN(obj.length)) {
+      return createBuffer(0)
     }
-
-    if (obj.type === 'Buffer' && Array.isArray(obj.data)) {
-      return fromArrayLike(obj.data)
-    }
+    return fromArrayLike(obj)
   }
 
-  throw new TypeError('The first argument must be one of type string, Buffer, ArrayBuffer, Array, or Array-like Object.')
+  if (obj.type === 'Buffer' && Array.isArray(obj.data)) {
+    return fromArrayLike(obj.data)
+  }
 }
 
 function checked (length) {
@@ -422,12 +483,17 @@ function SlowBuffer (length) {
 }
 
 Buffer.isBuffer = function isBuffer (b) {
-  return b != null && b._isBuffer === true
+  return b != null && b._isBuffer === true &&
+    b !== Buffer.prototype // so Buffer.isBuffer(Buffer.prototype) will be false
 }
 
 Buffer.compare = function compare (a, b) {
+  if (isInstance(a, Uint8Array)) a = Buffer.from(a, a.offset, a.byteLength)
+  if (isInstance(b, Uint8Array)) b = Buffer.from(b, b.offset, b.byteLength)
   if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
-    throw new TypeError('Arguments must be Buffers')
+    throw new TypeError(
+      'The "buf1", "buf2" arguments must be one of type Buffer or Uint8Array'
+    )
   }
 
   if (a === b) return 0
@@ -488,7 +554,7 @@ Buffer.concat = function concat (list, length) {
   var pos = 0
   for (i = 0; i < list.length; ++i) {
     var buf = list[i]
-    if (ArrayBuffer.isView(buf)) {
+    if (isInstance(buf, Uint8Array)) {
       buf = Buffer.from(buf)
     }
     if (!Buffer.isBuffer(buf)) {
@@ -504,15 +570,19 @@ function byteLength (string, encoding) {
   if (Buffer.isBuffer(string)) {
     return string.length
   }
-  if (ArrayBuffer.isView(string) || isArrayBuffer(string)) {
+  if (ArrayBuffer.isView(string) || isInstance(string, ArrayBuffer)) {
     return string.byteLength
   }
   if (typeof string !== 'string') {
-    string = '' + string
+    throw new TypeError(
+      'The "string" argument must be one of type string, Buffer, or ArrayBuffer. ' +
+      'Received type ' + typeof string
+    )
   }
 
   var len = string.length
-  if (len === 0) return 0
+  var mustMatch = (arguments.length > 2 && arguments[2] === true)
+  if (!mustMatch && len === 0) return 0
 
   // Use a for loop to avoid recursion
   var loweredCase = false
@@ -524,7 +594,6 @@ function byteLength (string, encoding) {
         return len
       case 'utf8':
       case 'utf-8':
-      case undefined:
         return utf8ToBytes(string).length
       case 'ucs2':
       case 'ucs-2':
@@ -536,7 +605,9 @@ function byteLength (string, encoding) {
       case 'base64':
         return base64ToBytes(string).length
       default:
-        if (loweredCase) return utf8ToBytes(string).length // assume utf8
+        if (loweredCase) {
+          return mustMatch ? -1 : utf8ToBytes(string).length // assume utf8
+        }
         encoding = ('' + encoding).toLowerCase()
         loweredCase = true
     }
@@ -683,16 +754,20 @@ Buffer.prototype.equals = function equals (b) {
 Buffer.prototype.inspect = function inspect () {
   var str = ''
   var max = exports.INSPECT_MAX_BYTES
-  if (this.length > 0) {
-    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
-    if (this.length > max) str += ' ... '
-  }
+  str = this.toString('hex', 0, max).replace(/(.{2})/g, '$1 ').trim()
+  if (this.length > max) str += ' ... '
   return '<Buffer ' + str + '>'
 }
 
 Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
+  if (isInstance(target, Uint8Array)) {
+    target = Buffer.from(target, target.offset, target.byteLength)
+  }
   if (!Buffer.isBuffer(target)) {
-    throw new TypeError('Argument must be a Buffer')
+    throw new TypeError(
+      'The "target" argument must be one of type Buffer or Uint8Array. ' +
+      'Received type ' + (typeof target)
+    )
   }
 
   if (start === undefined) {
@@ -771,7 +846,7 @@ function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
   } else if (byteOffset < -0x80000000) {
     byteOffset = -0x80000000
   }
-  byteOffset = +byteOffset  // Coerce to Number.
+  byteOffset = +byteOffset // Coerce to Number.
   if (numberIsNaN(byteOffset)) {
     // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
     byteOffset = dir ? 0 : (buffer.length - 1)
@@ -1023,8 +1098,8 @@ function utf8Slice (buf, start, end) {
     var codePoint = null
     var bytesPerSequence = (firstByte > 0xEF) ? 4
       : (firstByte > 0xDF) ? 3
-      : (firstByte > 0xBF) ? 2
-      : 1
+        : (firstByte > 0xBF) ? 2
+          : 1
 
     if (i + bytesPerSequence <= end) {
       var secondByte, thirdByte, fourthByte, tempCodePoint
@@ -1687,7 +1762,7 @@ Buffer.prototype.fill = function fill (val, start, end, encoding) {
   } else {
     var bytes = Buffer.isBuffer(val)
       ? val
-      : new Buffer(val, encoding)
+      : Buffer.from(val, encoding)
     var len = bytes.length
     if (len === 0) {
       throw new TypeError('The value "' + val +
@@ -1842,15 +1917,16 @@ function blitBuffer (src, dst, offset, length) {
   return i
 }
 
-// ArrayBuffers from another context (i.e. an iframe) do not pass the `instanceof` check
-// but they should be treated as valid. See: https://github.com/feross/buffer/issues/166
-function isArrayBuffer (obj) {
-  return obj instanceof ArrayBuffer ||
-    (obj != null && obj.constructor != null && obj.constructor.name === 'ArrayBuffer' &&
-      typeof obj.byteLength === 'number')
+// ArrayBuffer or Uint8Array objects from other contexts (i.e. iframes) do not pass
+// the `instanceof` check but they should be treated as of that type.
+// See: https://github.com/feross/buffer/issues/166
+function isInstance (obj, type) {
+  return obj instanceof type ||
+    (obj != null && obj.constructor != null && obj.constructor.name != null &&
+      obj.constructor.name === type.name)
 }
-
 function numberIsNaN (obj) {
+  // For IE11 support
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
@@ -2128,6 +2204,173 @@ process.umask = function() { return 0; };
 
 },{}],5:[function(require,module,exports){
 'use strict';
+const colorConvert = require('color-convert');
+
+const wrapAnsi16 = (fn, offset) => function () {
+	const code = fn.apply(colorConvert, arguments);
+	return `\u001B[${code + offset}m`;
+};
+
+const wrapAnsi256 = (fn, offset) => function () {
+	const code = fn.apply(colorConvert, arguments);
+	return `\u001B[${38 + offset};5;${code}m`;
+};
+
+const wrapAnsi16m = (fn, offset) => function () {
+	const rgb = fn.apply(colorConvert, arguments);
+	return `\u001B[${38 + offset};2;${rgb[0]};${rgb[1]};${rgb[2]}m`;
+};
+
+function assembleStyles() {
+	const codes = new Map();
+	const styles = {
+		modifier: {
+			reset: [0, 0],
+			// 21 isn't widely supported and 22 does the same thing
+			bold: [1, 22],
+			dim: [2, 22],
+			italic: [3, 23],
+			underline: [4, 24],
+			inverse: [7, 27],
+			hidden: [8, 28],
+			strikethrough: [9, 29]
+		},
+		color: {
+			black: [30, 39],
+			red: [31, 39],
+			green: [32, 39],
+			yellow: [33, 39],
+			blue: [34, 39],
+			magenta: [35, 39],
+			cyan: [36, 39],
+			white: [37, 39],
+			gray: [90, 39],
+
+			// Bright color
+			redBright: [91, 39],
+			greenBright: [92, 39],
+			yellowBright: [93, 39],
+			blueBright: [94, 39],
+			magentaBright: [95, 39],
+			cyanBright: [96, 39],
+			whiteBright: [97, 39]
+		},
+		bgColor: {
+			bgBlack: [40, 49],
+			bgRed: [41, 49],
+			bgGreen: [42, 49],
+			bgYellow: [43, 49],
+			bgBlue: [44, 49],
+			bgMagenta: [45, 49],
+			bgCyan: [46, 49],
+			bgWhite: [47, 49],
+
+			// Bright color
+			bgBlackBright: [100, 49],
+			bgRedBright: [101, 49],
+			bgGreenBright: [102, 49],
+			bgYellowBright: [103, 49],
+			bgBlueBright: [104, 49],
+			bgMagentaBright: [105, 49],
+			bgCyanBright: [106, 49],
+			bgWhiteBright: [107, 49]
+		}
+	};
+
+	// Fix humans
+	styles.color.grey = styles.color.gray;
+
+	for (const groupName of Object.keys(styles)) {
+		const group = styles[groupName];
+
+		for (const styleName of Object.keys(group)) {
+			const style = group[styleName];
+
+			styles[styleName] = {
+				open: `\u001B[${style[0]}m`,
+				close: `\u001B[${style[1]}m`
+			};
+
+			group[styleName] = styles[styleName];
+
+			codes.set(style[0], style[1]);
+		}
+
+		Object.defineProperty(styles, groupName, {
+			value: group,
+			enumerable: false
+		});
+
+		Object.defineProperty(styles, 'codes', {
+			value: codes,
+			enumerable: false
+		});
+	}
+
+	const ansi2ansi = n => n;
+	const rgb2rgb = (r, g, b) => [r, g, b];
+
+	styles.color.close = '\u001B[39m';
+	styles.bgColor.close = '\u001B[49m';
+
+	styles.color.ansi = {
+		ansi: wrapAnsi16(ansi2ansi, 0)
+	};
+	styles.color.ansi256 = {
+		ansi256: wrapAnsi256(ansi2ansi, 0)
+	};
+	styles.color.ansi16m = {
+		rgb: wrapAnsi16m(rgb2rgb, 0)
+	};
+
+	styles.bgColor.ansi = {
+		ansi: wrapAnsi16(ansi2ansi, 10)
+	};
+	styles.bgColor.ansi256 = {
+		ansi256: wrapAnsi256(ansi2ansi, 10)
+	};
+	styles.bgColor.ansi16m = {
+		rgb: wrapAnsi16m(rgb2rgb, 10)
+	};
+
+	for (let key of Object.keys(colorConvert)) {
+		if (typeof colorConvert[key] !== 'object') {
+			continue;
+		}
+
+		const suite = colorConvert[key];
+
+		if (key === 'ansi16') {
+			key = 'ansi';
+		}
+
+		if ('ansi16' in suite) {
+			styles.color.ansi[key] = wrapAnsi16(suite.ansi16, 0);
+			styles.bgColor.ansi[key] = wrapAnsi16(suite.ansi16, 10);
+		}
+
+		if ('ansi256' in suite) {
+			styles.color.ansi256[key] = wrapAnsi256(suite.ansi256, 0);
+			styles.bgColor.ansi256[key] = wrapAnsi256(suite.ansi256, 10);
+		}
+
+		if ('rgb' in suite) {
+			styles.color.ansi16m[key] = wrapAnsi16m(suite.rgb, 0);
+			styles.bgColor.ansi16m[key] = wrapAnsi16m(suite.rgb, 10);
+		}
+	}
+
+	return styles;
+}
+
+// Make the export immutable
+Object.defineProperty(module, 'exports', {
+	enumerable: true,
+	get: assembleStyles
+});
+
+},{"color-convert":11}],6:[function(require,module,exports){
+'use strict';
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
@@ -2153,7 +2396,7 @@ module.exports = function (word, breakAtLength) {
 };
 
 
-},{"wcwidth":22}],6:[function(require,module,exports){
+},{"wcwidth":22}],7:[function(require,module,exports){
 (function (process){
 'use strict';
 const escapeStringRegexp = require('escape-string-regexp');
@@ -2385,181 +2628,7 @@ module.exports.supportsColor = stdoutColor;
 module.exports.default = module.exports; // For TypeScript
 
 }).call(this,require('_process'))
-},{"./templates.js":9,"_process":4,"ansi-styles":7,"escape-string-regexp":16,"supports-color":8}],7:[function(require,module,exports){
-'use strict';
-const colorConvert = require('color-convert');
-
-const wrapAnsi16 = (fn, offset) => function () {
-	const code = fn.apply(colorConvert, arguments);
-	return `\u001B[${code + offset}m`;
-};
-
-const wrapAnsi256 = (fn, offset) => function () {
-	const code = fn.apply(colorConvert, arguments);
-	return `\u001B[${38 + offset};5;${code}m`;
-};
-
-const wrapAnsi16m = (fn, offset) => function () {
-	const rgb = fn.apply(colorConvert, arguments);
-	return `\u001B[${38 + offset};2;${rgb[0]};${rgb[1]};${rgb[2]}m`;
-};
-
-function assembleStyles() {
-	const codes = new Map();
-	const styles = {
-		modifier: {
-			reset: [0, 0],
-			// 21 isn't widely supported and 22 does the same thing
-			bold: [1, 22],
-			dim: [2, 22],
-			italic: [3, 23],
-			underline: [4, 24],
-			inverse: [7, 27],
-			hidden: [8, 28],
-			strikethrough: [9, 29]
-		},
-		color: {
-			black: [30, 39],
-			red: [31, 39],
-			green: [32, 39],
-			yellow: [33, 39],
-			blue: [34, 39],
-			magenta: [35, 39],
-			cyan: [36, 39],
-			white: [37, 39],
-			gray: [90, 39],
-
-			// Bright color
-			redBright: [91, 39],
-			greenBright: [92, 39],
-			yellowBright: [93, 39],
-			blueBright: [94, 39],
-			magentaBright: [95, 39],
-			cyanBright: [96, 39],
-			whiteBright: [97, 39]
-		},
-		bgColor: {
-			bgBlack: [40, 49],
-			bgRed: [41, 49],
-			bgGreen: [42, 49],
-			bgYellow: [43, 49],
-			bgBlue: [44, 49],
-			bgMagenta: [45, 49],
-			bgCyan: [46, 49],
-			bgWhite: [47, 49],
-
-			// Bright color
-			bgBlackBright: [100, 49],
-			bgRedBright: [101, 49],
-			bgGreenBright: [102, 49],
-			bgYellowBright: [103, 49],
-			bgBlueBright: [104, 49],
-			bgMagentaBright: [105, 49],
-			bgCyanBright: [106, 49],
-			bgWhiteBright: [107, 49]
-		}
-	};
-
-	// Fix humans
-	styles.color.grey = styles.color.gray;
-
-	for (const groupName of Object.keys(styles)) {
-		const group = styles[groupName];
-
-		for (const styleName of Object.keys(group)) {
-			const style = group[styleName];
-
-			styles[styleName] = {
-				open: `\u001B[${style[0]}m`,
-				close: `\u001B[${style[1]}m`
-			};
-
-			group[styleName] = styles[styleName];
-
-			codes.set(style[0], style[1]);
-		}
-
-		Object.defineProperty(styles, groupName, {
-			value: group,
-			enumerable: false
-		});
-
-		Object.defineProperty(styles, 'codes', {
-			value: codes,
-			enumerable: false
-		});
-	}
-
-	const ansi2ansi = n => n;
-	const rgb2rgb = (r, g, b) => [r, g, b];
-
-	styles.color.close = '\u001B[39m';
-	styles.bgColor.close = '\u001B[49m';
-
-	styles.color.ansi = {
-		ansi: wrapAnsi16(ansi2ansi, 0)
-	};
-	styles.color.ansi256 = {
-		ansi256: wrapAnsi256(ansi2ansi, 0)
-	};
-	styles.color.ansi16m = {
-		rgb: wrapAnsi16m(rgb2rgb, 0)
-	};
-
-	styles.bgColor.ansi = {
-		ansi: wrapAnsi16(ansi2ansi, 10)
-	};
-	styles.bgColor.ansi256 = {
-		ansi256: wrapAnsi256(ansi2ansi, 10)
-	};
-	styles.bgColor.ansi16m = {
-		rgb: wrapAnsi16m(rgb2rgb, 10)
-	};
-
-	for (let key of Object.keys(colorConvert)) {
-		if (typeof colorConvert[key] !== 'object') {
-			continue;
-		}
-
-		const suite = colorConvert[key];
-
-		if (key === 'ansi16') {
-			key = 'ansi';
-		}
-
-		if ('ansi16' in suite) {
-			styles.color.ansi[key] = wrapAnsi16(suite.ansi16, 0);
-			styles.bgColor.ansi[key] = wrapAnsi16(suite.ansi16, 10);
-		}
-
-		if ('ansi256' in suite) {
-			styles.color.ansi256[key] = wrapAnsi256(suite.ansi256, 0);
-			styles.bgColor.ansi256[key] = wrapAnsi256(suite.ansi256, 10);
-		}
-
-		if ('rgb' in suite) {
-			styles.color.ansi16m[key] = wrapAnsi16m(suite.rgb, 0);
-			styles.bgColor.ansi16m[key] = wrapAnsi16m(suite.rgb, 10);
-		}
-	}
-
-	return styles;
-}
-
-// Make the export immutable
-Object.defineProperty(module, 'exports', {
-	enumerable: true,
-	get: assembleStyles
-});
-
-},{"color-convert":12}],8:[function(require,module,exports){
-'use strict';
-module.exports = {
-	stdout: false,
-	stderr: false
-};
-
-},{}],9:[function(require,module,exports){
+},{"./templates.js":8,"_process":4,"ansi-styles":5,"escape-string-regexp":15,"supports-color":20}],8:[function(require,module,exports){
 'use strict';
 const TEMPLATE_REGEX = /(?:\\(u[a-f\d]{4}|x[a-f\d]{2}|.))|(?:\{(~)?(\w+(?:\([^)]*\))?(?:\.\w+(?:\([^)]*\))?)*)(?:[ \t]|(?=\r?\n)))|(\})|((?:.|[\r\n\f])+?)/gi;
 const STYLE_REGEX = /(?:^|\.)(\w+)(?:\(([^)]*)\))?/g;
@@ -2689,7 +2758,7 @@ module.exports = (chalk, tmp) => {
 	return chunks.join('');
 };
 
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 (function (Buffer){
 var clone = (function() {
 'use strict';
@@ -2756,7 +2825,13 @@ function clone(parent, circular, depth, prototype) {
     } else if (clone.__isDate(parent)) {
       child = new Date(parent.getTime());
     } else if (useBuffer && Buffer.isBuffer(parent)) {
-      child = new Buffer(parent.length);
+      if (Buffer.allocUnsafe) {
+        // Node.js >= 4.5.0
+        child = Buffer.allocUnsafe(parent.length);
+      } else {
+        // Older Node.js versions
+        child = new Buffer(parent.length);
+      }
       parent.copy(child);
       return child;
     } else {
@@ -2853,7 +2928,7 @@ if (typeof module === 'object' && module.exports) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":2}],11:[function(require,module,exports){
+},{"buffer":2}],10:[function(require,module,exports){
 /* MIT license */
 var cssKeywords = require('color-name');
 
@@ -2951,41 +3026,48 @@ convert.rgb.hsl = function (rgb) {
 };
 
 convert.rgb.hsv = function (rgb) {
-	var r = rgb[0];
-	var g = rgb[1];
-	var b = rgb[2];
-	var min = Math.min(r, g, b);
-	var max = Math.max(r, g, b);
-	var delta = max - min;
+	var rdif;
+	var gdif;
+	var bdif;
 	var h;
 	var s;
-	var v;
 
-	if (max === 0) {
-		s = 0;
+	var r = rgb[0] / 255;
+	var g = rgb[1] / 255;
+	var b = rgb[2] / 255;
+	var v = Math.max(r, g, b);
+	var diff = v - Math.min(r, g, b);
+	var diffc = function (c) {
+		return (v - c) / 6 / diff + 1 / 2;
+	};
+
+	if (diff === 0) {
+		h = s = 0;
 	} else {
-		s = (delta / max * 1000) / 10;
+		s = diff / v;
+		rdif = diffc(r);
+		gdif = diffc(g);
+		bdif = diffc(b);
+
+		if (r === v) {
+			h = bdif - gdif;
+		} else if (g === v) {
+			h = (1 / 3) + rdif - bdif;
+		} else if (b === v) {
+			h = (2 / 3) + gdif - rdif;
+		}
+		if (h < 0) {
+			h += 1;
+		} else if (h > 1) {
+			h -= 1;
+		}
 	}
 
-	if (max === min) {
-		h = 0;
-	} else if (r === max) {
-		h = (g - b) / delta;
-	} else if (g === max) {
-		h = 2 + (b - r) / delta;
-	} else if (b === max) {
-		h = 4 + (r - g) / delta;
-	}
-
-	h = Math.min(h * 60, 360);
-
-	if (h < 0) {
-		h += 360;
-	}
-
-	v = ((max / 255) * 1000) / 10;
-
-	return [h, s, v];
+	return [
+		h * 360,
+		s * 100,
+		v * 100
+	];
 };
 
 convert.rgb.hwb = function (rgb) {
@@ -3716,7 +3798,7 @@ convert.rgb.gray = function (rgb) {
 	return [val / 255 * 100];
 };
 
-},{"color-name":14}],12:[function(require,module,exports){
+},{"color-name":13}],11:[function(require,module,exports){
 var conversions = require('./conversions');
 var route = require('./route');
 
@@ -3796,7 +3878,7 @@ models.forEach(function (fromModel) {
 
 module.exports = convert;
 
-},{"./conversions":11,"./route":13}],13:[function(require,module,exports){
+},{"./conversions":10,"./route":12}],12:[function(require,module,exports){
 var conversions = require('./conversions');
 
 /*
@@ -3895,7 +3977,7 @@ module.exports = function (fromModel) {
 };
 
 
-},{"./conversions":11}],14:[function(require,module,exports){
+},{"./conversions":10}],13:[function(require,module,exports){
 'use strict'
 
 module.exports = {
@@ -4049,7 +4131,7 @@ module.exports = {
 	"yellowgreen": [154, 205, 50]
 };
 
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var clone = require('clone');
 
 module.exports = function(options, defaults) {
@@ -4063,7 +4145,7 @@ module.exports = function(options, defaults) {
 
   return options;
 };
-},{"clone":10}],16:[function(require,module,exports){
+},{"clone":9}],15:[function(require,module,exports){
 'use strict';
 
 var matchOperatorsRe = /[|\\{}()[\]^$+*?.]/g;
@@ -4076,7 +4158,7 @@ module.exports = function (str) {
 	return str.replace(matchOperatorsRe, '\\$&');
 };
 
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /*!
  * @name JavaScript/NodeJS Merge v1.2.0
  * @author yeikos
@@ -4252,7 +4334,7 @@ module.exports = function (str) {
 	}
 
 })(typeof module === 'object' && module && typeof module.exports === 'object' && module.exports);
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 function smartWrap(text,options){
@@ -4390,22 +4472,33 @@ function smartWrap(text,options){
 
 module.exports = smartWrap;
 
-},{"breakword":5,"merge":17,"wcwidth":22}],19:[function(require,module,exports){
+},{"breakword":6,"merge":16,"wcwidth":22}],18:[function(require,module,exports){
 'use strict';
 const ansiRegex = require('ansi-regex');
 
 module.exports = input => typeof input === 'string' ? input.replace(ansiRegex(), '') : input;
 
-},{"ansi-regex":20}],20:[function(require,module,exports){
+},{"ansi-regex":19}],19:[function(require,module,exports){
 'use strict';
 
-module.exports = () => {
+module.exports = options => {
+	options = Object.assign({
+		onlyFirst: false
+	}, options);
+
 	const pattern = [
 		'[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\\u0007)',
-		'(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))'
+		'(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))'
 	].join('|');
 
-	return new RegExp(pattern, 'g');
+	return new RegExp(pattern, options.onlyFirst ? undefined : 'g');
+};
+
+},{}],20:[function(require,module,exports){
+'use strict';
+module.exports = {
+	stdout: false,
+	stderr: false
 };
 
 },{}],21:[function(require,module,exports){
@@ -4561,28 +4654,28 @@ function bisearch(ucs) {
   return false
 }
 
-},{"./combining":21,"defaults":15}],23:[function(require,module,exports){
+},{"./combining":21,"defaults":14}],23:[function(require,module,exports){
 "use strict";var Config={borderCharacters:[[{v:" ",l:" ",j:" ",h:" ",r:" "},{v:" ",l:" ",j:" ",h:" ",r:" "},{v:" ",l:" ",j:" ",h:" ",r:" "}],[{v:"\u2502",l:"\u250C",j:"\u252C",h:"\u2500",r:"\u2510"},{v:"\u2502",l:"\u251C",j:"\u253C",h:"\u2500",r:"\u2524"},{v:"\u2502",l:"\u2514",j:"\u2534",h:"\u2500",r:"\u2518"}],[{v:"|",l:"+",j:"+",h:"-",r:"+"},{v:"|",l:"+",j:"+",h:"-",r:"+"},{v:"|",l:"+",j:"+",h:"-",r:"+"}]],align:"center",borderColor:null,borderStyle:1,color:!1,compact:!1,defaultErrorValue:"\x1B[32m\x1B[37m\x1B[41m ERROR!  \x1B[49m\x1B[32m\x1B[39m",defaultValue:"\x1B[32m\x1B[37m\x1B[41m ?  \x1B[49m\x1B[32m\x1B[39m",errorOnNull:!1,footerAlign:"center",footerColor:!1,formatter:null,headerAlign:"center",headerColor:"yellow",marginLeft:2,marginTop:1,paddingBottom:0,paddingLeft:1,paddingRight:1,paddingTop:0,tableType:null,truncate:!1,width:"auto",GUTTER:1,columnSettings:[],headerEmpty:!1,table:{body:"",columnInnerWidths:[],columnWidths:[],columns:[],footer:"",header:"",height:0,typeLocked:!1}};module.exports=Config;
 
 },{}],24:[function(require,module,exports){
 (function (process){
-'use strict';var _typeof='function'==typeof Symbol&&'symbol'==typeof Symbol.iterator?function(a){return typeof a}:function(a){return a&&'function'==typeof Symbol&&a.constructor===Symbol&&a!==Symbol.prototype?'symbol':typeof a};function _toConsumableArray(a){if(Array.isArray(a)){for(var b=0,c=Array(a.length);b<a.length;b++)c[b]=a[b];return c}return Array.from(a)}var Merge=require('merge'),Defaults=require('./config.js'),Counter=0,Factory=function(a){var b=Symbol.config,c=[],d=[],e=[],f={};switch(!0){case 4===a.length:c=a[0],d.push.apply(d,_toConsumableArray(a[1])),e=a[2],f=a[3];break;case 3===a.length&&a[2]instanceof Array:c=a[0],d.push.apply(d,_toConsumableArray(a[1])),e=a[2];break;case 3===a.length&&'object'===_typeof(a[2]):c=a[0],d.push.apply(d,_toConsumableArray(a[1])),f=a[2];break;case 2===a.length&&a[1]instanceof Array:c=a[0],d.push.apply(d,_toConsumableArray(a[1]));break;case 2===a.length&&'object'===_typeof(a[2]):d.push.apply(d,_toConsumableArray(a[0])),f=a[1];break;case 1===a.length&&a[0]instanceof Array:d.push.apply(d,_toConsumableArray(a[0]));break;case 1===a.length&&'string'==typeof a[0]:return require('../adapters/'+a[0]);default:console.log('Error: Bad params. \nSee docs at github.com/tecfu/tty-table'),process.exit();}var g=Merge(!0,Defaults,f);if(g.align=g.alignment||g.align,g.headerAlign=g.headerAlignment||g.headerAlign,null!==g.borderColor){var i=require('chalk');g.borderCharacters[g.borderStyle]=g.borderCharacters[g.borderStyle].map(function(a){return Object.keys(a).forEach(function(b){a[b]=i[g.borderColor](a[b])}),a})}g.columnSettings=c.slice(0),g.table.header=c,g.headerEmpty=0===c.length,g.table.header=[g.table.header],g.table.footer=e,!0!==g.terminalAdapter&&Counter++,g.tableId=Counter;var h=Object.create(d);return h[b]=g,h.render=function(){var a=require('./render.js'),c=a.stringifyData(this[b],this.slice(0));return h.height=this[b].height,c},h};module.exports=function(){return new Factory(arguments)};
+'use strict';var _typeof='function'==typeof Symbol&&'symbol'==typeof Symbol.iterator?function(a){return typeof a}:function(a){return a&&'function'==typeof Symbol&&a.constructor===Symbol&&a!==Symbol.prototype?'symbol':typeof a};function _toConsumableArray(a){if(Array.isArray(a)){for(var b=0,c=Array(a.length);b<a.length;b++)c[b]=a[b];return c}return Array.from(a)}var Merge=require('merge'),Defaults=require('./config.js'),Counter=0,Factory=function(a){var b=Symbol.config,c=[],d=[],e=[],f={};switch(!0){case 4===a.length:c=a[0],d.push.apply(d,_toConsumableArray(a[1])),e=a[2],f=a[3];break;case 3===a.length&&a[2]instanceof Array:c=a[0],d.push.apply(d,_toConsumableArray(a[1])),e=a[2];break;case 3===a.length&&'object'===_typeof(a[2]):c=a[0],d.push.apply(d,_toConsumableArray(a[1])),f=a[2];break;case 2===a.length&&a[1]instanceof Array:c=a[0],d.push.apply(d,_toConsumableArray(a[1]));break;case 2===a.length&&'object'===_typeof(a[1]):d.push.apply(d,_toConsumableArray(a[0])),f=a[1];break;case 1===a.length&&a[0]instanceof Array:d.push.apply(d,_toConsumableArray(a[0]));break;case 1===a.length&&'string'==typeof a[0]:return require('../adapters/'+a[0]);default:console.log('Error: Bad params. \nSee docs at github.com/tecfu/tty-table'),process.exit();}var g=Merge(!0,Defaults,f);if(g.align=g.alignment||g.align,g.headerAlign=g.headerAlignment||g.headerAlign,!!g.borderColor){var i=require('chalk');g.borderCharacters[g.borderStyle]=g.borderCharacters[g.borderStyle].map(function(a){return Object.keys(a).forEach(function(b){a[b]=i[g.borderColor](a[b])}),a})}g.columnSettings=c.slice(0),g.table.header=c,g.headerEmpty=0===c.length,g.table.header=[g.table.header],g.table.footer=e,!0!==g.terminalAdapter&&Counter++,g.tableId=Counter;var h=Object.create(d);return h[b]=g,h.render=function(){var a=require('./render.js'),c=a.stringifyData(this[b],this.slice(0));return h.height=this[b].height,c},h};module.exports=function(){return new Factory(arguments)};
 
 }).call(this,require('_process'))
-},{"./config.js":23,"./render.js":26,"_process":4,"chalk":6,"merge":17}],25:[function(require,module,exports){
+},{"./config.js":23,"./render.js":26,"_process":4,"chalk":7,"merge":16}],25:[function(require,module,exports){
 (function (process){
-"use strict";var _typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(a){return typeof a}:function(a){return a&&"function"==typeof Symbol&&a.constructor===Symbol&&a!==Symbol.prototype?"symbol":typeof a},StripAnsi=require("strip-ansi"),Wrap=require("smartwrap"),Wcwidth=require("wcwidth"),Format={};Format.calculateLength=function(a){return Wcwidth(StripAnsi(a))},Format.wrapCellContent=function(a,b,c,d,e){var f=b.toString(),g=/^(\033\[[0-9;]*m)+/,h=f.match(g)||[""];f=f.replace(g,"");var i=/(\033\[[0-9;]*m)+$/,j=f.match(i)||[""];f=f.replace(i,"");var k="header"===e?"headerAlign":"body"===e?"align":"footerAlign";"center"===d[k]&&(d.paddingLeft=d.paddingRight=Math.max(d.paddingRight,d.paddingLeft,0));var l=a.table.columnWidths[c],m=l-d.paddingLeft-d.paddingRight-a.GUTTER;switch(!0){case"string"==typeof a.truncate||!0===a.truncate:!0===a.truncate&&(a.truncate=""),f=Format.handleTruncatedValue(f,d,m);break;case /[\uD800-\uDFFF]/.test(f):f=Format.handleWideChars(f,d,m);break;default:f=Format.handleNonWideChars(f,d,m);}var n=f.split("\n");return n=n.map(function(a){a=a.trim();var b=Format.calculateLength(a);if(b<l){var c=l-b;switch(!0){case"center"===d[k]:c--;var e=Math.floor(c/2),f=c%2;a=Array(e+1).join(" ")+a+Array(e+1+f).join(" ");break;case"right"===d[k]:a=Array(c-d.paddingRight).join(" ")+a+Array(d.paddingRight+1).join(" ");break;default:a=Array(d.paddingLeft+1).join(" ")+a+Array(c-d.paddingLeft).join(" ");}}return a=h[0]+a,a+=j[0],a}),{output:n,width:m}},Format.handleTruncatedValue=function(a,b,c){var d=a;return c<d.length&&(d=d.substring(0,c-b.truncate.length),d+=b.truncate),d},Format.handleWideChars=function(a,b,c){var d=0,e=0,f=a.split(""),g=f.reduce(function(b,g,h){return d+=Format.calculateLength(g),d>c?(b.push(a.slice(e,h)),e=h,d=0):f.length===h+1&&b.push(a.slice(e)),b},[]).join("\n");return g},Format.handleNonWideChars=function(a,b,c){var d=Wrap(a,{width:c,trim:!0});return d},Format.inferColumnWidth=function(a,b,c){var d;if("object"===("undefined"==typeof a?"undefined":_typeof(a))&&a.value){d=b.slice();var f=Array(d[0].length);f[c]=a.value.toString(),d.push(f)}else d=b;var e=0;return d.forEach(function(a){a[c]&&a[c].toString().length>e&&(e=Wcwidth(a[c].toString()))}),e},Format.getColumnWidths=function(a,b){var c=a.table.header[0]&&0<a.table.header[0].length?a.table.header[0]:b[0],d=c.map(function(c,d){var e;switch(!0){case"object"===("undefined"==typeof c?"undefined":_typeof(c))&&"number"==typeof c.width:e=c.width;break;case a.width&&"auto"!==a.width:e=a.width;break;default:var f=a.table.header[0][d]?a.table.header[0][d]:{};e=Format.inferColumnWidth(f,b,d),e=e+a.paddingLeft+a.paddingRight;}return e+=a.GUTTER,e}),e=d.reduce(function(a,b){return a+b});if(e+=a.marginLeft,process&&process.stdout&&e>process.stdout.columns){var f=process.stdout.columns/e;f=f.toFixed(2)-0.01,0<f&&(d=d.map(function(a){return Math.floor(f*a)}))}return d},module.exports=Format;
+"use strict";var _typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(a){return typeof a}:function(a){return a&&"function"==typeof Symbol&&a.constructor===Symbol&&a!==Symbol.prototype?"symbol":typeof a},StripAnsi=require("strip-ansi"),Wrap=require("smartwrap"),Wcwidth=require("wcwidth"),Format={};Format.calculateLength=function(a){return Wcwidth(StripAnsi(a))},Format.wrapCellContent=function(a,b,c,d,e){var f=b.toString(),g=/^(\033\[[0-9;]*m)+/,h=f.match(g)||[""];f=f.replace(g,"");var i=/(\033\[[0-9;]*m)+$/,j=f.match(i)||[""];f=f.replace(i,"");var k="header"===e?"headerAlign":"body"===e?"align":"footerAlign";"center"===d[k]&&(d.paddingLeft=d.paddingRight=Math.max(d.paddingRight,d.paddingLeft,0));var l=a.table.columnWidths[c],m=l-d.paddingLeft-d.paddingRight-a.GUTTER;switch(!0){case"string"==typeof a.truncate||!0===a.truncate:!0===a.truncate&&(a.truncate=""),f=Format.handleTruncatedValue(f,d,m);break;case /[\uD800-\uDFFF]/.test(f):f=Format.handleWideChars(f,d,m);break;default:f=Format.handleNonWideChars(f,d,m);}var n=f.split("\n");return n=n.map(function(a){a=a.trim();var b=Format.calculateLength(a);if(b<l){var c=l-b;switch(!0){case"center"===d[k]:c--;var e=Math.floor(c/2),f=c%2;a=Array(e+1).join(" ")+a+Array(e+1+f).join(" ");break;case"right"===d[k]:a=Array(c-d.paddingRight).join(" ")+a+Array(d.paddingRight+1).join(" ");break;default:a=Array(d.paddingLeft+1).join(" ")+a+Array(c-d.paddingLeft).join(" ");}}return a=h[0]+a,a+=j[0],a}),{output:n,width:m}},Format.handleTruncatedValue=function(a,b,c){var d=a;return c<d.length&&(d=d.substring(0,c-b.truncate.length),d+=b.truncate),d},Format.handleWideChars=function(a,b,c){var d=0,e=0,f=a.split(""),g=f.reduce(function(b,g,h){return d+=Format.calculateLength(g),d>c?(b.push(a.slice(e,h)),e=h,d=0):f.length===h+1&&b.push(a.slice(e)),b},[]).join("\n");return g},Format.handleNonWideChars=function(a,b,c){var d=Wrap(a,{width:c,trim:!0});return d},Format.inferColumnWidth=function(a,b,c){var d;if("object"===("undefined"==typeof a?"undefined":_typeof(a))&&a.value){d=b.slice();var f=Array(d[0].length);f[c]=a.value.toString(),d.push(f)}else d=b;var e=0;return d.forEach(function(a){a[c]&&a[c].toString().length>e&&(e=Wcwidth(a[c].toString()))}),e},Format.getColumnWidths=function(a,b){var c=a.table.header[0]&&0<a.table.header[0].length?a.table.header[0]:b[0],d=c.map(function(c,d){var e;switch(!0){case"object"===("undefined"==typeof c?"undefined":_typeof(c))&&"number"==typeof c.width:e=c.width;break;case a.width&&"auto"!==a.width:e=a.width;break;default:var f=a.table.header[0][d]?a.table.header[0][d]:{},g=b.length?b:a.table.header[0];e=Format.inferColumnWidth(f,g,d),e=e+a.paddingLeft+a.paddingRight;}return e+=a.GUTTER,e}),e=d.reduce(function(a,b){return a+b});if(e+=a.marginLeft,process&&process.stdout&&e>process.stdout.columns){var f=process.stdout.columns/e;f=f.toFixed(2)-0.01,0<f&&(d=d.map(function(a){return Math.floor(f*a)}))}return d},module.exports=Format;
 
 }).call(this,require('_process'))
-},{"_process":4,"smartwrap":18,"strip-ansi":19,"wcwidth":22}],26:[function(require,module,exports){
+},{"_process":4,"smartwrap":17,"strip-ansi":18,"wcwidth":22}],26:[function(require,module,exports){
 (function (global){
-"use strict";var _typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(a){return typeof a}:function(a){return a&&"function"==typeof Symbol&&a.constructor===Symbol&&a!==Symbol.prototype?"symbol":typeof a},Merge=require("merge"),Style=require("./style.js"),Format=require("./format.js"),Render={};Render.stringifyData=function(b,c){var d={header:[],body:[],footer:[]},e=Array(b.marginLeft+1).join(" "),f=b.borderCharacters[b.borderStyle],g=[];b.rowFormat=Render.getRowFormat(c[0]||[],b),c=Render.transformRows(b,c),global.columnWidths||(global.columnWidths={}),global.columnWidths[b.tableId]?b.table.columnWidths=global.columnWidths[b.tableId]:global.columnWidths[b.tableId]=b.table.columnWidths=Format.getColumnWidths(b,c),d.header=b.headerEmpty?[]:b.table.header.map(function(a){return buildRow(b,a,"header")}),d.body=c.map(function(a){return buildRow(b,a,"body")}),d.footer=b.table.footer instanceof Array&&0<b.table.footer.length?[b.table.footer]:[],d.footer=d.footer.map(function(a){return buildRow(b,a,"footer")});for(var h=function(c){g.push(""),b.table.columnWidths.forEach(function(a,b,d){g[c]+=Array(a).join(f[c].h)+(b+1===d.length?f[c].r:f[c].j)}),g[c]=f[c].l+g[c],g[c]=g[c].split(""),g[c][g[c].length1]=f[c].r,g[c]=g[c].join(""),g[c]=2>c?e+g[c]+"\n":e+g[c]},i=0;3>i;i++)h(i);var a="";a+=g[0],Object.keys(d).forEach(function(c,h){for(;d[c].length;){var i=d[c].shift();switch(i.forEach(function(b){a=a+e+f[1].v+b.join(f[1].v)+f[1].v+"\n"}),!0){case 0===d[c].length&&1===h&&0===d.footer.length:break;case 0===d[c].length&&2===h:break;case b.compact&&"body"===c&&!i.empty:break;default:a+=g[1];}}}),a+=g[2];var j=Array(b.marginTop+1).join("\n")+a;return b.height=j.split(/\r\n|\r|\n/).length,j};var buildRow=function(d,a,e){var f=0;if(0===a.length&&d.compact)return a.empty=!0,a;var b=d.table.columnWidths.length-a.length;0<b?a=a.concat(Array.apply(null,Array(b)).map(function(){return null})):0>b&&(a.length=d.table.columnWidths.length);for(var g=[],h=a.length,i=0;i<h;i++){var k=Render.buildCell(d,a[i],i,e),c=k.cellArr;"header"===e&&d.table.columnInnerWidths.push(k.width),f=f<c.length?c.length:f,g.push(c)}f="header"===e?f:f+(d.paddingBottom+d.paddingTop);var j=Array.apply(null,{length:f}).map(Function.call,function(){return[]});return g.forEach(function(c,g){var a=Array(d.table.columnWidths[g]).join(" ");if("body"===e){for(var h=0;h<d.paddingTop;h++)c.unshift(a);for(var i=0;i<d.paddingBottom;i++)c.push(a)}for(var k=0;k<f;k++)j[k].push("undefined"==typeof c[k]?a:c[k])}),j};Render.buildCell=function(a,b,c,d){var e,f=Merge(!0,{},a,"body"===d?a.columnSettings[c]:{},b);if("header"===d)a.table.columns.push(f),e=f.alias||f.value||"";else{switch(!0){case"undefined"==typeof b||null===b:e=a.errorOnNull?a.defaultErrorValue:a.defaultValue;break;case"object"===("undefined"==typeof b?"undefined":_typeof(b))&&"undefined"!=typeof b.value:e=b.value;break;default:e=b;}"function"==typeof f.formatter&&(e=f.formatter(e))}e=Style.colorizeCell(e,f,d);var g=Format.wrapCellContent(a,e,c,f,d);return{cellArr:g.output,width:g.width}},Render.getRowFormat=function(a,b){var c;if("object"===("undefined"==typeof a?"undefined":_typeof(a))&&!(a instanceof Array)){var d=Object.keys(a);if("automattic"===b.adapter){var e=d[0];c=a[e]instanceof Array?"automattic-cross":"automattic-vertical"}else c="o-horizontal"}else c="a-horizontal";return c},Render.verticalizeMatrix=function(a,b){var c=[],d=a.table.columns;return d.forEach(function(a){c.push([a])}),b.forEach(function(a){a.forEach(function(a,b){c[b].push(a)})}),c},Render.transformRows=function(a,b){var c=[];switch(a.rowFormat){case"automattic-cross":a.columnSettings[0]=a.columnSettings[0]||{},a.columnSettings[0].color=a.headerColor,c=b.map(function(a){var b=[],c=Object.keys(a)[0];return b.push(c),b.concat(a[c])});break;case"automattic-vertical":a.columnSettings[0]=a.columnSettings[0]||{},a.columnSettings[0].color=a.headerColor,c=b.map(function(a){var b=Object.keys(a)[0];return[b,a[b]]});break;case"o-horizontal":c=b.map(function(b){return a.table.header[0].map(function(a){return b[a.value]||null})});break;case"a-horizontal":c=b;break;default:}return c},module.exports=Render;
+"use strict";var _typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(a){return typeof a}:function(a){return a&&"function"==typeof Symbol&&a.constructor===Symbol&&a!==Symbol.prototype?"symbol":typeof a},Merge=require("merge"),Style=require("./style.js"),Format=require("./format.js"),Render={};Render.stringifyData=function(b,c){var d={header:[],body:[],footer:[]},e=Array(b.marginLeft+1).join(" "),f=b.borderCharacters[b.borderStyle],g=[];b.rowFormat=Render.getRowFormat(c[0]||[],b),c=Render.transformRows(b,c),global.columnWidths||(global.columnWidths={}),global.columnWidths[b.tableId]?b.table.columnWidths=global.columnWidths[b.tableId]:global.columnWidths[b.tableId]=b.table.columnWidths=Format.getColumnWidths(b,c),d.header=b.headerEmpty?[]:b.table.header.map(function(a){return buildRow(b,a,"header")}),d.body=c.map(function(a){return buildRow(b,a,"body")}),d.footer=b.table.footer instanceof Array&&0<b.table.footer.length?[b.table.footer]:[],d.footer=d.footer.map(function(a){return buildRow(b,a,"footer")});for(var h=function(c){g.push(""),b.table.columnWidths.forEach(function(a,b,d){g[c]+=Array(a).join(f[c].h)+(b+1===d.length?f[c].r:f[c].j)}),g[c]=f[c].l+g[c],g[c]=g[c].split(""),g[c][g[c].length1]=f[c].r,g[c]=g[c].join(""),g[c]=2>c?e+g[c]+"\n":e+g[c]},i=0;3>i;i++)h(i);var a="";a+=g[0],Object.keys(d).forEach(function(c,h){for(;d[c].length;){var i=d[c].shift();switch(i.forEach(function(b){a=a+e+f[1].v+b.join(f[1].v)+f[1].v+"\n"}),!0){case 0===d[c].length&&1===h&&0===d.footer.length:break;case 0===d[c].length&&2===h:break;case b.compact&&"body"===c&&!i.empty:break;default:a+=g[1];}}}),a+=g[2];var j=Array(b.marginTop+1).join("\n")+a;return b.height=j.split(/\r\n|\r|\n/).length,j};var buildRow=function(d,a,e){var f=0;if(0===a.length&&d.compact)return a.empty=!0,a;var b=d.table.columnWidths.length-a.length;0<b?a=a.concat(Array.apply(null,Array(b)).map(function(){return null})):0>b&&(a.length=d.table.columnWidths.length);for(var g=[],h=a.length,i=0;i<h;i++){var j=Render.buildCell(d,a[i],i,e),c=j.cellArr;"header"===e&&d.table.columnInnerWidths.push(j.width),f=f<c.length?c.length:f,g.push(c)}f="header"===e?f:f+(d.paddingBottom+d.paddingTop);var k=Array.apply(null,{length:f}).map(Function.call,function(){return[]});return g.forEach(function(c,g){var a=Array(d.table.columnWidths[g]).join(" ");if("body"===e){for(var h=0;h<d.paddingTop;h++)c.unshift(a);for(var i=0;i<d.paddingBottom;i++)c.push(a)}for(var j=0;j<f;j++)k[j].push("undefined"==typeof c[j]?a:c[j])}),k};Render.buildCell=function(a,b,c,d){var e=void 0,f="function"==typeof Object.assign?Object.assign:Merge,g=f(!0,{},a,"body"===d?a.columnSettings[c]:{},b);if("header"===d)a.table.columns.push(g),e=g.alias||g.value||"";else{switch(!0){case"undefined"==typeof b||null===b:e=a.errorOnNull?a.defaultErrorValue:a.defaultValue;break;case"object"===("undefined"==typeof b?"undefined":_typeof(b))&&"undefined"!=typeof b.value:e=b.value;break;default:e=b;}"function"==typeof g.formatter&&(e=g.formatter(e))}e=Style.colorizeCell(e,g,d);var h=Format.wrapCellContent(a,e,c,g,d);return{cellArr:h.output,width:h.width}},Render.getRowFormat=function(a,b){var c;if("object"===("undefined"==typeof a?"undefined":_typeof(a))&&!(a instanceof Array)){var d=Object.keys(a);if("automattic"===b.adapter){var e=d[0];c=a[e]instanceof Array?"automattic-cross":"automattic-vertical"}else c="o-horizontal"}else c="a-horizontal";return c},Render.verticalizeMatrix=function(a,b){var c=[],d=a.table.columns;return d.forEach(function(a){c.push([a])}),b.forEach(function(a){a.forEach(function(a,b){c[b].push(a)})}),c},Render.transformRows=function(a,b){var c=[];switch(a.rowFormat){case"automattic-cross":a.columnSettings[0]=a.columnSettings[0]||{},a.columnSettings[0].color=a.headerColor,c=b.map(function(a){var b=[],c=Object.keys(a)[0];return b.push(c),b.concat(a[c])});break;case"automattic-vertical":a.columnSettings[0]=a.columnSettings[0]||{},a.columnSettings[0].color=a.headerColor,c=b.map(function(a){var b=Object.keys(a)[0];return[b,a[b]]});break;case"o-horizontal":c=b.map(function(b){return a.table.header[0].map(function(a){return b[a.value]||null})});break;case"a-horizontal":c=b;break;default:}return c},module.exports=Render;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./format.js":25,"./style.js":27,"merge":17}],27:[function(require,module,exports){
+},{"./format.js":25,"./style.js":27,"merge":16}],27:[function(require,module,exports){
 'use strict';var Chalk=require('chalk');exports.colorizeCell=function(a,b,c){var d=!1;switch(!0){case'body'===c:d=b.color||d;break;case'header'===c:d=b.headerColor||d;break;default:d=b.footerColor||d;}return d&&(a=Chalk[d](a)),a};
 
-},{"chalk":6}],"tty-table":[function(require,module,exports){
+},{"chalk":7}],"tty-table":[function(require,module,exports){
 'use strict';var Factory=require('./../src/factory.js');module.exports=Factory;
 
 },{"./../src/factory.js":24}]},{},[]);

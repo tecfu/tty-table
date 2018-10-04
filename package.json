@@ -1,6 +1,6 @@
 {
   "name": "tty-table",
-  "version": "2.6.8",
+  "version": "2.6.9",
   "description": "Command line table generator.",
   "main": "src/main.js",
   "bin": {
@@ -31,13 +31,14 @@
   },
   "homepage": "https://github.com/tecfu/tty-table",
   "dependencies": {
-    "chalk": "^2.3.0",
-    "csv": "^3.0.2",
+    "babel-core": "^6.26.3",
+    "chalk": "^2.4.1",
+    "csv": "^4.0.0",
     "merge": "^1.2.0",
     "smartwrap": "^1.0.9",
-    "strip-ansi": "^4.0.0",
+    "strip-ansi": "^5.0.0",
     "wcwidth": "^1.0.1",
-    "yargs": "^11.0.0"
+    "yargs": "^12.0.2"
   },
   "devDependencies": {
     "babel-preset-babili": "0.1.4",
