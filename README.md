@@ -1,10 +1,10 @@
 # tty-table 电传打字台
--
+
 [![Build Status](https://travis-ci.org/tecfu/tty-table.svg?branch=master)](https://travis-ci.org/tecfu/tty-table) [![Dependency Status](https://david-dm.org/tecfu/tty-table.png)](https://david-dm.org/tecfu/tty-table) [![NPM version](https://badge.fury.io/js/tty-table.svg)](http://badge.fury.io/js/tty-table) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
 
 ---
 
-Display yout data in a table using a terminal, browser, or browser console.
+Display your data in a table using a terminal, browser, or browser console.
 
 使用终端，浏览器或浏览器控制台在表中显示您的数据
 
