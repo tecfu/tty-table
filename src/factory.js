@@ -6,7 +6,7 @@ let Counter = 0;
 * @class Table
 * @param {array} header                          - [See example](#example-usage)
 * @param {object} header.column                  - Column options
-* @param {string} header.column.alias            - Alernate header column name
+* @param {string} header.column.alias            - Alternate header column name
 * @param {string} header.column.align            - default: "center"
 * @param {string} header.column.color            - default: terminal default color
 * @param {string} header.column.footerAlign      - default: "center" 
