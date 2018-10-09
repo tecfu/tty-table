@@ -141,7 +141,7 @@ Default border character sets:
 | --- | --- | --- |
 | header | <code>array</code> | [See example](#example-usage) |
 | header.column | <code>object</code> | Column options |
-| header.column.alias | <code>string</code> | Alernate header column name |
+| header.column.alias | <code>string</code> | Alternate header column name |
 | header.column.align | <code>string</code> | default: "center" |
 | header.column.color | <code>string</code> | default: terminal default color |
 | header.column.footerAlign | <code>string</code> | default: "center" |
