@@ -1,30 +1,37 @@
 #!/usr/bin/env node
-let csv = require('csv');
-let yargs = require('yargs');
-yargs.epilog('Copyight github.com/tecfu 2018');
-yargs.option('csv-delimiter',{
+let Csv = require('csv');
+let Chalk = require('chalk');
+let Yargs = require('yargs');
+
+Yargs.epilog('Copyright github.com/tecfu 2018');
+
+Yargs.option('csv-delimiter',{
   describe:'Set the field delimiter. One character only.',
   default:','
 });
-yargs.option('csv-escape',{
+
+Yargs.option('csv-escape',{
   describe:'Set the escape character. One character only.'
 });
-yargs.option('csv-rowDelimiter',{
+
+Yargs.option('csv-rowDelimiter',{
   describe:'String used to delimit record rows. You can also use a special constant: "auto","unix","max","windows","unicode".',
   default: '\n'
 });
-yargs.option('format',{
+
+Yargs.option('format',{
   describe:'Set input data format',
   choices:['json','csv'],
   default:'csv'
 });
-yargs.option('options\u2010\u002A',{
+
+Yargs.option('options\u2010\u002A',{
   describe:'Specify an optional setting where * is the setting name. See README.md for a complete list.'
 });
-//run help only at the end
-yargs = yargs.help('h').argv;
 
-let Chalk = require('chalk');
+//run help only at the end
+Yargs = Yargs.help('h').argv;
+
 let sendError = function(msg){
   msg = '\ntty-table error: ' + msg + '\n';
   console.log(msg);
@@ -37,9 +44,9 @@ let previousHeight = 0;
 
 let dataFormat = 'csv';
 switch(true){
-  case(typeof yargs.format === 'undefined'):
+  case(typeof Yargs.format === 'undefined'):
     break;
-  case(yargs.format.toString().match(/json/i) !== null):
+  case(Yargs.format.toString().match(/json/i) !== null):
     dataFormat = 'json';
     break;
   default:
@@ -47,15 +54,15 @@ switch(true){
 
 //look for options-* 
 let options = {};
-Object.keys(yargs).forEach(function(key){
+Object.keys(Yargs).forEach(function(key){
   let keyParts = key.split('-');
   if(keyParts[0]==='options'){
-    options[keyParts[1]]=yargs[key];
+    options[keyParts[1]]=Yargs[key];
   }
 });
 
 //look for header-n-*
-//Object.keys(yargs).forEach(function(key){
+//Object.keys(Yargs).forEach(function(key){
 //  let keyParts = key.split('-');
 //  if(keyParts[0] === 'header'){
 //    //find out which column we're setting an option on
@@ -63,20 +70,19 @@ Object.keys(yargs).forEach(function(key){
 //    if(typeof header[column] === 'undefined'){
 //      header[column] = {}
 //    }
-//    header[column][keyParts[2]] = yargs[key];
+//    header[column][keyParts[2]] = Yargs[key];
 //  }
 //});
 
 //if header is specified, we'll need to have a size on it
 
 
-//because diffent dataFormats 
+//because different dataFormats 
 let runTable = function(input){
   
   let header = [], 
   body = input; 
   //footer = [], 
-
   let Table = require('../src/factory.js');
   options.terminalAdapter = true;
   let t1 = Table(header,body,options);
@@ -126,13 +132,13 @@ process.stdin.on('data', function(chunk) {
       break;
     default:
       let formatterOptions = {};
-      Object.keys(yargs).forEach(function(key){
-        if(key.slice(0,4) === 'csv-' && typeof(yargs[key]) !== 'undefined'){
-          formatterOptions[key.slice(4)] = yargs[key];
+      Object.keys(Yargs).forEach(function(key){
+        if(key.slice(0,4) === 'csv-' && typeof(Yargs[key]) !== 'undefined'){
+          formatterOptions[key.slice(4)] = Yargs[key];
         }
       });
       
-      csv.parse(chunk,formatterOptions,function(err, data){
+      Csv.parse(chunk,formatterOptions,function(err, data){
         //validate csv  
         if(typeof data === 'undefined'){
           let msg = "CSV parse error.";
