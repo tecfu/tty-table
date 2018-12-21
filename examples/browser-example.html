@@ -1,88 +1,88 @@
 <!doctype html>
 <html>
-	<head>
-		<script src="../dist/tty-table.bundle.js"></script>
-		<script>
-			//Remember: ASCI colors won't render in the browser!
-			//in html body
-			var Table = require("tty-table");
+  <head>
+    <script src="../dist/tty-table.bundle.js"></script>
+    <script>
+      //Remember: ASCI colors won't render in the browser!
+      //in html body
+      var Table = require("tty-table");
 
-			var header = [
-				{
-					value : "item",
-					headerColor : "cyan",
-					color: "yellow",
-					align : "left",
-			//		paddingRight : 5,
-			//		width : 30
-				},
-				{
-					value : "price",
-					color : "red", 
-					formatter : function(value){
-						var str = "$" + value.toFixed(2);
-						if(value > 5){
-							//str = chalk.underline.green(str);
-						}
-						return str;
-					}
-				},
-				{
-					alias : "Is organic?",	
-					value : "organic",
-					formatter : function(value){
-						if(value === 'yes'){
-							//value = chalk.stripColor(value);
-							//value = chalk.green(value);
-						}
-						else{
-							//value = chalk.white.bgRed(value);
-						}
-						return value;
-					}
-				}
-			];
+      var header = [
+        {
+          value: "item",
+          headerColor: "cyan",
+          color: "yellow",
+          align: "left",
+          // paddingRight: 5,
+          // width: 30
+        },
+        {
+          value: "price",
+          color: "red", 
+          formatter: function(value){
+            var str = "$" + value.toFixed(2);
+            if(value > 5){
+              //str = chalk.underline.green(str);
+            }
+            return str;
+          }
+        },
+        {
+          alias: "Is organic?",  
+          value: "organic",
+          formatter: function(value){
+            if(value === 'yes'){
+              //value = chalk.stripColor(value);
+              //value = chalk.green(value);
+            }
+            else{
+              //value = chalk.white.bgRed(value);
+            }
+            return value;
+          }
+        }
+      ];
 
-			//Example with arrays as rows 
-			var rows = [
-				["hamburger",2.50,"no"],
-				["el jefe's special cream sauce",0.10,"yes"]
-			];
+      //Example with arrays as rows 
+      var rows = [
+        ["hamburger",2.50,"no"],
+        ["el jefe's special cream sauce",0.10,"yes"]
+      ];
 
-			var footer = [
-				"TOTAL",
-				(function(){
-					return rows.reduce(function(prev,curr){
-						return prev+curr[1]
-					},0)
-				}()),
-				(function(){
-					var total = rows.reduce(function(prev,curr){
-						return prev+((curr[2]==='yes') ? 1 : 0);
-					},0);
-					return (total/rows.length*100).toFixed(2) + "%";
-				}())];
+      var footer = [
+        "TOTAL",
+        (function(){
+          return rows.reduce(function(prev,curr){
+            return prev+curr[1]
+          },0)
+        }()),
+        (function(){
+          var total = rows.reduce(function(prev,curr){
+            return prev+((curr[2]==='yes') ? 1: 0);
+          },0);
+          return (total/rows.length*100).toFixed(2) + "%";
+        }())];
 
-			var t1 = Table(header,rows,footer,{
-				borderStyle : 2,
-				paddingBottom : 0,
-				headerAlign : "center",
-				align : "center",
-				color : "white"
-			});
+      var t1 = Table(header,rows,footer,{
+        borderStyle: 2,
+        paddingBottom: 0,
+        headerAlign: "center",
+        align: "center",
+        color: "white"
+      });
 
-			str1 = t1.render();
-			console.log(str1);
-	
-			setTimeout(function(){
-				 document.getElementById('example').innerHTML = str1;
-			},500);
-		</script>
-	</head>
-	<body>
-		Also see console for an example there.
-		<pre>
-			<span id="example"></span>
-		</pre>
-	</body>
+      str1 = t1.render();
+      console.log(str1)
+
+      setTimeout(function(){
+         document.getElementById('example').innerHTML = str1;
+      },500);
+    </script>
+  </head>
+  <body>
+    <h2>Also see your browser console for this output in an example there.</h2>
+    <pre>
+      <span id="example"></span>
+    </pre>
+  </body>
 </html>
