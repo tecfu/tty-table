@@ -34,7 +34,6 @@
     "babel-core": "^6.26.3",
     "chalk": "^2.4.1",
     "csv": "^4.0.0",
-    "merge": "^1.2.0",
     "smartwrap": "^1.0.9",
     "strip-ansi": "^5.0.0",
     "wcwidth": "^1.0.1",

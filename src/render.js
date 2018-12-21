@@ -1,4 +1,3 @@
-let Merge = require("merge");
 let Style = require("./style.js");
 let Format = require("./format.js");
 let Render = {};
@@ -208,11 +207,11 @@ const buildRow = function(config,row,rowType){
 Render.buildCell = function(config,cell,columnIndex,rowType){
 
   let cellValue;
-  let merge = typeof Object.assign === 'function' ? Object.assign : Merge
-  let cellOptions = merge(true,{},config,
-                          (rowType === 'body') ? 
-                          config.columnSettings[columnIndex] : {}, //ignore columnSettings for footer
-                          cell);    
+  let cellOptions = Object.assign({},
+                                  config,
+                                  (rowType === 'body') ? 
+                                  config.columnSettings[columnIndex] : {}, //ignore columnSettings for footer
+                                  cell);    
   
   if(rowType === 'header'){
     config.table.columns.push(cellOptions);

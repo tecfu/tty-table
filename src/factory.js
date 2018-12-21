@@ -1,5 +1,4 @@
-let Merge = require('merge');
-let Defaults = require('./config.js');
+const Defaults = require('./config.js');
 let Counter = 0;
 
 /**
@@ -134,7 +133,10 @@ let Factory = function(paramsArr){
       process.exit();
   }
   
-  let config = Merge(true,Defaults,options);
+  // For "deep" copy, use JSON.parse
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Deep_Clone
+  let clonedDefaults = JSON.parse(JSON.stringify(Defaults))
+  let config = Object.assign({}, clonedDefaults, options);
   
   //backfixes for shortened option names
   config.align = config.alignment || config.align;
