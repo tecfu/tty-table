@@ -32,7 +32,7 @@
   "homepage": "https://github.com/tecfu/tty-table",
   "dependencies": {
     "chalk": "^2.4.2",
-    "csv": "^5.1.1",
+    "csv": "^4.0.0",
     "smartwrap": "^1.0.11",
     "strip-ansi": "^5.0.0",
     "wcwidth": "^1.0.1",
