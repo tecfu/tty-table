@@ -1,0 +1,10 @@
+[
+  {
+    "value": "ticker",
+    "color": "cyan"
+  },
+  {
+    "value": "last",
+    "color": "red"
+  }
+]

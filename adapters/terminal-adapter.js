@@ -1,9 +1,15 @@
 #!/usr/bin/env node
+let path = require('path');
+let fs = require('fs');
 let Csv = require('csv');
 let Chalk = require('chalk');
 let Yargs = require('yargs');
 
 Yargs.epilog('Copyright github.com/tecfu 2018');
+
+Yargs.option('config',{
+  describe:'Specify the configuration for your table.'
+});
 
 Yargs.option('csv-delimiter',{
   describe:'Set the field delimiter. One character only.',
@@ -32,9 +38,8 @@ Yargs.option('options\u2010\u002A',{
 //run help only at the end
 Yargs = Yargs.help('h').argv;
 
-let sendError = function(msg){
-  msg = '\ntty-table error: ' + msg + '\n';
-  console.log(msg);
+let emitError = function(type,detail){
+  console.log('\n' + Chalk.bgRed.white(type) + '\n\n' + Chalk.bold(detail));
   process.exit(1);
 };
 
@@ -52,7 +57,7 @@ switch(true){
   default:
 }
 
-//look for options-* 
+//look for individually flagged options-* 
 let options = {};
 Object.keys(Yargs).forEach(function(key){
   let keyParts = key.split('-');
@@ -61,31 +66,26 @@ Object.keys(Yargs).forEach(function(key){
   }
 });
 
-//look for header-n-*
-//Object.keys(Yargs).forEach(function(key){
-//  let keyParts = key.split('-');
-//  if(keyParts[0] === 'header'){
-//    //find out which column we're setting an option on
-//    let column = keyParts[1];
-//    if(typeof header[column] === 'undefined'){
-//      header[column] = {}
-//    }
-//    header[column][keyParts[2]] = Yargs[key];
-//  }
-//});
-
-//if header is specified, we'll need to have a size on it
-
+//look for options passed via config file
+let header = []
+if(Yargs.header){
+  if(!fs.existsSync(path.resolve(Yargs.header))){
+    emitError(
+      'Invalid file path',
+      'Cannot find config file at: ' + Yarg.header+ '.'
+    )
+  }
+  //merge with any individually flagged options
+  header = require(path.resolve(Yargs.header))
+}
 
 //because different dataFormats 
-let runTable = function(input){
+let runTable = function(header,body){
   
-  let header = [], 
-  body = input; 
   //footer = [], 
   let Table = require('../src/factory.js');
   options.terminalAdapter = true;
-  let t1 = Table(header,body,options);
+  let t1 = Table(header, body,options);
   
   //hide cursor
   console.log('\u001b[?25l');
@@ -119,16 +119,17 @@ process.stdin.on('data', function(chunk) {
   //handle dataFormats
   switch(true){
     case(dataFormat==='json'):  
-      let data,msg;
+      let data;
       try {
         data = JSON.parse(chunk);
       }
       catch(e){
-        msg = Chalk.bgRed.white(msg);
-        msg = msg + "\n\nPlease check to make sure that your input data consists of JSON or specify a different format with the --format flag.";
-        sendError(msg);
+        emitError(
+          "JSON parse error",
+          "Please check to make sure that your input data consists of JSON or specify a different format with the --format flag."
+        );
       }
-      runTable(data);
+      runTable(header,data);
       break;
     default:
       let formatterOptions = {};
@@ -141,13 +142,12 @@ process.stdin.on('data', function(chunk) {
       Csv.parse(chunk,formatterOptions,function(err, data){
         //validate csv  
         if(typeof data === 'undefined'){
-          let msg = "CSV parse error.";
-          msg = Chalk.bgRed.white(msg);
-          msg = msg + '\n\n' + err;
-          msg = msg + '\n\n' + 'Please check to make sure that your input data consists of valid comma separated values or specify a different format with the --format flag.';
-          sendError(msg);
+          emitError(
+            "CSV parse error", 
+            "Please check to make sure that your input data consists of valid comma separated values or specify a different format with the --format flag." 
+          );
         }
-        runTable(data);
+        runTable(header,data);
       });
   }
 });
