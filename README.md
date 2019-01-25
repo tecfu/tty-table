@@ -1,6 +1,6 @@
 # tty-table 电传打字台
 
-[![Build Status](https://travis-ci.org/tecfu/tty-table.svg?branch=master)](https://travis-ci.org/tecfu/tty-table) [![Dependency Status](https://david-dm.org/tecfu/tty-table.png)](https://david-dm.org/tecfu/tty-table) [![NPM version](https://badge.fury.io/js/tty-table.svg)](http://badge.fury.io/js/tty-table)
+[![Build Status](https://travis-ci.org/tecfu/tty-table.svg?branch=master)](https://travis-ci.org/tecfu/tty-table) [![NPM version](https://badge.fury.io/js/tty-table.svg)](http://badge.fury.io/js/tty-table)
 
 ---
 
@@ -12,20 +12,19 @@ Display your data in a table using a terminal, browser, or browser console.
 
 ## Installation
 
-- To install as a [terminal application](docs/terminal.md):
+- [Terminal](docs/terminal.md):
 
 ```sh
-$ sudo apt-get install nodejs 
 $ npm install tty-table -g
 ```
 
-- As a Nodejs module:
+- Node Module
 
 ```sh
 $ npm install tty-table
 ```
 
-- Browser (via browserify)
+- Browser
 
 ```html
 <script src="tty-table.bundle.min.js"></script>
@@ -35,36 +34,7 @@ $ npm install tty-table
 </script>
 ```
 
-## Why would someone do such a thing?
-
-- Can be used as a bugfixed, drop-in replacement for the [unmaintained, but popular Automattic/cli-table](https://github.com/Automattic/cli-table/issues/91):
-```js
-var Table = require('tty-table')('automattic-cli-table');
-//now runs with same syntax as Automattic/cli-table
-...
-```
-
-- Fixes these open issues with Automattic/cli-table:
-  - [Text alignment](https://github.com/Automattic/cli-table/issues/64)
-  - [Alternative table character sets](https://github.com/Automattic/cli-table/issues/10)
-  - [Automatic text wrapping](https://github.com/Automattic/cli-table/issues/35)
-  - [Wide character support](https://github.com/Automattic/cli-table/issues/82)
-  - [Chokes on null values](https://github.com/Automattic/cli-table/issues/65)
-  - [Automatically resize to terminal width](https://github.com/tecfu/tty-table/issues/4)
-
-
-### In addition to the fixes listed above, the native API also supports:
-
-- Optional callbacks on column values
-- Header, body column alignment
-- Padding
-- Passing of rows as either arrays or objects
-- Colors (not supported in browser)
-- [Footer](https://github.com/tecfu/tty-table/issues/6)
-- [Works in the browser as well as nodejs](https://cdn.rawgit.com/tecfu/tty-table/master/examples/browser-example.html)
-- [Can be run as a standalone terminal application](docs/terminal.md)
-
-## Output Examples
+## [Examples](examples/)
 
 ### Terminal (Static)
 
@@ -75,7 +45,7 @@ var Table = require('tty-table')('automattic-cli-table');
 ### Terminal (Streaming)
 
 ```
-$ node examples/data/fake-stream.js | tty-table --format=json
+$ node examples/data/fake-stream.js | tty-table --format json --header examples/config/header.js
 ```
 
 ![Streaming](https://cloud.githubusercontent.com/assets/7478359/26528893/88e38e38-4369-11e7-8125-05df0259511e.gif "Streaming Example") 
