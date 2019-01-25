@@ -48,7 +48,7 @@ $ npm install tty-table
 $ node examples/data/fake-stream.js | tty-table --format json --header examples/config/header.js
 ```
 
-![Streaming](https://cloud.githubusercontent.com/assets/7478359/26528893/88e38e38-4369-11e7-8125-05df0259511e.gif "Streaming Example") 
+![Streaming](https://user-images.githubusercontent.com/7478359/51738817-47c25700-204d-11e9-9df1-04e478331658.gif "Streaming Example") 
 
 - See the built-in help for the terminal version of tty-table with: 
 ```
