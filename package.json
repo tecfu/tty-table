@@ -3,6 +3,9 @@
   "version": "2.7.1",
   "description": "Command line table generator.",
   "main": "src/main.js",
+  "engines": {
+    "node": ">=8.16.0"
+  },
   "bin": {
     "tty-table": "adapters/terminal-adapter.js"
   },
