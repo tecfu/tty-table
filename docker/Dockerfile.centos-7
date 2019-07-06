@@ -2,13 +2,16 @@ FROM centos:7
 
 RUN yum install -y epel-release
 
-# Install nodejs 
-RUN yum install -y nodejs npm
-# RUN ln -s /usr/bin/nodejs /usr/bin/node
 # Install bzip2 
 RUN yum install -y bzip2
 
 RUN yum install -y git
+
+# Install nodejs 8 
+RUN curl -sL https://rpm.nodesource.com/setup_8.x | bash -
+RUN yum install -y nodejs
+
+# RUN ln -s /usr/bin/nodejs /usr/bin/node
 
 # Install tty-table
 RUN git clone https://www.github.com/tecfu/tty-table
