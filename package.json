@@ -1,6 +1,6 @@
 {
   "name": "tty-table",
-  "version": "2.7.3",
+  "version": "2.7.4",
   "description": "Command line table generator.",
   "main": "src/main.js",
   "engines": {
@@ -36,7 +36,7 @@
   "dependencies": {
     "chalk": "^2.4.2",
     "csv": "^5.1.1",
-    "smartwrap": "^1.0.11",
+    "smartwrap": "^1.0.12",
     "strip-ansi": "^5.2.0",
     "wcwidth": "^1.0.1",
     "yargs": "^13.2.4"
