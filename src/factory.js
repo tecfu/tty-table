@@ -1,4 +1,6 @@
-const Defaults = require('./config.js');
+const Defaults = require('./defaults.js');
+const Render = require('./render.js');
+const Chalk = require('chalk')
 let Counter = 0;
 
 /**
@@ -24,9 +26,8 @@ let Counter = 0;
 * @param {array} rows                      - [See example](#example-usage)
 *
 * @param {object} options                  - Table options 
-* @param {number} options.borderStyle      - default: 1 (0 = no border) 
-* Refers to the index of the desired character set. 
-* @param {array} options.borderCharacters  - [See @note](#note) 
+* @param {string} options.borderStyle      - default: "solid". options: "solid", "dashed", "none"
+* @param {object} options.borderCharacters  - [See @note](#note) 
 * @param {string} options.borderColor      - default: terminal's default color
 * @param {boolean} options.compact      - default: false
 * Removes horizontal lines when true.
@@ -46,25 +47,25 @@ let Counter = 0;
 * @returns {Table}
 * @note
 * <a name="note"/>
-* Default border character sets:
+* Available border character sets:
 * ```js
-*[
-*  [
+*{
+*  "none": [
 *    {v: " ", l: " ", j: " ", h: " ", r: " "},
 *    {v: " ", l: " ", j: " ", h: " ", r: " "},
 *    {v: " ", l: " ", j: " ", h: " ", r: " "}
 *  ],
-*  [
+*  "solid": [
 *    {v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
 *    {v: "│", l: "├", j: "┼", h: "─", r: "┤"},
 *    {v: "│", l: "└", j: "┴", h: "─", r: "┘"}
 *  ],
-*  [
+*  "dashed": [
 *    {v: "|", l: "+", j: "+", h: "-", r: "+"},
 *    {v: "|", l: "+", j: "+", h: "-", r: "+"},
 *    {v: "|", l: "+", j: "+", h: "-", r: "+"}
 *  ]
-*]
+*}
 * ```
 * @example
 * ```js
@@ -142,10 +143,8 @@ let Factory = function(paramsArr){
   config.align = config.alignment || config.align;
   config.headerAlign = config.headerAlignment || config.headerAlign;
 
-  //if borderColor is called, lets do it now
+  //if borderColor customized, color the border character set
   if(!!config.borderColor){
-    let Chalk = require('chalk')
-    
     config.borderCharacters[config.borderStyle] = 
       config.borderCharacters[config.borderStyle].map(function(obj){
         Object.keys(obj).forEach(function(key){
@@ -192,7 +191,6 @@ let Factory = function(paramsArr){
    * ```
   */
   tableObject.render = function(){
-    let Render = require('./render.js');
     //let configCopy = JSON.parse(JSON.stringify(this[_configKey]));
     //return Render.stringifyData(configCopy,this.slice(0));  //get string output
     let output = Render.stringifyData(this[_configKey],this.slice(0));  //get string output

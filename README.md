@@ -6,8 +6,6 @@
 
 Display your data in a table using a terminal, browser, or browser console.
 
-使用终端，浏览器或浏览器控制台在表中显示您的数据
-
 ---
 
 ## Installation
@@ -67,7 +65,7 @@ $ tty-table -h
 > An alternative border style, as shown below, should be used by setting the following option:
 >
 > ```
-> borderStyle : 2
+> borderStyle : "dashed"
 > ```
 
 ## API Reference 
@@ -78,30 +76,30 @@ $ tty-table -h
 ## Table
 **Kind**: global class  
 **Note**: <a name="note"/>
-Default border character sets:
+Available border character sets:
 ```js
-[
- [
+{
+ "none": [
    {v: " ", l: " ", j: " ", h: " ", r: " "},
    {v: " ", l: " ", j: " ", h: " ", r: " "},
    {v: " ", l: " ", j: " ", h: " ", r: " "}
  ],
- [
+ "solid": [
    {v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
    {v: "│", l: "├", j: "┼", h: "─", r: "┤"},
    {v: "│", l: "└", j: "┴", h: "─", r: "┘"}
  ],
- [
+ "dashed": [
    {v: "|", l: "+", j: "+", h: "-", r: "+"},
    {v: "|", l: "+", j: "+", h: "-", r: "+"},
    {v: "|", l: "+", j: "+", h: "-", r: "+"}
  ]
-]
+}
 ```  
 
 * [Table](#Table)
     * [Table(header, rows, options)](#new_Table_new)
-    * [.Cls.render()](#Table.Cls.render) ⇒ <code>String</code>
+    * [.tableObject.render()](#Table.tableObject.render) ⇒ <code>String</code>
 
 <a name="new_Table_new"></a>
 
@@ -128,8 +126,8 @@ Default border character sets:
 | header.column.paddingTop | <code>number</code> | default: 0 |
 | rows | <code>array</code> | [See example](#example-usage) |
 | options | <code>object</code> | Table options |
-| options.borderStyle | <code>number</code> | default: 1 (0 = no border)  Refers to the index of the desired character set. |
-| options.borderCharacters | <code>array</code> | [See @note](#note) |
+| options.borderStyle | <code>string</code> | default: "solid". options: "solid", "dashed", "none" |
+| options.borderCharacters | <code>object</code> | [See @note](#note) |
 | options.borderColor | <code>string</code> | default: terminal's default color |
 | options.compact | <code>boolean</code> | default: false Removes horizontal lines when true. |
 | options.defaultErrorValue | <code>mixed</code> | default: 'ERROR!' |
@@ -143,10 +141,10 @@ let Table = require('tty-table');
 let t1 = Table(header,rows,options);
 console.log(t1.render()); 
 ```
-<a name="Table.Cls.render"></a>
+<a name="Table.tableObject.render"></a>
 
-### Table.Cls.render() ⇒ <code>String</code>
-Renders a table to a string
+### Table.tableObject.render() ⇒ <code>String</code>
+Add method to render table to a string
 
 **Kind**: static method of [<code>Table</code>](#Table)  
 **Example**  
@@ -193,4 +191,4 @@ $ grunt watch
 
 [MIT License](https://opensource.org/licenses/MIT)
 
-Copyright 2015-2018, Tecfu. 
+Copyright 2015-2019, Tecfu. 
