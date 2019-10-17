@@ -1,5 +1,5 @@
-let Style = require("./style.js");
-let Format = require("./format.js");
+const Style = require("./style.js");
+const Format = require("./format.js");
 let Render = {};
 
 /**
@@ -114,6 +114,9 @@ Render.stringifyData = function(config,data){
           break;
         //skip if compact
         case(config.compact && p === 'body' && !row.empty):
+          break;
+        //skip if border style is "none"
+        case(config.borderStyle === "none" && config.compact):
           break;
         default:
           output += borders[1];

@@ -1,8 +1,8 @@
-let StripAnsi = require("strip-ansi");
-//let Wrap = require("word-wrap");
-let Wrap = require("smartwrap");
-let Wcwidth = require("wcwidth");
-let Format = {};
+const StripAnsi = require("strip-ansi");
+//const Wrap = require("word-wrap");
+const Wrap = require("smartwrap");
+const Wcwidth = require("wcwidth");
+const Format = {};
 
 Format.calculateLength = function(line) {
   //return StripAnsi(line.replace(/[^\x00-\xff]/g,'XX')).length;

@@ -158,13 +158,13 @@ console.log(str); //outputs table
 ## Running tests
 
 ```sh
-$ grunt test
+$ npx grunt test
 ```
 
 ## Saving the output of new unit tests 
 
 ```sh
-$ grunt st
+$ npx grunt st
 ```
 - Because: 
 
@@ -175,13 +175,13 @@ $ grunt st
 - To generate vim tags (make sure [jsctags](https://github.com/ramitos/jsctags) is installed globally)
 
 ```sh
-$ grunt tags
+$ npx grunt tags
 ```
 
 - To generate vim tags on file save 
 
 ```sh
-$ grunt watch
+$ npx grunt watch
 ```
 
 ## [Packaging as a distributable](packaging.md)

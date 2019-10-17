@@ -10,63 +10,42 @@ let Counter = 0;
 * @param {string} header.column.alias            - Alternate header column name
 * @param {string} header.column.align            - default: "center"
 * @param {string} header.column.color            - default: terminal default color
-* @param {string} header.column.footerAlign      - default: "center" 
+* @param {string} header.column.footerAlign      - default: "center"
 * @param {string} header.column.footerColor      - default: terminal default color
 * @param {function} header.column.formatter      - Runs a callback on each cell value in the parent column
-* @param {string} header.column.headerAlign      - default: "center" 
+* @param {string} header.column.headerAlign      - default: "center"
 * @param {string} header.column.headerColor      - default: terminal's default color
 * @param {number} header.column.marginLeft       - default: 0
-* @param {number} header.column.marginTop        - default: 0      
+* @param {number} header.column.marginTop        - default: 0
 * @param {string|number} header.column.width     - default: "auto"
 * @param {number} header.column.paddingBottom    - default: 0
 * @param {number} header.column.paddingLeft      - default: 1
 * @param {number} header.column.paddingRight     - default: 1
-* @param {number} header.column.paddingTop       - default: 0  
+* @param {number} header.column.paddingTop       - default: 0
 *
 * @param {array} rows                      - [See example](#example-usage)
 *
-* @param {object} options                  - Table options 
+* @param {object} options                  - Table options
 * @param {string} options.borderStyle      - default: "solid". options: "solid", "dashed", "none"
-* @param {object} options.borderCharacters  - [See @note](#note) 
+* @param {object} options.borderCharacters  - [See @note](#note)
 * @param {string} options.borderColor      - default: terminal's default color
 * @param {boolean} options.compact      - default: false
 * Removes horizontal lines when true.
 * @param {mixed} options.defaultErrorValue - default: 'ERROR!'
 * @param {mixed} options.defaultValue - default: '?'
 * @param {boolean} options.errorOnNull    - default: false
-* @param {mixed} options.truncate - default: false 
+* @param {mixed} options.truncate - default: false
 * <br/>
 * When this property is set to a string, cell contents will be truncated by that string instead of wrapped when they extend beyond of the width of the cell. 
 * <br/>
-* For example if: 
+* For example if:
 * <br/>
 * <code>"truncate":"..."</code>
 * <br/>
 * the cell will be truncated with "..."
 
 * @returns {Table}
-* @note
-* <a name="note"/>
-* Available border character sets:
-* ```js
-*{
-*  "none": [
-*    {v: " ", l: " ", j: " ", h: " ", r: " "},
-*    {v: " ", l: " ", j: " ", h: " ", r: " "},
-*    {v: " ", l: " ", j: " ", h: " ", r: " "}
-*  ],
-*  "solid": [
-*    {v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
-*    {v: "│", l: "├", j: "┼", h: "─", r: "┤"},
-*    {v: "│", l: "└", j: "┴", h: "─", r: "┘"}
-*  ],
-*  "dashed": [
-*    {v: "|", l: "+", j: "+", h: "-", r: "+"},
-*    {v: "|", l: "+", j: "+", h: "-", r: "+"},
-*    {v: "|", l: "+", j: "+", h: "-", r: "+"}
-*  ]
-*}
-* ```
+
 * @example
 * ```js
 * let Table = require('tty-table');
@@ -75,7 +54,7 @@ let Counter = 0;
 * ```
 *
 */
-let Factory = function(paramsArr){
+const Factory = function(paramsArr){
 
   let _configKey = Symbol['config'];
   let header = [];
