@@ -1,13 +1,196 @@
 /** 
 tty-table: Command line table generator. 
-Version: 2.6.10 
-Built: 2018-12-21 02:46:10
+Version: 2.8.0 
+Built: 2019-10-16 20:12:36
 Author: Tecfu  
 */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.TtyTable = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({"/adapters/default-adapter.js":[function(require,module,exports){
 'use strict';var Factory=require('./../src/factory.js');module.exports=Factory;
 
 },{"./../src/factory.js":23}],1:[function(require,module,exports){
+'use strict';
+
+module.exports = options => {
+	options = Object.assign({
+		onlyFirst: false
+	}, options);
+
+	const pattern = [
+		'[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
+		'(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))'
+	].join('|');
+
+	return new RegExp(pattern, options.onlyFirst ? undefined : 'g');
+};
+
+},{}],2:[function(require,module,exports){
+'use strict';
+const colorConvert = require('color-convert');
+
+const wrapAnsi16 = (fn, offset) => function () {
+	const code = fn.apply(colorConvert, arguments);
+	return `\u001B[${code + offset}m`;
+};
+
+const wrapAnsi256 = (fn, offset) => function () {
+	const code = fn.apply(colorConvert, arguments);
+	return `\u001B[${38 + offset};5;${code}m`;
+};
+
+const wrapAnsi16m = (fn, offset) => function () {
+	const rgb = fn.apply(colorConvert, arguments);
+	return `\u001B[${38 + offset};2;${rgb[0]};${rgb[1]};${rgb[2]}m`;
+};
+
+function assembleStyles() {
+	const codes = new Map();
+	const styles = {
+		modifier: {
+			reset: [0, 0],
+			// 21 isn't widely supported and 22 does the same thing
+			bold: [1, 22],
+			dim: [2, 22],
+			italic: [3, 23],
+			underline: [4, 24],
+			inverse: [7, 27],
+			hidden: [8, 28],
+			strikethrough: [9, 29]
+		},
+		color: {
+			black: [30, 39],
+			red: [31, 39],
+			green: [32, 39],
+			yellow: [33, 39],
+			blue: [34, 39],
+			magenta: [35, 39],
+			cyan: [36, 39],
+			white: [37, 39],
+			gray: [90, 39],
+
+			// Bright color
+			redBright: [91, 39],
+			greenBright: [92, 39],
+			yellowBright: [93, 39],
+			blueBright: [94, 39],
+			magentaBright: [95, 39],
+			cyanBright: [96, 39],
+			whiteBright: [97, 39]
+		},
+		bgColor: {
+			bgBlack: [40, 49],
+			bgRed: [41, 49],
+			bgGreen: [42, 49],
+			bgYellow: [43, 49],
+			bgBlue: [44, 49],
+			bgMagenta: [45, 49],
+			bgCyan: [46, 49],
+			bgWhite: [47, 49],
+
+			// Bright color
+			bgBlackBright: [100, 49],
+			bgRedBright: [101, 49],
+			bgGreenBright: [102, 49],
+			bgYellowBright: [103, 49],
+			bgBlueBright: [104, 49],
+			bgMagentaBright: [105, 49],
+			bgCyanBright: [106, 49],
+			bgWhiteBright: [107, 49]
+		}
+	};
+
+	// Fix humans
+	styles.color.grey = styles.color.gray;
+
+	for (const groupName of Object.keys(styles)) {
+		const group = styles[groupName];
+
+		for (const styleName of Object.keys(group)) {
+			const style = group[styleName];
+
+			styles[styleName] = {
+				open: `\u001B[${style[0]}m`,
+				close: `\u001B[${style[1]}m`
+			};
+
+			group[styleName] = styles[styleName];
+
+			codes.set(style[0], style[1]);
+		}
+
+		Object.defineProperty(styles, groupName, {
+			value: group,
+			enumerable: false
+		});
+
+		Object.defineProperty(styles, 'codes', {
+			value: codes,
+			enumerable: false
+		});
+	}
+
+	const ansi2ansi = n => n;
+	const rgb2rgb = (r, g, b) => [r, g, b];
+
+	styles.color.close = '\u001B[39m';
+	styles.bgColor.close = '\u001B[49m';
+
+	styles.color.ansi = {
+		ansi: wrapAnsi16(ansi2ansi, 0)
+	};
+	styles.color.ansi256 = {
+		ansi256: wrapAnsi256(ansi2ansi, 0)
+	};
+	styles.color.ansi16m = {
+		rgb: wrapAnsi16m(rgb2rgb, 0)
+	};
+
+	styles.bgColor.ansi = {
+		ansi: wrapAnsi16(ansi2ansi, 10)
+	};
+	styles.bgColor.ansi256 = {
+		ansi256: wrapAnsi256(ansi2ansi, 10)
+	};
+	styles.bgColor.ansi16m = {
+		rgb: wrapAnsi16m(rgb2rgb, 10)
+	};
+
+	for (let key of Object.keys(colorConvert)) {
+		if (typeof colorConvert[key] !== 'object') {
+			continue;
+		}
+
+		const suite = colorConvert[key];
+
+		if (key === 'ansi16') {
+			key = 'ansi';
+		}
+
+		if ('ansi16' in suite) {
+			styles.color.ansi[key] = wrapAnsi16(suite.ansi16, 0);
+			styles.bgColor.ansi[key] = wrapAnsi16(suite.ansi16, 10);
+		}
+
+		if ('ansi256' in suite) {
+			styles.color.ansi256[key] = wrapAnsi256(suite.ansi256, 0);
+			styles.bgColor.ansi256[key] = wrapAnsi256(suite.ansi256, 10);
+		}
+
+		if ('rgb' in suite) {
+			styles.color.ansi16m[key] = wrapAnsi16m(suite.rgb, 0);
+			styles.bgColor.ansi16m[key] = wrapAnsi16m(suite.rgb, 10);
+		}
+	}
+
+	return styles;
+}
+
+// Make the export immutable
+Object.defineProperty(module, 'exports', {
+	enumerable: true,
+	get: assembleStyles
+});
+
+},{"color-convert":11}],3:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -75,7 +258,8 @@ function toByteArray (b64) {
     ? validLen - 4
     : validLen
 
-  for (var i = 0; i < len; i += 4) {
+  var i
+  for (i = 0; i < len; i += 4) {
     tmp =
       (revLookup[b64.charCodeAt(i)] << 18) |
       (revLookup[b64.charCodeAt(i + 1)] << 12) |
@@ -160,7 +344,37 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],2:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
+'use strict';
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+var Wcwidth = require('wcwidth');
+module.exports = function (word, breakAtLength) {
+	var charArr = [].concat(_toConsumableArray(word));
+	var index = 0;
+	var indexOfLastFitChar = 0;
+	var fittableLength = 0;
+	while (charArr.length > 0) {
+		var char = charArr.shift();
+		var currentLength = fittableLength + Wcwidth(char);
+		if (currentLength <= breakAtLength) {
+			indexOfLastFitChar = index;
+			fittableLength = currentLength;
+			index++;
+		} else {
+			break;
+		}
+	}
+	//break after this character
+	return indexOfLastFitChar;
+};
+
+
+},{"wcwidth":21}],5:[function(require,module,exports){
+
+},{}],6:[function(require,module,exports){
+(function (Buffer){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -173,6 +387,10 @@ function fromByteArray (uint8) {
 
 var base64 = require('base64-js')
 var ieee754 = require('ieee754')
+var customInspectSymbol =
+  (typeof Symbol === 'function' && typeof Symbol.for === 'function')
+    ? Symbol.for('nodejs.util.inspect.custom')
+    : null
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -209,7 +427,9 @@ function typedArraySupport () {
   // Can typed array instances can be augmented?
   try {
     var arr = new Uint8Array(1)
-    arr.__proto__ = { __proto__: Uint8Array.prototype, foo: function () { return 42 } }
+    var proto = { foo: function () { return 42 } }
+    Object.setPrototypeOf(proto, Uint8Array.prototype)
+    Object.setPrototypeOf(arr, proto)
     return arr.foo() === 42
   } catch (e) {
     return false
@@ -238,7 +458,7 @@ function createBuffer (length) {
   }
   // Return an augmented `Uint8Array` instance
   var buf = new Uint8Array(length)
-  buf.__proto__ = Buffer.prototype
+  Object.setPrototypeOf(buf, Buffer.prototype)
   return buf
 }
 
@@ -288,7 +508,7 @@ function from (value, encodingOrOffset, length) {
   }
 
   if (value == null) {
-    throw TypeError(
+    throw new TypeError(
       'The first argument must be one of type string, Buffer, ArrayBuffer, Array, ' +
       'or Array-like Object. Received type ' + (typeof value)
     )
@@ -340,8 +560,8 @@ Buffer.from = function (value, encodingOrOffset, length) {
 
 // Note: Change prototype *after* Buffer.from is defined to workaround Chrome bug:
 // https://github.com/feross/buffer/pull/148
-Buffer.prototype.__proto__ = Uint8Array.prototype
-Buffer.__proto__ = Uint8Array
+Object.setPrototypeOf(Buffer.prototype, Uint8Array.prototype)
+Object.setPrototypeOf(Buffer, Uint8Array)
 
 function assertSize (size) {
   if (typeof size !== 'number') {
@@ -445,7 +665,8 @@ function fromArrayBuffer (array, byteOffset, length) {
   }
 
   // Return an augmented `Uint8Array` instance
-  buf.__proto__ = Buffer.prototype
+  Object.setPrototypeOf(buf, Buffer.prototype)
+
   return buf
 }
 
@@ -767,6 +988,9 @@ Buffer.prototype.inspect = function inspect () {
   if (this.length > max) str += ' ... '
   return '<Buffer ' + str + '>'
 }
+if (customInspectSymbol) {
+  Buffer.prototype[customInspectSymbol] = Buffer.prototype.inspect
+}
 
 Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
   if (isInstance(target, Uint8Array)) {
@@ -892,7 +1116,7 @@ function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
         return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
       }
     }
-    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
+    return arrayIndexOf(buffer, [val], byteOffset, encoding, dir)
   }
 
   throw new TypeError('val must be string, number or Buffer')
@@ -1221,7 +1445,7 @@ function hexSlice (buf, start, end) {
 
   var out = ''
   for (var i = start; i < end; ++i) {
-    out += toHex(buf[i])
+    out += hexSliceLookupTable[buf[i]]
   }
   return out
 }
@@ -1258,7 +1482,8 @@ Buffer.prototype.slice = function slice (start, end) {
 
   var newBuf = this.subarray(start, end)
   // Return an augmented `Uint8Array` instance
-  newBuf.__proto__ = Buffer.prototype
+  Object.setPrototypeOf(newBuf, Buffer.prototype)
+
   return newBuf
 }
 
@@ -1747,6 +1972,8 @@ Buffer.prototype.fill = function fill (val, start, end, encoding) {
     }
   } else if (typeof val === 'number') {
     val = val & 255
+  } else if (typeof val === 'boolean') {
+    val = Number(val)
   }
 
   // Invalid ranges are not set to a default, so can range check early.
@@ -1802,11 +2029,6 @@ function base64clean (str) {
     str = str + '='
   }
   return str
-}
-
-function toHex (n) {
-  if (n < 16) return '0' + n.toString(16)
-  return n.toString(16)
 }
 
 function utf8ToBytes (string, units) {
@@ -1939,473 +2161,22 @@ function numberIsNaN (obj) {
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":1,"ieee754":3}],3:[function(require,module,exports){
-exports.read = function (buffer, offset, isLE, mLen, nBytes) {
-  var e, m
-  var eLen = (nBytes * 8) - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var nBits = -7
-  var i = isLE ? (nBytes - 1) : 0
-  var d = isLE ? -1 : 1
-  var s = buffer[offset + i]
-
-  i += d
-
-  e = s & ((1 << (-nBits)) - 1)
-  s >>= (-nBits)
-  nBits += eLen
-  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}
-
-  m = e & ((1 << (-nBits)) - 1)
-  e >>= (-nBits)
-  nBits += mLen
-  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}
-
-  if (e === 0) {
-    e = 1 - eBias
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity)
-  } else {
-    m = m + Math.pow(2, mLen)
-    e = e - eBias
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
-}
-
-exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
-  var e, m, c
-  var eLen = (nBytes * 8) - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
-  var i = isLE ? 0 : (nBytes - 1)
-  var d = isLE ? 1 : -1
-  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
-
-  value = Math.abs(value)
-
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0
-    e = eMax
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2)
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--
-      c *= 2
-    }
-    if (e + eBias >= 1) {
-      value += rt / c
-    } else {
-      value += rt * Math.pow(2, 1 - eBias)
-    }
-    if (value * c >= 2) {
-      e++
-      c /= 2
-    }
-
-    if (e + eBias >= eMax) {
-      m = 0
-      e = eMax
-    } else if (e + eBias >= 1) {
-      m = ((value * c) - 1) * Math.pow(2, mLen)
-      e = e + eBias
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
-      e = 0
+// Create lookup table for `toString('hex')`
+// See: https://github.com/feross/buffer/issues/219
+var hexSliceLookupTable = (function () {
+  var alphabet = '0123456789abcdef'
+  var table = new Array(256)
+  for (var i = 0; i < 16; ++i) {
+    var i16 = i * 16
+    for (var j = 0; j < 16; ++j) {
+      table[i16 + j] = alphabet[i] + alphabet[j]
     }
   }
+  return table
+})()
 
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
-
-  e = (e << mLen) | m
-  eLen += mLen
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
-
-  buffer[offset + i - d] |= s * 128
-}
-
-},{}],4:[function(require,module,exports){
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-},{}],5:[function(require,module,exports){
-'use strict';
-const colorConvert = require('color-convert');
-
-const wrapAnsi16 = (fn, offset) => function () {
-	const code = fn.apply(colorConvert, arguments);
-	return `\u001B[${code + offset}m`;
-};
-
-const wrapAnsi256 = (fn, offset) => function () {
-	const code = fn.apply(colorConvert, arguments);
-	return `\u001B[${38 + offset};5;${code}m`;
-};
-
-const wrapAnsi16m = (fn, offset) => function () {
-	const rgb = fn.apply(colorConvert, arguments);
-	return `\u001B[${38 + offset};2;${rgb[0]};${rgb[1]};${rgb[2]}m`;
-};
-
-function assembleStyles() {
-	const codes = new Map();
-	const styles = {
-		modifier: {
-			reset: [0, 0],
-			// 21 isn't widely supported and 22 does the same thing
-			bold: [1, 22],
-			dim: [2, 22],
-			italic: [3, 23],
-			underline: [4, 24],
-			inverse: [7, 27],
-			hidden: [8, 28],
-			strikethrough: [9, 29]
-		},
-		color: {
-			black: [30, 39],
-			red: [31, 39],
-			green: [32, 39],
-			yellow: [33, 39],
-			blue: [34, 39],
-			magenta: [35, 39],
-			cyan: [36, 39],
-			white: [37, 39],
-			gray: [90, 39],
-
-			// Bright color
-			redBright: [91, 39],
-			greenBright: [92, 39],
-			yellowBright: [93, 39],
-			blueBright: [94, 39],
-			magentaBright: [95, 39],
-			cyanBright: [96, 39],
-			whiteBright: [97, 39]
-		},
-		bgColor: {
-			bgBlack: [40, 49],
-			bgRed: [41, 49],
-			bgGreen: [42, 49],
-			bgYellow: [43, 49],
-			bgBlue: [44, 49],
-			bgMagenta: [45, 49],
-			bgCyan: [46, 49],
-			bgWhite: [47, 49],
-
-			// Bright color
-			bgBlackBright: [100, 49],
-			bgRedBright: [101, 49],
-			bgGreenBright: [102, 49],
-			bgYellowBright: [103, 49],
-			bgBlueBright: [104, 49],
-			bgMagentaBright: [105, 49],
-			bgCyanBright: [106, 49],
-			bgWhiteBright: [107, 49]
-		}
-	};
-
-	// Fix humans
-	styles.color.grey = styles.color.gray;
-
-	for (const groupName of Object.keys(styles)) {
-		const group = styles[groupName];
-
-		for (const styleName of Object.keys(group)) {
-			const style = group[styleName];
-
-			styles[styleName] = {
-				open: `\u001B[${style[0]}m`,
-				close: `\u001B[${style[1]}m`
-			};
-
-			group[styleName] = styles[styleName];
-
-			codes.set(style[0], style[1]);
-		}
-
-		Object.defineProperty(styles, groupName, {
-			value: group,
-			enumerable: false
-		});
-
-		Object.defineProperty(styles, 'codes', {
-			value: codes,
-			enumerable: false
-		});
-	}
-
-	const ansi2ansi = n => n;
-	const rgb2rgb = (r, g, b) => [r, g, b];
-
-	styles.color.close = '\u001B[39m';
-	styles.bgColor.close = '\u001B[49m';
-
-	styles.color.ansi = {
-		ansi: wrapAnsi16(ansi2ansi, 0)
-	};
-	styles.color.ansi256 = {
-		ansi256: wrapAnsi256(ansi2ansi, 0)
-	};
-	styles.color.ansi16m = {
-		rgb: wrapAnsi16m(rgb2rgb, 0)
-	};
-
-	styles.bgColor.ansi = {
-		ansi: wrapAnsi16(ansi2ansi, 10)
-	};
-	styles.bgColor.ansi256 = {
-		ansi256: wrapAnsi256(ansi2ansi, 10)
-	};
-	styles.bgColor.ansi16m = {
-		rgb: wrapAnsi16m(rgb2rgb, 10)
-	};
-
-	for (let key of Object.keys(colorConvert)) {
-		if (typeof colorConvert[key] !== 'object') {
-			continue;
-		}
-
-		const suite = colorConvert[key];
-
-		if (key === 'ansi16') {
-			key = 'ansi';
-		}
-
-		if ('ansi16' in suite) {
-			styles.color.ansi[key] = wrapAnsi16(suite.ansi16, 0);
-			styles.bgColor.ansi[key] = wrapAnsi16(suite.ansi16, 10);
-		}
-
-		if ('ansi256' in suite) {
-			styles.color.ansi256[key] = wrapAnsi256(suite.ansi256, 0);
-			styles.bgColor.ansi256[key] = wrapAnsi256(suite.ansi256, 10);
-		}
-
-		if ('rgb' in suite) {
-			styles.color.ansi16m[key] = wrapAnsi16m(suite.rgb, 0);
-			styles.bgColor.ansi16m[key] = wrapAnsi16m(suite.rgb, 10);
-		}
-	}
-
-	return styles;
-}
-
-// Make the export immutable
-Object.defineProperty(module, 'exports', {
-	enumerable: true,
-	get: assembleStyles
-});
-
-},{"color-convert":11}],6:[function(require,module,exports){
-'use strict';
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-var Wcwidth = require('wcwidth');
-module.exports = function (word, breakAtLength) {
-	var charArr = [].concat(_toConsumableArray(word));
-	var index = 0;
-	var indexOfLastFitChar = 0;
-	var fittableLength = 0;
-	while (charArr.length > 0) {
-		var char = charArr.shift();
-		var currentLength = fittableLength + Wcwidth(char);
-		if (currentLength <= breakAtLength) {
-			indexOfLastFitChar = index;
-			fittableLength = currentLength;
-			index++;
-		} else {
-			break;
-		}
-	}
-	//break after this character
-	return indexOfLastFitChar;
-};
-
-
-},{"wcwidth":21}],7:[function(require,module,exports){
+}).call(this,require("buffer").Buffer)
+},{"base64-js":3,"buffer":6,"ieee754":16}],7:[function(require,module,exports){
 (function (process){
 'use strict';
 const escapeStringRegexp = require('escape-string-regexp');
@@ -2637,7 +2408,7 @@ module.exports.supportsColor = stdoutColor;
 module.exports.default = module.exports; // For TypeScript
 
 }).call(this,require('_process'))
-},{"./templates.js":8,"_process":4,"ansi-styles":5,"escape-string-regexp":15,"supports-color":19}],8:[function(require,module,exports){
+},{"./templates.js":8,"_process":5,"ansi-styles":2,"escape-string-regexp":15,"supports-color":19}],8:[function(require,module,exports){
 'use strict';
 const TEMPLATE_REGEX = /(?:\\(u[a-f\d]{4}|x[a-f\d]{2}|.))|(?:\{(~)?(\w+(?:\([^)]*\))?(?:\.\w+(?:\([^)]*\))?)*)(?:[ \t]|(?=\r?\n)))|(\})|((?:.|[\r\n\f])+?)/gi;
 const STYLE_REGEX = /(?:^|\.)(\w+)(?:\(([^)]*)\))?/g;
@@ -2937,7 +2708,7 @@ if (typeof module === 'object' && module.exports) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":2}],10:[function(require,module,exports){
+},{"buffer":6}],10:[function(require,module,exports){
 /* MIT license */
 var cssKeywords = require('color-name');
 
@@ -4168,16 +3939,115 @@ module.exports = function (str) {
 };
 
 },{}],16:[function(require,module,exports){
+exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+  var e, m
+  var eLen = (nBytes * 8) - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var nBits = -7
+  var i = isLE ? (nBytes - 1) : 0
+  var d = isLE ? -1 : 1
+  var s = buffer[offset + i]
+
+  i += d
+
+  e = s & ((1 << (-nBits)) - 1)
+  s >>= (-nBits)
+  nBits += eLen
+  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}
+
+  m = e & ((1 << (-nBits)) - 1)
+  e >>= (-nBits)
+  nBits += mLen
+  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}
+
+  if (e === 0) {
+    e = 1 - eBias
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity)
+  } else {
+    m = m + Math.pow(2, mLen)
+    e = e - eBias
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+}
+
+exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c
+  var eLen = (nBytes * 8) - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+  var i = isLE ? 0 : (nBytes - 1)
+  var d = isLE ? 1 : -1
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+
+  value = Math.abs(value)
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0
+    e = eMax
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2)
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--
+      c *= 2
+    }
+    if (e + eBias >= 1) {
+      value += rt / c
+    } else {
+      value += rt * Math.pow(2, 1 - eBias)
+    }
+    if (value * c >= 2) {
+      e++
+      c /= 2
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0
+      e = eMax
+    } else if (e + eBias >= 1) {
+      m = ((value * c) - 1) * Math.pow(2, mLen)
+      e = e + eBias
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+      e = 0
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+  e = (e << mLen) | m
+  eLen += mLen
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+  buffer[offset + i - d] |= s * 128
+}
+
+},{}],17:[function(require,module,exports){
 'use strict';
 
-function smartWrap(text,options){
+let Wcwidth = require('wcwidth');
+let Breakword = require('breakword');
+
+function smartWrap(input, options) {
+  //in case a template literal was passed that has newling characters,
+  //split string by newlines and process each resulting string 
+  const str = input.toString()
+  const strArr = str.split("\n").map( string => {
+    return wrap(string, options)
+  })
+
+  return strArr.join("\n")
+}
+
+function wrap(text,options){
 
   options = options || {};
-  let Wcwidth = require('wcwidth');
-  let Breakword = require('breakword');
-  
   let defaults = {};
-  defaults.calculateSpaceRemaining = function(obj,i){//i is in case someone wants to customize based on line index
+
+  defaults.calculateSpaceRemaining = function(obj,i){
+    //i is in case someone wants to customize based on line index
     return Math.max(obj.lineLength - obj.spacesUsed - obj.paddingLeft - obj.paddingRight,0);
   }; //function to set starting line length
   defaults.currentLine = 0; //index of current line in 'lines[]'
@@ -4304,29 +4174,16 @@ function smartWrap(text,options){
 
 module.exports = smartWrap;
 
-},{"breakword":6,"wcwidth":21}],17:[function(require,module,exports){
+},{"breakword":4,"wcwidth":21}],18:[function(require,module,exports){
 'use strict';
 const ansiRegex = require('ansi-regex');
 
-module.exports = input => typeof input === 'string' ? input.replace(ansiRegex(), '') : input;
+const stripAnsi = string => typeof string === 'string' ? string.replace(ansiRegex(), '') : string;
 
-},{"ansi-regex":18}],18:[function(require,module,exports){
-'use strict';
+module.exports = stripAnsi;
+module.exports.default = stripAnsi;
 
-module.exports = options => {
-	options = Object.assign({
-		onlyFirst: false
-	}, options);
-
-	const pattern = [
-		'[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\\u0007)',
-		'(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))'
-	].join('|');
-
-	return new RegExp(pattern, options.onlyFirst ? undefined : 'g');
-};
-
-},{}],19:[function(require,module,exports){
+},{"ansi-regex":1}],19:[function(require,module,exports){
 'use strict';
 module.exports = {
 	stdout: false,
@@ -4487,21 +4344,21 @@ function bisearch(ucs) {
 }
 
 },{"./combining":20,"defaults":14}],22:[function(require,module,exports){
-"use strict";var Config={borderCharacters:[[{v:" ",l:" ",j:" ",h:" ",r:" "},{v:" ",l:" ",j:" ",h:" ",r:" "},{v:" ",l:" ",j:" ",h:" ",r:" "}],[{v:"\u2502",l:"\u250C",j:"\u252C",h:"\u2500",r:"\u2510"},{v:"\u2502",l:"\u251C",j:"\u253C",h:"\u2500",r:"\u2524"},{v:"\u2502",l:"\u2514",j:"\u2534",h:"\u2500",r:"\u2518"}],[{v:"|",l:"+",j:"+",h:"-",r:"+"},{v:"|",l:"+",j:"+",h:"-",r:"+"},{v:"|",l:"+",j:"+",h:"-",r:"+"}]],align:"center",borderColor:null,borderStyle:1,color:!1,compact:!1,defaultErrorValue:"\x1B[32m\x1B[37m\x1B[41m ERROR!  \x1B[49m\x1B[32m\x1B[39m",defaultValue:"\x1B[32m\x1B[37m\x1B[41m ?  \x1B[49m\x1B[32m\x1B[39m",errorOnNull:!1,footerAlign:"center",footerColor:!1,formatter:null,headerAlign:"center",headerColor:"yellow",marginLeft:2,marginTop:1,paddingBottom:0,paddingLeft:1,paddingRight:1,paddingTop:0,tableType:null,truncate:!1,width:"auto",GUTTER:1,columnSettings:[],headerEmpty:!1,table:{body:"",columnInnerWidths:[],columnWidths:[],columns:[],footer:"",header:"",height:0,typeLocked:!1}};module.exports=Config;
+"use strict";var defaults={borderCharacters:{invisible:[{v:" ",l:" ",j:" ",h:" ",r:" "},{v:" ",l:" ",j:" ",h:" ",r:" "},{v:" ",l:" ",j:" ",h:" ",r:" "}],solid:[{v:"\u2502",l:"\u250C",j:"\u252C",h:"\u2500",r:"\u2510"},{v:"\u2502",l:"\u251C",j:"\u253C",h:"\u2500",r:"\u2524"},{v:"\u2502",l:"\u2514",j:"\u2534",h:"\u2500",r:"\u2518"}],dashed:[{v:"|",l:"+",j:"+",h:"-",r:"+"},{v:"|",l:"+",j:"+",h:"-",r:"+"},{v:"|",l:"+",j:"+",h:"-",r:"+"}],none:[{v:"",l:"",j:"",h:"",r:""},{v:"",l:"",j:"",h:"",r:""},{v:"",l:"",j:"",h:"",r:""}]},align:"center",borderColor:null,borderStyle:"solid",color:!1,compact:!1,defaultErrorValue:"\x1B[32m\x1B[37m\x1B[41m ERROR!  \x1B[49m\x1B[32m\x1B[39m",defaultValue:"\x1B[32m\x1B[37m\x1B[41m ?  \x1B[49m\x1B[32m\x1B[39m",errorOnNull:!1,footerAlign:"center",footerColor:!1,formatter:null,headerAlign:"center",headerColor:"yellow",marginLeft:2,marginTop:1,paddingBottom:0,paddingLeft:1,paddingRight:1,paddingTop:0,tableType:null,truncate:!1,width:"auto",GUTTER:1,columnSettings:[],headerEmpty:!1,table:{body:"",columnInnerWidths:[],columnWidths:[],columns:[],footer:"",header:"",height:0,typeLocked:!1}};defaults.borderCharacters[0]=defaults.borderCharacters.none,defaults.borderCharacters[1]=defaults.borderCharacters.solid,defaults.borderCharacters[2]=defaults.borderCharacters.dashed,module.exports=defaults;
 
 },{}],23:[function(require,module,exports){
 (function (process){
-'use strict';var _typeof='function'==typeof Symbol&&'symbol'==typeof Symbol.iterator?function(a){return typeof a}:function(a){return a&&'function'==typeof Symbol&&a.constructor===Symbol&&a!==Symbol.prototype?'symbol':typeof a};function _toConsumableArray(a){if(Array.isArray(a)){for(var b=0,c=Array(a.length);b<a.length;b++)c[b]=a[b];return c}return Array.from(a)}var Defaults=require('./config.js'),Counter=0,Factory=function(a){var b=Symbol.config,c=[],d=[],e=[],f={};switch(!0){case 4===a.length:c=a[0],d.push.apply(d,_toConsumableArray(a[1])),e=a[2],f=a[3];break;case 3===a.length&&a[2]instanceof Array:c=a[0],d.push.apply(d,_toConsumableArray(a[1])),e=a[2];break;case 3===a.length&&'object'===_typeof(a[2]):c=a[0],d.push.apply(d,_toConsumableArray(a[1])),f=a[2];break;case 2===a.length&&a[1]instanceof Array:c=a[0],d.push.apply(d,_toConsumableArray(a[1]));break;case 2===a.length&&'object'===_typeof(a[1]):d.push.apply(d,_toConsumableArray(a[0])),f=a[1];break;case 1===a.length&&a[0]instanceof Array:d.push.apply(d,_toConsumableArray(a[0]));break;case 1===a.length&&'string'==typeof a[0]:return require('../adapters/'+a[0]);default:console.log('Error: Bad params. \nSee docs at github.com/tecfu/tty-table'),process.exit();}var g=JSON.parse(JSON.stringify(Defaults)),h=Object.assign({},g,f);if(h.align=h.alignment||h.align,h.headerAlign=h.headerAlignment||h.headerAlign,!!h.borderColor){var j=require('chalk');h.borderCharacters[h.borderStyle]=h.borderCharacters[h.borderStyle].map(function(a){return Object.keys(a).forEach(function(b){a[b]=j[h.borderColor](a[b])}),a})}h.columnSettings=c.slice(0),h.table.header=c,h.headerEmpty=0===c.length,h.table.header=[h.table.header],h.table.footer=e,!0!==h.terminalAdapter&&Counter++,h.tableId=Counter;var i=Object.create(d);return i[b]=h,i.render=function(){var a=require('./render.js'),c=a.stringifyData(this[b],this.slice(0));return i.height=this[b].height,c},i};module.exports=function(){return new Factory(arguments)};
+'use strict';var _typeof='function'==typeof Symbol&&'symbol'==typeof Symbol.iterator?function(a){return typeof a}:function(a){return a&&'function'==typeof Symbol&&a.constructor===Symbol&&a!==Symbol.prototype?'symbol':typeof a};function _toConsumableArray(a){if(Array.isArray(a)){for(var b=0,c=Array(a.length);b<a.length;b++)c[b]=a[b];return c}return Array.from(a)}var Defaults=require('./defaults.js'),Render=require('./render.js'),Chalk=require('chalk'),Counter=0,Factory=function(a){var b=Symbol.config,c=[],d=[],e=[],f={};switch(!0){case 4===a.length:c=a[0],d.push.apply(d,_toConsumableArray(a[1])),e=a[2],f=a[3];break;case 3===a.length&&a[2]instanceof Array:c=a[0],d.push.apply(d,_toConsumableArray(a[1])),e=a[2];break;case 3===a.length&&'object'===_typeof(a[2]):c=a[0],d.push.apply(d,_toConsumableArray(a[1])),f=a[2];break;case 2===a.length&&a[1]instanceof Array:c=a[0],d.push.apply(d,_toConsumableArray(a[1]));break;case 2===a.length&&'object'===_typeof(a[1]):d.push.apply(d,_toConsumableArray(a[0])),f=a[1];break;case 1===a.length&&a[0]instanceof Array:d.push.apply(d,_toConsumableArray(a[0]));break;case 1===a.length&&'string'==typeof a[0]:return require('../adapters/'+a[0]);default:console.log('Error: Bad params. \nSee docs at github.com/tecfu/tty-table'),process.exit();}var g=JSON.parse(JSON.stringify(Defaults)),h=Object.assign({},g,f);h.align=h.alignment||h.align,h.headerAlign=h.headerAlignment||h.headerAlign,!h.borderColor||(h.borderCharacters[h.borderStyle]=h.borderCharacters[h.borderStyle].map(function(a){return Object.keys(a).forEach(function(b){a[b]=Chalk[h.borderColor](a[b])}),a})),h.columnSettings=c.slice(0),h.table.header=c,h.headerEmpty=0===c.length,h.table.header=[h.table.header],h.table.footer=e,!0!==h.terminalAdapter&&Counter++,h.tableId=Counter;var i=Object.create(d);return i[b]=h,i.render=function(){var a=Render.stringifyData(this[b],this.slice(0));return i.height=this[b].height,a},i};module.exports=function(){return new Factory(arguments)};
 
 }).call(this,require('_process'))
-},{"./config.js":22,"./render.js":25,"_process":4,"chalk":7}],24:[function(require,module,exports){
+},{"./defaults.js":22,"./render.js":25,"_process":5,"chalk":7}],24:[function(require,module,exports){
 (function (process){
 "use strict";var _typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(a){return typeof a}:function(a){return a&&"function"==typeof Symbol&&a.constructor===Symbol&&a!==Symbol.prototype?"symbol":typeof a},StripAnsi=require("strip-ansi"),Wrap=require("smartwrap"),Wcwidth=require("wcwidth"),Format={};Format.calculateLength=function(a){return Wcwidth(StripAnsi(a))},Format.wrapCellContent=function(a,b,c,d,e){var f=b.toString(),g=/^(\033\[[0-9;]*m)+/,h=f.match(g)||[""];f=f.replace(g,"");var i=/(\033\[[0-9;]*m)+$/,j=f.match(i)||[""];f=f.replace(i,"");var k="header"===e?"headerAlign":"body"===e?"align":"footerAlign";"center"===d[k]&&(d.paddingLeft=d.paddingRight=Math.max(d.paddingRight,d.paddingLeft,0));var l=a.table.columnWidths[c],m=l-d.paddingLeft-d.paddingRight-a.GUTTER;switch(!0){case"string"==typeof a.truncate||!0===a.truncate:!0===a.truncate&&(a.truncate=""),f=Format.handleTruncatedValue(f,d,m);break;case /[\uD800-\uDFFF]/.test(f):f=Format.handleWideChars(f,d,m);break;default:f=Format.handleNonWideChars(f,d,m);}var n=f.split("\n");return n=n.map(function(a){a=a.trim();var b=Format.calculateLength(a);if(b<l){var c=l-b;switch(!0){case"center"===d[k]:c--;var e=Math.floor(c/2),f=c%2;a=Array(e+1).join(" ")+a+Array(e+1+f).join(" ");break;case"right"===d[k]:a=Array(c-d.paddingRight).join(" ")+a+Array(d.paddingRight+1).join(" ");break;default:a=Array(d.paddingLeft+1).join(" ")+a+Array(c-d.paddingLeft).join(" ");}}return a=h[0]+a,a+=j[0],a}),{output:n,width:m}},Format.handleTruncatedValue=function(a,b,c){var d=a;return c<d.length&&(d=d.substring(0,c-b.truncate.length),d+=b.truncate),d},Format.handleWideChars=function(a,b,c){var d=0,e=0,f=a.split(""),g=f.reduce(function(b,g,h){return d+=Format.calculateLength(g),d>c?(b.push(a.slice(e,h)),e=h,d=0):f.length===h+1&&b.push(a.slice(e)),b},[]).join("\n");return g},Format.handleNonWideChars=function(a,b,c){var d=Wrap(a,{width:c,trim:!0});return d},Format.inferColumnWidth=function(a,b,c){var d;if("object"===("undefined"==typeof a?"undefined":_typeof(a))&&a.value){d=b.slice();var f=Array(d[0].length);f[c]=a.value.toString(),d.push(f)}else d=b;var e=0;return d.forEach(function(a){a[c]&&a[c].toString().length>e&&(e=Wcwidth(a[c].toString()))}),e},Format.getColumnWidths=function(a,b){var c=a.table.header[0]&&0<a.table.header[0].length?a.table.header[0]:b[0],d=c.map(function(c,d){var e;switch(!0){case"object"===("undefined"==typeof c?"undefined":_typeof(c))&&"number"==typeof c.width:e=c.width;break;case a.width&&"auto"!==a.width:e=a.width;break;default:var f=a.table.header[0][d]?a.table.header[0][d]:{},g=b.length?b:a.table.header[0];e=Format.inferColumnWidth(f,g,d),e=e+a.paddingLeft+a.paddingRight;}return e+=a.GUTTER,e}),e=d.reduce(function(a,b){return a+b});if(e+=a.marginLeft,process&&process.stdout&&e>process.stdout.columns){var f=process.stdout.columns/e;f=f.toFixed(2)-0.01,0<f&&(d=d.map(function(a){return Math.floor(f*a)}))}return d},module.exports=Format;
 
 }).call(this,require('_process'))
-},{"_process":4,"smartwrap":16,"strip-ansi":17,"wcwidth":21}],25:[function(require,module,exports){
+},{"_process":5,"smartwrap":17,"strip-ansi":18,"wcwidth":21}],25:[function(require,module,exports){
 (function (global){
-"use strict";var _typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(a){return typeof a}:function(a){return a&&"function"==typeof Symbol&&a.constructor===Symbol&&a!==Symbol.prototype?"symbol":typeof a},Style=require("./style.js"),Format=require("./format.js"),Render={};Render.stringifyData=function(b,c){var d={header:[],body:[],footer:[]},e=Array(b.marginLeft+1).join(" "),f=b.borderCharacters[b.borderStyle],g=[];b.rowFormat=Render.getRowFormat(c[0]||[],b),c=Render.transformRows(b,c),global.columnWidths||(global.columnWidths={}),global.columnWidths[b.tableId]?b.table.columnWidths=global.columnWidths[b.tableId]:global.columnWidths[b.tableId]=b.table.columnWidths=Format.getColumnWidths(b,c),d.header=b.headerEmpty?[]:b.table.header.map(function(a){return buildRow(b,a,"header")}),d.body=c.map(function(a){return buildRow(b,a,"body")}),d.footer=b.table.footer instanceof Array&&0<b.table.footer.length?[b.table.footer]:[],d.footer=d.footer.map(function(a){return buildRow(b,a,"footer")});for(var h=function(c){g.push(""),b.table.columnWidths.forEach(function(a,b,d){g[c]+=Array(a).join(f[c].h)+(b+1===d.length?f[c].r:f[c].j)}),g[c]=f[c].l+g[c],g[c]=g[c].split(""),g[c][g[c].length1]=f[c].r,g[c]=g[c].join(""),g[c]=2>c?e+g[c]+"\n":e+g[c]},i=0;3>i;i++)h(i);var a="";a+=g[0],Object.keys(d).forEach(function(c,h){for(;d[c].length;){var i=d[c].shift();switch(i.forEach(function(b){a=a+e+f[1].v+b.join(f[1].v)+f[1].v+"\n"}),!0){case 0===d[c].length&&1===h&&0===d.footer.length:break;case 0===d[c].length&&2===h:break;case b.compact&&"body"===c&&!i.empty:break;default:a+=g[1];}}}),a+=g[2];var j=Array(b.marginTop+1).join("\n")+a;return b.height=j.split(/\r\n|\r|\n/).length,j};var buildRow=function(d,a,e){var f=0;if(0===a.length&&d.compact)return a.empty=!0,a;var b=d.table.columnWidths.length-a.length;0<b?a=a.concat(Array.apply(null,Array(b)).map(function(){return null})):0>b&&(a.length=d.table.columnWidths.length);for(var g=[],h=a.length,i=0;i<h;i++){var j=Render.buildCell(d,a[i],i,e),c=j.cellArr;"header"===e&&d.table.columnInnerWidths.push(j.width),f=f<c.length?c.length:f,g.push(c)}f="header"===e?f:f+(d.paddingBottom+d.paddingTop);var k=Array.apply(null,{length:f}).map(Function.call,function(){return[]});return g.forEach(function(c,g){var a=Array(d.table.columnWidths[g]).join(" ");if("body"===e){for(var h=0;h<d.paddingTop;h++)c.unshift(a);for(var i=0;i<d.paddingBottom;i++)c.push(a)}for(var j=0;j<f;j++)k[j].push("undefined"==typeof c[j]?a:c[j])}),k};Render.buildCell=function(a,b,c,d){var e=void 0,f=Object.assign({},a,"body"===d?a.columnSettings[c]:{},b);if("header"===d)a.table.columns.push(f),e=f.alias||f.value||"";else{switch(!0){case"undefined"==typeof b||null===b:e=a.errorOnNull?a.defaultErrorValue:a.defaultValue;break;case"object"===("undefined"==typeof b?"undefined":_typeof(b))&&"undefined"!=typeof b.value:e=b.value;break;default:e=b;}"function"==typeof f.formatter&&(e=f.formatter(e))}e=Style.colorizeCell(e,f,d);var g=Format.wrapCellContent(a,e,c,f,d);return{cellArr:g.output,width:g.width}},Render.getRowFormat=function(a,b){var c;if("object"===("undefined"==typeof a?"undefined":_typeof(a))&&!(a instanceof Array)){var d=Object.keys(a);if("automattic"===b.adapter){var e=d[0];c=a[e]instanceof Array?"automattic-cross":"automattic-vertical"}else c="o-horizontal"}else c="a-horizontal";return c},Render.verticalizeMatrix=function(a,b){var c=[],d=a.table.columns;return d.forEach(function(a){c.push([a])}),b.forEach(function(a){a.forEach(function(a,b){c[b].push(a)})}),c},Render.transformRows=function(a,b){var c=[];switch(a.rowFormat){case"automattic-cross":a.columnSettings[0]=a.columnSettings[0]||{},a.columnSettings[0].color=a.headerColor,c=b.map(function(a){var b=[],c=Object.keys(a)[0];return b.push(c),b.concat(a[c])});break;case"automattic-vertical":a.columnSettings[0]=a.columnSettings[0]||{},a.columnSettings[0].color=a.headerColor,c=b.map(function(a){var b=Object.keys(a)[0];return[b,a[b]]});break;case"o-horizontal":c=b.map(function(b){return a.table.header[0].map(function(a){return b[a.value]||null})});break;case"a-horizontal":c=b;break;default:}return c},module.exports=Render;
+"use strict";var _typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(a){return typeof a}:function(a){return a&&"function"==typeof Symbol&&a.constructor===Symbol&&a!==Symbol.prototype?"symbol":typeof a},Style=require("./style.js"),Format=require("./format.js"),Render={};Render.stringifyData=function(b,c){var d={header:[],body:[],footer:[]},e=Array(b.marginLeft+1).join(" "),f=b.borderCharacters[b.borderStyle],g=[];b.rowFormat=Render.getRowFormat(c[0]||[],b),c=Render.transformRows(b,c),global.columnWidths||(global.columnWidths={}),global.columnWidths[b.tableId]?b.table.columnWidths=global.columnWidths[b.tableId]:global.columnWidths[b.tableId]=b.table.columnWidths=Format.getColumnWidths(b,c),d.header=b.headerEmpty?[]:b.table.header.map(function(a){return buildRow(b,a,"header")}),d.body=c.map(function(a){return buildRow(b,a,"body")}),d.footer=b.table.footer instanceof Array&&0<b.table.footer.length?[b.table.footer]:[],d.footer=d.footer.map(function(a){return buildRow(b,a,"footer")});for(var h=function(c){g.push(""),b.table.columnWidths.forEach(function(a,b,d){g[c]+=Array(a).join(f[c].h)+(b+1===d.length?f[c].r:f[c].j)}),g[c]=f[c].l+g[c],g[c]=g[c].split(""),g[c][g[c].length1]=f[c].r,g[c]=g[c].join(""),g[c]=2>c?e+g[c]+"\n":e+g[c]},i=0;3>i;i++)h(i);var a="";a+=g[0],Object.keys(d).forEach(function(c,h){for(;d[c].length;){var i=d[c].shift();switch(i.forEach(function(b){a=a+e+f[1].v+b.join(f[1].v)+f[1].v+"\n"}),!0){case 0===d[c].length&&1===h&&0===d.footer.length:break;case 0===d[c].length&&2===h:break;case b.compact&&"body"===c&&!i.empty:break;case"none"===b.borderStyle&&b.compact:break;default:a+=g[1];}}}),a+=g[2];var j=Array(b.marginTop+1).join("\n")+a;return b.height=j.split(/\r\n|\r|\n/).length,j};var buildRow=function(d,a,e){var f=0;if(0===a.length&&d.compact)return a.empty=!0,a;var b=d.table.columnWidths.length-a.length;0<b?a=a.concat(Array.apply(null,Array(b)).map(function(){return null})):0>b&&(a.length=d.table.columnWidths.length);for(var g=[],h=a.length,i=0;i<h;i++){var j=Render.buildCell(d,a[i],i,e),c=j.cellArr;"header"===e&&d.table.columnInnerWidths.push(j.width),f=f<c.length?c.length:f,g.push(c)}f="header"===e?f:f+(d.paddingBottom+d.paddingTop);var k=Array.apply(null,{length:f}).map(Function.call,function(){return[]});return g.forEach(function(c,g){var a=Array(d.table.columnWidths[g]).join(" ");if("body"===e){for(var h=0;h<d.paddingTop;h++)c.unshift(a);for(var i=0;i<d.paddingBottom;i++)c.push(a)}for(var j=0;j<f;j++)k[j].push("undefined"==typeof c[j]?a:c[j])}),k};Render.buildCell=function(a,b,c,d){var e=void 0,f=Object.assign({},a,"body"===d?a.columnSettings[c]:{},b);if("header"===d)a.table.columns.push(f),e=f.alias||f.value||"";else{switch(!0){case"undefined"==typeof b||null===b:e=a.errorOnNull?a.defaultErrorValue:a.defaultValue;break;case"object"===("undefined"==typeof b?"undefined":_typeof(b))&&"undefined"!=typeof b.value:e=b.value;break;default:e=b;}"function"==typeof f.formatter&&(e=f.formatter(e))}e=Style.colorizeCell(e,f,d);var g=Format.wrapCellContent(a,e,c,f,d);return{cellArr:g.output,width:g.width}},Render.getRowFormat=function(a,b){var c;if("object"===("undefined"==typeof a?"undefined":_typeof(a))&&!(a instanceof Array)){var d=Object.keys(a);if("automattic"===b.adapter){var e=d[0];c=a[e]instanceof Array?"automattic-cross":"automattic-vertical"}else c="o-horizontal"}else c="a-horizontal";return c},Render.verticalizeMatrix=function(a,b){var c=[],d=a.table.columns;return d.forEach(function(a){c.push([a])}),b.forEach(function(a){a.forEach(function(a,b){c[b].push(a)})}),c},Render.transformRows=function(a,b){var c=[];switch(a.rowFormat){case"automattic-cross":a.columnSettings[0]=a.columnSettings[0]||{},a.columnSettings[0].color=a.headerColor,c=b.map(function(a){var b=[],c=Object.keys(a)[0];return b.push(c),b.concat(a[c])});break;case"automattic-vertical":a.columnSettings[0]=a.columnSettings[0]||{},a.columnSettings[0].color=a.headerColor,c=b.map(function(a){var b=Object.keys(a)[0];return[b,a[b]]});break;case"o-horizontal":c=b.map(function(b){return a.table.header[0].map(function(a){return b[a.value]||null})});break;case"a-horizontal":c=b;break;default:}return c},module.exports=Render;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./format.js":24,"./style.js":26}],26:[function(require,module,exports){
