@@ -17,6 +17,7 @@ env:
   
 services:
   - docker
+  - xvfb
 
 before_install:
   # Pull base image
@@ -28,7 +29,7 @@ before_script:
   # Create virtual framebuffer so display output can be read with 
   # correct dimensions by test suite
   - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
+  # - sh -e /etc/init.d/xvfb start
 
 script:
   # Create a container from the custom image and run tests on it
