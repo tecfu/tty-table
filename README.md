@@ -75,27 +75,6 @@ $ tty-table -h
 
 ## Table
 **Kind**: global class  
-**Note**: <a name="note"/>
-Available border character sets:
-```js
-{
- "none": [
-   {v: " ", l: " ", j: " ", h: " ", r: " "},
-   {v: " ", l: " ", j: " ", h: " ", r: " "},
-   {v: " ", l: " ", j: " ", h: " ", r: " "}
- ],
- "solid": [
-   {v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
-   {v: "│", l: "├", j: "┼", h: "─", r: "┤"},
-   {v: "│", l: "└", j: "┴", h: "─", r: "┘"}
- ],
- "dashed": [
-   {v: "|", l: "+", j: "+", h: "-", r: "+"},
-   {v: "|", l: "+", j: "+", h: "-", r: "+"},
-   {v: "|", l: "+", j: "+", h: "-", r: "+"}
- ]
-}
-```  
 
 * [Table](#Table)
     * [Table(header, rows, options)](#new_Table_new)
@@ -133,7 +112,7 @@ Available border character sets:
 | options.defaultErrorValue | <code>mixed</code> | default: 'ERROR!' |
 | options.defaultValue | <code>mixed</code> | default: '?' |
 | options.errorOnNull | <code>boolean</code> | default: false |
-| options.truncate | <code>mixed</code> | default: false  <br/> When this property is set to a string, cell contents will be truncated by that string instead of wrapped when they extend beyond of the width of the cell.  <br/> For example if:  <br/> <code>"truncate":"..."</code> <br/> the cell will be truncated with "..." |
+| options.truncate | <code>mixed</code> | default: false <br/> When this property is set to a string, cell contents will be truncated by that string instead of wrapped when they extend beyond of the width of the cell.  <br/> For example if: <br/> <code>"truncate":"..."</code> <br/> the cell will be truncated with "..." |
 
 **Example**  
 ```js
