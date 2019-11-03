@@ -1,5 +1,5 @@
-let defaults = {
-  borderCharacters : { 
+const defaults = {
+  borderCharacters: {
     "invisible": [
       {v: " ", l: " ", j: " ", h: " ", r: " "},
       {v: " ", l: " ", j: " ", h: " ", r: " "},
@@ -21,47 +21,47 @@ let defaults = {
       {v: "", l: "", j: "", h: "", r: ""}
     ]
   },
-  align : "center",
-  borderColor : null,
-  borderStyle : "solid",
-  color : false,
-  compact : false,
-  defaultErrorValue : "[32m[37m[41m ERROR!  [49m[32m[39m",
-  defaultValue : "[32m[37m[41m ?  [49m[32m[39m",
-  errorOnNull : false,
-  footerAlign : "center",
-  footerColor : false,
-  formatter : null,
-  headerAlign : "center",
-  headerColor : "yellow",
-  marginLeft : 2,
-  marginTop : 1,
-  paddingBottom : 0,
-  paddingLeft : 1,
-  paddingRight : 1,
-  paddingTop : 0,
-  tableType : null,
+  align: "center",
+  borderColor: null,
+  borderStyle: "solid",
+  color: false,
+  compact: false,
+  defaultErrorValue: "[32m[37m[41m ERROR!  [49m[32m[39m",
+  defaultValue: "[32m[37m[41m ?  [49m[32m[39m",
+  errorOnNull: false,
+  footerAlign: "center",
+  footerColor: false,
+  formatter: null,
+  headerAlign: "center",
+  headerColor: "yellow",
+  marginLeft: 2,
+  marginTop: 1,
+  paddingBottom: 0,
+  paddingLeft: 1,
+  paddingRight: 1,
+  paddingTop: 0,
+  tableType: null,
   truncate: false,
-  width : "auto",
-  GUTTER : 1, //undocumented
-  columnSettings : [],
-  headerEmpty : false,
+  width: "auto",
+  GUTTER: 1, //undocumented
+  columnSettings: [],
+  headerEmpty: false,
   //save so cell options can be merged into column options
-  table : {
-    body : '',
-    columnInnerWidths : [],
-    columnWidths : [],
-    columns : [],
-    footer : '',
-    header : '', //post-rendered strings.
-    height : 0,
-    typeLocked : false //once a table type is selected can't switch
+  table: {
+    body: "",
+    columnInnerWidths: [],
+    columnWidths: [],
+    columns: [],
+    footer: "",
+    header: "", //post-rendered strings.
+    height: 0,
+    typeLocked: false //once a table type is selected can't switch
   }
-};
+}
 
 // support deprecated border style values
-defaults.borderCharacters['0'] = defaults.borderCharacters['none'];
-defaults.borderCharacters['1'] = defaults.borderCharacters['solid'];
-defaults.borderCharacters['2'] = defaults.borderCharacters['dashed'];
+defaults.borderCharacters["0"] = defaults.borderCharacters["none"]
+defaults.borderCharacters["1"] = defaults.borderCharacters["solid"]
+defaults.borderCharacters["2"] = defaults.borderCharacters["dashed"]
 
-module.exports = defaults;
+module.exports = defaults

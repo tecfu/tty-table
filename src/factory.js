@@ -1,7 +1,7 @@
-const Defaults = require('./defaults.js');
-const Render = require('./render.js');
-const Chalk = require('chalk')
-let Counter = 0;
+const Defaults = require("./defaults.js")
+const Render = require("./render.js")
+const Chalk = require("chalk")
+let Counter = 0
 
 /**
 * @class Table
@@ -36,7 +36,7 @@ let Counter = 0;
 * @param {boolean} options.errorOnNull    - default: false
 * @param {mixed} options.truncate - default: false
 * <br/>
-* When this property is set to a string, cell contents will be truncated by that string instead of wrapped when they extend beyond of the width of the cell. 
+* When this property is set to a string, cell contents will be truncated by that string instead of wrapped when they extend beyond of the width of the cell.
 * <br/>
 * For example if:
 * <br/>
@@ -50,136 +50,136 @@ let Counter = 0;
 * ```js
 * let Table = require('tty-table');
 * let t1 = Table(header,rows,options);
-* console.log(t1.render()); 
+* console.log(t1.render());
 * ```
 *
 */
-const Factory = function(paramsArr){
+const Factory = function(paramsArr) {
 
-  let _configKey = Symbol['config'];
-  let header = [];
-  let body = [];
-  let footer = [];
-  let options = {};
-  
+  let _configKey = Symbol["config"]
+  let header = []
+  let body = []
+  let footer = []
+  let options = {}
+
   //handle different parameter scenarios
-  switch(true){
-    
+  switch(true) {
+
     //header, rows, footer, and options
-    case(paramsArr.length === 4): 
-      header = paramsArr[0];
-      body.push(...paramsArr[1]); //creates new array to store our rows (body)
-      footer = paramsArr[2];
-      options = paramsArr[3];
-      break;
-    
+    case(paramsArr.length === 4):
+      header = paramsArr[0]
+      body.push(...paramsArr[1]) //creates new array to store our rows (body)
+      footer = paramsArr[2]
+      options = paramsArr[3]
+      break
+
     //header, rows, footer
-    case(paramsArr.length === 3 && paramsArr[2] instanceof Array): 
-      header = paramsArr[0];
-      body.push(...paramsArr[1]); //creates new array to store our rows
-      footer = paramsArr[2];
-      break;
-   
+    case(paramsArr.length === 3 && paramsArr[2] instanceof Array):
+      header = paramsArr[0]
+      body.push(...paramsArr[1]) //creates new array to store our rows
+      footer = paramsArr[2]
+      break
+
     //header, rows, options
-    case(paramsArr.length === 3 && typeof paramsArr[2] === 'object'): 
-      header = paramsArr[0];
-      body.push(...paramsArr[1]); //creates new array to store our rows
-      options = paramsArr[2];
-      break;
+    case(paramsArr.length === 3 && typeof paramsArr[2] === "object"):
+      header = paramsArr[0]
+      body.push(...paramsArr[1]) //creates new array to store our rows
+      options = paramsArr[2]
+      break
 
     //header, rows            (rows, footer is not an option)
-    case(paramsArr.length === 2 && paramsArr[1] instanceof Array): 
-      header = paramsArr[0];
-      body.push(...paramsArr[1]); //creates new array to store our rows
-      break;
+    case(paramsArr.length === 2 && paramsArr[1] instanceof Array):
+      header = paramsArr[0]
+      body.push(...paramsArr[1]) //creates new array to store our rows
+      break
 
     //rows, options
-    case(paramsArr.length === 2 && typeof paramsArr[1] === 'object'): 
-      body.push(...paramsArr[0]); //creates new array to store our rows
-      options = paramsArr[1];
-      break;
+    case(paramsArr.length === 2 && typeof paramsArr[1] === "object"):
+      body.push(...paramsArr[0]) //creates new array to store our rows
+      options = paramsArr[1]
+      break
 
     //rows
     case(paramsArr.length === 1 && paramsArr[0] instanceof Array):
-      body.push(...paramsArr[0]);
-      break;
-         
+      body.push(...paramsArr[0])
+      break
+
     //adapter called          i.e. require('tty-table')('automattic-cli')
-    case(paramsArr.length === 1 && typeof paramsArr[0] === 'string'):
-      return require('../adapters/' + paramsArr[0]);
-    
+    case(paramsArr.length === 1 && typeof paramsArr[0] === "string"):
+      return require(`../adapters/${  paramsArr[0]}`)
+
     default:
-      console.log("Error: Bad params. \nSee docs at github.com/tecfu/tty-table");
-      process.exit();
+      console.log("Error: Bad params. \nSee docs at github.com/tecfu/tty-table")
+      process.exit()
   }
-  
+
   // For "deep" copy, use JSON.parse
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Deep_Clone
-  let clonedDefaults = JSON.parse(JSON.stringify(Defaults))
-  let config = Object.assign({}, clonedDefaults, options);
-  
+  const clonedDefaults = JSON.parse(JSON.stringify(Defaults))
+  let config = Object.assign({}, clonedDefaults, options)
+
   //backfixes for shortened option names
-  config.align = config.alignment || config.align;
-  config.headerAlign = config.headerAlignment || config.headerAlign;
+  config.align = config.alignment || config.align
+  config.headerAlign = config.headerAlignment || config.headerAlign
 
   //if borderColor customized, color the border character set
-  if(!!config.borderColor){
-    config.borderCharacters[config.borderStyle] = 
-      config.borderCharacters[config.borderStyle].map(function(obj){
-        Object.keys(obj).forEach(function(key){
-           obj[key] = Chalk[config.borderColor](obj[key]);
+  if(config.borderColor) {
+    config.borderCharacters[config.borderStyle] =
+      config.borderCharacters[config.borderStyle].map(function(obj) {
+        Object.keys(obj).forEach(function(key) {
+          obj[key] = Chalk[config.borderColor](obj[key])
         })
-        return obj;
-      });
+        return obj
+      })
   }
- 
+
   //save a copy for merging columnSettings into cell options
-  config.columnSettings = header.slice(0); 
+  config.columnSettings = header.slice(0)
 
   //header
-  config.table.header = header;
-  config.headerEmpty = (header.length === 0) ? true : false;
-  
-  //match header geometry with body array  
-  config.table.header = [config.table.header];
-  
+  config.table.header = header
+  config.headerEmpty = (header.length === 0) ? true : false
+
+  //match header geometry with body array
+  config.table.header = [config.table.header]
+
   //footer
-  config.table.footer = footer;
- 
-  //counting table enables fixed column widths for streams, 
-  //variable widths for multiple tables simulateously 
-  if(config.terminalAdapter !== true){
-    Counter++; //fix columnwidths for streams
+  config.table.footer = footer
+
+  //counting table enables fixed column widths for streams,
+  //variable widths for multiple tables simulateously
+  if(config.terminalAdapter !== true) {
+    Counter++ //fix columnwidths for streams
   }
-  config.tableId = Counter;
-  
+  config.tableId = Counter
+
   //create a new object with an Array prototype
-  let tableObject = Object.create(body);
-  
+  let tableObject = Object.create(body)
+
   //save configuration to new object
-  tableObject[_configKey] = config; 
-  
+  tableObject[_configKey] = config
+
   /**
    * Add method to render table to a string
    * @returns {String}
-   * @memberof Table 
-   * @example 
+   * @memberof Table
+   * @example
    * ```js
-   * let str = t1.render(); 
+   * let str = t1.render();
    * console.log(str); //outputs table
    * ```
   */
-  tableObject.render = function(){
+  tableObject.render = function() {
     //let configCopy = JSON.parse(JSON.stringify(this[_configKey]));
     //return Render.stringifyData(configCopy,this.slice(0));  //get string output
-    let output = Render.stringifyData(this[_configKey],this.slice(0));  //get string output
-    tableObject.height = this[_configKey].height;
-    return output;
+    let output = Render.stringifyData(this[_configKey],this.slice(0))  //get string output
+    tableObject.height = this[_configKey].height
+    return output
   }
 
-  return tableObject;
+  return tableObject
 }
 
-module.exports = function(){
-  return new Factory(arguments);
+module.exports = function() {
+  return new Factory(arguments)
 }
