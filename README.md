@@ -34,6 +34,9 @@ $ npm install tty-table
 
 ## [Examples](examples/)
 
+[See here for complete example list](examples/)
+
+
 ### Terminal (Static)
 
 [examples/styles-and-formatting.js](examples/styles-and-formatting.js)
