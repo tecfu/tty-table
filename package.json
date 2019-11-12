@@ -11,6 +11,7 @@
   },
   "preferGlobal": false,
   "scripts": {
+    "dist": "npx grunt",
     "test": "npx grunt t",
     "test-save": "npx grunt st",
     "lint": "./node_modules/.bin/eslint adapters/* src/*",

@@ -4039,31 +4039,36 @@ function smartWrap(input, options) {
   return strArr.join("\n")
 }
 
+const defaults = () => {
+  let obj = {}
+
+  obj.breakword = false
+  obj.calculateSpaceRemaining = function(obj) {
+    return Math.max(obj.lineLength - obj.spacesUsed - obj.paddingLeft - obj.paddingRight, 0)
+  } //function to set starting line length
+  obj.currentLine = 0 //index of current line in 'lines[]'
+  obj.input = [] //input string split by whitespace
+  obj.lines = [
+    []
+  ] //assume at least one line
+  obj.minWidth = 2 //fallback to if width set too narrow
+  obj.paddingLeft = 0
+  obj.paddingRight = 0
+  obj.returnFormat = "string" //or 'array'
+  obj.skipPadding = false //set to true when padding set too wide for line length
+  obj.spacesUsed = 0 //spaces used so far on current line
+  obj.splitAt = [" ","\t"]
+  obj.trim = true
+  obj.width = 10
+  obj.words = []
+
+  return obj
+}
+
 function wrap(text,options) {
 
   options = options || {}
-  let defaults = {}
-
-  defaults.calculateSpaceRemaining = function(obj) {
-    return Math.max(obj.lineLength - obj.spacesUsed - obj.paddingLeft - obj.paddingRight, 0)
-  } //function to set starting line length
-  defaults.currentLine = 0 //index of current line in 'lines[]'
-  defaults.input = [] //input string split by whitespace
-  defaults.lines = [
-    []
-  ] //assume at least one line
-  defaults.minWidth = 2 //fallback to if width set too narrow
-  defaults.paddingLeft = 0
-  defaults.paddingRight = 0
-  defaults.returnFormat = "string" //or 'array'
-  defaults.skipPadding = false //set to true when padding set too wide for line length
-  defaults.spacesUsed = 0 //spaces used so far on current line
-  defaults.splitAt = [" ","\t"]
-  defaults.trim = true
-  defaults.width = 10
-  defaults.words = []
-
-  let wrapObj = Object.assign({},defaults,options)
+  let wrapObj = Object.assign({},defaults(),options)
 
   //make sure correct sign on padding
   wrapObj.paddingLeft = Math.abs(wrapObj.paddingLeft)
@@ -4080,7 +4085,7 @@ function wrap(text,options) {
   }
 
   //Break input into array of characters split by whitespace and/or tabs
-  let unfilteredWords = []
+  let wordArray = []
 
   //to trim or not to trim...
   let modifiedText = text.toString()
@@ -4088,18 +4093,25 @@ function wrap(text,options) {
     modifiedText = modifiedText.trim()
   }
 
-  if(wrapObj.splitAt.indexOf("\t")!==-1) {
-    //split at both spaces and tabs
-    unfilteredWords = modifiedText.split(/ |\t/i)
-  } else{
-    //split at whitespace
-    unfilteredWords = modifiedText.split(" ")
+  if(!wrapObj.breakword){
+    //break string into words
+    if(wrapObj.splitAt.indexOf("\t")!==-1) {
+      //split at both spaces and tabs
+      wordArray = modifiedText.split(/ |\t/i)
+    } else{
+      //split at whitespace
+      wordArray = modifiedText.split(" ")
+    }
+  }
+  else {
+    //do not break string into words
+    wordArray = [modifiedText]
   }
 
   //remove empty array elements
-  unfilteredWords.forEach(function(val) {
+  wrapObj.words = wordArray.filter(val => {
     if (val.length > 0) {
-      wrapObj.words.push(val)
+      return true  
     }
   })
 
@@ -4340,7 +4352,7 @@ function bisearch(ucs) {
 }).call(this,require('_process'))
 },{"./defaults.js":22,"./render.js":25,"_process":5,"chalk":7}],24:[function(require,module,exports){
 (function (process){
-"use strict";var _typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(a){return typeof a}:function(a){return a&&"function"==typeof Symbol&&a.constructor===Symbol&&a!==Symbol.prototype?"symbol":typeof a},StripAnsi=require("strip-ansi"),Wrap=require("smartwrap"),Wcwidth=require("wcwidth"),Format={};Format.calculateLength=function(a){return Wcwidth(StripAnsi(a))},Format.wrapCellContent=function(a,b,c,d,e){var f=b.toString(),g=/^(\033\[[0-9;]*m)+/,h=f.match(g)||[""];f=f.replace(g,"");var i=/(\033\[[0-9;]*m)+$/,j=f.match(i)||[""];f=f.replace(i,"");var k="header"===e?"headerAlign":"body"===e?"align":"footerAlign";"center"===d[k]&&(d.paddingLeft=d.paddingRight=Math.max(d.paddingRight,d.paddingLeft,0));var l=a.table.columnWidths[c],m=l-d.paddingLeft-d.paddingRight-a.GUTTER;switch(!0){case"string"==typeof a.truncate||!0===a.truncate:!0===a.truncate&&(a.truncate=""),f=Format.handleTruncatedValue(f,d,m);break;case /[\uD800-\uDFFF]/.test(f):f=Format.handleWideChars(f,d,m);break;default:f=Format.handleNonWideChars(f,d,m);}var n=f.split("\n");return n=n.map(function(a){a=a.trim();var b=Format.calculateLength(a);if(b<l){var c=l-b;switch(!0){case"center"===d[k]:c--;var e=Math.floor(c/2),f=c%2;a=Array(e+1).join(" ")+a+Array(e+1+f).join(" ");break;case"right"===d[k]:a=Array(c-d.paddingRight).join(" ")+a+Array(d.paddingRight+1).join(" ");break;default:a=Array(d.paddingLeft+1).join(" ")+a+Array(c-d.paddingLeft).join(" ");}}return a=h[0]+a,a+=j[0],a}),{output:n,width:m}},Format.handleTruncatedValue=function(a,b,c){var d=a;return c<d.length&&(d=d.substring(0,c-b.truncate.length),d+=b.truncate),d},Format.handleWideChars=function(a,b,c){var d=0,e=0,f=a.split(""),g=f.reduce(function(b,g,h){return d+=Format.calculateLength(g),d>c?(b.push(a.slice(e,h)),e=h,d=0):f.length===h+1&&b.push(a.slice(e)),b},[]).join("\n");return g},Format.handleNonWideChars=function(a,b,c){var d=Wrap(a,{width:c,trim:!0});return d},Format.inferColumnWidth=function(a,b,c){var d;if("object"===("undefined"==typeof a?"undefined":_typeof(a))&&a.value){d=b.slice();var f=Array(d[0].length);f[c]=a.value.toString(),d.push(f)}else d=b;var e=0;return d.forEach(function(a){a[c]&&a[c].toString().length>e&&(e=Wcwidth(a[c].toString()))}),e},Format.getColumnWidths=function(a,b){var c=a.table.header[0]&&0<a.table.header[0].length?a.table.header[0]:b[0],d=c.map(function(c,d){var e;switch(!0){case"object"===("undefined"==typeof c?"undefined":_typeof(c))&&"number"==typeof c.width:e=c.width;break;case a.width&&"auto"!==a.width:e=a.width;break;default:var f=a.table.header[0][d]?a.table.header[0][d]:{},g=b.length?b:a.table.header[0];e=Format.inferColumnWidth(f,g,d),e=e+a.paddingLeft+a.paddingRight;}return e+=a.GUTTER,e}),e=d.reduce(function(a,b){return a+b});if(e+=a.marginLeft,process&&process.stdout&&e>process.stdout.columns){var f=process.stdout.columns/e;f=f.toFixed(2)-0.01,0<f&&(d=d.map(function(a){return Math.floor(f*a)}))}return d},module.exports=Format;
+"use strict";var _typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(a){return typeof a}:function(a){return a&&"function"==typeof Symbol&&a.constructor===Symbol&&a!==Symbol.prototype?"symbol":typeof a},StripAnsi=require("strip-ansi"),Smartwrap=require("smartwrap"),Wcwidth=require("wcwidth"),Format={};Format.calculateLength=function(a){return Wcwidth(StripAnsi(a))},Format.wrapCellContent=function(a,b,c,d,e){var f=b.toString(),g=/^(\033\[[0-9;]*m)+/,h=f.match(g)||[""];f=f.replace(g,"");var i=/(\033\[[0-9;]*m)+$/,j=f.match(i)||[""];f=f.replace(i,"");var k="header"===e?"headerAlign":"body"===e?"align":"footerAlign";"center"===d[k]&&(d.paddingLeft=d.paddingRight=Math.max(d.paddingRight,d.paddingLeft,0));var l=a.table.columnWidths[c],m=l-d.paddingLeft-d.paddingRight-a.GUTTER;switch(!0){case"string"==typeof a.truncate||!0===a.truncate:!0===a.truncate&&(a.truncate=""),f=Format.handleTruncatedValue(f,d,m);break;case /[\uD800-\uDFFF]/.test(f):f=Format.handleWideChars(f,d,m);break;default:f=Format.handleNonWideChars(f,d,m);}var n=f.split("\n");return n=n.map(function(a){a=a.trim();var b=Format.calculateLength(a);if(b<l){var c=l-b;switch(!0){case"center"===d[k]:c--;var e=Math.floor(c/2),f=c%2;a=Array(e+1).join(" ")+a+Array(e+1+f).join(" ");break;case"right"===d[k]:a=Array(c-d.paddingRight).join(" ")+a+Array(d.paddingRight+1).join(" ");break;default:a=Array(d.paddingLeft+1).join(" ")+a+Array(c-d.paddingLeft).join(" ");}}return a=h[0]+a,a+=j[0],a}),{output:n,width:m}},Format.handleTruncatedValue=function(a,b,c){var d=Wcwidth(a);return c<d&&(a=Smartwrap(a,{width:c-b.truncate.length,breakword:!0}).split("\n")[0],a+=b.truncate),a},Format.handleWideChars=function(a,b,c){var d=0,e=0,f=a.split(""),g=f.reduce(function(b,g,h){return d+=Format.calculateLength(g),d>c?(b.push(a.slice(e,h)),e=h,d=0):f.length===h+1&&b.push(a.slice(e)),b},[]).join("\n");return g},Format.handleNonWideChars=function(a,b,c){var d=Smartwrap(a,{width:c,trim:!0});return d},Format.inferColumnWidth=function(a,b,c){var d;if("object"===("undefined"==typeof a?"undefined":_typeof(a))&&a.value){d=b.slice();var f=Array(d[0].length);f[c]=a.value.toString(),d.push(f)}else d=b;var e=0;return d.forEach(function(a){a[c]&&a[c].toString().length>e&&(e=Wcwidth(a[c].toString()))}),e},Format.getColumnWidths=function(a,b){var c=a.table.header[0]&&0<a.table.header[0].length?a.table.header[0]:b[0],d=c.map(function(c,d){var e;switch(!0){case"object"===("undefined"==typeof c?"undefined":_typeof(c))&&"number"==typeof c.width:e=c.width;break;case a.width&&"auto"!==a.width:e=a.width;break;default:var f=a.table.header[0][d]?a.table.header[0][d]:{},g=b.length?b:a.table.header[0];e=Format.inferColumnWidth(f,g,d),e=e+a.paddingLeft+a.paddingRight;}return e+=a.GUTTER,e}),e=d.reduce(function(a,b){return a+b});if(e+=a.marginLeft,process&&process.stdout&&e>process.stdout.columns){var f=process.stdout.columns/e;f=f.toFixed(2)-0.01,0<f&&(d=d.map(function(a){return Math.floor(f*a)}))}return d},module.exports=Format;
 
 }).call(this,require('_process'))
 },{"_process":5,"smartwrap":17,"strip-ansi":18,"wcwidth":21}],25:[function(require,module,exports){
