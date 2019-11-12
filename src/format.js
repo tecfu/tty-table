@@ -1,6 +1,5 @@
 const StripAnsi = require("strip-ansi")
-//const Wrap = require("word-wrap");
-const Wrap = require("smartwrap")
+const Smartwrap = require("smartwrap")
 const Wcwidth = require("wcwidth")
 const Format = {}
 
@@ -139,13 +138,17 @@ Format.wrapCellContent = function(
   }
 }
 
-Format.handleTruncatedValue = function(string,cellOptions,innerWidth) {
-  let outstring = string
-  if(innerWidth < outstring.length) {
-    outstring = outstring.substring(0,innerWidth - cellOptions.truncate.length)
-    outstring = outstring + cellOptions.truncate
+Format.handleTruncatedValue = function(string,cellOptions,maxWidth) {
+  const stringWidth = Wcwidth(string)
+  if(maxWidth < stringWidth) {
+    string = Smartwrap(string, {
+      width: maxWidth - cellOptions.truncate.length,
+      //@todo give use option to decide if they want to break words on wrapping
+      breakword: true
+    }).split('\n')[0]
+    string = string + cellOptions.truncate
   }
-  return outstring
+  return string
 }
 
 Format.handleWideChars = function(string,cellOptions,innerWidth) {
@@ -169,7 +172,7 @@ Format.handleWideChars = function(string,cellOptions,innerWidth) {
 }
 
 Format.handleNonWideChars = function(string,cellOptions,innerWidth) {
-  let outstring = Wrap(string,{
+  let outstring = Smartwrap(string,{
     width: innerWidth,
     trim: true//,
     //indent : '',
