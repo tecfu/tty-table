@@ -1,4 +1,4 @@
-let Chalk = require("chalk")
+const Chalk = require("chalk")
 
 exports.colorizeCell = function(str,cellOptions,rowType) {
 

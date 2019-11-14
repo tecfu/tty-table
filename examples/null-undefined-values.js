@@ -1,108 +1,106 @@
-var Chalk = require('chalk');
-var Table = require('../');
+const Table = require("../")
+const Chalk = require("chalk")
 
-var header = [
+let header = [
   {
-    value : "item",
-    formatter : function(value){
-      return Chalk.cyan(value);
+    value: "item",
+    formatter: function(value) {
+      return Chalk.cyan(value)
     }
   },
   {
-    value : "price",
-    width : 10
+    value: "price",
+    width: 10
   },
   {
-    value : "organic",
-    width : 10
+    value: "organic",
+    width: 10
   }
-];
+]
 
-//Example with arrays as rows 
-var rows = [
-  [],  
+//Example with arrays as rows
+let rows = [
+  [],
   ["hamburger",2.50,null],
   ["el jefe's special cream sauce",0.10],
   ["two tacos, rice and beans topped with cheddar cheese",9.80,""],
   ["apple slices",1.00,"yes"],
   [null,1.50,"no","extra element","another extra element"],
   ["macaroni, ham and peruvian mozzarella",3.75,"no"]
-];
+]
 
-var footer = [
+let footer = [
   "TOTAL",
-  (function(){
-    return rows.reduce(function(prev,curr){
-      return (typeof curr[1] === 'number') ? prev+curr[1] : prev
+  (function() {
+    return rows.reduce(function(prev,curr) {
+      return (typeof curr[1] === "number") ? prev+curr[1] : prev
     },0)
   }()),
-  'N/A'];
+  "N/A"]
 
-var t1 = Table(header,rows,footer,{
-  borderStyle : 1,
-  paddingBottom : 0,
-  headerAlign : "center",
-  align : "center",
-  color : "green",
-  footerColor : "yellow",
-  footerAlign : "right"
-});
+let t1 = Table(header,rows,footer,{
+  borderStyle: 1,
+  paddingBottom: 0,
+  headerAlign: "center",
+  align: "center",
+  color: "green",
+  footerColor: "yellow",
+  footerAlign: "right"
+})
 
 t1.push(
   ["chocolate cake",4.65,"no"]
-);
+)
 
-var str1 = t1.render();
-console.log(str1);
+console.log(t1.render())
 
-//Example with objects as rows 
-var rows = [
+//Example with objects as rows
+let rows2 = [
   {},
   {
-    item : "hamburger",
-    price : 2.50,
-    organic : null 
+    item: "hamburger",
+    price: 2.50,
+    organic: null
   },
   {
-    item : "el jefe's special cream sauce",
-    price : 0.10
+    item: "el jefe's special cream sauce",
+    price: 0.10
   },
   {
-    item : "two tacos, rice and beans topped with cheddar cheese",
-    price : 9.80,
-    organic : "no"
+    item: "two tacos, rice and beans topped with cheddar cheese",
+    price: 9.80,
+    organic: "no"
   },
   {
-    item : "apple slices",
-    price : 1.00,
-    organic : "yes"  
-  },  
-  {
-    item : null, 
-    price : 1.50,
-    organic : "no"
+    item: "apple slices",
+    price: 1.00,
+    organic: "yes"
   },
   {
-    item : "macaroni, ham and peruvian mozzarella",
-    price : 3.75,
-    organic : "no"
+    item: null,
+    price: 1.50,
+    organic: "no"
+  },
+  {
+    item: "macaroni, ham and peruvian mozzarella",
+    price: 3.75,
+    organic: "no"
   }
-];
+]
 
-var t2 = Table(header,rows,{
-  borderStyle : 1,
-  paddingBottom : 0,
-  headerAlign : "center",
-  align : "center",
-  color : "cyan",
-  headerColor : "yellow"
-});
+let t2 = Table(header,rows2,{
+  borderStyle: 1,
+  paddingBottom: 0,
+  headerAlign: "center",
+  align: "center",
+  color: "cyan",
+  headerColor: "yellow"
+})
 
-var str2 = t2.render();
-console.log(str2);
+console.log(t2.render())
 
 
-//var header3 = [
+//let header3 = [
 //  {
 //    alias : "Is organic?",
 //    value : "organic",
@@ -111,7 +109,7 @@ console.log(str2);
 //];
 //
 ////Example with objects as rows3
-//var rows3 = [
+//let rows3 = [
 //  {
 //    organic : "no"
 //  },
@@ -132,12 +130,12 @@ console.log(str2);
 //  }
 //];
 //
-//var t3 = Table(header3,rows3,{
+//let t3 = Table(header3,rows3,{
 //  borderStyle : 1,
 //  paddingBottom : 0
 //});
 //
-//var str3 = t3.render();
+//let str3 = t3.render();
 //console.log(str3);
 
 

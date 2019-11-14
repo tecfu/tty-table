@@ -15,7 +15,9 @@
     "test": "npx grunt t",
     "test-save": "npx grunt st",
     "lint": "./node_modules/.bin/eslint adapters/* src/*",
-    "lint-fix": "./node_modules/.bin/eslint adapters/* src/* --fix"
+    "lint-fix": "./node_modules/.bin/eslint adapters/* src/* --fix",
+    "lint-examples": "./node_modules/.bin/eslint adapters/* examples/*",
+    "lint-examples-fix": "./node_modules/.bin/eslint adapters/* examples/* --fix"
   },
   "repository": {
     "type": "git",
@@ -65,6 +67,6 @@
     "grunt-shell": "^3.0.1",
     "jsdoc-to-markdown": "^5.0.0",
     "mocha": "^6.1.4",
-    "orgy": "^2.2.0"
+    "orgy": "^2.2.1"
   }
 }

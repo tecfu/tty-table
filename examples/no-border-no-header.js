@@ -1,56 +1,53 @@
-const Table = require('../');
+const Table = require("../")
 
-//Example with arrays as rows 
+//Example with arrays as rows
 const rows = [
-  ['xxxyyyzzz'],
-  ['zzzxxxyyy']
-];
+  ["xxxyyyzzz"],
+  ["zzzxxxyyy"]
+]
 
 const t1 = Table(rows,{
   borderStyle: "none",
   marginTop: 0,
   marginLeft: 0,
-  align : "left",
-  color : "white"
-});
+  align: "left",
+  color: "white"
+})
 
-str1 = t1.render();
-console.log(str1);
+console.log(t1.render())
 
-//Example with arrays as rows 
+
+//Example with arrays as rows
 const rows2 = [
-  ['xxxyyyzzz'],
-  ['zzzxxxyyy']
-];
+  ["xxxyyyzzz"],
+  ["zzzxxxyyy"]
+]
 
-const t2 = Table(rows,{
-  borderStyle : "none",
+const t2 = Table(rows2,{
+  borderStyle: "none",
   compact: true,
   marginTop: 0,
   marginLeft: 0,
-  align : "left",
-  color : "white"
-});
+  align: "left",
+  color: "white"
+})
 
-str2 = t2.render();
-console.log(str2);
-
+console.log(t2.render())
 
 
-//Example with arrays as rows 
+//Another example with arrays as rows
 const rows3 = [
-  ['xxxyyyzzz', 'aaaaa'],
-  ['zzzxxxyyy', 'bbbbbb']
-];
+  ["xxxyyyzzz", "aaaaa"],
+  ["zzzxxxyyy", "bbbbbb"]
+]
 
 const t3 = Table(rows3,{
-  borderStyle : "none",
+  borderStyle: "none",
   compact: true,
-  align : "left",
-  color : "white",
+  align: "left",
+  color: "white",
   marginTop: 0,
   marginLeft: 0
-});
+})
 
-str3 = t3.render();
-console.log(str3);
+console.log(t3.render())

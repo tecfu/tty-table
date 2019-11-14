@@ -1,43 +1,37 @@
-var header = ['SYMBOL','LAST']
-var baseline = {
-  "aapl" : 92,
-  "ibm" : 120.72,
-  "wmt" : 68.93,
-  "abx" : 13.36,
-  "msft" : 35.26
-};
+const header = ["SYMBOL","LAST"]
+let baseline = {
+  "aapl": 92,
+  "ibm": 120.72,
+  "wmt": 68.93,
+  "abx": 13.36,
+  "msft": 35.26
+}
 
-var last = {};
+setInterval(function() {
 
-setInterval(function(){
+  //  //Add imaginary ticker
+  //  let newTicker = Math.random().toString(36).substring(7);
+  //  baseline[newTicker] = Math.random();
+  //
+  //  //Remove a random ticker
+  //  let keys = Object.keys(baseline);
+  //  let random =   Math.floor(Math.random() * keys.length) + 0;
+  //  delete baseline[keys[random]];
 
-//  //Add imaginary ticker
-//  var newTicker = Math.random().toString(36).substring(7); 
-//  baseline[newTicker] = Math.random();
-//  
-//  //Remove a random ticker
-//  var keys = Object.keys(baseline);
-//  var random =   Math.floor(Math.random() * keys.length) + 0;
-//  delete baseline[keys[random]];
+  let array = [header]
 
-  var array = [header];
-
-  for(var i in baseline){
+  for(let i in baseline) {
     //give each symbol a 30% chance of changing
-    if(Math.random() >= .7){
-      baseline[i] = (baseline[i] + ((Math.random() > .5) ? .01 : -.01)).toFixed(2)*1;  
+    if(Math.random() >= .7) {
+      baseline[i] = (baseline[i] + ((Math.random() > .5) ? .01 : -.01)).toFixed(2)*1
     }
-    else {
-      baseline[i] = baseline[i];
-    }
-    array.push([i,'$ ' + baseline[i].toFixed(2)])
+    array.push([i,`$ ${  baseline[i].toFixed(2)}`])
   }
 
-  var string = JSON.stringify(array);
-  console.log(string);
-},500)  
+  let string = JSON.stringify(array)
+  console.log(string)
+},500)
 
-process.stdout.on('error',function(){
-  process.exit(1);
-});
-
+process.stdout.on("error",function() {
+  process.exit(1)
+})
