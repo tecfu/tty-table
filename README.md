@@ -8,30 +8,6 @@ Display your data in a table using a terminal, browser, or browser console.
 
 ---
 
-## Installation
-
-- [Terminal](docs/terminal.md):
-
-```sh
-$ npm install tty-table -g
-```
-
-- Node Module
-
-```sh
-$ npm install tty-table
-```
-
-- Browser
-
-```html
-<script src="tty-table.bundle.min.js"></script>
-<script>
- let Table = require('tty-table');
- ...
-</script>
-```
-
 ## [Examples](examples/)
 
 [See here for complete example list](examples/)
@@ -71,71 +47,170 @@ $ tty-table -h
 > borderStyle : "dashed"
 > ```
 
+<br/>
+<br/>
+
 ## API Reference 
 <!--API-REF-->
 
-<a name="Table"></a>
-
-## Table
-**Kind**: global class  
-
-* [Table](#Table)
-    * [Table(header, rows, options)](#new_Table_new)
-    * [.tableObject.render()](#Table.tableObject.render) ⇒ <code>String</code>
-
 <a name="new_Table_new"></a>
-
-### Table(header, rows, options)
+### Table(header ```array```, rows ```array```, options ```object```)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| header | <code>array</code> | [See example](#example-usage) |
-| header.column | <code>object</code> | Column options |
-| header.column.alias | <code>string</code> | Alternate header column name |
-| header.column.align | <code>string</code> | default: "center" |
-| header.column.color | <code>string</code> | default: terminal default color |
-| header.column.footerAlign | <code>string</code> | default: "center" |
-| header.column.footerColor | <code>string</code> | default: terminal default color |
-| header.column.formatter | <code>function</code> | Runs a callback on each cell value in the parent column |
-| header.column.headerAlign | <code>string</code> | default: "center" |
-| header.column.headerColor | <code>string</code> | default: terminal's default color |
-| header.column.marginLeft | <code>number</code> | default: 0 |
-| header.column.marginTop | <code>number</code> | default: 0 |
-| header.column.width | <code>string</code> \| <code>number</code> | default: "auto" |
-| header.column.paddingBottom | <code>number</code> | default: 0 |
-| header.column.paddingLeft | <code>number</code> | default: 1 |
-| header.column.paddingRight | <code>number</code> | default: 1 |
-| header.column.paddingTop | <code>number</code> | default: 0 |
-| rows | <code>array</code> | [See example](#example-usage) |
-| options | <code>object</code> | Table options |
-| options.borderStyle | <code>string</code> | default: "solid". options: "solid", "dashed", "none" |
-| options.borderCharacters | <code>object</code> | [See @note](#note) |
-| options.borderColor | <code>string</code> | default: terminal's default color |
-| options.compact | <code>boolean</code> | default: false Removes horizontal lines when true. |
-| options.defaultErrorValue | <code>mixed</code> | default: 'ERROR!' |
-| options.defaultValue | <code>mixed</code> | default: '?' |
-| options.errorOnNull | <code>boolean</code> | default: false |
-| options.truncate | <code>mixed</code> | default: false <br/> When this property is set to a string, cell contents will be truncated by that string instead of wrapped when they extend beyond of the width of the cell.  <br/> For example if: <br/> <code>"truncate":"..."</code> <br/> the cell will be truncated with "..." |
+| [header](#header_options) | <code>array</code> | Per-column configuration. An array of objects, one object for each column. Each object contains properties you can use to configure that particular column. [See available properties](#header_options) |
+| [rows](#rows_examples) | <code>array</code> | Your data. An array of arrays or objects. [See examples](#rows_examples) |
+| [options](#options_properties) | <code>object</code> | Global table configuration. [See available properties](#options_properties) |
 
-**Example**  
+
+<br/>
+<a name="header_options"></a>
+
+#### header <code>array of objects</code>
+
+| Param | Type | Description |
+| --- | --- | --- |
+| alias | <code>string</code> | Text to display in column header cell |
+| align | <code>string</code> | default: "center" |
+| color | <code>string</code> | default: terminal default color |
+| footerAlign | <code>string</code> | default: "center" |
+| footerColor | <code>string</code> | default: terminal default color |
+| formatter | <code>function</code> | Runs a callback on each cell value in the parent column |
+| headerAlign | <code>string</code> | default: "center" |
+| headerColor | <code>string</code> | default: terminal's default color |
+| marginLeft | <code>integer</code> | default: 0 |
+| marginTop | <code>integer</code> | default: 0 |
+| width | <code>string</code> \|\| <code>integer</code> | default: "auto" |
+| paddingBottom | <code>integer</code> | default: 0 |
+| paddingLeft | <code>integer</code> | default: 1 |
+| paddingRight | <code>integer</code> | default: 1 |
+| paddingTop | <code>integer</code> | default: 0 |
+| value | <code>string</code> | Name of the property to display in each cell when data passed as an array of objects |
+
+
+**Example**
 ```js
-let Table = require('tty-table');
-let t1 = Table(header,rows,options);
-console.log(t1.render()); 
+let header = [
+  {
+    alias: "my items",
+    value: "item",
+    headerColor: "cyan",
+    color: "white",
+    align: "left",
+    paddingLeft: 5,
+    width: 30
+  },
+  {
+    value: "price", // if not set, alias will default to "price"
+    color: "red",
+    width: 10,
+    formatter: function(value) {
+      var str = `$${value.toFixed(2)}`
+      if(value > 5) {
+        str = chalk.underline.green(str)
+      }
+      return str
+    }
+  }
+]
 ```
+
+
+<br/>
+<br/>
+<a name="rows_examples"></a>
+
+#### rows <code>array</code>
+
+**Example**
+- each row an array
+```js
+const rows = [
+  ["hamburger",2.50],
+]
+```
+- each row an object
+```js
+const rows = [
+  {
+    item: "hamburger",
+    price: 2.50
+  }
+]
+```
+
+
+<br/>
+<br/>
+<a name="options_properties"></a>
+
+#### options <code>object</code>
+
+| Param | Type | Description |
+| --- | --- | --- |
+| borderStyle | <code>string</code> | default: "solid".  "solid", "dashed", "none" |
+| borderColor | <code>string</code> | default: terminal default color |
+| color | <code>string</code> | default: terminal default color |
+| compact | <code>boolean</code> | default: false Removes horizontal lines when true. |
+| defaultErrorValue | <code>mixed</code> | default: 'ERROR!' |
+| defaultValue | <code>mixed</code> | default: '?' |
+| errorOnNull | <code>boolean</code> | default: false |
+| truncate | <code>mixed</code> | default: false <br/> When this property is set to a string, cell contents will be truncated by that string instead of wrapped when they extend beyond of the width of the cell.  <br/> For example if: <br/> <code>"truncate":"..."</code> <br/> the cell will be truncated with "..." |
+
+**Example**
+```js
+const options = {
+  borderStyle: 1,
+  borderColor: "blue",
+  headerAlign: "center",
+  align: "left",
+  color: "white",
+  truncate: "..."
+}
+```
+
+<br/>
+
+### Table.render() ⇒ <code>String</code>
 <a name="Table.tableObject.render"></a>
 
-### Table.tableObject.render() ⇒ <code>String</code>
 Add method to render table to a string
 
-**Kind**: static method of [<code>Table</code>](#Table)  
 **Example**  
 ```js
-let str = t1.render(); 
-console.log(str); //outputs table
+const out = Table(header,rows,options).render()
+console.log(out); //prints output
 ```
 
 <!--END-API-REF-->
+
+<br/>
+<br/>
+
+## Installation
+
+- [Terminal](docs/terminal.md):
+
+```sh
+$ npm install tty-table -g
+```
+
+- Node Module
+
+```sh
+$ npm install tty-table
+```
+
+- Browser
+
+```html
+<script src="tty-table.bundle.min.js"></script>
+<script>
+ const Table = require('tty-table');
+ ...
+</script>
+```
+
 
 ## Running tests
 

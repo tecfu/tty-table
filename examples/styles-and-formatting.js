@@ -1,7 +1,7 @@
 const Table = require("../")
 const chalk = require("chalk")
 
-var header = [
+let header = [
   {
     value: "item",
     headerColor: "cyan",
@@ -15,7 +15,7 @@ var header = [
     color: "red",
     width: 10,
     formatter: function(value) {
-      var str = `$${  value.toFixed(2)}`
+      var str = `$${value.toFixed(2)}`
       if(value > 5) {
         str = chalk.underline.green(str)
       }
@@ -42,7 +42,7 @@ var header = [
 ]
 
 //Example with arrays as rows
-var rows = [
+const rows = [
   ["hamburger",2.50,"no"],
   ["el jefe's special cream sauce",0.10,"yes"],
   ["two tacos, rice and beans topped with cheddar cheese",9.80,"no"],
@@ -51,7 +51,7 @@ var rows = [
   ["macaroni, ham and peruvian mozzarella",3.75,"no"]
 ]
 
-var footer = [
+const footer = [
   "TOTAL",
   (function() {
     return rows.reduce(function(prev,curr) {
