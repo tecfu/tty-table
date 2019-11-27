@@ -5,7 +5,7 @@ const Render = {}
 /**
  * Converts arrays of data into arrays of cell strings
  */
-Render.stringifyData = function(config,data) {
+Render.stringifyData = function(config,inputData) {
   const sections = {
     header: [],
     body: [],
@@ -17,13 +17,13 @@ Render.stringifyData = function(config,data) {
 
   //because automattic/cli-table syntax infers table type based on
   //how rows are passed (array of arrays, objects, etc)
-  config.rowFormat = Render.getRowFormat(data[0] || [],config)
+  config.rowFormat = Render.getRowFormat(inputData[0] || [],config)
 
   //now translate them
-  data = Render.transformRows(config,data)
+  const rowData = Render.transformRows(config,inputData)
 
   //when streaming values to tty-table, we don't want column widths to change
-  //from one data set to the next, so we save the first set of widths and reuse
+  //from one rowData set to the next, so we save the first set of widths and reuse
   if(!global.columnWidths) {
     global.columnWidths = {}
   }
@@ -31,28 +31,28 @@ Render.stringifyData = function(config,data) {
   if(global.columnWidths[config.tableId]) {
     config.table.columnWidths = global.columnWidths[config.tableId]
   } else{
-    global.columnWidths[config.tableId] = config.table.columnWidths = Format.getColumnWidths(config,data)
+    global.columnWidths[config.tableId] = config.table.columnWidths = Format.getColumnWidths(config,rowData)
   }
 
   //stringify header cells
   if(!config.headerEmpty) {
     sections.header = config.table.header.map(function(row) {
-      return buildRow(config,row,"header")
+      return buildRow(config,row,"header",null,rowData,inputData)
     })
   } else{
     sections.header = []
   }
 
   //stringify body cells
-  sections.body = data.map(function(row) {
-    return buildRow(config,row,"body")
+  sections.body = rowData.map(function(row, rowIndex) {
+    return buildRow(config,row,"body",rowIndex,rowData,inputData)
   })
 
   //stringify footer cells
   sections.footer = (config.table.footer instanceof Array && config.table.footer.length > 0) ? [config.table.footer] : []
 
   sections.footer = sections.footer.map(function(row) {
-    return buildRow(config,row,"footer")
+    return buildRow(config,row,"footer",null,rowData,inputData)
   })
 
   //add borders
@@ -132,7 +132,7 @@ Render.stringifyData = function(config,data) {
   return finalOutput
 }
 
-const buildRow = function(config,row,rowType) {
+const buildRow = function(config,row,rowType,rowIndex,rowData,inputData) {
 
   let minRowHeight = 0
 
@@ -163,7 +163,7 @@ const buildRow = function(config,row,rowType) {
   let rowLength = row.length
   for(let index=0; index<rowLength; index++) {
 
-    let c = Render.buildCell(config,row[index],index,rowType)
+    let c = Render.buildCell(config,row[index],index,rowType,rowIndex,rowData,inputData)
     let cellArr = c.cellArr
 
     if(rowType === "header") {
@@ -209,7 +209,7 @@ const buildRow = function(config,row,rowType) {
   return lines
 }
 
-Render.buildCell = function(config,cell,columnIndex,rowType) {
+Render.buildCell = function(config,cell,columnIndex,rowType,rowIndex,rowData,inputData) {
 
   let cellValue
   let cellOptions = Object.assign(
@@ -239,7 +239,7 @@ Render.buildCell = function(config,cell,columnIndex,rowType) {
 
     //run formatter
     if(typeof cellOptions.formatter === "function") {
-      cellValue = cellOptions.formatter(cellValue)
+      cellValue = cellOptions.formatter(cellValue,columnIndex,rowIndex,rowData,inputData)
     }
   }
 

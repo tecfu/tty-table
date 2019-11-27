@@ -133,10 +133,37 @@ const opts = {
   align: "left"
 }
 
-const data = [
+const rows3 = [
   [`apple ${chalk.red("mac")}`,92.50],
   ["ibm",120.15]
 ]
 
-let t3 = Table(header3,data, opts)
+let t3 = Table(header3, rows3, opts)
 console.log(t3.render())
+
+
+const header4 = [
+  {
+    value: 'price',
+    formatter(cellValue, columnIndex, rowIndex, rowData, inputData) {
+      const row = inputData[rowIndex] // How to get the whole row
+      let _color
+
+      if(!row.enabled) _color = 'gray'
+      if(row.important) _color = 'red'
+      
+      return chalk[_color](cellValue)
+    }
+  },
+  {
+    value: 'item'
+  }
+]
+
+const rows4 = [
+  { item: 'banana', price: 1.99, important: true, enabled: true },
+  { item: 'grapes', price: 2.99, important: false, enabled: false }
+]
+
+const t4 = Table(header4, rows4)
+console.log(t4.render())

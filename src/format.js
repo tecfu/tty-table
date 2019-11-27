@@ -145,7 +145,7 @@ Format.handleTruncatedValue = function(string,cellOptions,maxWidth) {
       width: maxWidth - cellOptions.truncate.length,
       //@todo give use option to decide if they want to break words on wrapping
       breakword: true
-    }).split('\n')[0]
+    }).split("\n")[0]
     string = string + cellOptions.truncate
   }
   return string
