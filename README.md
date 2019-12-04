@@ -99,7 +99,7 @@ $ tty-table -h
 | color | <code>string</code> | default: terminal default color |
 | footerAlign | <code>string</code> | default: "center" |
 | footerColor | <code>string</code> | default: terminal default color |
-| formatter | <code>function(cellValue, columnIndex, rowIndex, rowData,inputData)</code> | Runs a callback on each cell value in the parent column |
+| formatter | <code>function(cellValue, columnIndex, rowIndex, rowData, inputData)</code> | Runs a callback on each cell value in the parent column |
 | headerAlign | <code>string</code> | default: "center" |
 | headerColor | <code>string</code> | default: terminal's default color |
 | marginLeft | <code>integer</code> | default: 0 |

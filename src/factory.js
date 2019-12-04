@@ -12,7 +12,7 @@ let Counter = 0
 * @param {string} header.column.color            - default: terminal default color
 * @param {string} header.column.footerAlign      - default: "center"
 * @param {string} header.column.footerColor      - default: terminal default color
-* @param {function} header.column.formatter      - Runs a callback on each cell value in the parent column
+* @param {function(cellValue, columnIndex, rowIndex, rowData, inputData)</code} header.column.formatter      - Runs a callback on each cell value in the parent column
 * @param {string} header.column.headerAlign      - default: "center"
 * @param {string} header.column.headerColor      - default: terminal's default color
 * @param {number} header.column.marginLeft       - default: 0
