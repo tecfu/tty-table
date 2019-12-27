@@ -12,12 +12,13 @@
   "preferGlobal": false,
   "scripts": {
     "dist": "npx grunt",
-    "test": "npx grunt t",
+    "coverage": "npx nyc mocha",
+    "test": "npx mocha",
     "test-save": "npx grunt st",
-    "lint": "./node_modules/.bin/eslint adapters/* src/*",
-    "lint-fix": "./node_modules/.bin/eslint adapters/* src/* --fix",
-    "lint-examples": "./node_modules/.bin/eslint adapters/* examples/*",
-    "lint-examples-fix": "./node_modules/.bin/eslint adapters/* examples/* --fix"
+    "lint": "npx eslint adapters/* src/*",
+    "lint-fix": "npx eslint adapters/* src/* --fix",
+    "lint-examples": "npx eslint adapters/* examples/*",
+    "lint-examples-fix": "npx eslint adapters/* examples/* --fix"
   },
   "repository": {
     "type": "git",
@@ -63,11 +64,10 @@
     "grunt-contrib-uglify": "^4.0.1",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-jsdoc": "^2.4.0",
-    "grunt-mocha-redux": "^1.1.1",
-    "grunt-mocha-test": "^0.13.3",
     "grunt-shell": "^3.0.1",
     "jsdoc-to-markdown": "^5.0.0",
     "mocha": "^6.1.4",
+    "nyc": "^15.0.0",
     "orgy": "^2.2.1"
   }
 }

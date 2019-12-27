@@ -18,22 +18,10 @@ module.exports = function(grunt) {
         //A FORMATTED TIMESTAMP STRING FOR BACKUP NAMING
         var d = new Date(),dstr = '';
         dstr = ('0' + d.getHours()).slice(-2)
-        + ':' + ('0' + d.getMinutes()).slice(-2)
+ Info: https://github.com/nodejs/node/issues/24731       + ':' + ('0' + d.getMinutes()).slice(-2)
         + ':' + ('0' + d.getSeconds()).slice(-2);
         return dstr;
       }())
-    },
-    
-    mochaTest: {
-      test: {
-        options: {
-          ui : 'bdd',
-          reporter: 'spec',
-        },
-        //We require all our tests in the conf file, so we
-        //can do some pre-test functions before they are run.
-        src: ['./test/mocha.conf.js']
-      }
     },
     
     shell: {
@@ -183,26 +171,13 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-shell');
-  grunt.loadNpmTasks('grunt-mocha-test');
 
   grunt.registerTask('tags', [
     'shell:generate-vim-tags-file',
   ]);
 
-  grunt.registerTask('test', [
-    'mochaTest:test'
-  ]);
-
-  grunt.registerTask('t', [
-    'mochaTest:test'
-  ]);
-
   grunt.registerTask('st',[
     'save-test-outputs'
-  ]);
-
-  grunt.registerTask('test-travis', [
-    'mochaTest:test'
   ]);
 
   grunt.registerTask('default', [

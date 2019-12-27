@@ -13,13 +13,10 @@ RUN apt install -y nodejs
 RUN apt install git -y
 RUN git clone https://www.github.com/tecfu/tty-table
 
-# Install grunt
-RUN npm install grunt-cli -g
-
 # Install dev dependencies
 WORKDIR /tty-table
 RUN npm install
 
 # Run unit tests
 RUN node -v
-RUN grunt t
+RUN npx mocha
