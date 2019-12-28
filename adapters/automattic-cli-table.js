@@ -19,14 +19,14 @@ var Table = function(options) {
 
   //colWidths
   if(options.colWidths) {
-    options.colWidths.forEach(function(val,i) {
+    options.colWidths.forEach(function(val, i) {
       header[i].width = val
     })
   }
 
   //colAligns
   if(options.colAligns) {
-    options.colAligns.forEach(function(val,i) {
+    options.colAligns.forEach(function(val, i) {
       header[i].align = val
       header[i].headerAlign = val
     })
@@ -61,7 +61,7 @@ var Table = function(options) {
   //@todo style - border color
 
   //inherited from prototype
-  let t = Factory(header,[],[],options)
+  let t = Factory(header, [], [], options)
   t.toString = t.render
   return t
 }

@@ -7,38 +7,38 @@ let Yargs = require("yargs")
 
 Yargs.epilog("Copyright github.com/tecfu 2018")
 
-Yargs.option("config",{
+Yargs.option("config", {
   describe: "Specify the configuration for your table."
 })
 
-Yargs.option("csv-delimiter",{
+Yargs.option("csv-delimiter", {
   describe: "Set the field delimiter. One character only.",
   default: ","
 })
 
-Yargs.option("csv-escape",{
+Yargs.option("csv-escape", {
   describe: "Set the escape character. One character only."
 })
 
-Yargs.option("csv-rowDelimiter",{
+Yargs.option("csv-rowDelimiter", {
   describe: "String used to delimit record rows. You can also use a special constant: \"auto\",\"unix\",\"max\",\"windows\",\"unicode\".",
   default: "\n"
 })
 
-Yargs.option("format",{
+Yargs.option("format", {
   describe: "Set input data format",
-  choices: ["json","csv"],
+  choices: ["json", "csv"],
   default: "csv"
 })
 
-Yargs.option("options\u2010\u002A",{
+Yargs.option("options\u2010\u002A", {
   describe: "Specify an optional setting where * is the setting name. See README.md for a complete list."
 })
 
 //run help only at the end
 Yargs = Yargs.help("h").argv
 
-let emitError = function(type,detail) {
+let emitError = function(type, detail) {
   console.log(`\n${  Chalk.bgRed.white(type)  }\n\n${  Chalk.bold(detail)}`)
   process.exit(1)
 }
@@ -80,12 +80,12 @@ if(Yargs.header) {
 }
 
 //because different dataFormats
-let runTable = function(header,body) {
+let runTable = function(header, body) {
 
   //footer = [],
   let Table = require("../src/factory.js")
   options.terminalAdapter = true
-  let t1 = Table(header, body,options)
+  let t1 = Table(header, body, options)
 
   //hide cursor
   console.log("\u001b[?25l")
@@ -127,17 +127,17 @@ process.stdin.on("data", function(chunk) {
           "Please check to make sure that your input data consists of JSON or specify a different format with the --format flag."
         )
       }
-      runTable(header,data)
+      runTable(header, data)
       break
     default:
       let formatterOptions = {}
       Object.keys(Yargs).forEach(function(key) {
-        if(key.slice(0,4) === "csv-" && typeof(Yargs[key]) !== "undefined") {
+        if(key.slice(0, 4) === "csv-" && typeof(Yargs[key]) !== "undefined") {
           formatterOptions[key.slice(4)] = Yargs[key]
         }
       })
 
-      Csv.parse(chunk,formatterOptions,function(err, data) {
+      Csv.parse(chunk, formatterOptions, function(err, data) {
       //validate csv
         if(typeof data === "undefined") {
           emitError(
@@ -145,7 +145,7 @@ process.stdin.on("data", function(chunk) {
             "Please check to make sure that your input data consists of valid comma separated values or specify a different format with the --format flag."
           )
         }
-        runTable(header,data)
+        runTable(header, data)
       })
   }
 })

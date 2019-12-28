@@ -172,7 +172,7 @@ const Factory = function(paramsArr) {
   tableObject.render = function() {
     //let configCopy = JSON.parse(JSON.stringify(this[_configKey]));
     //return Render.stringifyData(configCopy,this.slice(0));  //get string output
-    let output = Render.stringifyData(this[_configKey],this.slice(0))  //get string output
+    let output = Render.stringifyData(this[_configKey], this.slice(0))  //get string output
     tableObject.height = this[_configKey].height
     return output
   }

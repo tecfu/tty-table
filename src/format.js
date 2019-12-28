@@ -26,7 +26,7 @@ Format.wrapCellContent = function(
   let startMatches = string.match(startAnsiRegexp) || [""]
 
   //remove ANSI start-of-line chars
-  string = string.replace(startAnsiRegexp,"")
+  string = string.replace(startAnsiRegexp, "")
 
   //ANSI chararacters that demarcate the end of a line
   let endAnsiRegexp = /(\033\[[0-9;]*m)+$/
@@ -35,7 +35,7 @@ Format.wrapCellContent = function(
   let endMatches = string.match(endAnsiRegexp) || [""]
 
   //remove ANSI end-of-line chars
-  string = string.replace(endAnsiRegexp,"")
+  string = string.replace(endAnsiRegexp, "")
 
   let alignTgt
 
@@ -54,7 +54,7 @@ Format.wrapCellContent = function(
   //equalize padding for centered lines
   if(cellOptions[alignTgt] === "center") {
     cellOptions.paddingLeft = cellOptions.paddingRight =
-      Math.max(cellOptions.paddingRight,cellOptions.paddingLeft,0)
+      Math.max(cellOptions.paddingRight, cellOptions.paddingLeft, 0)
   }
 
   let columnWidth = config.table.columnWidths[columnIndex]
@@ -89,7 +89,7 @@ Format.wrapCellContent = function(
       break
     //string does not have wide characters
     default:
-      string = Format.handleNonWideChars(string,cellOptions,innerWidth)
+      string = Format.handleNonWideChars(string, cellOptions, innerWidth)
   }
 
   //break string into array of lines
@@ -138,7 +138,7 @@ Format.wrapCellContent = function(
   }
 }
 
-Format.handleTruncatedValue = function(string,cellOptions,maxWidth) {
+Format.handleTruncatedValue = function(string, cellOptions, maxWidth) {
   const stringWidth = Wcwidth(string)
   if(maxWidth < stringWidth) {
     string = Smartwrap(string, {
@@ -151,7 +151,7 @@ Format.handleTruncatedValue = function(string,cellOptions,maxWidth) {
   return string
 }
 
-Format.handleWideChars = function(string,cellOptions,innerWidth) {
+Format.handleWideChars = function(string, cellOptions, innerWidth) {
   let count = 0
   let start = 0
   let characters = string.split("")
@@ -171,8 +171,8 @@ Format.handleWideChars = function(string,cellOptions,innerWidth) {
   return outstring
 }
 
-Format.handleNonWideChars = function(string,cellOptions,innerWidth) {
-  let outstring = Smartwrap(string,{
+Format.handleNonWideChars = function(string, cellOptions, innerWidth) {
+  let outstring = Smartwrap(string, {
     width: innerWidth,
     trim: true//,
     //indent : '',
@@ -189,7 +189,7 @@ Format.handleNonWideChars = function(string,cellOptions,innerWidth) {
  * @param integer columnIndex
  * @returns integer
  */
-Format.inferColumnWidth = function(columnOptions,rows,columnIndex) {
+Format.inferColumnWidth = function(columnOptions, rows, columnIndex) {
 
   let iterable
 
@@ -214,14 +214,14 @@ Format.inferColumnWidth = function(columnOptions,rows,columnIndex) {
   return widest
 }
 
-Format.getColumnWidths = function(config,rows) {
+Format.getColumnWidths = function(config, rows) {
 
   //iterate over the header if we have it, iterate over the first row
   //if we do not (to step through the correct number of columns)
   let iterable = (config.table.header[0] && config.table.header[0].length > 0)
     ? config.table.header[0] : rows[0]
 
-  let widths = iterable.map(function(column,columnIndex) { //iterate through column settings
+  let widths = iterable.map(function(column, columnIndex) { //iterate through column settings
     let result
     switch(true) {
     //column width specified in header
@@ -237,7 +237,7 @@ Format.getColumnWidths = function(config,rows) {
         let columnOptions = (config.table.header[0][columnIndex])
           ? config.table.header[0][columnIndex] : {}
         let measurableRows = (rows.length) ? rows : config.table.header[0]
-        result = Format.inferColumnWidth(columnOptions,measurableRows,columnIndex)
+        result = Format.inferColumnWidth(columnOptions, measurableRows, columnIndex)
 
         //add spaces for padding if not centered
         result = result + config.paddingLeft + config.paddingRight
@@ -249,7 +249,7 @@ Format.getColumnWidths = function(config,rows) {
   })
 
   //calculate sum of all column widths (including marginLeft)
-  let totalWidth = widths.reduce(function(prev,curr) {
+  let totalWidth = widths.reduce(function(prev, curr) {
     return prev + curr
   })
 

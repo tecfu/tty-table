@@ -175,15 +175,15 @@ const rows = [
 ```js
 const footer = [
   "TOTAL",
-  (cellValue,columnIndex,rowIndex,rowData,inputData) => {
-    return rowData.reduce((prev,curr) => {
+  (cellValue, columnIndex, rowIndex, rowData, inputData) => {
+    return rowData.reduce((prev, curr) => {
       return prev + curr[1]
-    },0)
+    }, 0)
   },
-  (cellValue,columnIndex,rowIndex,rowData,inputData) => {
-    let total = rowData.reduce((prev,curr) => {
+  (cellValue, columnIndex, rowIndex, rowData, inputData) => {
+    let total = rowData.reduce((prev, curr) => {
       return prev + ((curr[2] === "yes") ? 1 : 0)
-    },0)
+    }, 0)
     return `${ (total / rowData.length * 100).toFixed(2) }%`
   }
 ]

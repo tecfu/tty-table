@@ -41,6 +41,7 @@ module.exports = {
           "afterColon": true
         }],
         "prefer-template": "error",
+        "comma-spacing": ["error", {"before": false, "after": true}],
         "semi-spacing": ["error", {"before": false, "after": true}]
     }
 }

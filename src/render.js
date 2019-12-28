@@ -5,7 +5,7 @@ const Render = {}
 /**
  * Converts arrays of data into arrays of cell strings
  */
-Render.stringifyData = function(config,inputData) {
+Render.stringifyData = function(config, inputData) {
   const sections = {
     header: [],
     body: [],
@@ -17,10 +17,10 @@ Render.stringifyData = function(config,inputData) {
 
   //because automattic/cli-table syntax infers table type based on
   //how rows are passed (array of arrays, objects, etc)
-  config.rowFormat = Render.getRowFormat(inputData[0] || [],config)
+  config.rowFormat = Render.getRowFormat(inputData[0] || [], config)
 
   //now translate them
-  const rowData = Render.transformRows(config,inputData)
+  const rowData = Render.transformRows(config, inputData)
 
   //when streaming values to tty-table, we don't want column widths to change
   //from one rowData set to the next, so we save the first set of widths and reuse
@@ -31,13 +31,13 @@ Render.stringifyData = function(config,inputData) {
   if(global.columnWidths[config.tableId]) {
     config.table.columnWidths = global.columnWidths[config.tableId]
   } else{
-    global.columnWidths[config.tableId] = config.table.columnWidths = Format.getColumnWidths(config,rowData)
+    global.columnWidths[config.tableId] = config.table.columnWidths = Format.getColumnWidths(config, rowData)
   }
 
   //stringify header cells
   if(!config.headerEmpty) {
     sections.header = config.table.header.map(function(row) {
-      return buildRow(config,row,"header",null,rowData,inputData)
+      return buildRow(config, row, "header", null, rowData, inputData)
     })
   } else{
     sections.header = []
@@ -45,21 +45,21 @@ Render.stringifyData = function(config,inputData) {
 
   //stringify body cells
   sections.body = rowData.map(function(row, rowIndex) {
-    return buildRow(config,row,"body",rowIndex,rowData,inputData)
+    return buildRow(config, row, "body", rowIndex, rowData, inputData)
   })
 
   //stringify footer cells
   sections.footer = (config.table.footer instanceof Array && config.table.footer.length > 0) ? [config.table.footer] : []
 
   sections.footer = sections.footer.map(function(row) {
-    return buildRow(config,row,"footer",null,rowData,inputData)
+    return buildRow(config, row, "footer", null, rowData, inputData)
   })
 
   //add borders
   //0=header, 1=body, 2=footer
   for(let a=0; a<3; a++) {
     borders.push("")
-    config.table.columnWidths.forEach(function(w,i,arr) {
+    config.table.columnWidths.forEach(function(w, i, arr) {
       borders[a] += Array(w).join(borderStyle[a].h) +
         ((i+1 !== arr.length) ? borderStyle[a].j : borderStyle[a].r)
     })
@@ -76,7 +76,7 @@ Render.stringifyData = function(config,inputData) {
   output += borders[0]
 
   //for each section (header,body,footer)
-  Object.keys(sections).forEach(function(p,i) {
+  Object.keys(sections).forEach(function(p, i) {
 
     //for each row in the section
     while(sections[p].length) {
@@ -132,7 +132,7 @@ Render.stringifyData = function(config,inputData) {
   return finalOutput
 }
 
-const buildRow = function(config,row,rowType,rowIndex,rowData,inputData) {
+const buildRow = function(config, row, rowType, rowIndex, rowData, inputData) {
 
   let minRowHeight = 0
 
@@ -163,7 +163,7 @@ const buildRow = function(config,row,rowType,rowIndex,rowData,inputData) {
   let rowLength = row.length
   for(let index=0; index<rowLength; index++) {
 
-    let c = Render.buildCell(config,row[index],index,rowType,rowIndex,rowData,inputData)
+    let c = Render.buildCell(config, row[index], index, rowType, rowIndex, rowData, inputData)
     let cellArr = c.cellArr
 
     if(rowType === "header") {
@@ -181,12 +181,12 @@ const buildRow = function(config,row,rowType,rowIndex,rowData,inputData) {
     minRowHeight + (config.paddingBottom + config.paddingTop)
 
   //convert array of cell arrays to array of lines
-  let lines = Array.apply(null,{length: minRowHeight})
-    .map(Function.call,function() {
+  let lines = Array.apply(null, {length: minRowHeight})
+    .map(Function.call, function() {
       return []
     })
 
-  cArrs.forEach(function(cellArr,a) {
+  cArrs.forEach(function(cellArr, a) {
     let whiteline = Array(config.table.columnWidths[a]).join(" ")
 
     if(rowType ==="body") {
@@ -209,7 +209,7 @@ const buildRow = function(config,row,rowType,rowIndex,rowData,inputData) {
   return lines
 }
 
-Render.buildCell = function(config,cell,columnIndex,rowType,rowIndex,rowData,inputData) {
+Render.buildCell = function(config, cell, columnIndex, rowType, rowIndex, rowData, inputData) {
 
   let cellValue
   let cellOptions = Object.assign(
@@ -233,7 +233,7 @@ Render.buildCell = function(config,cell,columnIndex,rowType,rowIndex,rowData,inp
         cellValue = cell.value
         break
       case(typeof cell === "function"):
-        cellValue = cell(cellValue,columnIndex,rowIndex,rowData,inputData)
+        cellValue = cell(cellValue, columnIndex, rowIndex, rowData, inputData)
         break
       default:
       //cell is assumed to be a scalar
@@ -242,12 +242,12 @@ Render.buildCell = function(config,cell,columnIndex,rowType,rowIndex,rowData,inp
 
     //run header formatter
     if(typeof cellOptions.formatter === "function") {
-      cellValue = cellOptions.formatter(cellValue,columnIndex,rowIndex,rowData,inputData)
+      cellValue = cellOptions.formatter(cellValue, columnIndex, rowIndex, rowData, inputData)
     }
   }
 
   //colorize cellValue
-  cellValue = Style.colorizeCell(cellValue,cellOptions,rowType)
+  cellValue = Style.colorizeCell(cellValue, cellOptions, rowType)
 
   //textwrap cellValue
   let WrapObj  = Format.wrapCellContent(config, cellValue, columnIndex, cellOptions, rowType)
@@ -260,7 +260,7 @@ Render.buildCell = function(config,cell,columnIndex,rowType,rowIndex,rowData,inp
   }
 }
 
-Render.getRowFormat = function(row,config) {
+Render.getRowFormat = function(row, config) {
   let type
 
   //rows passed as an object
@@ -289,7 +289,7 @@ Render.getRowFormat = function(row,config) {
 
 //@todo For rotating horizontal data into a vertical table
 //assumes all rows are same length
-Render.verticalizeMatrix = function(config,inputArray) {
+Render.verticalizeMatrix = function(config, inputArray) {
 
   //grow to # arrays equal to number of columns in input array
   let outputArray = []
@@ -302,7 +302,7 @@ Render.verticalizeMatrix = function(config,inputArray) {
   })
 
   inputArray.forEach(function(row) {
-    row.forEach(function(element,index) {
+    row.forEach(function(element, index) {
       outputArray[index].push(element)
     })
   })
@@ -313,7 +313,7 @@ Render.verticalizeMatrix = function(config,inputArray) {
 /**
  * Transforms input data arrays to base rendering structure.
  */
-Render.transformRows = function(config,rows) {
+Render.transformRows = function(config, rows) {
 
   let output = []
   switch(config.rowFormat) {
@@ -336,7 +336,7 @@ Render.transformRows = function(config,rows) {
 
       output = rows.map(function(value) {
         let key = Object.keys(value)[0]
-        return [key,value[key]]
+        return [key, value[key]]
       })
       break
     case("o-horizontal"):

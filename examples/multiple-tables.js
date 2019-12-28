@@ -15,7 +15,7 @@ const header2 = [
 
 const rows2 = [
   [1, 2, 3],
-  [3,34,99]
+  [3, 34, 99]
 ]
 
 let a = Table(header2, rows2)

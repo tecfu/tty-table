@@ -1,4 +1,4 @@
-const header = ["SYMBOL","LAST"]
+const header = ["SYMBOL", "LAST"]
 let baseline = {
   "aapl": 92,
   "ibm": 120.72,
@@ -25,13 +25,13 @@ setInterval(function() {
     if(Math.random() >= .7) {
       baseline[i] = (baseline[i] + ((Math.random() > .5) ? .01 : -.01)).toFixed(2)*1
     }
-    array.push([i,`$ ${  baseline[i].toFixed(2)}`])
+    array.push([i, `$ ${  baseline[i].toFixed(2)}`])
   }
 
   let string = JSON.stringify(array)
   console.log(string)
-},500)
+}, 500)
 
-process.stdout.on("error",function() {
+process.stdout.on("error", function() {
   process.exit(1)
 })

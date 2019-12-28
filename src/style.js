@@ -1,6 +1,6 @@
 const Chalk = require("chalk")
 
-exports.colorizeCell = function(str,cellOptions,rowType) {
+exports.colorizeCell = function(str, cellOptions, rowType) {
 
   let color = false //false will keep terminal default
 

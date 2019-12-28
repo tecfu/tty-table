@@ -42,30 +42,30 @@ let header = [
 
 //Example with arrays as rows
 const rows = [
-  ["hamburger",2.50,"no"],
-  ["el jefe's special cream sauce",0.10,"yes"],
-  ["two tacos, rice and beans topped with cheddar cheese",9.80,"no"],
-  ["apple slices",1.00,"yes"],
-  ["ham sandwich",1.50,"no"],
-  ["macaroni, ham and peruvian mozzarella",3.75,"no"]
+  ["hamburger", 2.50, "no"],
+  ["el jefe's special cream sauce", 0.10, "yes"],
+  ["two tacos, rice and beans topped with cheddar cheese", 9.80, "no"],
+  ["apple slices", 1.00, "yes"],
+  ["ham sandwich", 1.50, "no"],
+  ["macaroni, ham and peruvian mozzarella", 3.75, "no"]
 ]
 
 const footer = [
   "TOTAL",
-  (cellValue,columnIndex,rowIndex,rowData,inputData) => {
-    return rowData.reduce((prev,curr) => {
+  (cellValue, columnIndex, rowIndex, rowData, inputData) => {
+    return rowData.reduce((prev, curr) => {
       return prev + curr[1]
-    },0)
+    }, 0)
   },
-  (cellValue,columnIndex,rowIndex,rowData,inputData) => {
-    let total = rowData.reduce((prev,curr) => {
+  (cellValue, columnIndex, rowIndex, rowData, inputData) => {
+    let total = rowData.reduce((prev, curr) => {
       return prev + ((curr[2] === "yes") ? 1 : 0)
-    },0)
+    }, 0)
     return `${ (total / rowData.length * 100).toFixed(2) }%`
   }
 ]
 
-let t1 = Table(header,rows,footer,{
+let t1 = Table(header, rows, footer, {
   borderStyle: 1,
   borderColor: "blue",
   paddingBottom: 0,
@@ -112,7 +112,7 @@ const rows2 = [
   }
 ]
 
-const t2 = Table(header,rows2,{
+const t2 = Table(header, rows2, {
   borderStyle: 1,
   paddingBottom: 0,
   headerAlign: "center",
@@ -134,8 +134,8 @@ const opts = {
 }
 
 const rows3 = [
-  [`apple ${chalk.red("mac")}`,92.50],
-  ["ibm",120.15]
+  [`apple ${chalk.red("mac")}`, 92.50],
+  ["ibm", 120.15]
 ]
 
 let t3 = Table(header3, rows3, opts)
@@ -144,25 +144,25 @@ console.log(t3.render())
 
 const header4 = [
   {
-    value: 'price',
+    value: "price",
     formatter: (cellValue, columnIndex, rowIndex, rowData, inputData) => {
       const row = inputData[rowIndex] // How to get the whole row
       let _color
 
-      if(!row.enabled) _color = 'gray'
-      if(row.important) _color = 'red'
-      
+      if(!row.enabled) _color = "gray"
+      if(row.important) _color = "red"
+
       return chalk[_color](cellValue)
     }
   },
   {
-    value: 'item'
+    value: "item"
   }
 ]
 
 const rows4 = [
-  { item: 'banana', price: 1.99, important: true, enabled: true },
-  { item: 'grapes', price: 2.99, important: false, enabled: false }
+  { item: "banana", price: 1.99, important: true, enabled: true },
+  { item: "grapes", price: 2.99, important: false, enabled: false }
 ]
 
 const t4 = Table(header4, rows4)

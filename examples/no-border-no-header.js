@@ -6,7 +6,7 @@ const rows = [
   ["zzzxxxyyy"]
 ]
 
-const t1 = Table(rows,{
+const t1 = Table(rows, {
   borderStyle: "none",
   marginTop: 0,
   marginLeft: 0,
@@ -23,7 +23,7 @@ const rows2 = [
   ["zzzxxxyyy"]
 ]
 
-const t2 = Table(rows2,{
+const t2 = Table(rows2, {
   borderStyle: "none",
   compact: true,
   marginTop: 0,
@@ -41,7 +41,7 @@ const rows3 = [
   ["zzzxxxyyy", "bbbbbb"]
 ]
 
-const t3 = Table(rows3,{
+const t3 = Table(rows3, {
   borderStyle: "none",
   compact: true,
   align: "left",

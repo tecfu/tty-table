@@ -21,24 +21,24 @@ let header = [
 //Example with arrays as rows
 let rows = [
   [],
-  ["hamburger",2.50,null],
-  ["el jefe's special cream sauce",0.10],
-  ["two tacos, rice and beans topped with cheddar cheese",9.80,""],
-  ["apple slices",1.00,"yes"],
-  [null,1.50,"no","extra element","another extra element"],
-  ["macaroni, ham and peruvian mozzarella",3.75,"no"]
+  ["hamburger", 2.50, null],
+  ["el jefe's special cream sauce", 0.10],
+  ["two tacos, rice and beans topped with cheddar cheese", 9.80, ""],
+  ["apple slices", 1.00, "yes"],
+  [null, 1.50, "no", "extra element", "another extra element"],
+  ["macaroni, ham and peruvian mozzarella", 3.75, "no"]
 ]
 
 let footer = [
   "TOTAL",
   (function() {
-    return rows.reduce(function(prev,curr) {
+    return rows.reduce(function(prev, curr) {
       return (typeof curr[1] === "number") ? prev+curr[1] : prev
-    },0)
+    }, 0)
   }()),
   "N/A"]
 
-let t1 = Table(header,rows,footer,{
+let t1 = Table(header, rows, footer, {
   borderStyle: 1,
   paddingBottom: 0,
   headerAlign: "center",
@@ -49,7 +49,7 @@ let t1 = Table(header,rows,footer,{
 })
 
 t1.push(
-  ["chocolate cake",4.65,"no"]
+  ["chocolate cake", 4.65, "no"]
 )
 
 console.log(t1.render())
@@ -88,7 +88,7 @@ let rows2 = [
   }
 ]
 
-let t2 = Table(header,rows2,{
+let t2 = Table(header, rows2, {
   borderStyle: 1,
   paddingBottom: 0,
   headerAlign: "center",

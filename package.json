@@ -18,8 +18,8 @@
     "test-save": "npx grunt st",
     "lint": "npx eslint adapters/* src/*",
     "lint-fix": "npx eslint adapters/* src/* --fix",
-    "lint-examples": "npx eslint adapters/* examples/*",
-    "lint-examples-fix": "npx eslint adapters/* examples/* --fix"
+    "lint-examples": "npx eslint examples/",
+    "lint-examples-fix": "npx eslint examples/ --fix"
   },
   "repository": {
     "type": "git",
