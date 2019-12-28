@@ -239,13 +239,13 @@ $ npm install tty-table
 ## Running tests
 
 ```sh
-$ npx grunt test
+$ npm test
 ```
 
 ## Saving the output of new unit tests 
 
 ```sh
-$ npx grunt st
+$ npm run test-save
 ```
 - Because: 
 
@@ -272,4 +272,4 @@ $ npx grunt watch
 
 [MIT License](https://opensource.org/licenses/MIT)
 
-Copyright 2015-2019, Tecfu. 
+Copyright 2015-2020, Tecfu. 
