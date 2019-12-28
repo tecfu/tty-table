@@ -20,4 +20,4 @@ RUN npm install
 
 # Run unit tests
 RUN node -v
-RUN grunt npx mocha
+RUN npm run test
