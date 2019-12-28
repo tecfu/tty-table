@@ -14,7 +14,7 @@ let header = [
     value: "price",
     color: "red",
     width: 10,
-    formatter: function(value) {
+    formatter: (value) => {
       var str = `$${value.toFixed(2)}`
       if(value > 5) {
         str = chalk.underline.green(str)
@@ -26,8 +26,7 @@ let header = [
     alias: "Is organic?",
     value: "organic",
     width: 15,
-    formatter: function(value) {
-
+    formatter: (value) => {
       //will convert an empty string to 0
       //value = value * 1;
 
@@ -53,17 +52,18 @@ const rows = [
 
 const footer = [
   "TOTAL",
-  (function() {
-    return rows.reduce(function(prev,curr) {
-      return prev+curr[1]
+  (cellValue,columnIndex,rowIndex,rowData,inputData) => {
+    return rowData.reduce((prev,curr) => {
+      return prev + curr[1]
     },0)
-  }()),
-  (function() {
-    var total = rows.reduce(function(prev,curr) {
-      return prev+((curr[2]==="yes") ? 1 : 0)
+  },
+  (cellValue,columnIndex,rowIndex,rowData,inputData) => {
+    let total = rowData.reduce((prev,curr) => {
+      return prev + ((curr[2] === "yes") ? 1 : 0)
     },0)
-    return `${(total/rows.length*100).toFixed(2)  }%`
-  }())]
+    return `${ (total / rowData.length * 100).toFixed(2) }%`
+  }
+]
 
 let t1 = Table(header,rows,footer,{
   borderStyle: 1,
@@ -145,7 +145,7 @@ console.log(t3.render())
 const header4 = [
   {
     value: 'price',
-    formatter(cellValue, columnIndex, rowIndex, rowData, inputData) {
+    formatter: (cellValue, columnIndex, rowIndex, rowData, inputData) => {
       const row = inputData[rowIndex] // How to get the whole row
       let _color
 
