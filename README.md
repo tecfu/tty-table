@@ -12,23 +12,23 @@ Display your data in a table using a terminal, browser, or browser console.
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
-- [tty-table 电传打字台](#tty-table-%E7%94%B5%E4%BC%A0%E6%89%93%E5%AD%97%E5%8F%B0)
-  - [Examples](#examples)
-    - [Terminal (Static)](#terminal-static)
-    - [Terminal (Streaming)](#terminal-streaming)
-    - [Browser & Browser Console](#browser--browser-console)
-  - [API Reference](#api-reference)
-    - [Table(header ```array```, rows ```array```, options ```object```)](#tableheader-array-rows-array-options-object)
-      - [header <code>array of objects</code>](#header-codearray-of-objectscode)
-      - [rows <code>array</code>](#rows-codearraycode)
-      - [options <code>object</code>](#options-codeobjectcode)
-    - [Table.render() ⇒ <code>String</code>](#tablerender-%E2%87%92-codestringcode)
-  - [Installation](#installation)
-  - [Running tests](#running-tests)
-  - [Saving the output of new unit tests](#saving-the-output-of-new-unit-tests)
-  - [Dev Tips](#dev-tips)
-  - [Packaging as a distributable](#packaging-as-a-distributable)
-  - [License](#license)
+- [Examples](#examples)
+  - [Terminal (Static)](#terminal-static)
+  - [Terminal (Streaming)](#terminal-streaming)
+  - [Browser & Browser Console](#browser--browser-console)
+- [API Reference](#api-reference)
+  - [Table(header ```array```, rows ```array```, options ```object```)](#tableheader-array-rows-array-options-object)
+    - [header <code>array of objects</code>](#header-codearray-of-objectscode)
+    - [rows <code>array</code>](#rows-codearraycode)
+    - [footer <code>array</code>](#footer-codearraycode)
+    - [options <code>object</code>](#options-codeobjectcode)
+  - [Table.render() ⇒ <code>String</code>](#tablerender-%E2%87%92-codestringcode)
+- [Installation](#installation)
+- [Running tests](#running-tests)
+- [Saving the output of new unit tests](#saving-the-output-of-new-unit-tests)
+- [Dev Tips](#dev-tips)
+- [Packaging as a distributable](#packaging-as-a-distributable)
+- [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -90,7 +90,7 @@ $ tty-table -h
 <br/>
 <a name="header_options"></a>
 
-#### header <code>array of objects</code>
+#### header ```array of objects```
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -144,7 +144,7 @@ let header = [
 <br/>
 <a name="rows_examples"></a>
 
-#### rows <code>array</code>
+#### rows ```array```
 
 **Example**
 - each row an array
@@ -168,7 +168,7 @@ const rows = [
 <br/>
 <a name="footer_example"></a>
 
-#### footer <code>array</code>
+#### footer ```array```
 - Footer is optional
 
 **Example**
@@ -193,7 +193,7 @@ const footer = [
 <br/>
 <a name="options_properties"></a>
 
-#### options <code>object</code>
+#### options ```object```
 
 | Param | Type | Description |
 | --- | --- | --- |
