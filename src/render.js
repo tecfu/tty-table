@@ -232,12 +232,15 @@ Render.buildCell = function(config,cell,columnIndex,rowType,rowIndex,rowData,inp
       case(typeof cell === "object" && typeof cell.value !== "undefined"):
         cellValue = cell.value
         break
+      case(typeof cell === "function"):
+        cellValue = cell(cellValue,columnIndex,rowIndex,rowData,inputData)
+        break
       default:
       //cell is assumed to be a scalar
         cellValue = cell
     }
 
-    //run formatter
+    //run header formatter
     if(typeof cellOptions.formatter === "function") {
       cellValue = cellOptions.formatter(cellValue,columnIndex,rowIndex,rowData,inputData)
     }
@@ -315,7 +318,7 @@ Render.transformRows = function(config,rows) {
   let output = []
   switch(config.rowFormat) {
     case("automattic-cross"):
-    //assign header styles to first column
+      //assign header styles to first column
       config.columnSettings[0] = config.columnSettings[0] || {}
       config.columnSettings[0].color = config.headerColor
 
@@ -327,7 +330,7 @@ Render.transformRows = function(config,rows) {
       })
       break
     case("automattic-vertical"):
-    //assign header styles to first column
+      //assign header styles to first column
       config.columnSettings[0] = config.columnSettings[0] || {}
       config.columnSettings[0].color = config.headerColor
 
@@ -337,12 +340,21 @@ Render.transformRows = function(config,rows) {
       })
       break
     case("o-horizontal"):
-      output = rows.map(function(row) {
-      //requires that column names are specified in header
-        return config.table.header[0].map(function(object) {
-          return row[object.value] || null
+      //cell property names are specified in header columns
+      if (config.table.header[0].length
+        && config.table.header[0].every( obj => obj.value )) {
+        output = rows.map(function(row) {
+          return config.table.header[0].map(function(object) {
+            return row[object.value]
+          })
         })
-      })
+      } //eslint-disable-line brace-style
+      //no property names given, default to object property order
+      else {
+        output = rows.map(function(obj) {
+          return Object.values(obj)
+        })
+      }
       break
     case("a-horizontal"):
       output = rows
