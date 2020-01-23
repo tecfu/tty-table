@@ -150,6 +150,7 @@ process.stdin.on("data", function(chunk) {
   }
 })
 
+/* istanbul ignore next */
 if (process.platform === "win32") {
   let rl = require("readline").createInterface({
     input: process.stdin,
@@ -161,6 +162,7 @@ if (process.platform === "win32") {
   })
 }
 
+/* istanbul ignore next */
 process.on("SIGINT", function () {
   //graceful shutdown
   process.exit()

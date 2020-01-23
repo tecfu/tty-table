@@ -3,33 +3,31 @@ const Smartwrap = require("smartwrap")
 const Wcwidth = require("wcwidth")
 const Format = {}
 
-Format.calculateLength = function(line) {
+Format.calculateLength = line => {
   //return StripAnsi(line.replace(/[^\x00-\xff]/g,'XX')).length;
   return Wcwidth(StripAnsi(line))
 }
 
-Format.wrapCellContent = function(
+Format.wrapCellContent = (
   config,
   cellValue,
   columnIndex,
   cellOptions,
   rowType
-) {
+) => {
+
+  //ANSI chararacters that demarcate the start/end of a line
+  const startAnsiRegexp = /^(\033\[[0-9;]*m)+/
+  const endAnsiRegexp = /(\033\[[0-9;]*m)+$/
 
   //coerce cell value to string
   let string = cellValue.toString()
-
-  //ANSI chararacters that demarcate the start of a line
-  let startAnsiRegexp = /^(\033\[[0-9;]*m)+/
 
   //store matching ANSI characters
   let startMatches = string.match(startAnsiRegexp) || [""]
 
   //remove ANSI start-of-line chars
   string = string.replace(startAnsiRegexp, "")
-
-  //ANSI chararacters that demarcate the end of a line
-  let endAnsiRegexp = /(\033\[[0-9;]*m)+$/
 
   //store matching ANSI characters so can be later re-attached
   let endMatches = string.match(endAnsiRegexp) || [""]
@@ -57,50 +55,33 @@ Format.wrapCellContent = function(
       Math.max(cellOptions.paddingRight, cellOptions.paddingLeft, 0)
   }
 
-  let columnWidth = config.table.columnWidths[columnIndex]
+  const columnWidth = config.table.columnWidths[columnIndex]
 
   //innerWidth is the width available for text within the cell
-  let innerWidth = columnWidth -
-   cellOptions.paddingLeft -
-   cellOptions.paddingRight -
-   config.GUTTER
+  const innerWidth = columnWidth -cellOptions.paddingLeft -cellOptions.paddingRight -config.GUTTER
 
   switch(true) {
   //no wrap, truncate
     case((typeof config.truncate === "string") || config.truncate === true):
-      if(config.truncate === true) {
-        config.truncate = ""
-      }
-
-      string = Format.handleTruncatedValue(
-        string,
-        cellOptions,
-        innerWidth
-      )
+      if(config.truncate === true) config.truncate = ""
+      string = Format.handleTruncatedValue(string, cellOptions, innerWidth)
       break
     //string has wide characters
     case(/[\uD800-\uDFFF]/.test(string)):
     //case(string.length < Format.calculateLength(string)):
-      string = Format.handleWideChars(
-        string,
-        cellOptions,
-        innerWidth
-      )
+      string = Format.handleWideChars(string, cellOptions, innerWidth)
       break
     //string does not have wide characters
     default:
       string = Format.handleNonWideChars(string, cellOptions, innerWidth)
   }
 
-  //break string into array of lines
-  let strArr = string.split("\n")
-
   //format each line
-  strArr = strArr.map(function(line) {
+  let strArr = string.split("\n").map( line => {
 
     line = line.trim()
 
-    let lineLength = Format.calculateLength(line)
+    const lineLength = Format.calculateLength(line)
 
     //alignment
     if(lineLength < columnWidth) {
@@ -110,26 +91,24 @@ Format.wrapCellContent = function(
           emptySpace --
           let padBoth = Math.floor(emptySpace / 2),
             padRemainder = emptySpace % 2
-          line = Array(padBoth + 1).join(" ") +
-            line +
-            Array(padBoth + 1 + padRemainder).join(" ")
+          line = Array(padBoth + 1).join(" ")
+            + line
+            + Array(padBoth + 1 + padRemainder).join(" ")
           break
         case(cellOptions[alignTgt] === "right"):
-          line = Array(emptySpace - cellOptions.paddingRight).join(" ") +
-                 line +
-                 Array(cellOptions.paddingRight + 1).join(" ")
+          line = Array(emptySpace - cellOptions.paddingRight).join(" ")
+            + line
+            + Array(cellOptions.paddingRight + 1).join(" ")
           break
         default:
-          line = Array(cellOptions.paddingLeft + 1).join(" ") +
-                 line + Array(emptySpace - cellOptions.paddingLeft).join(" ")
+          line = Array(cellOptions.paddingLeft + 1).join(" ")
+            + line
+            + Array(emptySpace - cellOptions.paddingLeft).join(" ")
       }
     }
 
     //put ANSI color codes BACK on the beginning and end of string
-    line = startMatches[0] + line
-    line = line + endMatches[0]
-
-    return line
+    return startMatches[0] + line + endMatches[0]
   })
 
   return {
@@ -138,7 +117,7 @@ Format.wrapCellContent = function(
   }
 }
 
-Format.handleTruncatedValue = function(string, cellOptions, maxWidth) {
+Format.handleTruncatedValue = (string, cellOptions, maxWidth) => {
   const stringWidth = Wcwidth(string)
   if(maxWidth < stringWidth) {
     string = Smartwrap(string, {
@@ -151,12 +130,12 @@ Format.handleTruncatedValue = function(string, cellOptions, maxWidth) {
   return string
 }
 
-Format.handleWideChars = function(string, cellOptions, innerWidth) {
+Format.handleWideChars = (string, cellOptions, innerWidth) => {
   let count = 0
   let start = 0
   let characters = string.split("")
 
-  let outstring = characters.reduce(function (prev, cellValue, i) {
+  let outstring = characters.reduce((prev, cellValue, i) => {
     count += Format.calculateLength(cellValue)
     if (count > innerWidth) {
       prev.push(string.slice(start, i))
@@ -171,7 +150,7 @@ Format.handleWideChars = function(string, cellOptions, innerWidth) {
   return outstring
 }
 
-Format.handleNonWideChars = function(string, cellOptions, innerWidth) {
+Format.handleNonWideChars = (string, cellOptions, innerWidth) => {
   let outstring = Smartwrap(string, {
     width: innerWidth,
     trim: true//,
@@ -189,7 +168,7 @@ Format.handleNonWideChars = function(string, cellOptions, innerWidth) {
  * @param integer columnIndex
  * @returns integer
  */
-Format.inferColumnWidth = function(columnOptions, rows, columnIndex) {
+Format.inferColumnWidth = (columnOptions, rows, columnIndex) => {
 
   let iterable
 
@@ -205,7 +184,7 @@ Format.inferColumnWidth = function(columnOptions, rows, columnIndex) {
   }
 
   let widest = 0
-  iterable.forEach(function(row) {
+  iterable.forEach( row => {
     if(row[columnIndex] && row[columnIndex].toString().length > widest) {
       //widest = row[columnIndex].toString().length;
       widest = Wcwidth(row[columnIndex].toString())
@@ -214,14 +193,14 @@ Format.inferColumnWidth = function(columnOptions, rows, columnIndex) {
   return widest
 }
 
-Format.getColumnWidths = function(config, rows) {
+Format.getColumnWidths = (config, rows) => {
 
   //iterate over the header if we have it, iterate over the first row
   //if we do not (to step through the correct number of columns)
   let iterable = (config.table.header[0] && config.table.header[0].length > 0)
     ? config.table.header[0] : rows[0]
 
-  let widths = iterable.map(function(column, columnIndex) { //iterate through column settings
+  let widths = iterable.map((column, columnIndex) => { //iterate through column settings
     let result
     switch(true) {
     //column width specified in header
@@ -249,7 +228,7 @@ Format.getColumnWidths = function(config, rows) {
   })
 
   //calculate sum of all column widths (including marginLeft)
-  let totalWidth = widths.reduce(function(prev, curr) {
+  let totalWidth = widths.reduce((prev, curr) => {
     return prev + curr
   })
 
@@ -265,7 +244,7 @@ Format.getColumnWidths = function(config, rows) {
 
     // when process.stdout.columns is 0, width will be negative
     if (prop > 0) {
-      widths = widths.map(function(value) {
+      widths = widths.map(value => {
         return Math.floor(prop*value)
       })
     }

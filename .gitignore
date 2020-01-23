@@ -3,4 +3,6 @@ node_modules
 npm-debug.log
 Session.vim
 tags
+.nyc_output
+temp
 
