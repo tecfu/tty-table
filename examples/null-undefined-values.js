@@ -1,44 +1,16 @@
 const Table = require("../")
 const Chalk = require("chalk")
 
-let header = [
+const header = [
   {
     value: "item",
-    formatter: function(value) {
-      return Chalk.cyan(value)
-    }
+    formatter: value => Chalk.cyan(value)
   },
-  {
-    value: "price",
-    width: 10
-  },
-  {
-    value: "organic",
-    width: 10
-  }
+  { value: "price" },
+  { value: "organic" }
 ]
 
-//Example with arrays as rows
-let rows = [
-  [],
-  ["hamburger", 2.50, null],
-  ["el jefe's special cream sauce", 0.10],
-  ["two tacos, rice and beans topped with cheddar cheese", 9.80, ""],
-  ["apple slices", 1.00, "yes"],
-  [null, 1.50, "no", "extra element", "another extra element"],
-  ["macaroni, ham and peruvian mozzarella", 3.75, "no"]
-]
-
-let footer = [
-  "TOTAL",
-  (function() {
-    return rows.reduce(function(prev, curr) {
-      return (typeof curr[1] === "number") ? prev+curr[1] : prev
-    }, 0)
-  }()),
-  "N/A"]
-
-let t1 = Table(header, rows, footer, {
+const options = {
   borderStyle: 1,
   paddingBottom: 0,
   headerAlign: "center",
@@ -46,35 +18,22 @@ let t1 = Table(header, rows, footer, {
   color: "green",
   footerColor: "yellow",
   footerAlign: "right"
-})
+}
 
-t1.push(
-  ["chocolate cake", 4.65, "no"]
-)
-
-console.log(t1.render())
+//Example with arrays as rows
+const rows = [
+  [],
+  ["special sauce", 0.10],
+  [null, 1.50, "no", "extra element", "another extra element"],
+  ["macaroni and cheese", 3.75, "no"]
+]
 
 //Example with objects as rows
-let rows2 = [
+const rows2 = [
   {},
   {
-    item: "hamburger",
-    price: 2.50,
-    organic: null
-  },
-  {
-    item: "el jefe's special cream sauce",
+    item: "special sauce",
     price: 0.10
-  },
-  {
-    item: "two tacos, rice and beans topped with cheddar cheese",
-    price: 9.80,
-    organic: "no"
-  },
-  {
-    item: "apple slices",
-    price: 1.00,
-    organic: "yes"
   },
   {
     item: null,
@@ -82,61 +41,32 @@ let rows2 = [
     organic: "no"
   },
   {
-    item: "macaroni, ham and peruvian mozzarella",
+    item: "macaroni and cheese",
     price: 3.75,
     organic: "no"
   }
 ]
 
-let t2 = Table(header, rows2, {
-  borderStyle: 1,
-  paddingBottom: 0,
-  headerAlign: "center",
-  align: "center",
-  color: "cyan",
-  headerColor: "yellow"
-})
 
+const footer = [
+  "TOTAL",
+  (cellValue, columnIndex, rowIndex, rowData, inputData) => {
+    return rowData.reduce((prev, curr) => {
+      return (curr[1]) ? prev + curr[1] : prev
+    }, 0)
+  },
+  "N/A"
+]
+
+let t1 = Table(header, rows, footer, options)
+let t2 = Table(header, rows2, footer, options)
+
+t1.push(
+  ["chocolate cake", 4.65, "no"]
+)
+t2.push(
+  { item: "chocolate cake", price: 4.65, organic: "no" }
+)
+
+console.log(t1.render())
 console.log(t2.render())
-
-
-//let header3 = [
-//  {
-//    alias : "Is organic?",
-//    value : "organic",
-//    width : 15
-//  }
-//];
-//
-////Example with objects as rows3
-//let rows3 = [
-//  {
-//    organic : "no"
-//  },
-//  {
-//    organic : "yes"
-//  },
-//  {
-//    organic : "no"
-//  },
-//  {
-//    organic : "yes"
-//  },
-//  {
-//    organic : "no"
-//  },
-//  {
-//    organic : "no"
-//  }
-//];
-//
-//let t3 = Table(header3,rows3,{
-//  borderStyle : 1,
-//  paddingBottom : 0
-//});
-//
-//let str3 = t3.render();
-//console.log(str3);
-
-
-

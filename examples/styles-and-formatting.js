@@ -27,9 +27,6 @@ let header = [
     value: "organic",
     width: 15,
     formatter: (value) => {
-      //will convert an empty string to 0
-      //value = value * 1;
-
       if(value === "yes") {
         value = chalk.black.bgGreen(value)
       } else{

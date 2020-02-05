@@ -1,9 +1,9 @@
 var Table = require("../")
 
-const rows = [[`The use of the secure-rm CLI is deprecated.
-Migrate over -> secure-rm-cli. Run:
-npm un secure-rm -g
-npm i secure-rm-cli -g`]]
+const rows = [[`The use of the cli-table is deprecated.
+Migrate over -> cli-table. Run:
+npm un cli-table -g
+npm i tty-table -g`]]
 
 const t1 = Table([], rows, {
   borderStyle: 1,
