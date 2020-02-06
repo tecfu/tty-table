@@ -63,7 +63,7 @@ const footer = [
 ]
 
 let t1 = Table(header, rows, footer, {
-  borderStyle: 1,
+  borderStyle: "solid",
   borderColor: "blue",
   paddingBottom: 0,
   headerAlign: "center",
@@ -110,7 +110,7 @@ const rows2 = [
 ]
 
 const t2 = Table(header, rows2, {
-  borderStyle: 1,
+  borderStyle: "solid",
   paddingBottom: 0,
   headerAlign: "center",
   align: "center",

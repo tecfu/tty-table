@@ -5,9 +5,9 @@
     <script>
       //Remember: ASCI colors won't render in the browser!
       //in html body
-      var Table = require("tty-table");
+      let Table = require("tty-table");
 
-      var header = [
+      let header = [
         {
           value: "item",
           headerColor: "cyan",
@@ -44,12 +44,12 @@
       ];
 
       //Example with arrays as rows 
-      var rows = [
+      let rows = [
         ["hamburger",2.50,"no"],
         ["el jefe's special cream sauce",0.10,"yes"]
       ];
 
-      var footer = [
+      let footer = [
         "TOTAL",
         (function(){
           return rows.reduce(function(prev,curr){
@@ -63,7 +63,7 @@
           return (total/rows.length*100).toFixed(2) + "%";
         }())];
 
-      var t1 = Table(header,rows,footer,{
+      let t1 = Table(header,rows,footer,{
         borderStyle: 2,
         paddingBottom: 0,
         headerAlign: "center",
@@ -71,17 +71,16 @@
         color: "white"
       });
 
-      var str1 = t1.render();
-
+      let str1 = t1.render();
       console.log(str1);
 
       setTimeout(function(){
          document.getElementById('example').innerHTML = str1;
-      },500);
+      },200);
     </script>
   </head>
   <body>
-    <h2>Also see your browser console for this output in an example there.</h2>
+    <h2>Also see your browser console for this output.</h2>
     <pre>
       <span id="example"></span>
     </pre>

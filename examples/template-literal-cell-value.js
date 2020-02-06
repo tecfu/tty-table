@@ -1,4 +1,4 @@
-var Table = require("../")
+const Table = require("../")
 
 const rows = [[`The use of the cli-table is deprecated.
 Migrate over -> cli-table. Run:
@@ -6,7 +6,7 @@ npm un cli-table -g
 npm i tty-table -g`]]
 
 const t1 = Table([], rows, {
-  borderStyle: 1,
+  borderStyle: "solid",
   borderColor: "yellow",
   paddingBottom: 0,
   headerAlign: "center",

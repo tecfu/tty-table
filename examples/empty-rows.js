@@ -6,5 +6,5 @@ const header = [
   { value: "col3" }
 ]
 const rows = []
-let t = Table(header, rows)
+const t = Table(header, rows)
 console.log(t.render())
