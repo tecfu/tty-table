@@ -50,7 +50,7 @@ const rows2 = [
 
 const footer = [
   "TOTAL",
-  (cellValue, columnIndex, rowIndex, rowData, inputData) => {
+  (cellValue, columnIndex, rowIndex, rowData) => {
     return rowData.reduce((prev, curr) => {
       return (curr[1]) ? prev + curr[1] : prev
     }, 0)

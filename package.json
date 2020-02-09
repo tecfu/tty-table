@@ -70,6 +70,7 @@
     "grunt-contrib-watch": "^1.1.0",
     "grunt-jsdoc": "^2.4.0",
     "grunt-shell": "^3.0.1",
+    "husky": "^4.2.1",
     "jsdoc-to-markdown": "^5.0.0",
     "mocha": "^6.1.4",
     "nyc": "^15.0.0",

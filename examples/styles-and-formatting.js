@@ -49,12 +49,12 @@ const rows = [
 
 const footer = [
   "TOTAL",
-  (cellValue, columnIndex, rowIndex, rowData, inputData) => {
+  (cellValue, columnIndex, rowIndex, rowData) => {
     return rowData.reduce((prev, curr) => {
       return prev + curr[1]
     }, 0)
   },
-  (cellValue, columnIndex, rowIndex, rowData, inputData) => {
+  (cellValue, columnIndex, rowIndex, rowData) => {
     let total = rowData.reduce((prev, curr) => {
       return prev + ((curr[2] === "yes") ? 1 : 0)
     }, 0)
