@@ -122,6 +122,9 @@ const Factory = function(paramsArr) {
   config.align = config.alignment || config.align
   config.headerAlign = config.headerAlignment || config.headerAlign
 
+  //for truncate true is equivalent to empty string
+  if(config.truncate === true) config.truncate = ""
+
   //if borderColor customized, color the border character set
   if(config.borderColor) {
     config.borderCharacters[config.borderStyle] =
