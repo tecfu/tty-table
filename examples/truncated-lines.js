@@ -3,7 +3,7 @@ const Chalk = require("chalk")
 
 let header = [
   {
-    value: "item",
+    value: "item name",
     formatter: function(value) {
       return Chalk.cyan(value)
     },
@@ -14,7 +14,7 @@ let header = [
     width: 10
   },
   {
-    value: "organic",
+    value: "100% organic",
     width: 10
   }
 ]

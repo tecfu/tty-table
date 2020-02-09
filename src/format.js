@@ -62,8 +62,7 @@ Format.wrapCellContent = (
 
   switch(true) {
   //no wrap, truncate
-    case((typeof config.truncate === "string") || config.truncate === true):
-      if(config.truncate === true) config.truncate = ""
+    case(typeof config.truncate === "string"):
       string = Format.handleTruncatedValue(string, cellOptions, innerWidth)
       break
     //string has wide characters
