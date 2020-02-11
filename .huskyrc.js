@@ -5,9 +5,7 @@ module.exports = {
     'pre-commit': tasks([
       "npm run lint",
       "npm run lint-examples",
-      "npm run test",
-      "npm run dist",
-      "git add dist/"
+      "npm run test"
     ])
   }
 }

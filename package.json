@@ -23,7 +23,8 @@
     "lint": "npx eslint adapters/* src/*",
     "lint-fix": "npx eslint adapters/* src/* --fix",
     "lint-examples": "npx eslint examples/",
-    "lint-examples-fix": "npx eslint examples/ --fix"
+    "lint-examples-fix": "npx eslint examples/ --fix",
+    "prepublishOnly": "npm run dist"
   },
   "repository": {
     "type": "git",
