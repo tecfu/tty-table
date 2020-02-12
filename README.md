@@ -246,7 +246,7 @@ $ npm test
 ## Saving the output of new unit tests 
 
 ```sh
-$ npm run test-save
+$ npm run save-tests
 ```
 - Because: 
 
@@ -257,13 +257,13 @@ $ npm run test-save
 - To generate vim tags (make sure [jsctags](https://github.com/ramitos/jsctags) is installed globally)
 
 ```sh
-$ npx grunt tags
+$ npm run tags
 ```
 
 - To generate vim tags on file save 
 
 ```sh
-$ npx grunt watch
+$ npm run watch-tags
 ```
 
 ## Pull Requests

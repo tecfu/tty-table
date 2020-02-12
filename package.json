@@ -19,12 +19,14 @@
     "dist": "npx grunt",
     "coverage": "npx nyc mocha",
     "test": "npx mocha",
-    "test-save": "npx grunt st",
+    "save-tests": "npx grunt st",
     "lint": "npx eslint adapters/* src/*",
     "lint-fix": "npx eslint adapters/* src/* --fix",
     "lint-examples": "npx eslint examples/",
     "lint-examples-fix": "npx eslint examples/ --fix",
-    "prepublishOnly": "npm run dist"
+    "prepublishOnly": "npm run dist",
+    "tags": "npx grunt tags",
+    "watch-tags": "npx grunt watch"
   },
   "repository": {
     "type": "git",
