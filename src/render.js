@@ -216,7 +216,7 @@ Render.buildCell = function(config, cell, columnIndex, rowType, rowIndex, rowDat
     {},
     config,
     (rowType === "body") ? config.columnSettings[columnIndex] : {}, //ignore columnSettings for footer
-    cell
+    (typeof cell === "object") ? cell : {}
   )
 
   if(rowType === "header") {
