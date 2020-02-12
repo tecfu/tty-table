@@ -61,7 +61,7 @@ Format.wrapCellContent = (
   const innerWidth = columnWidth -cellOptions.paddingLeft -cellOptions.paddingRight -config.GUTTER
 
   switch(true) {
-  //no wrap, truncate
+    //no wrap, truncate
     case(typeof config.truncate === "string"):
       string = Format.handleTruncatedValue(string, cellOptions, innerWidth)
       break
@@ -152,6 +152,7 @@ Format.handleWideChars = (string, cellOptions, innerWidth) => {
 Format.handleNonWideChars = (string, cellOptions, innerWidth) => {
   let outstring = Smartwrap(string, {
     width: innerWidth,
+    minWidth: 1,
     trim: true//,
     //indent : '',
     //cut : true
@@ -231,13 +232,10 @@ Format.getColumnWidths = (config, rows) => {
     return prev + curr
   })
 
-  //add marginLeft to totalWidth
-  totalWidth += config.marginLeft
-
   //if sum of all widths exceeds viewport, resize proportionately to fit
   if(process && process.stdout && totalWidth > process.stdout.columns) {
     //recalculate proportionately to fit size
-    let prop = process.stdout.columns / totalWidth
+    let prop = (process.stdout.columns - config.marginLeft) / totalWidth
 
     prop = prop.toFixed(2)-0.01
 
