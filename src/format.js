@@ -151,9 +151,10 @@ Format.handleWideChars = (string, cellOptions, innerWidth) => {
 
 Format.handleNonWideChars = (string, cellOptions, innerWidth) => {
   let outstring = Smartwrap(string, {
-    width: innerWidth,
+    errorChar: cellOptions.defaultErrorValue,
     minWidth: 1,
-    trim: true//,
+    trim: true,
+    width: innerWidth
     //indent : '',
     //cut : true
   })
@@ -202,8 +203,9 @@ Format.getColumnWidths = (config, rows) => {
 
   let widths = iterable.map((column, columnIndex) => { //iterate through column settings
     let result
+
     switch(true) {
-    //column width specified in header
+      //column width specified in header
       case(typeof column === "object" && typeof column.width === "number"):
         result = column.width
         break

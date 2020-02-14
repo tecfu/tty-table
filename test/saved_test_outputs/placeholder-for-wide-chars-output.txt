@@ -1,0 +1,19 @@
+
+=== width=25 ===========|
+┌─┬─────┬──────────────┐
+│a│ aaa │ aaa bbb ccc  │
+│a│ bbb │ ddd eee fff  │
+│a│ ccc │ ggg hhh iii  │
+│b│ ddd │ jjj kkk lll  │
+│b│ eee │ mmm nnn ooo  │
+│b│ fff │ ppp qqq rrr  │
+│c│ ggg │   sss ttt    │
+│c│ hhh │              │
+│c│     │              │
+├─┼─────┼──────────────┤
+│�│特制 │   2玉米饼,   │
+│�│的酱 │ 大米和豆类,  │
+│�│ 汁  │ 大米和豆类,  │
+│ │     │ 大米和豆类,  │
+│ │     │     奶酪     │
+└─┴─────┴──────────────┘

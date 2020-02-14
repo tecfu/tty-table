@@ -177,7 +177,7 @@ const footer = [
 | borderColor | <code>string</code> | default: terminal default color |
 | color | <code>string</code> | default: terminal default color |
 | compact | <code>boolean</code> | default: false Removes horizontal lines when true. |
-| defaultErrorValue | <code>mixed</code> | default: 'ERROR!' |
+| defaultErrorValue | <code>mixed</code> | default: '�' |
 | defaultValue | <code>mixed</code> | default: '?' |
 | errorOnNull | <code>boolean</code> | default: false |
 | truncate | <code>mixed</code> | default: false <br/> When this property is set to a string, cell contents will be truncated by that string instead of wrapped when they extend beyond of the width of the cell.  <br/> For example if: <br/> <code>"truncate":"..."</code> <br/> the cell will be truncated with "..." |
