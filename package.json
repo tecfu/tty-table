@@ -1,6 +1,6 @@
 {
   "name": "tty-table",
-  "version": "2.8.9",
+  "version": "2.8.10",
   "description": "Node cli table",
   "main": "src/main.js",
   "engines": {
@@ -51,7 +51,7 @@
   "dependencies": {
     "chalk": "^2.4.2",
     "csv": "^5.3.1",
-    "smartwrap": "^1.2.2",
+    "smartwrap": "^1.2.3",
     "strip-ansi": "^6.0.0",
     "wcwidth": "^1.0.1",
     "yargs": "^15.1.0"
