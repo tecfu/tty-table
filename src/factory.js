@@ -1,7 +1,7 @@
-const Defaults = require("./defaults.js")
-const Render = require("./render.js")
-const Chalk = require("chalk")
-let Counter = 0
+const defaults = require("./defaults.js")
+const render = require("./render.js")
+const chalk = require("chalk")
+let counter = 0
 
 /**
 * @class Table
@@ -31,7 +31,7 @@ let Counter = 0
 * @param {string} options.borderColor      - default: terminal's default color
 * @param {boolean} options.compact      - default: false
 * Removes horizontal lines when true.
-* @param {mixed} options.defaultErrorValue - default: 'ERROR!'
+* @param {mixed} options.defaultErrorValue - default: '�'
 * @param {mixed} options.defaultValue - default: '?'
 * @param {boolean} options.errorOnNull    - default: false
 * @param {mixed} options.truncate - default: false
@@ -115,8 +115,8 @@ const Factory = function(paramsArr) {
 
   // For "deep" copy, use JSON.parse
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Deep_Clone
-  const clonedDefaults = JSON.parse(JSON.stringify(Defaults))
-  let config = Object.assign({}, clonedDefaults, options)
+  const cloneddefaults = JSON.parse(JSON.stringify(defaults))
+  let config = Object.assign({}, cloneddefaults, options)
 
   //backfixes for shortened option names
   config.align = config.alignment || config.align
@@ -130,7 +130,7 @@ const Factory = function(paramsArr) {
     config.borderCharacters[config.borderStyle] =
       config.borderCharacters[config.borderStyle].map(function(obj) {
         Object.keys(obj).forEach(function(key) {
-          obj[key] = Chalk[config.borderColor](obj[key])
+          obj[key] = chalk[config.borderColor](obj[key])
         })
         return obj
       })
@@ -152,9 +152,9 @@ const Factory = function(paramsArr) {
   //counting table enables fixed column widths for streams,
   //variable widths for multiple tables simulateously
   if(config.terminalAdapter !== true) {
-    Counter++ //fix columnwidths for streams
+    counter++ //fix columnwidths for streams
   }
-  config.tableId = Counter
+  config.tableId = counter
 
   //create a new object with an Array prototype
   let tableObject = Object.create(body)
@@ -174,8 +174,8 @@ const Factory = function(paramsArr) {
   */
   tableObject.render = function() {
     //let configCopy = JSON.parse(JSON.stringify(this[_configKey]));
-    //return Render.stringifyData(configCopy,this.slice(0));  //get string output
-    let output = Render.stringifyData(this[_configKey], this.slice(0))  //get string output
+    //return render.stringifyData(configCopy,this.slice(0));  //get string output
+    let output = render.stringifyData(this[_configKey], this.slice(0))  //get string output
     tableObject.height = this[_configKey].height
     return output
   }

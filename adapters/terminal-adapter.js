@@ -1,45 +1,45 @@
 #!/usr/bin/env node
 const path = require("path")
 const fs = require("fs")
-const Csv = require("csv")
-const Chalk = require("chalk")
-let Yargs = require("yargs")
+const csv = require("csv")
+const chalk = require("chalk")
+let yargs = require("yargs")
 
-Yargs.epilog("Copyright github.com/tecfu 2018")
+yargs.epilog("Copyright github.com/tecfu 2018")
 
-Yargs.option("config", {
+yargs.option("config", {
   describe: "Specify the configuration for your table."
 })
 
-Yargs.option("csv-delimiter", {
+yargs.option("csv-delimiter", {
   describe: "Set the field delimiter. One character only.",
   default: ","
 })
 
-Yargs.option("csv-escape", {
+yargs.option("csv-escape", {
   describe: "Set the escape character. One character only."
 })
 
-Yargs.option("csv-rowDelimiter", {
+yargs.option("csv-rowDelimiter", {
   describe: "String used to delimit record rows. You can also use a special constant: \"auto\",\"unix\",\"max\",\"windows\",\"unicode\".",
   default: "\n"
 })
 
-Yargs.option("format", {
+yargs.option("format", {
   describe: "Set input data format",
   choices: ["json", "csv"],
   default: "csv"
 })
 
-Yargs.option("options\u2010\u002A", {
+yargs.option("options\u2010\u002A", {
   describe: "Specify an optional setting where * is the setting name. See README.md for a complete list."
 })
 
 //run help only at the end
-Yargs = Yargs.help("h").argv
+yargs = yargs.help("h").argv
 
 let emitError = function(type, detail) {
-  console.log(`\n${  Chalk.bgRed.white(type)  }\n\n${  Chalk.bold(detail)}`)
+  console.log(`\n${  chalk.bgRed.white(type)  }\n\n${  chalk.bold(detail)}`)
   process.exit(1)
 }
 
@@ -49,9 +49,9 @@ let previousHeight = 0
 
 let dataFormat = "csv"
 switch(true) {
-  case(typeof Yargs.format === "undefined"):
+  case(typeof yargs.format === "undefined"):
     break
-  case(Yargs.format.toString().match(/json/i) !== null):
+  case(yargs.format.toString().match(/json/i) !== null):
     dataFormat = "json"
     break
   default:
@@ -59,24 +59,24 @@ switch(true) {
 
 //look for individually flagged options-*
 let options = {}
-Object.keys(Yargs).forEach(function(key) {
+Object.keys(yargs).forEach(function(key) {
   let keyParts = key.split("-")
   if(keyParts[0]==="options") {
-    options[keyParts[1]]=Yargs[key]
+    options[keyParts[1]]=yargs[key]
   }
 })
 
 //look for options passed via config file
 let header = []
-if(Yargs.header) {
-  if(!fs.existsSync(path.resolve(Yargs.header))) {
+if(yargs.header) {
+  if(!fs.existsSync(path.resolve(yargs.header))) {
     emitError(
       "Invalid file path",
-      `Cannot find config file at: ${  Yargs.header  }.`
+      `Cannot find config file at: ${  yargs.header  }.`
     )
   }
   //merge with any individually flagged options
-  header = require(path.resolve(Yargs.header))
+  header = require(path.resolve(yargs.header))
 }
 
 //because different dataFormats
@@ -131,13 +131,13 @@ process.stdin.on("data", function(chunk) {
       break
     default:
       let formatterOptions = {}
-      Object.keys(Yargs).forEach(function(key) {
-        if(key.slice(0, 4) === "csv-" && typeof(Yargs[key]) !== "undefined") {
-          formatterOptions[key.slice(4)] = Yargs[key]
+      Object.keys(yargs).forEach(function(key) {
+        if(key.slice(0, 4) === "csv-" && typeof(yargs[key]) !== "undefined") {
+          formatterOptions[key.slice(4)] = yargs[key]
         }
       })
 
-      Csv.parse(chunk, formatterOptions, function(err, data) {
+      csv.parse(chunk, formatterOptions, function(err, data) {
       //validate csv
         if(typeof data === "undefined") {
           emitError(

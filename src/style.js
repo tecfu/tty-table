@@ -1,4 +1,4 @@
-const Chalk = require("chalk")
+const chalk = require("chalk")
 
 exports.colorizeCell = function(str, cellOptions, rowType) {
 
@@ -16,7 +16,7 @@ exports.colorizeCell = function(str, cellOptions, rowType) {
   }
 
   if (color) {
-    str = Chalk[color](str)
+    str = chalk[color](str)
   }
 
   return str
@@ -26,7 +26,7 @@ exports.colorizeCell = function(str, cellOptions, rowType) {
 exports.colorizeAllWords = function(color,str){
   //color each word in the cell so that line breaks don't break color
   let arr = str.replace(/(\S+)/gi,function(match){
-    return Chalk[color](match)+'\ ';
+    return chalk[color](match)+'\ ';
   });
   return arr;
 }

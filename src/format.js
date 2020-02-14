@@ -1,11 +1,11 @@
-const StripAnsi = require("strip-ansi")
-const Smartwrap = require("smartwrap")
-const Wcwidth = require("wcwidth")
+const stripAnsi = require("strip-ansi")
+const smartwrap = require("smartwrap")
+const wcwidth = require("wcwidth")
 const Format = {}
 
 Format.calculateLength = line => {
-  //return StripAnsi(line.replace(/[^\x00-\xff]/g,'XX')).length;
-  return Wcwidth(StripAnsi(line))
+  //return stripAnsi(line.replace(/[^\x00-\xff]/g,'XX')).length;
+  return wcwidth(stripAnsi(line))
 }
 
 Format.wrapCellContent = (
@@ -108,9 +108,9 @@ Format.wrapCellContent = (
 }
 
 Format.truncate = (string, cellOptions, maxWidth) => {
-  const stringWidth = Wcwidth(string)
+  const stringWidth = wcwidth(string)
   if(maxWidth < stringWidth) {
-    string = Smartwrap(string, {
+    string = smartwrap(string, {
       width: maxWidth - cellOptions.truncate.length,
       //@todo give use option to decide if they want to break words on wrapping
       breakword: true
@@ -121,7 +121,7 @@ Format.truncate = (string, cellOptions, maxWidth) => {
 }
 
 Format.wrap = (string, cellOptions, innerWidth) => {
-  let outstring = Smartwrap(string, {
+  let outstring = smartwrap(string, {
     errorChar: cellOptions.defaultErrorValue,
     minWidth: 1,
     trim: true,
@@ -159,7 +159,7 @@ Format.inferColumnWidth = (columnOptions, rows, columnIndex) => {
   iterable.forEach( row => {
     if(row[columnIndex] && row[columnIndex].toString().length > widest) {
       //widest = row[columnIndex].toString().length;
-      widest = Wcwidth(row[columnIndex].toString())
+      widest = wcwidth(row[columnIndex].toString())
     }
   })
   return widest
