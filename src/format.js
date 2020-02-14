@@ -60,19 +60,10 @@ Format.wrapCellContent = (
   //innerWidth is the width available for text within the cell
   const innerWidth = columnWidth -cellOptions.paddingLeft -cellOptions.paddingRight -config.GUTTER
 
-  switch(true) {
-    //no wrap, truncate
-    case(typeof config.truncate === "string"):
-      string = Format.handleTruncatedValue(string, cellOptions, innerWidth)
-      break
-    //string has wide characters
-    case(/[\uD800-\uDFFF]/.test(string)):
-    //case(string.length < Format.calculateLength(string)):
-      string = Format.handleWideChars(string, cellOptions, innerWidth)
-      break
-    //string does not have wide characters
-    default:
-      string = Format.handleNonWideChars(string, cellOptions, innerWidth)
+  if(typeof config.truncate === "string") {
+    string = Format.truncate(string, cellOptions, innerWidth)
+  } else {
+    string = Format.wrap(string, cellOptions, innerWidth)
   }
 
   //format each line
@@ -116,7 +107,7 @@ Format.wrapCellContent = (
   }
 }
 
-Format.handleTruncatedValue = (string, cellOptions, maxWidth) => {
+Format.truncate = (string, cellOptions, maxWidth) => {
   const stringWidth = Wcwidth(string)
   if(maxWidth < stringWidth) {
     string = Smartwrap(string, {
@@ -129,27 +120,7 @@ Format.handleTruncatedValue = (string, cellOptions, maxWidth) => {
   return string
 }
 
-Format.handleWideChars = (string, cellOptions, innerWidth) => {
-  let count = 0
-  let start = 0
-  let characters = string.split("")
-
-  let outstring = characters.reduce((prev, cellValue, i) => {
-    count += Format.calculateLength(cellValue)
-    if (count > innerWidth) {
-      prev.push(string.slice(start, i))
-      start = i
-      count = 0
-    } else if (characters.length === i + 1) {
-      prev.push(string.slice(start))
-    }
-    return prev
-  }, []).join("\n")
-
-  return outstring
-}
-
-Format.handleNonWideChars = (string, cellOptions, innerWidth) => {
+Format.wrap = (string, cellOptions, innerWidth) => {
   let outstring = Smartwrap(string, {
     errorChar: cellOptions.defaultErrorValue,
     minWidth: 1,
