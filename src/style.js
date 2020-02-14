@@ -3,7 +3,7 @@ const chalk = require("chalk")
 
 const colorizeCell = function(str, cellOptions, rowType) {
 
-  let color = false //false will keep terminal default
+  let color = false // false will keep terminal default
 
   switch(true) {
     case(rowType === "body"):

@@ -37,10 +37,10 @@ for (let w = 25; w < 120; w++) {
   test(w, process.argv[2], leftMargin)
 }
 
-//let w = 64
-//console.log(`\n${`=== width=${w} ${new Array(w).fill("=").join("")}`.substr(0, w - 1)  }|`)
-//process.stdout.columns = w  // fake width
-//test(w, false, 3)
+// let w = 64
+// console.log(`\n${`=== width=${w} ${new Array(w).fill("=").join("")}`.substr(0, w - 1)  }|`)
+// process.stdout.columns = w  // fake width
+// test(w, false, 3)
 
 if (failures.length) {
   process.stderr.write(Chalk.redBright(failures.join("\n")))

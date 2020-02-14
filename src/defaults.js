@@ -27,7 +27,7 @@ const defaults = {
   color: false,
   compact: false,
   defaultErrorValue: "�",
-  //defaultValue: "\u001b[31m?\u001b[39m",
+  // defaultValue: "\u001b[31m?\u001b[39m",
   defaultValue: "[32m[37m[41m ?[49m[32m[39m",
   errorOnNull: false,
   footerAlign: "center",
@@ -44,19 +44,19 @@ const defaults = {
   tableType: null,
   truncate: false,
   width: "auto",
-  GUTTER: 1, //undocumented
+  GUTTER: 1, // undocumented
   columnSettings: [],
   headerEmpty: false,
-  //save so cell options can be merged into column options
+  // save so cell options can be merged into column options
   table: {
     body: "",
     columnInnerWidths: [],
     columnWidths: [],
     columns: [],
     footer: "",
-    header: "", //post-rendered strings.
+    header: "", // post-rendered strings.
     height: 0,
-    typeLocked: false //once a table type is selected can't switch
+    typeLocked: false // once a table type is selected can't switch
   }
 }
 

@@ -4,7 +4,7 @@ const wcwidth = require("wcwidth")
 
 
 module.exports.calculateLength = line => {
-  //return stripAnsi(line.replace(/[^\x00-\xff]/g,'XX')).length;
+  // return stripAnsi(line.replace(/[^\x00-\xff]/g,'XX')).length;
   return wcwidth(stripAnsi(line))
 }
 
@@ -17,23 +17,23 @@ module.exports.wrapCellContent = (
   rowType
 ) => {
 
-  //ANSI chararacters that demarcate the start/end of a line
+  // ANSI chararacters that demarcate the start/end of a line
   const startAnsiRegexp = /^(\033\[[0-9;]*m)+/
   const endAnsiRegexp = /(\033\[[0-9;]*m)+$/
 
-  //coerce cell value to string
+  // coerce cell value to string
   let string = cellValue.toString()
 
-  //store matching ANSI characters
+  // store matching ANSI characters
   let startMatches = string.match(startAnsiRegexp) || [""]
 
-  //remove ANSI start-of-line chars
+  // remove ANSI start-of-line chars
   string = string.replace(startAnsiRegexp, "")
 
-  //store matching ANSI characters so can be later re-attached
+  // store matching ANSI characters so can be later re-attached
   let endMatches = string.match(endAnsiRegexp) || [""]
 
-  //remove ANSI end-of-line chars
+  // remove ANSI end-of-line chars
   string = string.replace(endAnsiRegexp, "")
 
   let alignTgt
@@ -50,7 +50,7 @@ module.exports.wrapCellContent = (
       break
   }
 
-  //equalize padding for centered lines
+  // equalize padding for centered lines
   if(cellOptions[alignTgt] === "center") {
     cellOptions.paddingLeft = cellOptions.paddingRight =
       Math.max(cellOptions.paddingRight, cellOptions.paddingLeft, 0)
@@ -58,7 +58,7 @@ module.exports.wrapCellContent = (
 
   const columnWidth = config.table.columnWidths[columnIndex]
 
-  //innerWidth is the width available for text within the cell
+  // innerWidth is the width available for text within the cell
   const innerWidth = columnWidth -cellOptions.paddingLeft -cellOptions.paddingRight -config.GUTTER
 
   if(typeof config.truncate === "string") {
@@ -67,14 +67,14 @@ module.exports.wrapCellContent = (
     string = exports.wrap(string, cellOptions, innerWidth)
   }
 
-  //format each line
+  // format each line
   let strArr = string.split("\n").map( line => {
 
     line = line.trim()
 
     const lineLength = exports.calculateLength(line)
 
-    //alignment
+    // alignment
     if(lineLength < columnWidth) {
       let emptySpace = columnWidth - lineLength
       switch(true) {
@@ -98,7 +98,7 @@ module.exports.wrapCellContent = (
       }
     }
 
-    //put ANSI color codes BACK on the beginning and end of string
+    // put ANSI color codes BACK on the beginning and end of string
     return startMatches[0] + line + endMatches[0]
   })
 
@@ -114,7 +114,7 @@ module.exports.truncate = (string, cellOptions, maxWidth) => {
   if(maxWidth < stringWidth) {
     string = smartwrap(string, {
       width: maxWidth - cellOptions.truncate.length,
-      //@todo give use option to decide if they want to break words on wrapping
+      // @todo give use option to decide if they want to break words on wrapping
       breakword: true
     }).split("\n")[0]
     string = string + cellOptions.truncate
@@ -129,8 +129,8 @@ module.exports.wrap = (string, cellOptions, innerWidth) => {
     minWidth: 1,
     trim: true,
     width: innerWidth
-    //indent : '',
-    //cut : true
+    // indent : '',
+    // cut : true
   })
 
   return outstring
@@ -148,21 +148,21 @@ module.exports.inferColumnWidth = (columnOptions, rows, columnIndex) => {
 
   let iterable
 
-  //add a row that contains the header value, so we use that width too
+  // add a row that contains the header value, so we use that width too
   if(typeof columnOptions === "object" && columnOptions.value) {
     iterable = rows.slice()
-    let z = new Array(iterable[0].length) //create a new empty row
+    let z = new Array(iterable[0].length) // create a new empty row
     z[columnIndex] = columnOptions.value.toString()
     iterable.push(z)
   } else{
-    //no header value, just use rows to derive max width
+    // no header value, just use rows to derive max width
     iterable = rows
   }
 
   let widest = 0
   iterable.forEach( row => {
     if(row[columnIndex] && row[columnIndex].toString().length > widest) {
-      //widest = row[columnIndex].toString().length;
+      // widest = row[columnIndex].toString().length;
       widest = wcwidth(row[columnIndex].toString())
     }
   })
@@ -172,47 +172,47 @@ module.exports.inferColumnWidth = (columnOptions, rows, columnIndex) => {
 
 module.exports.getColumnWidths = (config, rows) => {
 
-  //iterate over the header if we have it, iterate over the first row
-  //if we do not (to step through the correct number of columns)
+  // iterate over the header if we have it, iterate over the first row
+  // if we do not (to step through the correct number of columns)
   let iterable = (config.table.header[0] && config.table.header[0].length > 0)
     ? config.table.header[0] : rows[0]
 
-  let widths = iterable.map((column, columnIndex) => { //iterate through column settings
+  let widths = iterable.map((column, columnIndex) => { // iterate through column settings
     let result
 
     switch(true) {
-      //column width specified in header
+      // column width specified in header
       case(typeof column === "object" && typeof column.width === "number"):
         result = column.width
         break
-      //global column width set in config
+      // global column width set in config
       case(config.width && config.width !== "auto"):
         result = config.width
         break
       default:
-      //'auto' sets column width to longest value in initial data set
+      // 'auto' sets column width to longest value in initial data set
         let columnOptions = (config.table.header[0][columnIndex])
           ? config.table.header[0][columnIndex] : {}
         let measurableRows = (rows.length) ? rows : config.table.header[0]
         result = exports.inferColumnWidth(columnOptions, measurableRows, columnIndex)
 
-        //add spaces for padding if not centered
+        // add spaces for padding if not centered
         result = result + config.paddingLeft + config.paddingRight
     }
-    //add space for gutter
+    // add space for gutter
     result = result + config.GUTTER
 
     return result
   })
 
-  //calculate sum of all column widths (including marginLeft)
+  // calculate sum of all column widths (including marginLeft)
   let totalWidth = widths.reduce((prev, curr) => {
     return prev + curr
   })
 
-  //if sum of all widths exceeds viewport, resize proportionately to fit
+  // if sum of all widths exceeds viewport, resize proportionately to fit
   if(process && process.stdout && totalWidth > process.stdout.columns) {
-    //recalculate proportionately to fit size
+    // recalculate proportionately to fit size
     let prop = (process.stdout.columns - config.marginLeft) / totalWidth
 
     prop = prop.toFixed(2)-0.01

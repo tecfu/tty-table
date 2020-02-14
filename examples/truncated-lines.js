@@ -20,7 +20,7 @@ let header = [
   }
 ]
 
-//test truncation with elipsis
+// test truncation with elipsis
 let t1 = Table(header, [], {
   borderStyle: 1,
   paddingBottom: 0,
@@ -37,7 +37,7 @@ t1.push(
 let str1 = t1.render()
 console.log(str1)
 
-//test truncation with spaces
+// test truncation with spaces
 let t2 = Table(header, [], {
   borderStyle: 1,
   paddingBottom: 0,
@@ -54,7 +54,7 @@ t2.push(
 let str2 = t2.render()
 console.log(str2)
 
-//test with padding
+// test with padding
 let t3 = Table(header, [], {
   borderStyle: 1,
   paddingLeft: 2,
@@ -72,7 +72,7 @@ t3.push(
 let str3 = t3.render()
 console.log(str3)
 
-//test truncation with boolean false
+// test truncation with boolean false
 let t4 = Table(header, [], {
   borderStyle: 1,
   paddingBottom: 0,
@@ -89,7 +89,7 @@ t4.push(
 let str4 = t4.render()
 console.log(str4)
 
-//test truncation with boolean false
+// test truncation with boolean false
 let t5 = Table(header, [], {
   borderStyle: 1,
   paddingBottom: 0,

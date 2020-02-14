@@ -21,7 +21,7 @@ setInterval(function() {
   let array = [header]
 
   for(let i in baseline) {
-    //give each symbol a 30% chance of changing
+    // give each symbol a 30% chance of changing
     if(Math.random() >= .7) {
       baseline[i] = (baseline[i] + ((Math.random() > .5) ? .01 : -.01)).toFixed(2)*1
     }

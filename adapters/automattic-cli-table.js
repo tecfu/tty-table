@@ -5,9 +5,9 @@ var Table = function(options) {
   options = options || {}
   options.adapter = "automattic"
 
-  //translations
+  // translations
 
-  //header
+  // header
   var header = []
   if(options.head && options.head instanceof Array) {
     options.head.forEach(function(val) {
@@ -17,14 +17,14 @@ var Table = function(options) {
     })
   }
 
-  //colWidths
+  // colWidths
   if(options.colWidths) {
     options.colWidths.forEach(function(val, i) {
       header[i].width = val
     })
   }
 
-  //colAligns
+  // colAligns
   if(options.colAligns) {
     options.colAligns.forEach(function(val, i) {
       header[i].align = val
@@ -32,10 +32,10 @@ var Table = function(options) {
     })
   }
 
-  //style
+  // style
   options.style = options.style || {}
 
-  //style - padding
+  // style - padding
   if(options.style["padding-left"]) {
     options.paddingLeft = options.style["padding-left"]
   }
@@ -44,7 +44,7 @@ var Table = function(options) {
     options.paddingRight = options.style["padding-right"]
   }
 
-  //style - colors
+  // style - colors
   if(options.style.head && options.style.head instanceof Array) {
     options.headerColor = options.style.head[0]
   }
@@ -53,14 +53,14 @@ var Table = function(options) {
     options.color = options.style.body[0]
   }
 
-  //style - compact
+  // style - compact
   if(options.style.compact) {
     options.compact = true
   }
 
-  //@todo style - border color
+  // @todo style - border color
 
-  //inherited from prototype
+  // inherited from prototype
   let t = Factory(header, [], [], options)
   t.toString = t.render
   return t

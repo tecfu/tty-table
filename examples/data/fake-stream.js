@@ -8,7 +8,7 @@ const tickers = [
 
 const cycle = (iterator, tickers) => {
 
-  //change ticker values
+  // change ticker values
   tickers = tickers.map( value => {
     let sign = (Math.random()) < .5 ? -1 : 1
     let increment = Math.random()

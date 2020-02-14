@@ -21,7 +21,7 @@ const options = {
   footerAlign: "right"
 }
 
-//Example with arrays as rows
+// Example with arrays as rows
 const rows = [
   [],
   ["special sauce", 0.10],
@@ -29,7 +29,7 @@ const rows = [
   ["macaroni and cheese", 3.75, "no"]
 ]
 
-//Example with objects as rows
+// Example with objects as rows
 const rows2 = [
   {},
   {

@@ -38,7 +38,7 @@ let header = [
   }
 ]
 
-//Example with arrays as rows
+// Example with arrays as rows
 const rows = [
   ["hamburger", 2.50, "no"],
   ["el jefe's special cream sauce", 0.10, "yes"],
@@ -76,7 +76,7 @@ let t1 = Table(header, rows, footer, {
 console.log(t1.render())
 
 
-//Example with objects as rows
+// Example with objects as rows
 const rows2 = [
   {
     item: "hamburger",
@@ -121,7 +121,7 @@ const t2 = Table(header, rows2, {
 console.log(t2.render())
 
 
-//template literals
+// template literals
 let header3 = [
   { value: "name", width: 30, headerAlign: "left" },
   { value: "price", width: 30, headerAlign: "left" }
