@@ -5,11 +5,7 @@ const Chalk = require("chalk")
 let failures = []
 
 function test (width, truncate, marginLeft) {
-  let output = new Table([
-    {minWidth: 6, shrink: 0},
-    {minWidth: 12, shrink: 1},
-    {minWidth: 24, shrink: 1000}
-  ], [[
+  let output = new Table([[
     "aaa bbb ccc",
     "aaa bbb ccc ddd eee fff ggg hhh",
     "aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq rrr sss ttt"
