@@ -1,14 +1,15 @@
 const stripAnsi = require("strip-ansi")
 const smartwrap = require("smartwrap")
 const wcwidth = require("wcwidth")
-const Format = {}
 
-Format.calculateLength = line => {
+
+module.exports.calculateLength = line => {
   //return stripAnsi(line.replace(/[^\x00-\xff]/g,'XX')).length;
   return wcwidth(stripAnsi(line))
 }
 
-Format.wrapCellContent = (
+
+module.exports.wrapCellContent = (
   config,
   cellValue,
   columnIndex,
@@ -61,9 +62,9 @@ Format.wrapCellContent = (
   const innerWidth = columnWidth -cellOptions.paddingLeft -cellOptions.paddingRight -config.GUTTER
 
   if(typeof config.truncate === "string") {
-    string = Format.truncate(string, cellOptions, innerWidth)
+    string = exports.truncate(string, cellOptions, innerWidth)
   } else {
-    string = Format.wrap(string, cellOptions, innerWidth)
+    string = exports.wrap(string, cellOptions, innerWidth)
   }
 
   //format each line
@@ -71,7 +72,7 @@ Format.wrapCellContent = (
 
     line = line.trim()
 
-    const lineLength = Format.calculateLength(line)
+    const lineLength = exports.calculateLength(line)
 
     //alignment
     if(lineLength < columnWidth) {
@@ -107,7 +108,8 @@ Format.wrapCellContent = (
   }
 }
 
-Format.truncate = (string, cellOptions, maxWidth) => {
+
+module.exports.truncate = (string, cellOptions, maxWidth) => {
   const stringWidth = wcwidth(string)
   if(maxWidth < stringWidth) {
     string = smartwrap(string, {
@@ -120,7 +122,8 @@ Format.truncate = (string, cellOptions, maxWidth) => {
   return string
 }
 
-Format.wrap = (string, cellOptions, innerWidth) => {
+
+module.exports.wrap = (string, cellOptions, innerWidth) => {
   let outstring = smartwrap(string, {
     errorChar: cellOptions.defaultErrorValue,
     minWidth: 1,
@@ -133,6 +136,7 @@ Format.wrap = (string, cellOptions, innerWidth) => {
   return outstring
 }
 
+
 /**
  * Returns the widest cell give a collection of rows
  *
@@ -140,7 +144,7 @@ Format.wrap = (string, cellOptions, innerWidth) => {
  * @param integer columnIndex
  * @returns integer
  */
-Format.inferColumnWidth = (columnOptions, rows, columnIndex) => {
+module.exports.inferColumnWidth = (columnOptions, rows, columnIndex) => {
 
   let iterable
 
@@ -165,7 +169,8 @@ Format.inferColumnWidth = (columnOptions, rows, columnIndex) => {
   return widest
 }
 
-Format.getColumnWidths = (config, rows) => {
+
+module.exports.getColumnWidths = (config, rows) => {
 
   //iterate over the header if we have it, iterate over the first row
   //if we do not (to step through the correct number of columns)
@@ -189,7 +194,7 @@ Format.getColumnWidths = (config, rows) => {
         let columnOptions = (config.table.header[0][columnIndex])
           ? config.table.header[0][columnIndex] : {}
         let measurableRows = (rows.length) ? rows : config.table.header[0]
-        result = Format.inferColumnWidth(columnOptions, measurableRows, columnIndex)
+        result = exports.inferColumnWidth(columnOptions, measurableRows, columnIndex)
 
         //add spaces for padding if not centered
         result = result + config.paddingLeft + config.paddingRight
@@ -223,5 +228,3 @@ Format.getColumnWidths = (config, rows) => {
 
   return widths
 }
-
-module.exports = Format

@@ -3,6 +3,7 @@ const render = require("./render.js")
 const chalk = require("chalk")
 let counter = 0
 
+
 /**
 * @class Table
 * @param {array} header                          - [See example](#example-usage)
@@ -182,6 +183,7 @@ const Factory = function(paramsArr) {
 
   return tableObject
 }
+
 
 module.exports = function() {
   return new Factory(arguments)

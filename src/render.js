@@ -1,11 +1,11 @@
 const Style = require("./style.js")
 const Format = require("./format.js")
-const Render = {}
+
 
 /**
  * Converts arrays of data into arrays of cell strings
  */
-Render.stringifyData = function(config, inputData) {
+module.exports.stringifyData = (config, inputData) => {
   const sections = {
     header: [],
     body: [],
@@ -17,10 +17,10 @@ Render.stringifyData = function(config, inputData) {
 
   //because automattic/cli-table syntax infers table type based on
   //how rows are passed (array of arrays, objects, etc)
-  config.rowFormat = Render.getRowFormat(inputData[0] || [], config)
+  config.rowFormat = exports.getRowFormat(inputData[0] || [], config)
 
   //now translate them
-  const rowData = Render.transformRows(config, inputData)
+  const rowData = exports.transformRows(config, inputData)
 
   //when streaming values to tty-table, we don't want column widths to change
   //from one rowData set to the next, so we save the first set of widths and reuse
@@ -37,7 +37,7 @@ Render.stringifyData = function(config, inputData) {
   //stringify header cells
   if(!config.headerEmpty) {
     sections.header = config.table.header.map(function(row) {
-      return buildRow(config, row, "header", null, rowData, inputData)
+      return exports.buildRow(config, row, "header", null, rowData, inputData)
     })
   } else{
     sections.header = []
@@ -45,14 +45,14 @@ Render.stringifyData = function(config, inputData) {
 
   //stringify body cells
   sections.body = rowData.map(function(row, rowIndex) {
-    return buildRow(config, row, "body", rowIndex, rowData, inputData)
+    return exports.buildRow(config, row, "body", rowIndex, rowData, inputData)
   })
 
   //stringify footer cells
   sections.footer = (config.table.footer instanceof Array && config.table.footer.length > 0) ? [config.table.footer] : []
 
   sections.footer = sections.footer.map(function(row) {
-    return buildRow(config, row, "footer", null, rowData, inputData)
+    return exports.buildRow(config, row, "footer", null, rowData, inputData)
   })
 
   //add borders
@@ -132,8 +132,8 @@ Render.stringifyData = function(config, inputData) {
   return finalOutput
 }
 
-const buildRow = function(config, row, rowType, rowIndex, rowData, inputData) {
 
+module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) => {
   let minRowHeight = 0
 
   //tag row as empty if empty
@@ -163,7 +163,7 @@ const buildRow = function(config, row, rowType, rowIndex, rowData, inputData) {
   let rowLength = row.length
   for(let index=0; index<rowLength; index++) {
 
-    let c = Render.buildCell(config, row[index], index, rowType, rowIndex, rowData, inputData)
+    let c = exports.buildCell(config, row[index], index, rowType, rowIndex, rowData, inputData)
     let cellArr = c.cellArr
 
     if(rowType === "header") {
@@ -209,8 +209,8 @@ const buildRow = function(config, row, rowType, rowIndex, rowData, inputData) {
   return lines
 }
 
-Render.buildCell = function(config, cell, columnIndex, rowType, rowIndex, rowData, inputData) {
 
+module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowData, inputData) => {
   let cellValue
   let cellOptions = Object.assign(
     {},
@@ -222,11 +222,11 @@ Render.buildCell = function(config, cell, columnIndex, rowType, rowIndex, rowDat
   if(rowType === "header") {
     config.table.columns.push(cellOptions)
     cellValue = cellOptions.alias || cellOptions.value || ""
-  } else{
+  } else {
     //set cellValue
     switch(true) {
       case(typeof cell === "undefined" || cell === null):
-      //replace undefined/null cell values with placeholder
+        //replace undefined/null cell values with placeholder
         cellValue = (config.errorOnNull) ? config.defaultErrorValue : config.defaultValue
         break
       case(typeof cell === "object" && typeof cell.value !== "undefined"):
@@ -236,7 +236,7 @@ Render.buildCell = function(config, cell, columnIndex, rowType, rowIndex, rowDat
         cellValue = cell(cellValue, columnIndex, rowIndex, rowData, inputData)
         break
       default:
-      //cell is assumed to be a scalar
+        //cell is assumed to be a scalar
         cellValue = cell
     }
 
@@ -250,17 +250,17 @@ Render.buildCell = function(config, cell, columnIndex, rowType, rowIndex, rowDat
   cellValue = Style.colorizeCell(cellValue, cellOptions, rowType)
 
   //textwrap cellValue
-  let WrapObj  = Format.wrapCellContent(config, cellValue, columnIndex, cellOptions, rowType)
-  //cellValue = WrapObj.output.join('\n');
+  let wrapObj  = Format.wrapCellContent(config, cellValue, columnIndex, cellOptions, rowType)
 
   //return as array of lines
   return {
-    cellArr: WrapObj.output,
-    width: WrapObj.width
+    cellArr: wrapObj.output,
+    width: wrapObj.width
   }
 }
 
-Render.getRowFormat = function(row, config) {
+
+module.exports.getRowFormat = (row, config) => {
   let type
 
   //rows passed as an object
@@ -287,9 +287,10 @@ Render.getRowFormat = function(row, config) {
   return type
 }
 
+
 //@todo For rotating horizontal data into a vertical table
 //assumes all rows are same length
-Render.verticalizeMatrix = function(config, inputArray) {
+module.exports.verticalizeMatrix = (config, inputArray) => {
 
   //grow to # arrays equal to number of columns in input array
   let outputArray = []
@@ -310,10 +311,11 @@ Render.verticalizeMatrix = function(config, inputArray) {
   return outputArray
 }
 
+
 /**
  * Transforms input data arrays to base rendering structure.
  */
-Render.transformRows = function(config, rows) {
+module.exports.transformRows = (config, rows) => {
 
   let output = []
   switch(config.rowFormat) {
@@ -364,5 +366,3 @@ Render.transformRows = function(config, rows) {
 
   return output
 }
-
-module.exports = Render

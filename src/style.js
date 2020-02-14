@@ -1,6 +1,7 @@
 const chalk = require("chalk")
 
-exports.colorizeCell = function(str, cellOptions, rowType) {
+
+const colorizeCell = function(str, cellOptions, rowType) {
 
   let color = false //false will keep terminal default
 
@@ -22,6 +23,7 @@ exports.colorizeCell = function(str, cellOptions, rowType) {
   return str
 }
 
+
 /*
 exports.colorizeAllWords = function(color,str){
   //color each word in the cell so that line breaks don't break color
@@ -31,3 +33,8 @@ exports.colorizeAllWords = function(color,str){
   return arr;
 }
 */
+
+
+module.exports = {
+  colorizeCell
+}
