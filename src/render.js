@@ -30,36 +30,36 @@ module.exports.stringifyData = (config, inputData) => {
 
   if(global.columnWidths[config.tableId]) {
     config.table.columnWidths = global.columnWidths[config.tableId]
-  } else{
+  } else {
     global.columnWidths[config.tableId] = config.table.columnWidths = Format.getColumnWidths(config, rowData)
   }
 
   // stringify header cells
   if(!config.headerEmpty) {
-    sections.header = config.table.header.map(function(row) {
+    sections.header = config.table.header.map(row => {
       return exports.buildRow(config, row, "header", null, rowData, inputData)
     })
-  } else{
+  } else {
     sections.header = []
   }
 
   // stringify body cells
-  sections.body = rowData.map(function(row, rowIndex) {
+  sections.body = rowData.map((row, rowIndex) => {
     return exports.buildRow(config, row, "body", rowIndex, rowData, inputData)
   })
 
   // stringify footer cells
   sections.footer = (config.table.footer instanceof Array && config.table.footer.length > 0) ? [config.table.footer] : []
 
-  sections.footer = sections.footer.map(function(row) {
+  sections.footer = sections.footer.map(row => {
     return exports.buildRow(config, row, "footer", null, rowData, inputData)
   })
 
   // add borders
   // 0=header, 1=body, 2=footer
-  for(let a=0; a<3; a++) {
+  for (let a=0; a<3; a++) {
     borders.push("")
-    config.table.columnWidths.forEach(function(w, i, arr) {
+    config.table.columnWidths.forEach(function (w, i, arr) {
       borders[a] += Array(w).join(borderStyle[a].h) +
         ((i+1 !== arr.length) ? borderStyle[a].j : borderStyle[a].r)
     })
@@ -76,7 +76,7 @@ module.exports.stringifyData = (config, inputData) => {
   output += borders[0]
 
   // for each section (header,body,footer)
-  Object.keys(sections).forEach(function(p, i) {
+  Object.keys(sections).forEach((p, i) => {
 
     // for each row in the section
     while(sections[p].length) {
@@ -85,7 +85,7 @@ module.exports.stringifyData = (config, inputData) => {
 
       // if(row.length === 0) {break}
 
-      row.forEach(function(line) {
+      row.forEach(line => {
         // vertical row borders
         output = `${output
           + marginLeft
@@ -106,16 +106,20 @@ module.exports.stringifyData = (config, inputData) => {
              && i === 1
              && sections.footer.length === 0):
           break
+
         // skip if end of footer
         case(sections[p].length === 0
              && i === 2):
           break
+
         // skip if compact
         case(config.compact && p === "body" && !row.empty):
           break
+
         // skip if border style is "none"
         case(config.borderStyle === "none" && config.compact):
           break
+
         default:
           output += borders[1]
       }
@@ -129,6 +133,7 @@ module.exports.stringifyData = (config, inputData) => {
 
   // record the height of the output
   config.height = finalOutput.split(/\r\n|\r|\n/).length
+
   return finalOutput
 }
 
@@ -145,13 +150,11 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
 
   // force row to have correct number of columns
   let difL = config.table.columnWidths.length - row.length
+
   if(difL > 0) {
     // add empty element to array
-    row = row.concat(Array.apply(null, new Array(difL))
-      .map(function() {
-        return null
-      }))
-  } else if(difL < 0) {
+    row = row.concat(Array.apply(null, new Array(difL)).map(() => null))
+  } else if (difL < 0) {
     // truncate array
     row.length = config.table.columnWidths.length
   }
@@ -161,6 +164,7 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
   // [1,,3] will only iterate 1,3
   let cArrs = []
   let rowLength = row.length
+
   for(let index=0; index<rowLength; index++) {
 
     let c = exports.buildCell(config, row[index], index, rowType, rowIndex, rowData, inputData)
@@ -182,9 +186,7 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
 
   // convert array of cell arrays to array of lines
   let lines = Array.apply(null, {length: minRowHeight})
-    .map(Function.call, function() {
-      return []
-    })
+    .map(Function.call, () => [])
 
   cArrs.forEach(function(cellArr, a) {
     let whiteline = Array(config.table.columnWidths[a]).join(" ")
@@ -229,12 +231,15 @@ module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowDat
         // replace undefined/null cell values with placeholder
         cellValue = (config.errorOnNull) ? config.defaultErrorValue : config.defaultValue
         break
+
       case(typeof cell === "object" && typeof cell.value !== "undefined"):
         cellValue = cell.value
         break
+
       case(typeof cell === "function"):
         cellValue = cell(cellValue, columnIndex, rowIndex, rowData, inputData)
         break
+
       default:
         // cell is assumed to be a scalar
         cellValue = cell
@@ -266,12 +271,14 @@ module.exports.getRowFormat = (row, config) => {
   // rows passed as an object
   if(typeof row === "object" && !(row instanceof Array)) {
     let keys = Object.keys(row)
+
     if(config.adapter === "automattic") {
       // detected cross table
       let key = keys[0]
+
       if(row[key] instanceof Array) {
         type = "automattic-cross"
-      } else{
+      } else {
         // detected vertical table
         type = "automattic-vertical"
       }
@@ -279,7 +286,7 @@ module.exports.getRowFormat = (row, config) => {
       // detected horizontal table
       type = "o-horizontal"
     }
-  } else{
+  } else {
     // rows passed as an array
     type = "a-horizontal"
   }
@@ -298,14 +305,10 @@ module.exports.verticalizeMatrix = (config, inputArray) => {
 
   // create a row for each heading, and prepend the row
   // with the heading name
-  headers.forEach(function(name) {
-    outputArray.push([name])
-  })
+  headers.forEach(name => outputArray.push([name]))
 
-  inputArray.forEach(function(row) {
-    row.forEach(function(element, index) {
-      outputArray[index].push(element)
-    })
+  inputArray.forEach(row => {
+    row.forEach((element, index) => outputArray[index].push(element))
   })
 
   return outputArray
@@ -324,13 +327,14 @@ module.exports.transformRows = (config, rows) => {
       config.columnSettings[0] = config.columnSettings[0] || {}
       config.columnSettings[0].color = config.headerColor
 
-      output = rows.map(function(obj) {
+      output = rows.map(obj => {
         let arr = []
         let key = Object.keys(obj)[0]
         arr.push(key)
         return arr.concat(obj[key])
       })
       break
+
     case("automattic-vertical"):
       // assign header styles to first column
       config.columnSettings[0] = config.columnSettings[0] || {}
@@ -341,26 +345,24 @@ module.exports.transformRows = (config, rows) => {
         return [key, value[key]]
       })
       break
+
     case("o-horizontal"):
       // cell property names are specified in header columns
       if (config.table.header[0].length
-        && config.table.header[0].every( obj => obj.value )) {
-        output = rows.map(function(row) {
-          return config.table.header[0].map(function(object) {
-            return row[object.value]
-          })
-        })
+        && config.table.header[0].every(obj => obj.value)) {
+        output = rows.map(row => config.table.header[0]
+          .map(obj => row[obj.value]))
       } // eslint-disable-line brace-style
       // no property names given, default to object property order
       else {
-        output = rows.map(function(obj) {
-          return Object.values(obj)
-        })
+        output = rows.map(obj => Object.values(obj))
       }
       break
+
     case("a-horizontal"):
       output = rows
       break
+
     default:
   }
 

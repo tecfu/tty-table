@@ -105,7 +105,7 @@ const Factory = function(paramsArr) {
       body.push(...paramsArr[0])
       break
 
-    // adapter called          i.e. require('tty-table')('automattic-cli')
+    // adapter called: i.e. `require('tty-table')('automattic-cli')`
     case(paramsArr.length === 1 && typeof paramsArr[0] === "string"):
       return require(`../adapters/${  paramsArr[0]}`)
 
@@ -115,7 +115,6 @@ const Factory = function(paramsArr) {
   }
 
   // For "deep" copy, use JSON.parse
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Deep_Clone
   const cloneddefaults = JSON.parse(JSON.stringify(defaults))
   let config = Object.assign({}, cloneddefaults, options)
 
@@ -174,8 +173,6 @@ const Factory = function(paramsArr) {
    * ```
   */
   tableObject.render = function() {
-    // let configCopy = JSON.parse(JSON.stringify(this[_configKey]));
-    // return render.stringifyData(configCopy,this.slice(0));  //get string output
     let output = render.stringifyData(this[_configKey], this.slice(0))  // get string output
     tableObject.height = this[_configKey].height
     return output
