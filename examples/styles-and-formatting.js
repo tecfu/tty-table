@@ -1,3 +1,4 @@
+require("../test/example-header.js")()
 const Table = require("../")
 const chalk = require("chalk")
 

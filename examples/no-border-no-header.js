@@ -1,3 +1,4 @@
+require("../test/example-header.js")()
 const Table = require("../")
 
 //No empty space where horizontal border would be

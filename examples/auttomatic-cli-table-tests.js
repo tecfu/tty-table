@@ -1,3 +1,4 @@
+require("../test/example-header.js")()
 //var Table = require('cli-table');
 const Table = require("../")("automattic-cli-table")
 

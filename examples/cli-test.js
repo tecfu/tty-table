@@ -1,3 +1,4 @@
+require("../test/example-header.js")()
 const cp = require("child_process")
 const pwd = __dirname
 

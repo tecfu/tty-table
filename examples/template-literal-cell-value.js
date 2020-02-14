@@ -1,3 +1,4 @@
+require("../test/example-header.js")()
 const Table = require("../")
 
 const rows = [[`The use of the cli-table is deprecated.

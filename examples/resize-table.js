@@ -1,4 +1,4 @@
-// table resize test for tty-table
+require("../test/example-header.js")()
 const Table = require("../")
 const Chalk = require("chalk")
 
