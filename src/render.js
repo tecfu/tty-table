@@ -33,12 +33,21 @@ module.exports.stringifyData = (config, inputData) => {
   }
 
   // stringify header cells
-  if(!config.headerEmpty) {
-    sections.header = config.table.header.map(row => {
-      return exports.buildRow(config, row, "header", null, rows, inputData)
-    })
-  } else {
-    sections.header = []
+  // hide header if no column names or if specified in config
+  switch (true) {
+    case (config.showHeader !== null && !config.showHeader): // explicitly false, hide
+      sections.header = []
+      break
+
+    case (config.showHeader === true): // explicitly true, show
+    case (!!config.table.header[0].find(obj => obj.value)): //  atleast one named column, show
+      sections.header = config.table.header.map(row => {
+        return exports.buildRow(config, row, "header", null, rows, inputData)
+      })
+      break
+
+    default: // no named columns, hide
+      sections.header = []
   }
 
   // stringify body cells

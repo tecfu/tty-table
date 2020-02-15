@@ -141,7 +141,6 @@ const Factory = function(paramsArr) {
 
   // header
   config.table.header = header
-  config.headerEmpty = (header.length === 0) ? true : false
 
   // match header geometry with body array
   config.table.header = [config.table.header]

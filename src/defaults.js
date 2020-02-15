@@ -35,13 +35,13 @@ const defaults = {
   formatter: null,
   headerAlign: "center",
   headerColor: "yellow",
-  headerEmpty: false, // undocumented
   marginLeft: 2,
   marginTop: 1,
   paddingBottom: 0,
   paddingLeft: 1,
   paddingRight: 1,
   paddingTop: 0,
+  showHeader: null, // undocumented
   truncate: false,
   width: "auto",
   GUTTER: 1, // undocumented
