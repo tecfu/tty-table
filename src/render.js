@@ -15,15 +15,13 @@ module.exports.stringifyData = (config, inputData) => {
   const borderStyle = config.borderCharacters[config.borderStyle]
   let borders = []
 
-  // because automattic/cli-table syntax infers table type based on
-  // how rows are passed (array of arrays, objects, etc)
-  config.rowFormat = exports.getRowFormat(inputData[0] || [], config)
-
-  // now translate them
-  const rowData = exports.transformRows(config, inputData)
+  // support backwards compatibility cli-table's multiple constructor geometries
+  // @TODO deprecate and support only a single format
+  const constructorType = exports.getConstructorGeometry(inputData[0] || [], config)
+  const rows = exports.coerceConstructor(config, inputData, constructorType)
 
   // when streaming values to tty-table, we don't want column widths to change
-  // from one rowData set to the next, so we save the first set of widths and reuse
+  // from one rows set to the next, so we save the first set of widths and reuse
   if(!global.columnWidths) {
     global.columnWidths = {}
   }
@@ -31,28 +29,28 @@ module.exports.stringifyData = (config, inputData) => {
   if(global.columnWidths[config.tableId]) {
     config.table.columnWidths = global.columnWidths[config.tableId]
   } else {
-    global.columnWidths[config.tableId] = config.table.columnWidths = Format.getColumnWidths(config, rowData)
+    global.columnWidths[config.tableId] = config.table.columnWidths = Format.getColumnWidths(config, rows)
   }
 
   // stringify header cells
   if(!config.headerEmpty) {
     sections.header = config.table.header.map(row => {
-      return exports.buildRow(config, row, "header", null, rowData, inputData)
+      return exports.buildRow(config, row, "header", null, rows, inputData)
     })
   } else {
     sections.header = []
   }
 
   // stringify body cells
-  sections.body = rowData.map((row, rowIndex) => {
-    return exports.buildRow(config, row, "body", rowIndex, rowData, inputData)
+  sections.body = rows.map((row, rowIndex) => {
+    return exports.buildRow(config, row, "body", rowIndex, rows, inputData)
   })
 
   // stringify footer cells
   sections.footer = (config.table.footer instanceof Array && config.table.footer.length > 0) ? [config.table.footer] : []
 
   sections.footer = sections.footer.map(row => {
-    return exports.buildRow(config, row, "footer", null, rowData, inputData)
+    return exports.buildRow(config, row, "footer", null, rows, inputData)
   })
 
   // add borders
@@ -265,7 +263,10 @@ module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowDat
 }
 
 
-module.exports.getRowFormat = (row, config) => {
+/**
+ * Check for a backwards compatible (cli-table) constructor
+ */
+module.exports.getConstructorGeometry = (row, config) => {
   let type
 
   // rows passed as an object
@@ -295,33 +296,13 @@ module.exports.getRowFormat = (row, config) => {
 }
 
 
-// @todo For rotating horizontal data into a vertical table
-// assumes all rows are same length
-module.exports.verticalizeMatrix = (config, inputArray) => {
-
-  // grow to # arrays equal to number of columns in input array
-  let outputArray = []
-  let headers = config.table.columns
-
-  // create a row for each heading, and prepend the row
-  // with the heading name
-  headers.forEach(name => outputArray.push([name]))
-
-  inputArray.forEach(row => {
-    row.forEach((element, index) => outputArray[index].push(element))
-  })
-
-  return outputArray
-}
-
-
 /**
- * Transforms input data arrays to base rendering structure.
+ * Coerce backwards compatible constructor styles
  */
-module.exports.transformRows = (config, rows) => {
+module.exports.coerceConstructor = (config, rows, constructorType) => {
 
   let output = []
-  switch(config.rowFormat) {
+  switch(constructorType) {
     case("automattic-cross"):
       // assign header styles to first column
       config.columnSettings[0] = config.columnSettings[0] || {}
@@ -367,4 +348,24 @@ module.exports.transformRows = (config, rows) => {
   }
 
   return output
+}
+
+
+// @TODO For rotating horizontal data into a vertical table
+// assumes all rows are same length
+module.exports.verticalizeMatrix = (config, inputArray) => {
+
+  // grow to # arrays equal to number of columns in input array
+  let outputArray = []
+  let headers = config.table.columns
+
+  // create a row for each heading, and prepend the row
+  // with the heading name
+  headers.forEach(name => outputArray.push([name]))
+
+  inputArray.forEach(row => {
+    row.forEach((element, index) => outputArray[index].push(element))
+  })
+
+  return outputArray
 }
