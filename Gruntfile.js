@@ -18,7 +18,7 @@ module.exports = function(grunt) {
         //A FORMATTED TIMESTAMP STRING FOR BACKUP NAMING
         var d = new Date(),dstr = '';
         dstr = ('0' + d.getHours()).slice(-2)
- Info: https://github.com/nodejs/node/issues/24731       + ':' + ('0' + d.getMinutes()).slice(-2)
+        + ':' + ('0' + d.getMinutes()).slice(-2)
         + ':' + ('0' + d.getSeconds()).slice(-2);
         return dstr;
       }())
