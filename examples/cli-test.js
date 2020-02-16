@@ -1,4 +1,4 @@
-require("../test/example-header.js")()
+require("../test/example-utils.js").quickInit()
 const cp = require("child_process")
 const pwd = __dirname
 

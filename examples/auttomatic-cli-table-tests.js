@@ -1,5 +1,4 @@
-require("../test/example-header.js")()
-// var Table = require('cli-table');
+require("../test/example-utils.js").quickInit()
 const Table = require("../")("automattic-cli-table")
 
 /* col widths */

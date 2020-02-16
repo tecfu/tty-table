@@ -1,10 +1,9 @@
-
-=== width=25 ===========|
+╠═ width=25 ════════════╣
   ┌─┬─────┬────────────┐
   │a│ aaa │aaa bbb ccc │
   │a│ bbb │ddd eee fff │
   │a│ ccc │ggg hhh iii │
-  │b│😀 😃│jjj kkk lll │
+  │b│😀😃 │jjj kkk lll │
   │b│😄😁 │mmm nnn ooo │
   │b│ eee │ppp qqq rrr │
   │c│ fff │  sss ttt   │

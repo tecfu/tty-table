@@ -1,4 +1,4 @@
-require("../test/example-header.js")()
+require("../test/example-utils.js").quickInit()
 const Table = require("../")
 
 const rows = [[`The use of the cli-table is deprecated.
