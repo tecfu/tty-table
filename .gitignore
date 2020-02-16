@@ -5,4 +5,5 @@ Session.vim
 tags
 .nyc_output
 temp
-
+.idea
+scratch-files

@@ -1,4 +1,4 @@
-require("../test/example-header.js")()
+require("../test/example-utils.js").quickInit()
 const Table = require("../")
 
 // No empty space where horizontal border would be

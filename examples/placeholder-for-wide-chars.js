@@ -1,4 +1,4 @@
-require("../test/example-header.js")(25, true)
+require("../test/example-utils.js").quickInit(25, true)
 const Table = require("../")
 
 /**
