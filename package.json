@@ -49,8 +49,8 @@
   },
   "homepage": "https://github.com/tecfu/tty-table",
   "dependencies": {
-    "chalk": "^2.4.2",
     "csv": "^5.3.1",
+    "kleur": "^3.0.3",
     "smartwrap": "^1.2.3",
     "strip-ansi": "^6.0.0",
     "wcwidth": "^1.0.1",

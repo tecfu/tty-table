@@ -1,11 +1,12 @@
 require("../test/example-utils.js").quickInit()
 const Table = require("../")
-const Chalk = require("chalk")
 
 const header = [
   {
     value: "item",
-    formatter: value => Chalk.cyan(value)
+    formatter: function(value) {
+      return this.style(value, "cyan")
+    }
   },
   { value: "price" },
   { value: "organic" }
@@ -24,9 +25,9 @@ const options = {
 // Example with arrays as rows
 const rows = [
   [],
-  ["special sauce", 0.10],
+  ["special sauce", 0.10, "yes"],
   [null, 1.50, "no", "extra element", "another extra element"],
-  ["macaroni and cheese", 3.75, "no"]
+  ["macaroni and cheese", 3.75]
 ]
 
 // Example with objects as rows
@@ -34,7 +35,8 @@ const rows2 = [
   {},
   {
     item: "special sauce",
-    price: 0.10
+    price: 0.10,
+    organic: "yes"
   },
   {
     item: null,
@@ -43,8 +45,7 @@ const rows2 = [
   },
   {
     item: "macaroni and cheese",
-    price: 3.75,
-    organic: "no"
+    price: 3.75
   }
 ]
 
@@ -54,9 +55,14 @@ const footer = [
   (cellValue, columnIndex, rowIndex, rowData) => {
     return rowData.reduce((prev, curr) => {
       return (curr[1]) ? prev + curr[1] : prev
-    }, 0)
+    }, 0).toFixed(2)
   },
-  "N/A"
+  function (cellValue, columnIndex, rowIndex, rowData) {
+    let total = rowData.reduce((prev, curr) => {
+      return prev + ((curr[2] === "yes") ? 1 : 0)
+    }, 0)
+    return `${ (total / rowData.length * 100).toFixed(2) }%`
+  }
 ]
 
 let t1 = Table(header, rows, footer, options)

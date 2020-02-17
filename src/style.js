@@ -1,5 +1,11 @@
-const chalk = require("chalk")
+const kleur = require("kleur")
 
+
+module.exports.color = (str, ...colors) => {
+  return colors.reduce(function(input, color) {
+    return kleur[color](input)
+  }, str)
+}
 
 module.exports.colorizeCell = (str, cellOptions, rowType) => {
 
@@ -19,19 +25,8 @@ module.exports.colorizeCell = (str, cellOptions, rowType) => {
   }
 
   if (color) {
-    str = chalk[color](str)
+    str = exports.color(str, color)
   }
 
   return str
 }
-
-
-/*
-module.exports.colorizeAllWords = function(color,str){
-  //color each word in the cell so that line breaks don't break color
-  let arr = str.replace(/(\S+)/gi,function(match){
-    return chalk[color](match)+'\ ';
-  });
-  return arr;
-}
-*/

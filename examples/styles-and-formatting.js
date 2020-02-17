@@ -1,6 +1,5 @@
 require("../test/example-utils.js").quickInit()
 const Table = require("../")
-const chalk = require("chalk")
 
 let header = [
   {
@@ -8,30 +7,28 @@ let header = [
     headerColor: "cyan",
     color: "white",
     align: "left",
-    paddingLeft: 5,
-    width: 30
+    width: 20
   },
   {
     value: "price",
     color: "red",
     width: 10,
-    formatter: (value) => {
-      var str = `$${value.toFixed(2)}`
-      if(value > 5) {
-        str = chalk.underline.green(str)
-      }
-      return str
+    formatter: function (value) {
+      let str = `$${value.toFixed(2)}`
+      return (value > 5) ? this.style(str, "green", "bold") :
+        this.style(str, "red", "underline")
     }
   },
   {
-    alias: "Is organic?",
+    alias: "is organic?",
     value: "organic",
+    align: "right",
     width: 15,
-    formatter: (value) => {
+    formatter: function (value) {
       if(value === "yes") {
-        value = chalk.black.bgGreen(value)
+        value = this.style(value, "bgGreen", "black")
       } else{
-        value = chalk.white.bgRed(value)
+        value = this.style(value, "bgRed", "white")
       }
       return value
     }
@@ -40,22 +37,36 @@ let header = [
 
 // Example with arrays as rows
 const rows = [
-  ["hamburger", 2.50, "no"],
-  ["el jefe's special cream sauce", 0.10, "yes"],
-  ["two tacos, rice and beans topped with cheddar cheese", 9.80, "no"],
-  ["apple slices", 1.00, "yes"],
-  ["ham sandwich", 1.50, "no"],
-  ["macaroni, ham and peruvian mozzarella", 3.75, "no"]
+  ["tallarin verde", 5.50, "yes"],
+  ["aji de gallina", 4.50, "no"],
 ]
+
+// Example with objects as rows
+const rows2 = [
+  {
+    item: "tallarin verde",
+    price: 5.50,
+    organic: "yes"
+  },
+  {
+    item: "aji de gallina",
+    price: 4.50,
+    organic: "no"
+  }
+]
+
 
 const footer = [
   "TOTAL",
-  (cellValue, columnIndex, rowIndex, rowData) => {
-    return rowData.reduce((prev, curr) => {
+  function (cellValue, columnIndex, rowIndex, rowData) {
+    let total = rowData.reduce((prev, curr) => {
       return prev + curr[1]
     }, 0)
+      .toFixed(2)
+
+    return this.style(`$${total}`, "italic")
   },
-  (cellValue, columnIndex, rowIndex, rowData) => {
+  function (cellValue, columnIndex, rowIndex, rowData) {
     let total = rowData.reduce((prev, curr) => {
       return prev + ((curr[2] === "yes") ? 1 : 0)
     }, 0)
@@ -63,94 +74,35 @@ const footer = [
   }
 ]
 
-let t1 = Table(header, rows, footer, {
+const options = {
   borderStyle: "solid",
-  borderColor: "blue",
+  borderColor: "green",
   paddingBottom: 0,
   headerAlign: "center",
   align: "center",
   color: "white",
   truncate: "..."
-})
-
-console.log(t1.render())
-
-
-// Example with objects as rows
-const rows2 = [
-  {
-    item: "hamburger",
-    price: 2.50,
-    organic: "no"
-  },
-  {
-    item: "el jefe's special cream sauce",
-    price: 0.10,
-    organic: "yes"
-  },
-  {
-    item: "two tacos, rice and beans topped with cheddar cheese",
-    price: 9.80,
-    organic: "no"
-  },
-  {
-    item: "apple slices",
-    price: 1.00,
-    organic: "yes"
-  },
-  {
-    item: "ham sandwich",
-    price: 1.50,
-    organic: "no"
-  },
-  {
-    item: "macaroni, ham and peruvian mozzarella",
-    price: 3.75,
-    organic: "no"
-  }
-]
-
-const t2 = Table(header, rows2, {
-  borderStyle: "solid",
-  paddingBottom: 0,
-  headerAlign: "center",
-  align: "center",
-  color: "white"
-})
-
-console.log(t2.render())
-
-
-// template literals
-let header3 = [
-  { value: "name", width: 30, headerAlign: "left" },
-  { value: "price", width: 30, headerAlign: "left" }
-]
-
-const opts = {
-  align: "left"
 }
 
-const rows3 = [
-  [`apple ${chalk.red("mac")}`, 92.50],
-  ["ibm", 120.15]
-]
+let t1 = Table(header, rows, footer, options).render()
+console.log(t1)
 
-let t3 = Table(header3, rows3, opts)
-console.log(t3.render())
+const t2 = Table(header, rows2, footer, options).render()
+console.log(t2)
 
 
-const header4 = [
+
+const header3 = [
   {
     value: "price",
-    formatter: (cellValue, columnIndex, rowIndex, rowData, inputData) => {
+    formatter: function (cellValue, columnIndex, rowIndex, rowData, inputData) {
       const row = inputData[rowIndex] // How to get the whole row
       let _color
 
       if(!row.enabled) _color = "gray"
       if(row.important) _color = "red"
 
-      return chalk[_color](cellValue)
+      return this.style(cellValue, _color)
     }
   },
   {
@@ -158,10 +110,10 @@ const header4 = [
   }
 ]
 
-const rows4 = [
+const rows3 = [
   { item: "banana", price: 1.99, important: true, enabled: true },
   { item: "grapes", price: 2.99, important: false, enabled: false }
 ]
 
-const t4 = Table(header4, rows4)
-console.log(t4.render())
+const t3 = Table(header3, rows3)
+console.log(t3.render())

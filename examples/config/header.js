@@ -1,4 +1,3 @@
-let chalk = require("chalk")
 module.exports = [
   {
     value: "ticker",
@@ -11,7 +10,7 @@ module.exports = [
     formatter: function(value) {
       var str = `$${  value.toFixed(2)}`
       if(value > 138) {
-        str = chalk.bold.green(str)
+        str = this.style(str, "green", "bold")
       }
       return str
     }

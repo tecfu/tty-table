@@ -244,7 +244,13 @@ module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowDat
         break
 
       case(typeof cell === "function"):
-        cellValue = cell(cellValue, columnIndex, rowIndex, rowData, inputData)
+        cellValue = cell.bind({ style: Style.color })(
+          cellValue,
+          columnIndex,
+          rowIndex,
+          rowData,
+          inputData
+        )
         break
 
       default:
@@ -252,9 +258,16 @@ module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowDat
         cellValue = cell
     }
 
-    // run header formatter
+    // run formatter
     if(typeof cellOptions.formatter === "function") {
-      cellValue = cellOptions.formatter(cellValue, columnIndex, rowIndex, rowData, inputData)
+      cellValue = cellOptions.formatter
+        .bind({ style: Style.color })(
+          cellValue,
+          columnIndex,
+          rowIndex,
+          rowData,
+          inputData
+        )
     }
   }
 

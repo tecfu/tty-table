@@ -1,6 +1,6 @@
 const defaults = require("./defaults.js")
-const render = require("./render.js")
-const chalk = require("chalk")
+const Render = require("./render.js")
+const Style = require("./style.js")
 let counter = 0
 
 
@@ -130,7 +130,7 @@ const Factory = function(paramsArr) {
     config.borderCharacters[config.borderStyle] =
       config.borderCharacters[config.borderStyle].map(function(obj) {
         Object.keys(obj).forEach(function(key) {
-          obj[key] = chalk[config.borderColor](obj[key])
+          obj[key] = Style.color(obj[key], config.borderColor)
         })
         return obj
       })
@@ -172,7 +172,7 @@ const Factory = function(paramsArr) {
    * ```
   */
   tableObject.render = function() {
-    let output = render.stringifyData(this[_configKey], this.slice(0))  // get string output
+    let output = Render.stringifyData(this[_configKey], this.slice(0))  // get string output
     tableObject.height = this[_configKey].height
     return output
   }

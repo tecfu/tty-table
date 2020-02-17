@@ -75,7 +75,7 @@ $ tty-table -h
 | color | <code>string</code> | default: terminal default color |
 | footerAlign | <code>string</code> | default: "center" |
 | footerColor | <code>string</code> | default: terminal default color |
-| formatter | <code>function(cellValue, columnIndex, rowIndex, rowData, inputData)</code> | Runs a callback on each cell value in the parent column |
+| formatter | <code>function(cellValue, columnIndex, rowIndex, rowData, inputData)</code> | Runs a callback on each cell value in the parent column. <br/>Use `this.style` within function body to style text, i.e. `this.style("mytext", "bold", "green", "underline")`. <br/>Please note that fat arrow functions `() => {}` don't support scope overrides, and this feature won't work within them. For a full list of options, see: [kleur](https://github.com/lukeed/kleur).  |
 | headerAlign | <code>string</code> | default: "center" |
 | headerColor | <code>string</code> | default: terminal's default color |
 | marginLeft | <code>integer</code> | default: 0 |
@@ -91,29 +91,23 @@ $ tty-table -h
 **Example**
 
 ```js
-let header = [
-  {
-    alias: "my items",
-    value: "item",
-    headerColor: "cyan",
-    color: "white",
-    align: "left",
-    paddingLeft: 5,
-    width: 30
-  },
-  {
-    value: "price", // if not set, alias will default to "price"
-    color: "red",
-    width: 10,
-    formatter: function(cellValue) {
-      var str = `$${cellValue.toFixed(2)}`
-      if(value > 5) {
-        str = chalk.underline.green(str)
-      }
-      return str
-    }
+let header = [{
+  value: "item",
+  headerColor: "cyan",
+  color: "white",
+  align: "left",
+  width: 20
+},
+{
+  value: "price",
+  color: "red",
+  width: 10,
+  formatter: function (value) {
+    let str = `$${value.toFixed(2)}`
+    return (value > 5) ? this.style(str, "green", "bold") : 
+      this.style(str, "red", "underline")
   }
-]
+}]
 ```
 
 <br/>
@@ -151,16 +145,13 @@ const rows = [
 ```js
 const footer = [
   "TOTAL",
-  (cellValue, columnIndex, rowIndex, rowData, inputData) => {
-    return rowData.reduce((prev, curr) => {
+  function (cellValue, columnIndex, rowIndex, rowData) {
+    let total = rowData.reduce((prev, curr) => {
       return prev + curr[1]
     }, 0)
-  },
-  (cellValue, columnIndex, rowIndex, rowData, inputData) => {
-    let total = rowData.reduce((prev, curr) => {
-      return prev + ((curr[2] === "yes") ? 1 : 0)
-    }, 0)
-    return `${ (total / rowData.length * 100).toFixed(2) }%`
+    .toFixed(2)
+
+    return this.style(`$${total}`, "italic")
   }
 ]
 ``` 

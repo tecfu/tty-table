@@ -1,12 +1,11 @@
 require("../test/example-utils.js").quickInit()
 const Table = require("../")
-const Chalk = require("chalk")
 
 let header = [
   {
     value: "item name",
     formatter: function(value) {
-      return Chalk.cyan(value)
+      return this.style(value, "cyan")
     },
     width: 10
   },
