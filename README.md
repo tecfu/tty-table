@@ -25,7 +25,7 @@ Display your data in a table using a terminal, browser, or browser console.
 $ node examples/data/fake-stream.js | tty-table --format json --header examples/config/header.js
 ```
 
-![Streaming](https://user-images.githubusercontent.com/7478359/51738817-47c25700-204d-11e9-9df1-04e478331658.gif "Streaming Example") 
+![Streaming](https://user-images.githubusercontent.com/7478359/51738817-47c25700-204d-11e9-9df1-04e478331658.gif "tty-table streaming example") 
 
 - See the built-in help for the terminal version of tty-table with: 
 ```
@@ -36,16 +36,9 @@ $ tty-table -h
 
 - [examples/browser-example.html](examples/browser-example.html)
 
-![Browser Console Example](https://cloud.githubusercontent.com/assets/7478359/25214897/df99d2e8-254e-11e7-962f-743890292a24.png) 
+![Browser Console Example](https://user-images.githubusercontent.com/7478359/74614563-cbcaff00-50e6-11ea-9101-5457497696b8.jpg "tty-table in the browser console") 
 
 [Working Example in Browser](https://cdn.rawgit.com/tecfu/tty-table/master/examples/browser-example.html)
-
-> Note that neither ASCI colors nor default borders are rendered in the browser.
-> An alternative border style, as shown below, should be used by setting the following option:
->
-> ```
-> borderStyle : "dashed"
-> ```
 
 <br/>
 <br/>
@@ -220,11 +213,11 @@ $ npm install tty-table
 - Browser
 
 ```html
-<script src="tty-table.bundle.min.js"></script>
-<script>
- const Table = require('tty-table');
- ...
-</script>
+import Table from './dist/tty-table.esm.js'
+
+// other options:
+// let Table = require('tty-table')   // dist/tty-table.cjs.js
+// let Table = TTY_Table;             // dist/tty-table.umd.js
 ```
 
 

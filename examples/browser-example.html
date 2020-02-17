@@ -1,86 +1,98 @@
 <!doctype html>
 <html>
   <head>
-    <script src="../dist/tty-table.bundle.js"></script>
-    <script>
-      //Remember: ASCI colors won't render in the browser!
-      //in html body
-      let Table = require("tty-table");
-
+    <script src="https://cdn.jsdelivr.net/npm/ansi_up@4.0.4/ansi_up.min.js"></script>
+    <script src="./../dist/tty-table.cjs.js"></script>
+    <script src="./../dist/tty-table.umd.js"></script>
+    <script type="module">
+      
+      import Table from './../dist/tty-table.esm.js'
+      // let Table = require('tty-table') // tty-table.cjs.js
+      // let Table = TTY_Table; // tty-table.umd.js
+      
       let header = [
         {
           value: "item",
           headerColor: "cyan",
-          color: "yellow",
+          color: "white",
           align: "left",
-          // paddingRight: 5,
-          // width: 30
+          width: 20
         },
         {
           value: "price",
-          color: "red", 
-          formatter: function(value){
-            var str = "$" + value.toFixed(2);
-            if(value > 5){
-              //str = chalk.underline.green(str);
+          color: "red",
+          width: 10,
+          formatter: function (value) {
+            var str = `$${value.toFixed(2)}`
+            if(value > 5) {
+              str = this.style(str, "green")
             }
-            return str;
+            return str
           }
         },
         {
-          alias: "Is organic?",  
+          alias: "Is organic?",
           value: "organic",
-          formatter: function(value){
-            if(value === 'yes'){
-              //value = chalk.stripColor(value);
-              //value = chalk.green(value);
+          width: 15,
+          formatter: function (value) {
+            if(value === "yes") {
+              value = this.style(value, "bgGreen", "black")
+            } else{
+              value = this.style(value, "bgRed", "white")
             }
-            else{
-              //value = chalk.white.bgRed(value);
-            }
-            return value;
+            return value
           }
         }
-      ];
+      ]
 
-      //Example with arrays as rows 
-      let rows = [
-        ["hamburger",2.50,"no"],
-        ["el jefe's special cream sauce",0.10,"yes"]
-      ];
+      // Example with arrays as rows
+      const rows = [
+        ["tallarin verde", 5.50, "yes"],
+        ["aji de gallina", 4.50, "no"],
+      ]
 
-      let footer = [
+      const footer = [
         "TOTAL",
-        (function(){
-          return rows.reduce(function(prev,curr){
-            return prev+curr[1]
-          },0)
-        }()),
-        (function(){
-          var total = rows.reduce(function(prev,curr){
-            return prev+((curr[2]==='yes') ? 1: 0);
-          },0);
-          return (total/rows.length*100).toFixed(2) + "%";
-        }())];
+        function (cellValue, columnIndex, rowIndex, rowData) {
+          let total = rowData.reduce((prev, curr) => {
+            return prev + curr[1]
+          }, 0)
+          .toFixed(2)
 
-      let t1 = Table(header,rows,footer,{
-        borderStyle: 2,
+          return `$${total}`
+        },
+        function (cellValue, columnIndex, rowIndex, rowData) {
+          let total = rowData.reduce((prev, curr) => {
+            return prev + ((curr[2] === "yes") ? 1 : 0)
+          }, 0)
+          return `${ (total / rowData.length * 100).toFixed(2) }%`
+        }
+      ]
+
+      const options = {
+        borderStyle: "solid", // only "dashed" works with iife module
+        borderColor: "green",
         paddingBottom: 0,
         headerAlign: "center",
         align: "center",
-        color: "white"
-      });
+        color: "white",
+        truncate: "..."
+      }
 
-      let str1 = t1.render();
-      console.log(str1);
+      let ANSI = Table(header, rows, footer, options).render()
+      console.log(ANSI);
+
+      var ansi_up = new AnsiUp;
+      var html = ansi_up.ansi_to_html(ANSI);
 
       setTimeout(function(){
-         document.getElementById('example').innerHTML = str1;
+         document.getElementById('example').innerHTML = html;
       },200);
     </script>
   </head>
   <body>
-    <h2>Also see your browser console for this output.</h2>
+    <h2>Source: examples/browser-example.html</h2>
+    Only known to be supported in Chrome > 79.
     <pre>
       <span id="example"></span>
     </pre>
