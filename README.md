@@ -34,11 +34,11 @@ $ tty-table -h
 
 ### Browser & Browser Console 
 
-- [examples/browser-example.html](examples/browser-example.html)
+- [demo: jsfiddle](https://jsfiddle.net/6hz1a9cs/3/)
+- [demo: plinkr](https://plnkr.co/edit/iQn9xn5yCY4NUkXRF87o?p=preview)
+- [source: examples/browser-example.html](examples/browser-example.html)
 
 ![Browser Console Example](https://user-images.githubusercontent.com/7478359/74614563-cbcaff00-50e6-11ea-9101-5457497696b8.jpg "tty-table in the browser console") 
-
-[Working Example in Browser](https://cdn.rawgit.com/tecfu/tty-table/master/examples/browser-example.html)
 
 <br/>
 <br/>
@@ -213,11 +213,9 @@ $ npm install tty-table
 - Browser
 
 ```html
-import Table from './dist/tty-table.esm.js'
-
-// other options:
-// let Table = require('tty-table')   // dist/tty-table.cjs.js
-// let Table = TTY_Table;             // dist/tty-table.umd.js
+import Table from 'https://cdn.jsdelivr.net/gh/tecfu/tty-table/dist/tty-table.esm.js'
+let Table = require('tty-table')   // https://cdn.jsdelivr.net/gh/tecfu/tty-table/dist/tty-table.umd.js
+let Table = TTY_Table;             // https://cdn.jsdelivr.net/gh/tecfu/tty-table/dist/tty-table.umd.js
 ```
 
 
