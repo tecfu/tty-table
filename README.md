@@ -214,7 +214,7 @@ $ npm install tty-table
 
 ```html
 import Table from 'https://cdn.jsdelivr.net/gh/tecfu/tty-table/dist/tty-table.esm.js'
-let Table = require('tty-table')   // https://cdn.jsdelivr.net/gh/tecfu/tty-table/dist/tty-table.umd.js
+let Table = require('tty-table')   // https://cdn.jsdelivr.net/gh/tecfu/tty-table/dist/tty-table.cjs.js
 let Table = TTY_Table;             // https://cdn.jsdelivr.net/gh/tecfu/tty-table/dist/tty-table.umd.js
 ```
 
