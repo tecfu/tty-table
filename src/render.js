@@ -148,8 +148,7 @@ module.exports.stringifyData = (config, inputData) => {
 module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) => {
   let minRowHeight = 0
 
-  // tag row as empty if empty
-  // (used) for compact tables
+  // tag row as empty if empty, used for `compact` option
   if(row.length === 0 && config.compact) {
     row.empty = true
     return row
@@ -375,19 +374,19 @@ module.exports.coerceConstructor = (config, rows, constructorType) => {
 
 // @TODO For rotating horizontal data into a vertical table
 // assumes all rows are same length
-module.exports.verticalizeMatrix = (config, inputArray) => {
-
-  // grow to # arrays equal to number of columns in input array
-  let outputArray = []
-  let headers = config.table.columns
-
-  // create a row for each heading, and prepend the row
-  // with the heading name
-  headers.forEach(name => outputArray.push([name]))
-
-  inputArray.forEach(row => {
-    row.forEach((element, index) => outputArray[index].push(element))
-  })
-
-  return outputArray
-}
+// module.exports.verticalizeMatrix = (config, inputArray) => {
+//
+//   // grow to # arrays equal to number of columns in input array
+//   let outputArray = []
+//   let headers = config.table.columns
+//
+//   // create a row for each heading, and prepend the row
+//   // with the heading name
+//   headers.forEach(name => outputArray.push([name]))
+//
+//   inputArray.forEach(row => {
+//     row.forEach((element, index) => outputArray[index].push(element))
+//   })
+//
+//   return outputArray
+// }

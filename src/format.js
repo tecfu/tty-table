@@ -120,7 +120,7 @@ module.exports.truncate = (string, cellOptions, maxWidth) => {
   const stringWidth = wcwidth(string)
 
   if(maxWidth < stringWidth) {
-    // @todo give use option to decide if they want to break words on wrapping
+    // @TODO give user option to decide if they want to break words on wrapping
     string = smartwrap(string, {
       width: maxWidth - cellOptions.truncate.length,
       breakword: true
@@ -198,8 +198,8 @@ module.exports.getColumnWidths = (config, rows) => {
         result = config.width
         break
 
-      default:
       // 'auto' sets column width to longest value in initial data set
+      default:
         let columnOptions = (config.table.header[0][columnIndex])
           ? config.table.header[0][columnIndex] : {}
         let measurableRows = (rows.length) ? rows : config.table.header[0]

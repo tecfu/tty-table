@@ -1,4 +1,4 @@
-# tty-table 电传打字台
+# tty-table 端子台
 
 [![Build Status](https://travis-ci.org/tecfu/tty-table.svg?branch=master)](https://travis-ci.org/tecfu/tty-table) [![NPM version](https://badge.fury.io/js/tty-table.svg)](http://badge.fury.io/js/tty-table)
 
@@ -212,7 +212,7 @@ $ npm install tty-table
 
 - Browser
 
-```html
+```js
 import Table from 'https://cdn.jsdelivr.net/gh/tecfu/tty-table/dist/tty-table.esm.js'
 let Table = require('tty-table')   // https://cdn.jsdelivr.net/gh/tecfu/tty-table/dist/tty-table.cjs.js
 let Table = TTY_Table;             // https://cdn.jsdelivr.net/gh/tecfu/tty-table/dist/tty-table.umd.js
@@ -223,6 +223,10 @@ let Table = TTY_Table;             // https://cdn.jsdelivr.net/gh/tecfu/tty-tabl
 
 ```sh
 $ npm test
+```
+
+```sh
+$ npm run coverage
 ```
 
 ## Saving the output of new unit tests 
