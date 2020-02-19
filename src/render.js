@@ -18,7 +18,7 @@ module.exports.stringifyData = (config, inputData) => {
   // support backwards compatibility cli-table's multiple constructor geometries
   // @TODO deprecate and support only a single format
   const constructorType = exports.getConstructorGeometry(inputData[0] || [], config)
-  const rows = exports.coerceConstructor(config, inputData, constructorType)
+  const rows = exports.coerceConstructorGeometry(config, inputData, constructorType)
 
   // when streaming values to tty-table, we don't want column widths to change
   // from one rows set to the next, so we save the first set of widths and reuse
@@ -243,7 +243,7 @@ module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowDat
         break
 
       case(typeof cell === "function"):
-        cellValue = cell.bind({ style: Style.color })(
+        cellValue = cell.bind({ style: Style.style })(
           cellValue,
           columnIndex,
           rowIndex,
@@ -260,7 +260,7 @@ module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowDat
     // run formatter
     if(typeof cellOptions.formatter === "function") {
       cellValue = cellOptions.formatter
-        .bind({ style: Style.color })(
+        .bind({ style: Style.style })(
           cellValue,
           columnIndex,
           rowIndex,
@@ -274,7 +274,7 @@ module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowDat
   cellValue = Style.colorizeCell(cellValue, cellOptions, rowType)
 
   // textwrap cellValue
-  let wrapObj  = Format.wrapCellContent(config, cellValue, columnIndex, cellOptions, rowType)
+  let wrapObj  = Format.wrapCellText(config, cellValue, columnIndex, cellOptions, rowType)
 
   // return as array of lines
   return {
@@ -320,7 +320,7 @@ module.exports.getConstructorGeometry = (row, config) => {
 /**
  * Coerce backwards compatible constructor styles
  */
-module.exports.coerceConstructor = (config, rows, constructorType) => {
+module.exports.coerceConstructorGeometry = (config, rows, constructorType) => {
 
   let output = []
   switch(constructorType) {

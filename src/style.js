@@ -1,7 +1,7 @@
 const kleur = require("kleur")
 
 
-module.exports.color = (str, ...colors) => {
+module.exports.style = (str, ...colors) => {
   return colors.reduce(function(input, color) {
     return kleur[color](input)
   }, str)
@@ -25,7 +25,7 @@ module.exports.colorizeCell = (str, cellOptions, rowType) => {
   }
 
   if (color) {
-    str = exports.color(str, color)
+    str = exports.style(str, color)
   }
 
   return str

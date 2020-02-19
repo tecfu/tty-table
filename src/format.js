@@ -3,13 +3,13 @@ const smartwrap = require("smartwrap")
 const wcwidth = require("wcwidth")
 
 
-module.exports.calculateLength = line => {
-  // return stripAnsi(line.replace(/[^\x00-\xff]/g,'XX')).length
-  return wcwidth(stripAnsi(line))
+module.exports.getStringLength = string => {
+  // return stripAnsi(string.replace(/[^\x00-\xff]/g,'XX')).length
+  return wcwidth(stripAnsi(string))
 }
 
 
-module.exports.wrapCellContent = (
+module.exports.wrapCellText = (
   config,
   cellValue,
   columnIndex,
@@ -76,7 +76,7 @@ module.exports.wrapCellContent = (
   let strArr = string.split("\n").map( line => {
     line = line.trim()
 
-    const lineLength = exports.calculateLength(line)
+    const lineLength = exports.getStringLength(line)
 
     // alignment
     if(lineLength < columnWidth) {

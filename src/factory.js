@@ -78,7 +78,7 @@ const Factory = function(paramsArr) {
     config.borderCharacters[config.borderStyle] =
       config.borderCharacters[config.borderStyle].map(function(obj) {
         Object.keys(obj).forEach(function(key) {
-          obj[key] = Style.color(obj[key], config.borderColor)
+          obj[key] = Style.style(obj[key], config.borderColor)
         })
         return obj
       })
