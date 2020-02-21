@@ -17,6 +17,9 @@ RUN git clone https://www.github.com/tecfu/tty-table
 WORKDIR /tty-table
 RUN npm install
 
-# Run unit tests
+# Run unit tests & report coverage
 RUN node -v
-RUN npx mocha
+# RUN npx mocha
+RUN npm run coverage
+RUN npm run report-to-cover-io
+RUN npm run report-to-coveralls

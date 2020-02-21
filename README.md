@@ -1,7 +1,6 @@
 # tty-table 端子台
 
-[![Build Status](https://travis-ci.org/tecfu/tty-table.svg?branch=master)](https://travis-ci.org/tecfu/tty-table) [![NPM version](https://badge.fury.io/js/tty-table.svg)](http://badge.fury.io/js/tty-table)
-
+[![Build Status](https://travis-ci.org/tecfu/tty-table.svg?branch=master)](https://travis-ci.org/tecfu/tty-table) [![NPM version](https://badge.fury.io/js/tty-table.svg)](http://badge.fury.io/js/tty-table) [![Coverage Status](https://coveralls.io/repos/github/tecfu/tty-table/badge.svg?branch=master)](https://coveralls.io/github/tecfu/tty-table?branch=master)
 ---
 
 Display your data in a table using a terminal, browser, or browser console.
