@@ -3,8 +3,60 @@ const smartwrap = require("smartwrap")
 const wcwidth = require("wcwidth")
 
 
+const addPadding = (config, width) => {
+  return width + config.paddingLeft + config.paddingRight
+}
+
+
+/**
+ * Returns the widest cell give a collection of rows
+ *
+ * @param object columnOptions
+ * @param array rows
+ * @param integer columnIndex
+ * @returns string
+ */
+const getMaxLength = (columnOptions, rows, columnIndex) => {
+
+  let iterable
+  let widest = 0
+
+  // add a row that contains the header value, so we use that width too
+  if(typeof columnOptions === "object" && columnOptions.value) {
+    iterable = rows.slice()
+    let z = new Array(iterable[0].length) // create a new empty row
+    z[columnIndex] = columnOptions.value.toString()
+    iterable.push(z)
+  } else {
+    // no header value, just use rows to derive max width
+    iterable = rows
+  }
+
+  iterable.forEach( row => {
+    if(row[columnIndex] && row[columnIndex].toString().length > widest) {
+      widest = wcwidth(row[columnIndex].toString())
+    }
+  })
+
+  return widest
+}
+
+
+/**
+ * Get total width available to this table instance
+ *
+ *
+ */
+const getAvailableWidth = config => {
+  if (config.width !== "auto" && /^\d{1,2}$/.test(config.width)) return config.width
+  if (process && process.stdout) return process.stdout.columns - config.marginLeft
+  if (window) return window.innerWidth // eslint-disable-line
+  throw new Error ("Cannot auto discover available table width. Set table `width` option to resolve")
+}
+
+
 module.exports.getStringLength = string => {
-  // return stripAnsi(string.replace(/[^\x00-\xff]/g,'XX')).length
+  // stripAnsi(string.replace(/[^\x00-\xff]/g,'XX')).length
   return wcwidth(stripAnsi(string))
 }
 
@@ -144,40 +196,12 @@ module.exports.wrap = (string, cellOptions, innerWidth) => {
 }
 
 
-/**
- * Returns the widest cell give a collection of rows
- *
- * @param array rows
- * @param integer columnIndex
- * @returns integer
- */
-module.exports.inferColumnWidth = (columnOptions, rows, columnIndex) => {
-
-  let iterable
-  let widest = 0
-
-  // add a row that contains the header value, so we use that width too
-  if(typeof columnOptions === "object" && columnOptions.value) {
-    iterable = rows.slice()
-    let z = new Array(iterable[0].length) // create a new empty row
-    z[columnIndex] = columnOptions.value.toString()
-    iterable.push(z)
-  } else {
-    // no header value, just use rows to derive max width
-    iterable = rows
-  }
-
-  iterable.forEach( row => {
-    if(row[columnIndex] && row[columnIndex].toString().length > widest) {
-      widest = wcwidth(row[columnIndex].toString())
-    }
-  })
-
-  return widest
-}
-
-
 module.exports.getColumnWidths = (config, rows) => {
+
+  const availableWidth = getAvailableWidth(config)
+
+  // array of spaces that cant be proportionately reduced for each row
+  const nonResizableRowSpaces = []
 
   // iterate over the header if we have it, iterate over the first row
   // if we do not (to step through the correct number of columns)
@@ -186,27 +210,31 @@ module.exports.getColumnWidths = (config, rows) => {
 
   let widths = iterable.map((column, columnIndex) => {
     let result
+    nonResizableRowSpaces[columnIndex] = 0 // track non resizable space for row
 
     switch(true) {
-      // column width specified in header
-      case(typeof column === "object" && typeof column.width === "number"):
+      // column width is specified in column header
+      case(typeof column === "object" && (/^\d{1,2}$/.test(column.width))):
         result = column.width
         break
 
-      // global column width set in config
-      case(config.width && config.width !== "auto"):
-        result = config.width
+      // column width is a percentage of table width specified in column header
+      case(typeof column === "object" && (/^\d{1,2}%$/.test(column.width))):
+        result = (column.width.slice(0, -1) * .01) * availableWidth
+        result = addPadding(config, result)
         break
 
-      // 'auto' sets column width to longest value in initial data set
+      // 'auto' sets column width to its longest value in the initial data set
       default:
         let columnOptions = (config.table.header[0][columnIndex])
           ? config.table.header[0][columnIndex] : {}
         let measurableRows = (rows.length) ? rows : config.table.header[0]
-        result = exports.inferColumnWidth(columnOptions, measurableRows, columnIndex)
+
+        result = getMaxLength(columnOptions, measurableRows, columnIndex)
 
         // add spaces for padding if not centered
-        result = result + config.paddingLeft + config.paddingRight
+        // @TODO test with if not centered conditional
+        result = addPadding(config, result)
     }
 
     // add space for gutter
@@ -216,18 +244,21 @@ module.exports.getColumnWidths = (config, rows) => {
   })
 
   // calculate sum of all column widths (including marginLeft)
-  let totalWidth = widths.reduce((prev, curr) => prev + curr)
+  let totalWidth = widths.reduce((prev, current) => prev + current)
 
   // if sum of all widths exceeds viewport, resize proportionately to fit
-  if(process && process.stdout && totalWidth > process.stdout.columns) {
-    // recalculate proportionately to fit
-    let prop = (process.stdout.columns - config.marginLeft) / totalWidth
+  if(totalWidth > availableWidth) {
+    let prop = availableWidth / totalWidth
+    let relativeWidths
+    let totalRelativeWidths
 
-    prop = prop.toFixed(2) - 0.01
+    prop = prop.toFixed(2) - 0.01 // this wont be exact fit, but keeps us safe
 
-    // when process.stdout.columns is 0, width will be negative
+    // when prop < 0 column cant be resized and totalWidth must overflow viewport
     if (prop > 0) {
-      widths = widths.map(value => Math.floor(prop * value))
+      relativeWidths = widths.map(value => Math.floor(prop * value))
+      totalRelativeWidths = relativeWidths.reduce((prev, current) => prev + current)
+      widths = (totalRelativeWidths < totalWidth) ? relativeWidths : widths
     }
   }
 

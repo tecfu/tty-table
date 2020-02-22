@@ -7,25 +7,25 @@ const baseRows = [[
     "aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq rrr sss ttt"
   ]],
   baseHeaders = [
-    {alias: "Short"},
-    {alias: "Medium Header"},
-    {alias: "A Very, Very Long Header"}
+    {alias: "Short", width: "20%"},
+    {alias: "Medium Header", width: "30%"},
+    {alias: "A Very, Very Long Header", width: "50%"}
   ],
   baseConfig = {
-    marginTop: 0
+    marginLeft: 0
   }
 
 function resizeTestCase (width, overrideConfig, customRows, customHeaders) {
   let config = Object.assign({}, baseConfig, overrideConfig),
-    rows = customRows === undefined ? baseRows : customRows,
-    headers = customHeaders === undefined ? baseHeaders : customHeaders
+    rows = (!customRows) ? baseRows : customRows,
+    headers = (!customHeaders) ? baseHeaders : customHeaders
 
   console.log("")
   example.init(`Test-w=${width}-${JSON.stringify(overrideConfig)}`, width, config)
 
-  let table = headers === null ? new Table(rows, config) : new Table(headers, rows, config),
-    output = table.render(),
-    widest = example.getMaxLineWidth(output)
+  let table = new Table(headers, rows, config)
+  let output = table.render()
+  let widest = example.getMaxLineWidth(output)
 
   if (widest > width) {
     example.error(`Table Too Wide: target=${width} widest-line=${widest}`)
@@ -35,7 +35,7 @@ function resizeTestCase (width, overrideConfig, customRows, customHeaders) {
 }
 
 const NONE = undefined,
-  DEFAULT_WIDTH = "25-119",
+  DEFAULT_WIDTH = "25-125",
   DEFAULT_TRUNCATE = [NONE],
   DEFAULT_RESIZE = [NONE],
   DEFAULT_MIN_WIDTH = [NONE]
@@ -58,7 +58,7 @@ for (let width of example.parseNumericList(program.width)) {
         example.setOption(config, "truncate", truncate)
         example.setOption(config, "resize", resize)
         example.setOption(config, "minColWidth", minColWidth)
-        resizeTestCase(width, config, undefined, null)
+        resizeTestCase(width, config, null, null)
       }
     }
   }
