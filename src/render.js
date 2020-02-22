@@ -40,7 +40,7 @@ module.exports.stringifyData = (config, inputData) => {
       break
 
     case (config.showHeader === true): // explicitly true, show
-    case (!!config.table.header[0].find(obj => obj.value)): //  atleast one named column, show
+    case (!!config.table.header[0].find(obj => obj.value || obj.alias)): //  atleast one named column, show
       sections.header = config.table.header.map(row => {
         return exports.buildRow(config, row, "header", null, rows, inputData)
       })
