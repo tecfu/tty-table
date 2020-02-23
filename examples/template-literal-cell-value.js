@@ -13,7 +13,8 @@ const t1 = Table([], rows, {
   headerAlign: "center",
   headerColor: "yellow",
   align: "center",
-  color: "white"
+  color: "white",
+  width: "50%"
 })
 
 const str1 = t1.render()

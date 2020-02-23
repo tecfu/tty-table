@@ -48,10 +48,27 @@ const getMaxLength = (columnOptions, rows, columnIndex) => {
  *
  */
 const getAvailableWidth = config => {
-  if (config.width !== "auto" && /^\d{1,2}$/.test(config.width)) return config.width
-  if (process && process.stdout) return process.stdout.columns - config.marginLeft
-  if (window) return window.innerWidth // eslint-disable-line
-  throw new Error ("Cannot auto discover available table width. Set table `width` option to resolve")
+  if (process && ((process.stdout && process.stdout.columns) || (process.env && process.env.COLUMNS))) {
+    // forked calls that do not inherit process.stdout must use process.env
+    let viewport = (process.stdout && process.stdout.columns) ? process.stdout.columns : process.env.COLUMNS
+    viewport = viewport - config.marginLeft
+
+    // table width fixed
+    if (config.width !== "auto" && /^\d{1,2}$/.test(config.width)) return config.width
+
+    // table width percentage of (viewport less margin)
+    if (config.width !== "auto" && /^\d{1,2}%$/.test(config.width)) {
+      return (config.width.slice(0, -1) * .01) * viewport
+    }
+
+    // table width equals viewport less margin
+    return viewport
+  }
+
+  // browser
+  if (typeof window !== "undefined") return window.innerWidth // eslint-disable-line
+
+  throw new Error ("Cannot auto discover available table width. Set table `width` option or export the environment variable COLUMNS")
 }
 
 

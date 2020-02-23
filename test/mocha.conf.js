@@ -11,6 +11,7 @@ const chai = require("chai"),
   glob = require("glob"),
   grunt = require("grunt"),
   exec = require("child_process").exec,
+  pkg = require("../package.json"),
   savedTestDir = path.join(__dirname, "/saved_test_outputs")
 
 chai.should()
@@ -27,7 +28,7 @@ exampleScripts.forEach(function(element) {
 
   describe(element, function() {
     it(`Should match ${savedTestPath}`, function(deferred) {
-      exec(`node ${element} --color=always`,
+      exec(`COLUMNS=${pkg.defaultTestColumns} node ${element} --color=always`,
         function (error, stdout /* , stderr */) {
           if (error !== null) {
             grunt.log.error(`Exec error: ${error}`)

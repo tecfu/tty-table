@@ -21,7 +21,7 @@
     "test": "npx mocha",
     "report-to-coveralls": "npx nyc report --reporter=text-lcov | npx coveralls",
     "report-to-cover-io": "npx nyc report --reporter=text-lcov > coverage.lcov && ./node_modules/.bin/codecov -t ffe0f46d-c939-4302-b199-0f2de3e8c18a",
-    "save-tests": "npx grunt st",
+    "save-tests": "node npm_scripts/save-tests.js",
     "lint": "npx eslint adapters/* src/*",
     "lint-fix": "npx eslint adapters/* src/* --fix",
     "lint-examples": "npx eslint examples/",
@@ -91,5 +91,6 @@
       "src/*.js",
       "adapters/*.js"
     ]
-  }
+  },
+  "defaultTestColumns": 90
 }

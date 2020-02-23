@@ -7,12 +7,28 @@ let header = [
     headerColor: "cyan",
     color: "white",
     align: "left",
-    width: 20
+    width: "20%"
   },
   {
-    value: "price",
+    value: "description",
+    width: "40%",
+  },
+  {
+    value: "peru_price",
+    alias: "peru",
     color: "red",
-    width: 10,
+    width: "15%",
+    formatter: function (value) {
+      let str = `$${value.toFixed(2)}`
+      return (value > 5) ? this.style(str, "green", "bold") :
+        this.style(str, "red", "bold")
+    }
+  },
+  {
+    value: "us_price",
+    alias: "usa",
+    color: "red",
+    width: "15%",
     formatter: function (value) {
       let str = `$${value.toFixed(2)}`
       return (value > 5) ? this.style(str, "green", "bold") :
@@ -20,10 +36,10 @@ let header = [
     }
   },
   {
-    alias: "is organic?",
+    alias: "vegan",
     value: "organic",
     align: "right",
-    width: 15,
+    width: "10%",
     formatter: function (value) {
       if(value === "yes") {
         value = this.style(value, "bgGreen", "black")
@@ -35,40 +51,53 @@ let header = [
   }
 ]
 
-// Example with arrays as rows
-const rows = [
-  ["tallarin verde", 5.50, "yes"],
-  ["aji de gallina", 4.50, "no"],
-]
-
 // Example with objects as rows
-const rows2 = [
+const rows = [
   {
     item: "tallarin verde",
-    price: 5.50,
-    organic: "yes"
+    description: "Peruvian version of spaghetti with pesto. Includes a thin piece of fried chicken breast",
+    peru_price: 2.50,
+    us_price: 15.50,
+    organic: "no"
   },
   {
     item: "aji de gallina",
-    price: 4.50,
+    description: "Heavy aji cream sauce, rice, and chicken with a halved hard-boiled egg",
+    peru_price: 1.80,
+    us_price: 14.50,
     organic: "no"
   }
 ]
 
+// Example with arrays as rows
+const rows2 = [
+  ["tallarin verde", 2.50, 15.50, "no"],
+  ["aji de gallina", 1.80, 14.50, "no"],
+].map( (arr, index) => {
+  arr.splice(1, 0, rows[index].description ); return arr
+} )
+
 
 const footer = [
   "TOTAL",
+  "",
   function (cellValue, columnIndex, rowIndex, rowData) {
     let total = rowData.reduce((prev, curr) => {
-      return prev + curr[1]
+      return prev + curr[2]
     }, 0)
       .toFixed(2)
-
     return this.style(`$${total}`, "italic")
   },
   function (cellValue, columnIndex, rowIndex, rowData) {
     let total = rowData.reduce((prev, curr) => {
-      return prev + ((curr[2] === "yes") ? 1 : 0)
+      return prev + curr[3]
+    }, 0)
+      .toFixed(2)
+    return this.style(`$${total}`, "italic")
+  },
+  function (cellValue, columnIndex, rowIndex, rowData) {
+    let total = rowData.reduce((prev, curr) => {
+      return prev + ((curr[4] === "yes") ? 1 : 0)
     }, 0)
     return `${ (total / rowData.length * 100).toFixed(2) }%`
   }
@@ -81,7 +110,7 @@ const options = {
   headerAlign: "center",
   align: "center",
   color: "white",
-  truncate: "..."
+  width: "80%"
 }
 
 let t1 = Table(header, rows, footer, options).render()
