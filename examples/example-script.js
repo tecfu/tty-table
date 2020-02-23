@@ -8,7 +8,7 @@ const baseConfig = {
   defaultSampleText = "this is a test"
 
 const program = require("commander").description("example test script")
-  .option("-c, --columns <number>", "list number/ranges to test", "1-5,10")
+  .option("-c, --columns <number>", "list number/ranges to test. ie 1-25 or 10", "1-25")
   .option("-t, --text <string>", "sample text", defaultSampleText)
   .option("--color", "to support chalk meta argument")
   .parse(process.argv)
@@ -24,14 +24,12 @@ function testColumns(cols, sampleText, overrideConfig) {
   let table = new Table(rows, config),
     output = table.render()
 
-  example.init(`Test ${cols} columns`)
+  example.init(`Test ${cols} columns`, (cols * 2) + 1) // need to account for border
   console.log(output)
 }
-
 
 for (let cols of example.parseNumericList(program.columns)) {
   for (let text of example.parseList(program.text)) {
     testColumns(cols, text)
   }
 }
-
