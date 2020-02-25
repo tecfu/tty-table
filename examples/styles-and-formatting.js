@@ -12,6 +12,8 @@ let header = [
   {
     value: "description",
     width: "40%",
+    headerColor: "magenta",
+    color: "yellow"
   },
   {
     value: "peru_price",
