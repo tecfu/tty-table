@@ -19,7 +19,6 @@ const addPadding = (config, width) => {
 const getMaxLength = (columnOptions, rows, columnIndex) => {
 
   let iterable
-  let widest = 0
 
   // add a row that contains the header value, so we use that width too
   if(typeof columnOptions === "object" && columnOptions.value) {
@@ -32,11 +31,19 @@ const getMaxLength = (columnOptions, rows, columnIndex) => {
     iterable = rows
   }
 
-  iterable.forEach( row => {
-    if(row[columnIndex] && row[columnIndex].toString().length > widest) {
-      widest = wcwidth(row[columnIndex].toString())
+  // iterable.forEach( row => {
+  //   if(row[columnIndex] && stripAnsi(row[columnIndex].toString()).length > widest) {
+  //     widest = wcwidth(row[columnIndex].toString())
+  //   }
+  // })
+
+  let widest = iterable.reduce((prev, row) => {
+    if(row[columnIndex]) {
+      let width = wcwidth(stripAnsi(row[columnIndex].toString()))
+      return ( width > prev) ? width : prev
     }
-  })
+    return prev
+  }, 0)
 
   return widest
 }
