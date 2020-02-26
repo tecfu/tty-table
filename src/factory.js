@@ -129,6 +129,11 @@ const Factory = function(paramsArr) {
 }
 
 
-module.exports = function() {
+let Table = function() {
   return new Factory(arguments)
 }
+
+Table.resetStyle = Style.resetStyle
+Table.style = Style.styleEachChar
+
+module.exports = Table
