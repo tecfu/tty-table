@@ -1,3 +1,4 @@
+// @TODO split defaults into table and cell settings
 const defaults = {
   borderCharacters: {
     "invisible": [
@@ -35,6 +36,7 @@ const defaults = {
   formatter: null,
   headerAlign: "center",
   headerColor: "yellow",
+  isNull: false, // undocumented cell setting
   marginLeft: 2,
   marginTop: 1,
   paddingBottom: 0,

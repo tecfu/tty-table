@@ -236,6 +236,8 @@ module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowDat
       case(typeof cell === "undefined" || cell === null):
         // replace undefined/null cell values with placeholder
         cellValue = (config.errorOnNull) ? config.defaultErrorValue : config.defaultValue
+        // @TODO add to cell defaults
+        cellOptions.isNull = true
         break
 
       case(typeof cell === "object" && typeof cell.value !== "undefined"):
@@ -244,7 +246,7 @@ module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowDat
 
       case(typeof cell === "function"):
         cellValue = cell.bind({ style: Style.style })(
-          cellValue,
+          (!cellOptions.isNull) ? cellValue : "",
           columnIndex,
           rowIndex,
           rowData,
@@ -261,7 +263,7 @@ module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowDat
     if(typeof cellOptions.formatter === "function") {
       cellValue = cellOptions.formatter
         .bind({ style: Style.style })(
-          cellValue,
+          (!cellOptions.isNull) ? cellValue : "",
           columnIndex,
           rowIndex,
           rowData,
