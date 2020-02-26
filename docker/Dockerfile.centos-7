@@ -8,7 +8,7 @@ RUN yum install -y bzip2
 RUN yum install -y git
 
 # Install nodejs 8 
-RUN curl -sL https://rpm.nodesource.com/setup_8.x | bash -
+RUN curl -sL https://rpm.nodesource.com/setup_12.x | bash -
 RUN yum install -y nodejs
 
 # RUN ln -s /usr/bin/nodejs /usr/bin/node
