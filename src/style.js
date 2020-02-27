@@ -1,9 +1,9 @@
-const kleur = require("kleur")
+const chalk = require("chalk")
 
 
 module.exports.color = (str, ...colors) => {
   return colors.reduce(function(input, color) {
-    return kleur[color](input)
+    return chalk[color](input)
   }, str)
 }
 
