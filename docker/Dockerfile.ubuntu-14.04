@@ -16,6 +16,7 @@ RUN git clone https://www.github.com/tecfu/tty-table
 
 # Install dev dependencies
 WORKDIR /tty-table
+RUN git checkout 2.x
 RUN npm install
 
 # Run unit tests
