@@ -1,10 +1,10 @@
-const kleur = require("kleur")
+const chalk = require("chalk")
 const stripAnsi = require("strip-ansi")
 
 
 module.exports.style = (str, ...colors) => {
   let out = colors.reduce(function(input, color) {
-    return kleur[color](input)
+    return chalk[color](input)
   }, str)
   return out
 }
@@ -18,7 +18,7 @@ module.exports.styleEachChar = (str, ...colors) => {
   // style each character
   let out = chars.reduce((prev, current) => {
     let coded = colors.reduce((input, color) => {
-      return kleur[color](input)
+      return chalk[color](input)
     }, current)
     return prev + coded
   }, "")
