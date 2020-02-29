@@ -13,7 +13,7 @@ module.exports.stringifyData = (config, inputData) => {
   }
   const marginLeft = Array(config.marginLeft + 1).join(" ")
   const borderStyle = config.borderCharacters[config.borderStyle]
-  let borders = []
+  const borders = []
 
   // support backwards compatibility cli-table's multiple constructor geometries
   // @TODO deprecate and support only a single format
@@ -40,7 +40,7 @@ module.exports.stringifyData = (config, inputData) => {
       break
 
     case (config.showHeader === true): // explicitly true, show
-    case (!!config.table.header[0].find(obj => obj.value || obj.alias)): //  atleast one named column, show
+    case (!!config.table.header[0].find(obj => obj.value || obj.alias)): //  atleast one named column, show header
       sections.header = config.table.header.map(row => {
         return exports.buildRow(config, row, "header", null, rows, inputData)
       })
@@ -62,25 +62,29 @@ module.exports.stringifyData = (config, inputData) => {
     return exports.buildRow(config, row, "footer", null, rows, inputData)
   })
 
-  // add borders
-  // 0=header, 1=body, 2=footer
+  // apply borders
+  // 0=top, 1=middle, 2=bottom
   for (let a=0; a<3; a++) {
-    borders.push("")
-    config.table.columnWidths.forEach(function (w, i, arr) {
-      borders[a] += Array(w).join(borderStyle[a].h) +
-        ((i+1 !== arr.length) ? borderStyle[a].j : borderStyle[a].r)
+
+    // add left border
+    borders[a] = borderStyle[a].l
+
+    // add joined borders for each column
+    config.table.columnWidths.forEach((columnWidth, index, arr) => {
+      // Math.max because otherwise columns 1 wide wont have horizontal border
+      borders[a] += Array(Math.max(columnWidth, 2)).join(borderStyle[a].h)
+      borders[a] += ((index+1 < arr.length) ? borderStyle[a].j : "")
     })
-    borders[a] = borderStyle[a].l + borders[a]
-    borders[a] = borders[a].split("")
-    borders[a][borders[a].length1] = borderStyle[a].r
-    borders[a] = borders[a].join("")
+
+    // add right border
+    borders[a] += borderStyle[a].r
+
     // no trailing space on footer
     borders[a] = (a<2) ? `${marginLeft + borders[a]  }\n` : marginLeft + borders[a]
   }
 
   // top horizontal border
-  let output = ""
-  output += borders[0]
+  let output = borders[0]
 
   // for each section (header,body,footer)
   Object.keys(sections).forEach((p, i) => {

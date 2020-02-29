@@ -224,9 +224,6 @@ module.exports.getColumnWidths = (config, rows) => {
 
   const availableWidth = getAvailableWidth(config)
 
-  // array of spaces that cant be proportionately reduced for each row
-  const nonResizableRowSpaces = []
-
   // iterate over the header if we have it, iterate over the first row
   // if we do not (to step through the correct number of columns)
   let iterable = (config.table.header[0] && config.table.header[0].length > 0)
@@ -234,7 +231,6 @@ module.exports.getColumnWidths = (config, rows) => {
 
   let widths = iterable.map((column, columnIndex) => {
     let result
-    nonResizableRowSpaces[columnIndex] = 0 // track non resizable space for row
 
     switch(true) {
       // column width is specified in column header
@@ -263,7 +259,6 @@ module.exports.getColumnWidths = (config, rows) => {
 
     // add space for gutter
     result = result + config.GUTTER
-
     return result
   })
 
