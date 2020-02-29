@@ -1,25 +1,25 @@
 // @TODO split defaults into table and cell settings
 const defaults = {
   borderCharacters: {
-    "invisible": [
-      {v: " ", l: " ", j: " ", h: " ", r: " "},
-      {v: " ", l: " ", j: " ", h: " ", r: " "},
-      {v: " ", l: " ", j: " ", h: " ", r: " "}
+    invisible: [
+      { v: " ", l: " ", j: " ", h: " ", r: " " },
+      { v: " ", l: " ", j: " ", h: " ", r: " " },
+      { v: " ", l: " ", j: " ", h: " ", r: " " }
     ],
-    "solid": [
-      {v: "│", l: "┌", j: "┬", h: "─", r: "┐"},
-      {v: "│", l: "├", j: "┼", h: "─", r: "┤"},
-      {v: "│", l: "└", j: "┴", h: "─", r: "┘"}
+    solid: [
+      { v: "│", l: "┌", j: "┬", h: "─", r: "┐" },
+      { v: "│", l: "├", j: "┼", h: "─", r: "┤" },
+      { v: "│", l: "└", j: "┴", h: "─", r: "┘" }
     ],
-    "dashed": [
-      {v: "|", l: "+", j: "+", h: "-", r: "+"},
-      {v: "|", l: "+", j: "+", h: "-", r: "+"},
-      {v: "|", l: "+", j: "+", h: "-", r: "+"}
+    dashed: [
+      { v: "|", l: "+", j: "+", h: "-", r: "+" },
+      { v: "|", l: "+", j: "+", h: "-", r: "+" },
+      { v: "|", l: "+", j: "+", h: "-", r: "+" }
     ],
-    "none": [
-      {v: "", l: "", j: "", h: "", r: ""},
-      {v: "", l: "", j: "", h: "", r: ""},
-      {v: "", l: "", j: "", h: "", r: ""}
+    none: [
+      { v: "", l: "", j: "", h: "", r: "" },
+      { v: "", l: "", j: "", h: "", r: "" },
+      { v: "", l: "", j: "", h: "", r: "" }
     ]
   },
   align: "center",
@@ -61,11 +61,9 @@ const defaults = {
   }
 }
 
-
 // support deprecated border style values
-defaults.borderCharacters["0"] = defaults.borderCharacters["none"]
-defaults.borderCharacters["1"] = defaults.borderCharacters["solid"]
-defaults.borderCharacters["2"] = defaults.borderCharacters["dashed"]
-
+defaults.borderCharacters["0"] = defaults.borderCharacters.none
+defaults.borderCharacters["1"] = defaults.borderCharacters.solid
+defaults.borderCharacters["2"] = defaults.borderCharacters.dashed
 
 module.exports = defaults

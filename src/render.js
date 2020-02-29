@@ -1,7 +1,6 @@
 const Style = require("./style.js")
 const Format = require("./format.js")
 
-
 /**
  * Converts arrays of data into arrays of cell strings
  */
@@ -22,11 +21,11 @@ module.exports.stringifyData = (config, inputData) => {
 
   // when streaming values to tty-table, we don't want column widths to change
   // from one rows set to the next, so we save the first set of widths and reuse
-  if(!global.columnWidths) {
+  if (!global.columnWidths) {
     global.columnWidths = {}
   }
 
-  if(global.columnWidths[config.tableId]) {
+  if (global.columnWidths[config.tableId]) {
     config.table.columnWidths = global.columnWidths[config.tableId]
   } else {
     global.columnWidths[config.tableId] = config.table.columnWidths = Format.getColumnWidths(config, rows)
@@ -64,8 +63,7 @@ module.exports.stringifyData = (config, inputData) => {
 
   // apply borders
   // 0=top, 1=middle, 2=bottom
-  for (let a=0; a<3; a++) {
-
+  for (let a = 0; a < 3; a++) {
     // add left border
     borders[a] = borderStyle[a].l
 
@@ -73,14 +71,14 @@ module.exports.stringifyData = (config, inputData) => {
     config.table.columnWidths.forEach((columnWidth, index, arr) => {
       // Math.max because otherwise columns 1 wide wont have horizontal border
       borders[a] += Array(Math.max(columnWidth, 2)).join(borderStyle[a].h)
-      borders[a] += ((index+1 < arr.length) ? borderStyle[a].j : "")
+      borders[a] += ((index + 1 < arr.length) ? borderStyle[a].j : "")
     })
 
     // add right border
     borders[a] += borderStyle[a].r
 
     // no trailing space on footer
-    borders[a] = (a<2) ? `${marginLeft + borders[a]  }\n` : marginLeft + borders[a]
+    borders[a] = (a < 2) ? `${marginLeft + borders[a]}\n` : marginLeft + borders[a]
   }
 
   // top horizontal border
@@ -88,11 +86,9 @@ module.exports.stringifyData = (config, inputData) => {
 
   // for each section (header,body,footer)
   Object.keys(sections).forEach((p, i) => {
-
     // for each row in the section
-    while(sections[p].length) {
-
-      let row = sections[p].shift()
+    while (sections[p].length) {
+      const row = sections[p].shift()
 
       // if(row.length === 0) {break}
 
@@ -111,24 +107,24 @@ module.exports.stringifyData = (config, inputData) => {
       })
 
       // bottom horizontal row border
-      switch(true) {
+      switch (true) {
       // skip if end of body and no footer
-        case(sections[p].length === 0
+        case (sections[p].length === 0
              && i === 1
              && sections.footer.length === 0):
           break
 
         // skip if end of footer
-        case(sections[p].length === 0
+        case (sections[p].length === 0
              && i === 2):
           break
 
         // skip if compact
-        case(config.compact && p === "body" && !row.empty):
+        case (config.compact && p === "body" && !row.empty):
           break
 
         // skip if border style is "none"
-        case(config.borderStyle === "none" && config.compact):
+        case (config.borderStyle === "none" && config.compact):
           break
 
         default:
@@ -140,7 +136,7 @@ module.exports.stringifyData = (config, inputData) => {
   // bottom horizontal border
   output += borders[2]
 
-  let finalOutput = Array(config.marginTop + 1).join("\n") + output
+  const finalOutput = Array(config.marginTop + 1).join("\n") + output
 
   // record the height of the output
   config.height = finalOutput.split(/\r\n|\r|\n/).length
@@ -148,20 +144,19 @@ module.exports.stringifyData = (config, inputData) => {
   return finalOutput
 }
 
-
 module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) => {
   let minRowHeight = 0
 
   // tag row as empty if empty, used for `compact` option
-  if(row.length === 0 && config.compact) {
+  if (row.length === 0 && config.compact) {
     row.empty = true
     return row
   }
 
   // force row to have correct number of columns
-  let difL = config.table.columnWidths.length - row.length
+  const difL = config.table.columnWidths.length - row.length
 
-  if(difL > 0) {
+  if (difL > 0) {
     // add empty element to array
     row = row.concat(Array.apply(null, new Array(difL)).map(() => null))
   } else if (difL < 0) {
@@ -172,83 +167,81 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
   // get row as array of cell arrays
   // can't use es5 row functions (map, forEach because i.e.
   // [1,,3] will only iterate 1,3
-  let cArrs = []
-  let rowLength = row.length
+  const cArrs = []
+  const rowLength = row.length
 
-  for(let index=0; index<rowLength; index++) {
+  for (let index = 0; index < rowLength; index++) {
+    const c = exports.buildCell(config, row[index], index, rowType, rowIndex, rowData, inputData)
+    const cellArr = c.cellArr
 
-    let c = exports.buildCell(config, row[index], index, rowType, rowIndex, rowData, inputData)
-    let cellArr = c.cellArr
-
-    if(rowType === "header") {
+    if (rowType === "header") {
       config.table.columnInnerWidths.push(c.width)
     }
 
-    minRowHeight = (minRowHeight < cellArr.length) ?
-      cellArr.length : minRowHeight
+    minRowHeight = (minRowHeight < cellArr.length)
+      ? cellArr.length : minRowHeight
 
     cArrs.push(cellArr)
   }
 
   // adjust minRowHeight to reflect vertical row padding
-  minRowHeight = (rowType === "header") ? minRowHeight :
-    minRowHeight + (config.paddingBottom + config.paddingTop)
+  minRowHeight = (rowType === "header") ? minRowHeight
+    : minRowHeight + (config.paddingBottom + config.paddingTop)
 
   // convert array of cell arrays to array of lines
-  let lines = Array.apply(null, {length: minRowHeight})
+  const lines = Array.apply(null, { length: minRowHeight })
     .map(Function.call, () => [])
 
-  cArrs.forEach(function(cellArr, a) {
-    let whiteline = Array(config.table.columnWidths[a]).join(" ")
+  cArrs.forEach(function (cellArr, a) {
+    const whiteline = Array(config.table.columnWidths[a]).join(" ")
 
-    if(rowType ==="body") {
+    if (rowType === "body") {
       // add whitespace for top padding
-      for(let i=0; i<config.paddingTop; i++) {
+      for (let i = 0; i < config.paddingTop; i++) {
         cellArr.unshift(whiteline)
       }
 
       // add whitespace for bottom padding
-      for(let i=0; i<config.paddingBottom; i++) {
+      for (let i = 0; i < config.paddingBottom; i++) {
         cellArr.push(whiteline)
       }
     }
-    for(let b=0; b<minRowHeight; b++) {
-      lines[b].push((typeof cellArr[b] !== "undefined") ?
-        cellArr[b] : whiteline)
+    for (let b = 0; b < minRowHeight; b++) {
+      lines[b].push((typeof cellArr[b] !== "undefined")
+        ? cellArr[b] : whiteline)
     }
   })
 
   return lines
 }
 
-
 module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowData, inputData) => {
   let cellValue
-  let cellOptions = Object.assign(
+  const cellOptions = Object.assign(
     {},
     config,
     (rowType === "body") ? config.columnSettings[columnIndex] : {}, // ignore columnSettings for footer
     (typeof cell === "object") ? cell : {}
   )
 
-  if(rowType === "header") {
+  if (rowType === "header") {
     config.table.columns.push(cellOptions)
     cellValue = cellOptions.alias || cellOptions.value || ""
   } else {
     // set cellValue
-    switch(true) {
-      case(typeof cell === "undefined" || cell === null):
+    switch (true) {
+      case (typeof cell === "undefined" || cell === null):
         // replace undefined/null cell values with placeholder
         cellValue = (config.errorOnNull) ? config.defaultErrorValue : config.defaultValue
         // @TODO add to cell defaults
         cellOptions.isNull = true
         break
 
-      case(typeof cell === "object" && typeof cell.value !== "undefined"):
+      case (typeof cell === "object" && typeof cell.value !== "undefined"):
         cellValue = cell.value
         break
 
-      case(typeof cell === "function"):
+      case (typeof cell === "function"):
         cellValue = cell.bind({ style: Style.style })(
           (!cellOptions.isNull) ? cellValue : "",
           columnIndex,
@@ -264,7 +257,7 @@ module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowDat
     }
 
     // run formatter
-    if(typeof cellOptions.formatter === "function") {
+    if (typeof cellOptions.formatter === "function") {
       cellValue = cellOptions.formatter
         .bind({ style: Style.style })(
           (!cellOptions.isNull) ? cellValue : "",
@@ -280,7 +273,7 @@ module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowDat
   cellValue = Style.colorizeCell(cellValue, cellOptions, rowType)
 
   // textwrap cellValue
-  let wrapObj  = Format.wrapCellText(config, cellValue, columnIndex, cellOptions, rowType)
+  const wrapObj = Format.wrapCellText(config, cellValue, columnIndex, cellOptions, rowType)
 
   // return as array of lines
   return {
@@ -289,7 +282,6 @@ module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowDat
   }
 }
 
-
 /**
  * Check for a backwards compatible (cli-table) constructor
  */
@@ -297,14 +289,14 @@ module.exports.getConstructorGeometry = (row, config) => {
   let type
 
   // rows passed as an object
-  if(typeof row === "object" && !(row instanceof Array)) {
-    let keys = Object.keys(row)
+  if (typeof row === "object" && !(row instanceof Array)) {
+    const keys = Object.keys(row)
 
-    if(config.adapter === "automattic") {
+    if (config.adapter === "automattic") {
       // detected cross table
-      let key = keys[0]
+      const key = keys[0]
 
-      if(row[key] instanceof Array) {
+      if (row[key] instanceof Array) {
         type = "automattic-cross"
       } else {
         // detected vertical table
@@ -322,39 +314,37 @@ module.exports.getConstructorGeometry = (row, config) => {
   return type
 }
 
-
 /**
  * Coerce backwards compatible constructor styles
  */
 module.exports.coerceConstructorGeometry = (config, rows, constructorType) => {
-
   let output = []
-  switch(constructorType) {
-    case("automattic-cross"):
+  switch (constructorType) {
+    case ("automattic-cross"):
       // assign header styles to first column
       config.columnSettings[0] = config.columnSettings[0] || {}
       config.columnSettings[0].color = config.headerColor
 
       output = rows.map(obj => {
-        let arr = []
-        let key = Object.keys(obj)[0]
+        const arr = []
+        const key = Object.keys(obj)[0]
         arr.push(key)
         return arr.concat(obj[key])
       })
       break
 
-    case("automattic-vertical"):
+    case ("automattic-vertical"):
       // assign header styles to first column
       config.columnSettings[0] = config.columnSettings[0] || {}
       config.columnSettings[0].color = config.headerColor
 
-      output = rows.map(function(value) {
-        let key = Object.keys(value)[0]
+      output = rows.map(function (value) {
+        const key = Object.keys(value)[0]
         return [key, value[key]]
       })
       break
 
-    case("o-horizontal"):
+    case ("o-horizontal"):
       // cell property names are specified in header columns
       if (config.table.header[0].length
         && config.table.header[0].every(obj => obj.value)) {
@@ -367,7 +357,7 @@ module.exports.coerceConstructorGeometry = (config, rows, constructorType) => {
       }
       break
 
-    case("a-horizontal"):
+    case ("a-horizontal"):
       output = rows
       break
 
@@ -376,7 +366,6 @@ module.exports.coerceConstructorGeometry = (config, rows, constructorType) => {
 
   return output
 }
-
 
 // @TODO For rotating horizontal data into a vertical table
 // assumes all rows are same length

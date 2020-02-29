@@ -4,7 +4,7 @@ module.exports = {
     "es6": true,
     "node": true
   },
-  "extends": "eslint:recommended",
+  "extends": "standard",
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
@@ -38,6 +38,8 @@ module.exports = {
     "no-case-declarations": "off",
 
     "no-trailing-spaces": "error",
+
+    "operator-linebreak": ["error", "before"],
 
     "prefer-template": "error",
 

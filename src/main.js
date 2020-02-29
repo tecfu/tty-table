@@ -1,4 +1,4 @@
-if(require.main === module) {
+if (require.main === module) {
   // called directly in terminal
   /* istanbul ignore next */
   require("./../adapters/terminal-adapter.js")
