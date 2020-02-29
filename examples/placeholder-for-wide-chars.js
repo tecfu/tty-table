@@ -15,7 +15,7 @@ const rows = [[
   "2玉米饼, 大米和豆类, 大米和豆类, 大米和豆类, 奶酪"
 ]]
 
-let output1 = new Table(rows, {
+const output1 = new Table(rows, {
   marginLeft: 0,
   paddingLeft: 0,
   paddingRight: 0,

@@ -4,7 +4,7 @@ const Table = require("../")
 const header = [
   {
     value: "item",
-    formatter: function(value) {
+    formatter: function (value) {
       return this.style(value, "cyan")
     }
   },
@@ -49,7 +49,6 @@ const rows2 = [
   }
 ]
 
-
 const footer = [
   "TOTAL",
   (cellValue, columnIndex, rowIndex, rowData) => {
@@ -58,15 +57,15 @@ const footer = [
     }, 0).toFixed(2)
   },
   function (cellValue, columnIndex, rowIndex, rowData) {
-    let total = rowData.reduce((prev, curr) => {
+    const total = rowData.reduce((prev, curr) => {
       return prev + ((curr[2] === "yes") ? 1 : 0)
     }, 0)
-    return `${ (total / rowData.length * 100).toFixed(2) }%`
+    return `${(total / rowData.length * 100).toFixed(2)}%`
   }
 ]
 
-let t1 = Table(header, rows, footer, options)
-let t2 = Table(header, rows2, footer, options)
+const t1 = Table(header, rows, footer, options)
+const t2 = Table(header, rows2, footer, options)
 
 t1.push(
   ["chocolate cake", 4.65, "no"]

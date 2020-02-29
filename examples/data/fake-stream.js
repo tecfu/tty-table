@@ -7,19 +7,18 @@ const tickers = [
 ]
 
 const cycle = (iterator, tickers) => {
-
   // change ticker values
-  tickers = tickers.map( value => {
-    let sign = (Math.random()) < .5 ? -1 : 1
-    let increment = Math.random()
-    let newVal = (value[1]+sign*increment).toFixed(2)*1
+  tickers = tickers.map(value => {
+    const sign = (Math.random()) < 0.5 ? -1 : 1
+    const increment = Math.random()
+    const newVal = (value[1] + sign * increment).toFixed(2) * 1
     return [value[0], newVal]
   })
 
   console.log(JSON.stringify(tickers))
   iterator++
 
-  setTimeout(function() {
+  setTimeout(function () {
     cycle(iterator, tickers)
   }, 500)
 }

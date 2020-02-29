@@ -13,7 +13,7 @@ const rows = [
   ["e", "pluribus", "unum"]
 ]
 
-let out = []
+const out = []
 
 out.push(Table(headerA, rows, {}).render()) // show automatically
 out.push(Table(headerA, rows, { showHeader: true }).render()) // show

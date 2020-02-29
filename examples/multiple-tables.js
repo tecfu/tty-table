@@ -7,7 +7,6 @@ const header = [
 ]
 const rows = [[10001, 20002]]
 
-
 const header2 = [
   { value: "col1" },
   { value: "col2" },
@@ -18,8 +17,7 @@ const rows2 = [
   [3, 34, 99]
 ]
 
-
-let t1 = Table(header, rows)
-let t2 = Table(header2, rows2)
+const t1 = Table(header, rows)
+const t2 = Table(header2, rows2)
 console.log(t2.render())
 console.log(t1.render())

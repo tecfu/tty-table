@@ -1,7 +1,7 @@
 require("../test/example-utils.js").quickInit()
 const Table = require("../")
 
-let header = [
+const header = [
   {
     value: "item",
     headerColor: "cyan",
@@ -21,9 +21,9 @@ let header = [
     color: "red",
     width: "15%",
     formatter: function (value) {
-      let str = `$${value.toFixed(2)}`
-      return (value > 5) ? this.style(str, "green", "bold") :
-        this.style(str, "red", "bold")
+      const str = `$${value.toFixed(2)}`
+      return (value > 5) ? this.style(str, "green", "bold")
+        : this.style(str, "red", "bold")
     }
   },
   {
@@ -32,9 +32,9 @@ let header = [
     color: "red",
     width: "15%",
     formatter: function (value) {
-      let str = `$${value.toFixed(2)}`
-      return (value > 5) ? this.style(str, "green", "bold") :
-        this.style(str, "red", "underline")
+      const str = `$${value.toFixed(2)}`
+      return (value > 5) ? this.style(str, "green", "bold")
+        : this.style(str, "red", "underline")
     }
   },
   {
@@ -43,9 +43,9 @@ let header = [
     align: "right",
     width: "10%",
     formatter: function (value) {
-      if(value === "yes") {
+      if (value === "yes") {
         value = this.style(value, "bgGreen", "black")
-      } else{
+      } else {
         value = this.style(value, "bgRed", "white")
       }
       return value
@@ -74,34 +74,33 @@ const rows = [
 // Example with arrays as rows
 const rows2 = [
   ["tallarin verde", 2.50, 15.50, "no"],
-  ["aji de gallina", 1.80, 14.50, "no"],
-].map( (arr, index) => {
-  arr.splice(1, 0, rows[index].description ); return arr
-} )
-
+  ["aji de gallina", 1.80, 14.50, "no"]
+].map((arr, index) => {
+  arr.splice(1, 0, rows[index].description); return arr
+})
 
 const footer = [
   "TOTAL",
   "",
   function (cellValue, columnIndex, rowIndex, rowData) {
-    let total = rowData.reduce((prev, curr) => {
+    const total = rowData.reduce((prev, curr) => {
       return prev + curr[2]
     }, 0)
       .toFixed(2)
     return this.style(`$${total}`, "italic")
   },
   function (cellValue, columnIndex, rowIndex, rowData) {
-    let total = rowData.reduce((prev, curr) => {
+    const total = rowData.reduce((prev, curr) => {
       return prev + curr[3]
     }, 0)
       .toFixed(2)
     return this.style(`$${total}`, "italic")
   },
   function (cellValue, columnIndex, rowIndex, rowData) {
-    let total = rowData.reduce((prev, curr) => {
+    const total = rowData.reduce((prev, curr) => {
       return prev + ((curr[4] === "yes") ? 1 : 0)
     }, 0)
-    return `${ (total / rowData.length * 100).toFixed(2) }%`
+    return `${(total / rowData.length * 100).toFixed(2)}%`
   }
 ]
 
@@ -115,13 +114,11 @@ const options = {
   width: "80%"
 }
 
-let t1 = Table(header, rows, footer, options).render()
+const t1 = Table(header, rows, footer, options).render()
 console.log(t1)
 
 const t2 = Table(header, rows2, footer, options).render()
 console.log(t2)
-
-
 
 const header3 = [
   {
@@ -130,8 +127,8 @@ const header3 = [
       const row = inputData[rowIndex] // How to get the whole row
       let _color
 
-      if(!row.enabled) _color = "gray"
-      if(row.important) _color = "red"
+      if (!row.enabled) _color = "gray"
+      if (row.important) _color = "red"
 
       return this.style(cellValue, _color)
     }

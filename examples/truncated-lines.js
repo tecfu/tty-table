@@ -1,10 +1,10 @@
 require("../test/example-utils.js").quickInit()
 const Table = require("../")
 
-let header = [
+const header = [
   {
     value: "item name",
-    formatter: function(value) {
+    formatter: function (value) {
       return this.style(value, "cyan")
     },
     width: 10
@@ -20,7 +20,7 @@ let header = [
 ]
 
 // test truncation with elipsis
-let t1 = Table(header, [], {
+const t1 = Table(header, [], {
   borderStyle: "solid",
   paddingBottom: 0,
   headerAlign: "center",
@@ -33,11 +33,11 @@ t1.push(
   ["chocolate cake", 4.65, "no"]
 )
 
-let str1 = t1.render()
+const str1 = t1.render()
 console.log(str1)
 
 // test truncation with spaces
-let t2 = Table(header, [], {
+const t2 = Table(header, [], {
   borderStyle: "solid",
   paddingBottom: 0,
   headerAlign: "center",
@@ -50,11 +50,11 @@ t2.push(
   ["pound cake", 123456789123456789, "no"]
 )
 
-let str2 = t2.render()
+const str2 = t2.render()
 console.log(str2)
 
 // test with padding
-let t3 = Table(header, [], {
+const t3 = Table(header, [], {
   borderStyle: "solid",
   paddingLeft: 2,
   paddingRight: 2,
@@ -68,11 +68,11 @@ t3.push(
   ["pound cake", 123456789123456789, "no"]
 )
 
-let str3 = t3.render()
+const str3 = t3.render()
 console.log(str3)
 
 // test truncation with boolean false
-let t4 = Table(header, [], {
+const t4 = Table(header, [], {
   borderStyle: "solid",
   paddingBottom: 0,
   headerAlign: "center",
@@ -85,11 +85,11 @@ t4.push(
   ["chocolate cake", 4.65, "no"]
 )
 
-let str4 = t4.render()
+const str4 = t4.render()
 console.log(str4)
 
 // test truncation with boolean false
-let t5 = Table(header, [], {
+const t5 = Table(header, [], {
   borderStyle: "solid",
   paddingBottom: 0,
   headerAlign: "center",
@@ -102,11 +102,11 @@ t5.push(
   ["chocolate cake", 5.65, "no"]
 )
 
-let str5 = t5.render()
+const str5 = t5.render()
 console.log(str5)
 
-let t6 = Table([
-  { width: 5}, { width: 4}, { width: 5}
+const t6 = Table([
+  { width: 5 }, { width: 4 }, { width: 5 }
 ], [], {
   truncate: "...",
   paddingLeft: 0,
@@ -116,8 +116,8 @@ let t6 = Table([
 t6.push(
   ["特制的酱汁", 0.10],
   ["2玉米饼, 大米和豆类, 奶酪", 9.80, ""],
-  ["苹果片", 1.00, "yes"],
+  ["苹果片", 1.00, "yes"]
 )
 
-let str6 = t6.render()
+const str6 = t6.render()
 console.log(str6)
