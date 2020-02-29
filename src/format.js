@@ -28,12 +28,6 @@ const getMaxLength = (columnOptions, rows, columnIndex) => {
     iterable = rows
   }
 
-  // iterable.forEach( row => {
-  //   if(row[columnIndex] && stripAnsi(row[columnIndex].toString()).length > widest) {
-  //     widest = wcwidth(row[columnIndex].toString())
-  //   }
-  // })
-
   const widest = iterable.reduce((prev, row) => {
     if (row[columnIndex]) {
       const width = wcwidth(stripAnsi(row[columnIndex].toString()))
