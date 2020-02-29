@@ -21,7 +21,7 @@ let header = [
 
 // test truncation with elipsis
 let t1 = Table(header, [], {
-  borderStyle: 1,
+  borderStyle: "solid",
   paddingBottom: 0,
   headerAlign: "center",
   align: "center",
@@ -38,7 +38,7 @@ console.log(str1)
 
 // test truncation with spaces
 let t2 = Table(header, [], {
-  borderStyle: 1,
+  borderStyle: "solid",
   paddingBottom: 0,
   headerAlign: "center",
   align: "center",
@@ -55,7 +55,7 @@ console.log(str2)
 
 // test with padding
 let t3 = Table(header, [], {
-  borderStyle: 1,
+  borderStyle: "solid",
   paddingLeft: 2,
   paddingRight: 2,
   headerAlign: "center",
@@ -73,7 +73,7 @@ console.log(str3)
 
 // test truncation with boolean false
 let t4 = Table(header, [], {
-  borderStyle: 1,
+  borderStyle: "solid",
   paddingBottom: 0,
   headerAlign: "center",
   align: "center",
@@ -90,7 +90,7 @@ console.log(str4)
 
 // test truncation with boolean false
 let t5 = Table(header, [], {
-  borderStyle: 1,
+  borderStyle: "solid",
   paddingBottom: 0,
   headerAlign: "center",
   align: "center",

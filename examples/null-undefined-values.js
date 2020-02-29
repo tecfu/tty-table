@@ -13,7 +13,7 @@ const header = [
 ]
 
 const options = {
-  borderStyle: 1,
+  borderStyle: "solid",
   paddingBottom: 0,
   headerAlign: "center",
   align: "center",

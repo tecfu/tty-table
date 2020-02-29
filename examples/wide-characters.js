@@ -15,7 +15,7 @@ let rows = [
   ["意大利粉, 火腿, 意大利干酪", 3.75, "no"]
 ]
 let t1 = Table(header, rows, {
-  borderStyle: 1,
+  borderStyle: "solid",
   headerAlign: "right",
   align: "center",
   color: "white"
@@ -29,7 +29,7 @@ let rows2 = [
   ["ab한"]
 ]
 let t2 = Table(header, rows2, {
-  borderStyle: 2,
+  borderStyle: "dashed",
   paddingBottom: 0,
   paddingLeft: 2,
   paddingRight: 2,
