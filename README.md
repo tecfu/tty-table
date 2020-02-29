@@ -12,6 +12,13 @@ Display your data in a table using a terminal, browser, or browser console.
 [See here for complete example list](examples/)
 
 
+To view all example output:
+
+```sh
+$ git clone https://github.com/tecfu/tty-table && cd tty-table && npm i
+$ npm run view-examples
+```
+
 ### Terminal (Static)
 
 [examples/styles-and-formatting.js](examples/styles-and-formatting.js)
@@ -33,8 +40,8 @@ $ tty-table -h
 
 ### Browser & Browser Console 
 
-- [demo: jsfiddle](https://jsfiddle.net/6hz1a9cs/3/)
-- [demo: plinkr](https://plnkr.co/edit/iQn9xn5yCY4NUkXRF87o?p=preview)
+- [live demo: jsfiddle](https://jsfiddle.net/6hz1a9cs/3/)
+- [live demo: plnkr](https://plnkr.co/edit/iQn9xn5yCY4NUkXRF87o?p=preview)
 - [source: examples/browser-example.html](examples/browser-example.html)
 
 ![Browser Console Example](https://user-images.githubusercontent.com/7478359/74614563-cbcaff00-50e6-11ea-9101-5457497696b8.jpg "tty-table in the browser console") 
@@ -168,7 +175,7 @@ const footer = [
 **Example**
 ```js
 const options = {
-  borderStyle: 1,
+  borderStyle: "solid",
   borderColor: "blue",
   headerAlign: "center",
   align: "left",
@@ -233,9 +240,6 @@ $ npm run coverage
 ```sh
 $ npm run save-tests
 ```
-- Because: 
-
-`node script.js --color=always`
 
 ## Dev Tips
 
