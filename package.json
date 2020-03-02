@@ -1,6 +1,6 @@
 {
   "name": "tty-table",
-  "version": "3.0.3",
+  "version": "3.1.0",
   "description": "Node cli table",
   "main": "src/main.js",
   "engines": {

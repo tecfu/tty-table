@@ -50,15 +50,17 @@ const getAvailableWidth = config => {
     let viewport = (process.stdout && process.stdout.columns) ? process.stdout.columns : process.env.COLUMNS
     viewport = viewport - config.marginLeft
 
-    // table width fixed
-    if (config.width !== "auto" && /^\d{1,2}$/.test(config.width)) return config.width
-
     // table width percentage of (viewport less margin)
-    if (config.width !== "auto" && /^\d{1,2}%$/.test(config.width)) {
-      return (config.width.slice(0, -1) * 0.01) * viewport
+    if (config.width !== "auto" && /^\d+%$/.test(config.width)) {
+      return Math.min(1, (config.width.slice(0, -1) * 0.01)) * viewport
     }
 
+    // table width fixed
+    if (config.width !== "auto" && /^\d+$/.test(config.width)) return config.width
+
     // table width equals viewport less margin
+    // @TODO deprecate and remove "auto", which was never documented so should not be
+    // an issue
     return viewport
   }
 

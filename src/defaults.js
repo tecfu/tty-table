@@ -45,7 +45,7 @@ const defaults = {
   paddingTop: 0,
   showHeader: null, // undocumented
   truncate: false,
-  width: "auto",
+  width: "100%",
   GUTTER: 1, // undocumented
   columnSettings: [],
   // save so cell options can be merged into column options

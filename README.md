@@ -171,6 +171,8 @@ const footer = [
 | defaultValue | <code>mixed</code> | default: '?' |
 | errorOnNull | <code>boolean</code> | default: false |
 | truncate | <code>mixed</code> | default: false <br/> When this property is set to a string, cell contents will be truncated by that string instead of wrapped when they extend beyond of the width of the cell.  <br/> For example if: <br/> <code>"truncate":"..."</code> <br/> the cell will be truncated with "..." |
+| width | <code>string</code> | default: "100%". Width of the table. Can be a percentage of viewport i.e. "50%" or a fixed number of columns in the terminal i.e. "100". Note: When you use a percentage, your table will be "responsive".|
+
 
 **Example**
 ```js
