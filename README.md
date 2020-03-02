@@ -74,17 +74,17 @@ $ tty-table -h
 | color | <code>string</code> | default: terminal default color |
 | footerAlign | <code>string</code> | default: "center" |
 | footerColor | <code>string</code> | default: terminal default color |
-| formatter | <code>function(cellValue, columnIndex, rowIndex, rowData, inputData)</code> | Runs a callback on each cell value in the parent column. <br/>Use `this.style` within function body to style text, i.e. `this.style("mytext", "bold", "green", "underline")`. <br/>Please note that fat arrow functions `() => {}` don't support scope overrides, and this feature won't work within them. For a full list of options, see: [kleur](https://github.com/lukeed/kleur).  |
+| formatter | <code>function(cellValue, columnIndex, rowIndex, rowData, inputData)</code> | Runs a callback on each cell value in the parent column. <br/>Use `this.style` within function body to style text, i.e. `this.style("mytext", "bold", "green", "underline")`. <br/>Please note that fat arrow functions `() => {}` don't support scope overrides, and this feature won't work within them. For a full list of options, see: [chalk](https://github.com/chalk/chalk).  |
 | headerAlign | <code>string</code> | default: "center" |
 | headerColor | <code>string</code> | default: terminal's default color |
 | marginLeft | <code>integer</code> | default: 0 |
 | marginTop | <code>integer</code> | default: 0 |
-| width | <code>string</code> \|\| <code>integer</code> | default: "auto" |
 | paddingBottom | <code>integer</code> | default: 0 |
 | paddingLeft | <code>integer</code> | default: 1 |
 | paddingRight | <code>integer</code> | default: 1 |
 | paddingTop | <code>integer</code> | default: 0 |
 | value | <code>string</code> | Name of the property to display in each cell when data passed as an array of objects |
+| width | <code>string</code> \|\| <code>integer</code> | default: "auto" <br/> Can be a percentage of table width i.e. "20%" or a fixed number of columns i.e. "20". <br/> When set to the default ("auto"), the column widths are made proportionate by the longest value in each column. <br/> Note: Percentage columns and fixed value colums not intended to be mixed in the same table.|
 
 
 **Example**
@@ -163,15 +163,15 @@ const footer = [
 
 | Param | Type | Description |
 | --- | --- | --- |
-| borderStyle | <code>string</code> | default: "solid".  "solid", "dashed", "none" |
+| borderStyle | <code>string</code> | default: "solid". <br/> options: "solid", "dashed", "none" |
 | borderColor | <code>string</code> | default: terminal default color |
 | color | <code>string</code> | default: terminal default color |
-| compact | <code>boolean</code> | default: false Removes horizontal lines when true. |
+| compact | <code>boolean</code> | default: false <br/> Removes horizontal borders when true. |
 | defaultErrorValue | <code>mixed</code> | default: '�' |
 | defaultValue | <code>mixed</code> | default: '?' |
 | errorOnNull | <code>boolean</code> | default: false |
-| truncate | <code>mixed</code> | default: false <br/> When this property is set to a string, cell contents will be truncated by that string instead of wrapped when they extend beyond of the width of the cell.  <br/> For example if: <br/> <code>"truncate":"..."</code> <br/> the cell will be truncated with "..." |
-| width | <code>string</code> | default: "100%". Width of the table. Can be a percentage of viewport i.e. "50%" or a fixed number of columns in the terminal i.e. "100". Note: When you use a percentage, your table will be "responsive".|
+| truncate | <code>mixed</code> | default: false <br/> When this property is set to a string, cell contents will be truncated by that string instead of wrapped when they extend beyond of the width of the cell.  <br/> For example if: <br/> <code>"truncate":"..."</code> <br/> the cell will be truncated with "..." <br/> Note: tty-table wraps overflowing cell text into multiple lines by default, so you would likely only utilize `truncate` for extremely long values. |
+| width | <code>string</code> | default: "100%" <br/> Width of the table. Can be a percentage of i.e. "50%" or a fixed number of columns in the terminal viewport i.e. "100". <br/> Note: When you use a percentage, your table will be "responsive".|
 
 
 **Example**
@@ -182,7 +182,8 @@ const options = {
   headerAlign: "center",
   align: "left",
   color: "white",
-  truncate: "..."
+  truncate: "...",
+  width: "90%"
 }
 ```
 

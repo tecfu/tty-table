@@ -215,15 +215,15 @@ module.exports.getColumnWidths = (config, rows) => {
     let result
 
     switch (true) {
-      // column width is specified in column header
-      case (typeof column === "object" && (/^\d{1,2}$/.test(column.width))):
-        result = column.width
-        break
-
       // column width is a percentage of table width specified in column header
-      case (typeof column === "object" && (/^\d{1,2}%$/.test(column.width))):
+      case (typeof column === "object" && (/^\d+%$/.test(column.width))):
         result = (column.width.slice(0, -1) * 0.01) * availableWidth
         result = addPadding(config, result)
+        break
+
+      // column width is specified in column header
+      case (typeof column === "object" && (/^\d+$/.test(column.width))):
+        result = column.width
         break
 
       // 'auto' sets column width to its longest value in the initial data set
