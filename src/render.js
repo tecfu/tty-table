@@ -154,74 +154,63 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
   }
 
   // force row to have correct number of columns
-  const difL = config.table.columnWidths.length - row.length
-
-  if (difL > 0) {
-    // add empty element to array
-    row = row.concat(Array.apply(null, new Array(difL)).map(() => null))
-  } else if (difL < 0) {
-    // truncate array
+  const lengthDifference = config.table.columnWidths.length - row.length
+  if (lengthDifference > 0) {
+    // array (row) lacks elements, add until equal
+    row = row.concat(Array.apply(null, new Array(lengthDifference)).map(() => null))
+  } else if (lengthDifference < 0) {
+    // array (row) has too many elements, remove until equal
     row.length = config.table.columnWidths.length
   }
 
-  // get row as array of cell arrays
-  // can't use es5 row functions (map, forEach because i.e.
-  // [1,,3] will only iterate 1,3
-  const cArrs = []
-  const rowLength = row.length
+  // convert each element in row to cell format
+  row = row.map((elem, elemIndex) => {
+    const cell = exports.buildCell(config, elem, elemIndex, rowType, rowIndex, rowData, inputData)
+    minRowHeight = (minRowHeight < cell.length) ? cell.length : minRowHeight
+    return cell
+  })
 
-  for (let index = 0; index < rowLength; index++) {
-    const c = exports.buildCell(config, row[index], index, rowType, rowIndex, rowData, inputData)
-    const cellArr = c.cellArr
-
-    if (rowType === "header") {
-      config.table.columnInnerWidths.push(c.width)
-    }
-
-    minRowHeight = (minRowHeight < cellArr.length)
-      ? cellArr.length : minRowHeight
-
-    cArrs.push(cellArr)
-  }
-
-  // adjust minRowHeight to reflect vertical row padding
+  // apply top and bottom padding to row
   minRowHeight = (rowType === "header") ? minRowHeight
     : minRowHeight + (config.paddingBottom + config.paddingTop)
 
-  // convert array of cell arrays to array of lines
-  const lines = Array.apply(null, { length: minRowHeight })
+  const linedRow = Array.apply(null, { length: minRowHeight })
     .map(Function.call, () => [])
 
-  cArrs.forEach(function (cellArr, a) {
-    const whiteline = Array(config.table.columnWidths[a]).join(" ")
+  row.forEach(function (cell, a) {
+    const whitespace = Array(config.table.columnWidths[a]).join(" ")
 
     if (rowType === "body") {
       // add whitespace for top padding
       for (let i = 0; i < config.paddingTop; i++) {
-        cellArr.unshift(whiteline)
+        cell.unshift(whitespace)
       }
 
       // add whitespace for bottom padding
       for (let i = 0; i < config.paddingBottom; i++) {
-        cellArr.push(whiteline)
+        cell.push(whitespace)
       }
     }
-    for (let b = 0; b < minRowHeight; b++) {
-      lines[b].push((typeof cellArr[b] !== "undefined")
-        ? cellArr[b] : whiteline)
+
+    // a `row` is divided by columns (horizontally)
+    // a `linedRow` becomes the row divided instead into an array of vertical lines
+    // each nested line divided by columns
+    for (let i = 0; i < minRowHeight; i++) {
+      linedRow[i].push((typeof cell[i] !== "undefined")
+        ? cell[i] : whitespace)
     }
   })
 
-  return lines
+  return linedRow
 }
 
-module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowData, inputData) => {
+module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowData, inputData) => {
   let cellValue
   const cellOptions = Object.assign(
     {},
     config,
     (rowType === "body") ? config.columnSettings[columnIndex] : {}, // ignore columnSettings for footer
-    (typeof cell === "object") ? cell : {}
+    (typeof elem === "object") ? elem : {}
   )
 
   if (rowType === "header") {
@@ -230,19 +219,19 @@ module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowDat
   } else {
     // set cellValue
     switch (true) {
-      case (typeof cell === "undefined" || cell === null):
-        // replace undefined/null cell values with placeholder
+      case (typeof elem === "undefined" || elem === null):
+        // replace undefined/null elem values with placeholder
         cellValue = (config.errorOnNull) ? config.defaultErrorValue : config.defaultValue
-        // @TODO add to cell defaults
+        // @TODO add to elem defaults
         cellOptions.isNull = true
         break
 
-      case (typeof cell === "object" && typeof cell.value !== "undefined"):
-        cellValue = cell.value
+      case (typeof elem === "object" && typeof elem.value !== "undefined"):
+        cellValue = elem.value
         break
 
-      case (typeof cell === "function"):
-        cellValue = cell.bind({ style: Style.style })(
+      case (typeof elem === "function"):
+        cellValue = elem.bind({ style: Style.style })(
           (!cellOptions.isNull) ? cellValue : "",
           columnIndex,
           rowIndex,
@@ -252,8 +241,8 @@ module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowDat
         break
 
       default:
-        // cell is assumed to be a scalar
-        cellValue = cell
+        // elem is assumed to be a scalar
+        cellValue = elem
     }
 
     // run formatter
@@ -273,13 +262,13 @@ module.exports.buildCell = (config, cell, columnIndex, rowType, rowIndex, rowDat
   cellValue = Style.colorizeCell(cellValue, cellOptions, rowType)
 
   // textwrap cellValue
-  const wrapObj = Format.wrapCellText(config, cellValue, columnIndex, cellOptions, rowType)
+  const { cell, innerWidth } = Format.wrapCellText(config, cellValue, columnIndex, cellOptions, rowType)
 
-  // return as array of lines
-  return {
-    cellArr: wrapObj.output,
-    width: wrapObj.width
+  if (rowType === "header") {
+    config.table.columnInnerWidths.push(innerWidth)
   }
+
+  return cell
 }
 
 /**

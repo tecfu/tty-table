@@ -136,7 +136,7 @@ module.exports.wrapCellText = (
   }
 
   // format each line
-  const strArr = string.split("\n").map(line => {
+  const cell = string.split("\n").map(line => {
     line = line.trim()
 
     const lineLength = exports.getStringLength(line)
@@ -172,10 +172,7 @@ module.exports.wrapCellText = (
     return startMatches[0] + line + endMatches[0]
   })
 
-  return {
-    output: strArr,
-    width: innerWidth
-  }
+  return { cell, innerWidth }
 }
 
 module.exports.truncate = (string, cellOptions, maxWidth) => {
