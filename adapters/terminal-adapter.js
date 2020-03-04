@@ -2,7 +2,7 @@
 const path = require("path")
 const fs = require("fs")
 const csv = require("csv")
-const chalk = require("chalk")
+const style = require("../src/style").style
 let yargs = require("yargs")
 
 yargs.epilog("Copyright github.com/tecfu 2018")
@@ -39,7 +39,10 @@ yargs.option("options\u2010\u002A", {
 yargs = yargs.help("h").argv
 
 const emitError = function (type, detail) {
-  console.log(`\n${chalk.bgRed.white(type)}\n\n${chalk.bold(detail)}`)
+  console.log(`
+${style(type, "white", "bgRed")}
+
+${detail}`)
   process.exit(1)
 }
 
