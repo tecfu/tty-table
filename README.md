@@ -227,6 +227,13 @@ let Table = require('tty-table')   // https://cdn.jsdelivr.net/gh/tecfu/tty-tabl
 let Table = TTY_Table;             // https://cdn.jsdelivr.net/gh/tecfu/tty-table/dist/tty-table.umd.js
 ```
 
+## Version Compatibility
+
+| Node Version   |   tty-table Version  |
+| -------------- | ------------------|
+| 11             | <= 3.0            |
+| 8              | >= 2.0            |
+| 0.11           | >= 0.0            |
 
 ## Running tests
 
