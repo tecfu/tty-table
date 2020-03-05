@@ -3,6 +3,9 @@ const Format = require("./format.js")
 
 /**
  * Converts arrays of data into arrays of cell strings
+ * @param {TtyTable.Config} config
+ * @param {Array<Array<string>|object|TtyTable.Formatter>} inputData
+ * @returns {Array<string>}
  */
 module.exports.stringifyData = (config, inputData) => {
   const sections = {
@@ -205,7 +208,7 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
 }
 
 module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowData, inputData) => {
-  let cellValue
+  let cellValue = null
   const cellOptions = Object.assign(
     {},
     config,
@@ -226,7 +229,7 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
         cellOptions.isNull = true
         break
 
-      case (typeof elem === "object" && typeof elem.value !== "undefined"):
+      case (typeof elem === "object" && elem !== null && typeof elem.value !== "undefined"):
         cellValue = elem.value
         break
 
@@ -242,7 +245,7 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
 
       default:
         // elem is assumed to be a scalar
-        cellValue = elem
+        cellValue = elem || ""
     }
 
     // run formatter
