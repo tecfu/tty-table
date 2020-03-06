@@ -67,7 +67,9 @@ const getAvailableWidth = config => {
   // browser
   if (typeof window !== "undefined") return window.innerWidth // eslint-disable-line
 
-  throw new Error("Cannot auto discover available table width. Set table `width` option or export the environment variable COLUMNS")
+  // process.stdout.columns does not exist. assume redirecting to write stream
+  // use 80 columns, which is VT200 standard
+  return config.COLUMNS - config.marginLeft
 }
 
 module.exports.getStringLength = string => {

@@ -26,6 +26,7 @@ const defaults = {
   borderColor: null,
   borderStyle: "solid",
   color: false,
+  COLUMNS: 80, // if !process.stdout.columns assume redirecting to write stream 80 columns is VT200 standard
   compact: false,
   defaultErrorValue: "�",
   // defaultValue: "\u001b[31m?\u001b[39m",
