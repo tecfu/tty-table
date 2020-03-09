@@ -47,3 +47,20 @@ var crossTable = new Table({ head: ["", "Header #1", "Header #2"] })
 crossTable.push({ "Header #3": ["Value 1", "Value 2"] },
   { "Header #4": ["Value 3", "Value 4"] })
 console.log(crossTable.toString())
+
+/* additional to improve code coverage */
+const misc = new Table({
+  head: ["Rel", "Change", "By", "When"],
+  colWidths: [6, 21, 25, 17],
+  colAligns: ["left", "left", "right", "right"],
+  style: { compact: true, "padding-right": 1, body: ["green"] },
+})
+misc.push(
+  ["v0.1", "Testing something cool", "rauchg@gmail.com", "7 minutes ago"]
+  , ["v0.1", "Testing something cool", "rauchg@gmail.com", "8 minutes ago"]
+  , []
+  , ["v0.1", "Testing something cool", "rauchg@gmail.com", "8 minutes ago"]
+)
+console.log(misc.toString())
+
+

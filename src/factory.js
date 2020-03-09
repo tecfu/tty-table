@@ -55,6 +55,7 @@ const Factory = function (paramsArr) {
     case (paramsArr.length === 1 && typeof paramsArr[0] === "string"):
       return require(`../adapters/${paramsArr[0]}`)
 
+    /* istanbul ignore next */
     default:
       console.log("Error: Bad params. \nSee docs at github.com/tecfu/tty-table")
       process.exit()

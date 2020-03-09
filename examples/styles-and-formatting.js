@@ -143,5 +143,6 @@ const rows3 = [
   { item: "grapes", price: 2.99, important: false, enabled: false }
 ]
 
-const t3 = Table(header3, rows3)
+const t3 = Table(header3, rows3, { width: 50 })
+//const t3 = Table(header3, rows3)
 console.log(t3.render())
