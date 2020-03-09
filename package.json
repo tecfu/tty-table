@@ -1,10 +1,10 @@
 {
   "name": "tty-table",
-  "version": "3.3.1",
+  "version": "4.0.0",
   "description": "Node cli table",
   "main": "src/main.js",
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=8.0.0"
   },
   "bin": {
     "tty-table": "adapters/terminal-adapter.js"

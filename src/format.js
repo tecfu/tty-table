@@ -58,7 +58,10 @@ const getAvailableWidth = config => {
     }
 
     // table width fixed
-    if (config.width !== "auto" && /^\d+$/.test(config.width)) return config.width
+    if (config.width !== "auto" && /^\d+$/.test(config.width)) {
+      config.FIXED_WIDTH = true
+      return config.width
+    }
 
     // table width equals viewport less margin
     // @TODO deprecate and remove "auto", which was never documented so should not be
@@ -251,18 +254,17 @@ module.exports.getColumnWidths = (config, rows) => {
   // calculate sum of all column widths (including marginLeft)
   const totalWidth = widths.reduce((prev, current) => prev + current)
 
-  // if sum of all widths exceeds viewport, resize proportionately to fit
-  if (totalWidth > availableWidth) {
-    let prop = availableWidth / totalWidth
-    let relativeWidths
-    let totalRelativeWidths
+  // proportionately resize columns when necessary
+  if (totalWidth > availableWidth || config.FIXED_WIDTH) {
+    // proportion wont be exact fit, but this method keeps us safe
+    const proportion = (availableWidth / totalWidth).toFixed(2) - 0.01
+    const relativeWidths = widths.map(value => Math.floor(proportion * value))
 
-    prop = prop.toFixed(2) - 0.01 // this wont be exact fit, but keeps us safe
+    if (config.FIXED_WIDTH) return relativeWidths
 
-    // when prop < 0 column cant be resized and totalWidth must overflow viewport
-    if (prop > 0) {
-      relativeWidths = widths.map(value => Math.floor(prop * value))
-      totalRelativeWidths = relativeWidths.reduce((prev, current) => prev + current)
+    // when proportion < 0 column cant be resized and totalWidth must overflow viewport
+    if (proportion > 0) {
+      const totalRelativeWidths = relativeWidths.reduce((prev, current) => prev + current)
       widths = (totalRelativeWidths < totalWidth) ? relativeWidths : widths
     }
   }

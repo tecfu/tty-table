@@ -32,6 +32,7 @@ const defaults = {
   // defaultValue: "\u001b[31m?\u001b[39m",
   defaultValue: "[32m[37m[41m ?[49m[32m[39m",
   errorOnNull: false,
+  FIXED_WIDTH: false,
   footerAlign: "center",
   footerColor: false,
   formatter: null,

@@ -144,5 +144,5 @@ const rows3 = [
 ]
 
 const t3 = Table(header3, rows3, { width: 50 })
-//const t3 = Table(header3, rows3)
+// const t3 = Table(header3, rows3)
 console.log(t3.render())

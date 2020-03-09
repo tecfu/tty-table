@@ -53,7 +53,7 @@ const misc = new Table({
   head: ["Rel", "Change", "By", "When"],
   colWidths: [6, 21, 25, 17],
   colAligns: ["left", "left", "right", "right"],
-  style: { compact: true, "padding-right": 1, body: ["green"] },
+  style: { compact: true, "padding-right": 1, body: ["green"] }
 })
 misc.push(
   ["v0.1", "Testing something cool", "rauchg@gmail.com", "7 minutes ago"]
@@ -62,5 +62,3 @@ misc.push(
   , ["v0.1", "Testing something cool", "rauchg@gmail.com", "8 minutes ago"]
 )
 console.log(misc.toString())
-
-
