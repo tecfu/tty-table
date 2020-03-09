@@ -109,6 +109,7 @@ const options = {
   borderColor: "green",
   paddingBottom: 0,
   headerAlign: "center",
+  headerColor: "green",
   align: "center",
   color: "white",
   width: "80%"
@@ -144,14 +145,37 @@ const header3 = [
 
 const rows3 = [
   {
-    item: "[32m[37m[41m banana[49m[32m[39m",
     price: 1.99,
+    item: "[32m[37m[41m banana[49m[32m[39m",
     important: true,
     enabled: true
   },
-  { item: "[32m[37m[41m grapes[49m[32m[39m", price: 2.99, important: false, enabled: false }
+  {
+    price: 2.99,
+    item: "[32m[37m[41m grapes[49m[32m[39m",
+    important: false,
+    enabled: false
+  }
 ]
 
-const t3 = Table(header3, rows3, { width: 50 })
-// const t3 = Table(header3, rows3)
-console.log(t3.render())
+const t3 = Table(header3, rows3, { width: 50, borderStyle: "none", compact: true }).render()
+console.log(t3)
+
+const t4 = Table(header3, rows3, { width: 50, paddingTop: 2, paddingBottom: 2 }).render()
+console.log(t4)
+
+header3[0].alias = header3[0].value
+header3[1].alias = header3[1].value
+
+delete header3[0].value
+delete header3[1].value
+
+const t5 = Table(header3, rows3, { width: 50, paddingTop: 2, paddingBottom: 2 }).render()
+console.log(t5)
+
+delete header3[0].alias
+delete header3[1].alias
+
+// will have a different column width because no header to derive from
+const t6 = Table(header3, rows3, { width: 50, paddingTop: 2, paddingBottom: 2 }).render()
+console.log(t6)

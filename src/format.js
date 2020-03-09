@@ -17,12 +17,17 @@ const addPadding = (config, width) => {
 const getMaxLength = (columnOptions, rows, columnIndex) => {
   let iterable
 
-  // add a row that contains the header value, so we use that width too
-  if (typeof columnOptions === "object" && columnOptions.value) {
+  // add header value, alias to calculate width when applicable
+  if (columnOptions && (columnOptions.value || columnOptions.alias)) {
+    // string we use from header
+    let val = columnOptions.alias || columnOptions.value
+    val = val.toString()
+    // create a row with value in the current columnIndex
+    const headerRow = Array(rows[0].length)
+    headerRow[columnIndex] = val
+    // add header row to new array we will check for max value width
     iterable = rows.slice()
-    const z = new Array(iterable[0].length) // create a new empty row
-    z[columnIndex] = columnOptions.value.toString()
-    iterable.push(z)
+    iterable.push(headerRow)
   } else {
     // no header value, just use rows to derive max width
     iterable = rows
@@ -70,7 +75,7 @@ const getAvailableWidth = config => {
   }
 
   // browser
-  //* istanbul ignore next */
+  /* istanbul ignore next */
   if (typeof window !== "undefined") return window.innerWidth // eslint-disable-line
 
   // process.stdout.columns does not exist. assume redirecting to write stream
