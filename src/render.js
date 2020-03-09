@@ -209,6 +209,10 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
 
 module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowData, inputData) => {
   let cellValue = null
+  const formatterMeta = {
+    reset: false
+  }
+
   const cellOptions = Object.assign(
     {},
     config,
@@ -234,7 +238,11 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
         break
 
       case (typeof elem === "function"):
-        cellValue = elem.bind({ style: Style.style })(
+        cellValue = elem.bind({
+          meta: formatterMeta, // `resetStyle` updates to prevent downstream styling
+          style: Style.style,
+          resetStyle: Style.resetStyle
+        })(
           (!cellOptions.isNull) ? cellValue : "",
           columnIndex,
           rowIndex,
@@ -251,7 +259,11 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
     // run formatter
     if (typeof cellOptions.formatter === "function") {
       cellValue = cellOptions.formatter
-        .bind({ style: Style.style })(
+        .bind({
+          meta: formatterMeta, // `resetStyle` updates to prevent downstream styling
+          style: Style.style,
+          resetStyle: Style.resetStyle
+        })(
           (!cellOptions.isNull) ? cellValue : "",
           columnIndex,
           rowIndex,
@@ -262,7 +274,13 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
   }
 
   // colorize cellValue
-  cellValue = Style.colorizeCell(cellValue, cellOptions, rowType)
+  // we don't want the formatter to pass a styled cell value with ANSI codes
+  // (in case user wants to do math or string operations to cell value), so
+  // we apply default styles to the cell after it runs through the formatter
+  // and omit those default styles if the user applied `this.resetStyle`
+  if (!formatterMeta.reset) {
+    cellValue = Style.colorizeCell(cellValue, cellOptions, rowType)
+  }
 
   // textwrap cellValue
   const { cell, innerWidth } = Format.wrapCellText(config, cellValue, columnIndex, cellOptions, rowType)

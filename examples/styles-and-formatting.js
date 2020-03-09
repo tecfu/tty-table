@@ -134,13 +134,22 @@ const header3 = [
     }
   },
   {
-    value: "item"
+    value: "item",
+    color: "underline",
+    formatter: function (cellValue) {
+      return (/banana/.test(cellValue)) ? this.resetStyle(cellValue) : cellValue
+    }
   }
 ]
 
 const rows3 = [
-  { item: "banana", price: 1.99, important: true, enabled: true },
-  { item: "grapes", price: 2.99, important: false, enabled: false }
+  {
+    item: "[32m[37m[41m banana[49m[32m[39m",
+    price: 1.99,
+    important: true,
+    enabled: true
+  },
+  { item: "[32m[37m[41m grapes[49m[32m[39m", price: 2.99, important: false, enabled: false }
 ]
 
 const t3 = Table(header3, rows3, { width: 50 })

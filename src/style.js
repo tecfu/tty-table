@@ -24,7 +24,8 @@ module.exports.styleEachChar = (str, ...colors) => {
   return out
 }
 
-module.exports.resetStyle = (str) => {
+module.exports.resetStyle = function (str) {
+  this.meta.reset = true
   return stripAnsi(str)
 }
 

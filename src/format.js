@@ -70,6 +70,7 @@ const getAvailableWidth = config => {
   }
 
   // browser
+  //* istanbul ignore next */
   if (typeof window !== "undefined") return window.innerWidth // eslint-disable-line
 
   // process.stdout.columns does not exist. assume redirecting to write stream
