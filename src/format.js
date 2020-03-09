@@ -30,7 +30,9 @@ const getMaxLength = (columnOptions, rows, columnIndex) => {
 
   const widest = iterable.reduce((prev, row) => {
     if (row[columnIndex]) {
-      const width = wcwidth(stripAnsi(row[columnIndex].toString()))
+      // check cell value is object or scalar
+      const value = (row[columnIndex].value) ? row[columnIndex].value : row[columnIndex]
+      const width = wcwidth(stripAnsi(value.toString()))
       return (width > prev) ? width : prev
     }
     return prev
