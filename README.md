@@ -231,7 +231,6 @@ let Table = TTY_Table;             // https://cdn.jsdelivr.net/gh/tecfu/tty-tabl
 
 | Node Version   |   tty-table Version  |
 | -------------- | ------------------|
-| 11             | <= 3.0            |
 | 8              | >= 2.0            |
 | 0.11           | >= 0.0            |
 

@@ -6,7 +6,7 @@ RUN apt-get update
 # Install nodejs
 RUN apt-get install curl -y
 RUN apt-get install python-software-properties -y
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 RUN apt-get update
 RUN apt-get install -y nodejs
 
