@@ -1,9 +1,14 @@
 const chalk = require("chalk")
+const kleur = require("kleur")
+
+// user kleur if we are in the browser
+const colorLib = (process && process.stdout) ? chalk : kleur
+
 const stripAnsi = require("strip-ansi")
 
 module.exports.style = (str, ...colors) => {
   const out = colors.reduce(function (input, color) {
-    return chalk[color](input)
+    return colorLib[color](input)
   }, str)
   return out
 }
@@ -16,7 +21,7 @@ module.exports.styleEachChar = (str, ...colors) => {
   // style each character
   const out = chars.reduce((prev, current) => {
     const coded = colors.reduce((input, color) => {
-      return chalk[color](input)
+      return colorLib[color](input)
     }, current)
     return prev + coded
   }, "")

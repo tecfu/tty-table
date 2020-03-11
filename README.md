@@ -77,7 +77,7 @@ $ tty-table -h
 | formatter | <code>function(cellValue, columnIndex, rowIndex, rowData, inputData</code> | Runs a callback on each cell value in the parent column. <br/>Please note that fat arrow functions `() => {}` don't support scope overrides, and this feature won't work correctly within them.  |
 | @formatter configure | <code>function(object)</code> | Configure cell properties. For example: <br/>`this.configure({ truncate: false, align: "left" })` [More here](https://github.com/tecfu/tty-table/blob/master/examples/truncated-lines.js#L100-L110). |
 | @formatter resetStyle | <code>function(cellValue)</code> | Removes ANSI escape sequences. For example: <br/>`this.resetStyle("[32m myText[39m") // "myText"`<br/> |
-| @formatter style | <code>function(cellValue, effect)</code> | Style cell value. For example: <br/>`this.style("mytext", "bold", "green", "underline")`<br/>For a full list of options, see: [chalk](https://github.com/chalk/chalk). |
+| @formatter style | <code>function(cellValue, effect)</code> | Style cell value. For example: <br/>`this.style("mytext", "bold", "green", "underline")`<br/>For a full list of options in the terminal: [chalk](https://github.com/chalk/chalk). For a full list of options in the browser: [chalk](https://github.com/lukeed/kleur)|
 | headerAlign | <code>string</code> | default: "center" |
 | headerColor | <code>string</code> | default: terminal's default color |
 | marginLeft | <code>integer</code> | default: 0 |
