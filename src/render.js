@@ -209,12 +209,9 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
 
 module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowData, inputData) => {
   let cellValue = null
-  const formatterMeta = {
-    reset: false
-  }
 
   const cellOptions = Object.assign(
-    {},
+    { reset: false },
     config,
     (rowType === "body") ? config.columnSettings[columnIndex] : {}, // ignore columnSettings for footer
     (typeof elem === "object") ? elem : {}
@@ -239,7 +236,9 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
 
       case (typeof elem === "function"):
         cellValue = elem.bind({
-          meta: formatterMeta, // `resetStyle` updates to prevent downstream styling
+          configure: function (object) {
+            return Object.assign(cellOptions, object)
+          },
           style: Style.style,
           resetStyle: Style.resetStyle
         })(
@@ -260,7 +259,9 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
     if (typeof cellOptions.formatter === "function") {
       cellValue = cellOptions.formatter
         .bind({
-          meta: formatterMeta, // `resetStyle` updates to prevent downstream styling
+          configure: function (object) {
+            return Object.assign(cellOptions, object)
+          },
           style: Style.style,
           resetStyle: Style.resetStyle
         })(
@@ -278,12 +279,12 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
   // (in case user wants to do math or string operations to cell value), so
   // we apply default styles to the cell after it runs through the formatter
   // and omit those default styles if the user applied `this.resetStyle`
-  if (!formatterMeta.reset) {
+  if (!cellOptions.reset) {
     cellValue = Style.colorizeCell(cellValue, cellOptions, rowType)
   }
 
   // textwrap cellValue
-  const { cell, innerWidth } = Format.wrapCellText(config, cellValue, columnIndex, cellOptions, rowType)
+  const { cell, innerWidth } = Format.wrapCellText(cellOptions, cellValue, columnIndex, cellOptions, rowType)
 
   if (rowType === "header") {
     config.table.columnInnerWidths.push(innerWidth)

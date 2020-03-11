@@ -74,7 +74,10 @@ $ tty-table -h
 | color | <code>string</code> | default: terminal default color |
 | footerAlign | <code>string</code> | default: "center" |
 | footerColor | <code>string</code> | default: terminal default color |
-| formatter | <code>function(cellValue, columnIndex, rowIndex, rowData, inputData)</code> | Runs a callback on each cell value in the parent column. <br/>Use `this.style` within function body to style text, i.e. `this.style("mytext", "bold", "green", "underline")`. <br/>Please note that fat arrow functions `() => {}` don't support scope overrides, and this feature won't work within them. For a full list of options, see: [chalk](https://github.com/chalk/chalk).  |
+| formatter | <code>function(cellValue, columnIndex, rowIndex, rowData, inputData</code> | Runs a callback on each cell value in the parent column. <br/>Please note that fat arrow functions `() => {}` don't support scope overrides, and this feature won't work correctly within them.  |
+| @formatter configure | <code>function(object)</code> | Configure cell properties. For example: <br/>`this.configure({ truncate: false, align: "left" })` |
+| @formatter resetStyle | <code>function(cellValue)</code> | Removes ANSI escape sequences. For example: <br/>`this.resetStyle("[32m myText[39m") // "myText"`<br/>[More here.](https://github.com/tecfu/tty-table/blob/master/examples/truncated-lines.js#L100-L110)) |
+| @formatter style | <code>function(cellValue, effect)</code> | Style cell value. For example: <br/>`this.style("mytext", "bold", "green", "underline")`<br/>For a full list of options, see: [chalk](https://github.com/chalk/chalk). |
 | headerAlign | <code>string</code> | default: "center" |
 | headerColor | <code>string</code> | default: terminal's default color |
 | marginLeft | <code>integer</code> | default: 0 |
@@ -85,7 +88,6 @@ $ tty-table -h
 | paddingTop | <code>integer</code> | default: 0 |
 | value | <code>string</code> | Name of the property to display in each cell when data passed as an array of objects |
 | width | <code>string</code> \|\| <code>integer</code> | default: "auto" <br/> Can be a percentage of table width i.e. "20%" or a fixed number of columns i.e. "20". <br/> When set to the default ("auto"), the column widths are made proportionate by the longest value in each column. <br/> Note: Percentage columns and fixed value colums not intended to be mixed in the same table.|
-
 
 **Example**
 
