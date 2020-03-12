@@ -40,8 +40,16 @@ $ tty-table -h
 
 ### Browser & Browser Console 
 
-- [live demo: jsfiddle](https://jsfiddle.net/6hz1a9cs/3/)
-- [live demo: plnkr](https://plnkr.co/edit/iQn9xn5yCY4NUkXRF87o?p=preview)
+- View in Chrome or Chromium at [http://localhost:8070/examples/browser-example.html](http://localhost:8070/examples/browser-example.html) using a dockerized apache instance:
+
+    ```sh
+    git clone https://github.com/tecfu/tty-table
+    cd tty-table
+    docker run -dit --name tty-table-in-browser -p 8070:80 -v "$PWD":/usr/local/apache2/htdocs/ httpd:2.4
+    ```
+
+- [live demo (chrome only): jsfiddle](https://jsfiddle.net/nb14eyav/)
+- [live demo (chrome only): plnkr](https://plnkr.co/edit/iQn9xn5yCY4NUkXRF87o?p=preview)
 - [source: examples/browser-example.html](examples/browser-example.html)
 
 ![Browser Console Example](https://user-images.githubusercontent.com/7478359/74614563-cbcaff00-50e6-11ea-9101-5457497696b8.jpg "tty-table in the browser console") 
