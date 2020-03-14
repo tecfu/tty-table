@@ -12,6 +12,8 @@
 
  * Terminal Emulator:
 
+ * Node Version:
+
 
 ## Steps to Reproduce 
 
