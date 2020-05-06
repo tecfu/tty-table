@@ -37,7 +37,9 @@ const getMaxLength = (columnOptions, rows, columnIndex) => {
     if (row[columnIndex]) {
       // check cell value is object or scalar
       const value = (row[columnIndex].value) ? row[columnIndex].value : row[columnIndex]
-      const width = wcwidth(stripAnsi(value.toString()))
+      const width = Math.max(
+        ...stripAnsi(value.toString()).split(/[\n\r]/).map((s) => wcwidth(s))
+      )
       return (width > prev) ? width : prev
     }
     return prev
