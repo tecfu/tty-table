@@ -3,6 +3,7 @@
   "version": "4.1.2",
   "description": "Node cli table",
   "main": "src/main.js",
+  "types": "src/factory.d.ts",
   "engines": {
     "node": ">=8.0.0"
   },
