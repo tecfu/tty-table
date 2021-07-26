@@ -266,8 +266,7 @@ module.exports.getColumnWidths = (config, rows) => {
   if (totalWidth > availableWidth || config.FIXED_WIDTH) {
     // proportion wont be exact fit, but this method keeps us safe
     const proportion = (availableWidth / totalWidth).toFixed(2) - 0.01
-    const relativeWidths = widths.map(value => Math.floor(proportion * value))
-
+    const relativeWidths = widths.map(value => Math.max(2, Math.floor(proportion * value)))
     if (config.FIXED_WIDTH) return relativeWidths
 
     // when proportion < 0 column cant be resized and totalWidth must overflow viewport

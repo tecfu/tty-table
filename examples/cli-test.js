@@ -14,3 +14,9 @@ const output2 = cp.execSync(`cat ${pwd}/data/data.json | node ${pwd}/../adapters
   env: { ...process.env, COLUMNS: pkg.defaultTestColumns } // since child process wont inherit process.stdout.columns
 })
 console.log(output2)
+
+const output3 = cp.execSync(`cat ${pwd}/data/data-wide.csv | node ${pwd}/../adapters/terminal-adapter.js --options-width 20`, {
+  encoding: "utf8",
+  env: { ...process.env, COLUMNS: pkg.defaultTestColumns } // since child process wont inherit process.stdout.columns
+})
+console.log(output3)
