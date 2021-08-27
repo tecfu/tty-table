@@ -13,7 +13,7 @@ function getCjsExportFromNamespace (n) {
 }
 
 // @TODO split defaults into table and cell settings
-const defaults = {
+const defaults$2 = {
   borderCharacters: {
     invisible: [
       { v: " ", l: " ", j: " ", h: " ", r: " " },
@@ -78,11 +78,11 @@ const defaults = {
 };
 
 // support deprecated border style values
-defaults.borderCharacters["0"] = defaults.borderCharacters.none;
-defaults.borderCharacters["1"] = defaults.borderCharacters.solid;
-defaults.borderCharacters["2"] = defaults.borderCharacters.dashed;
+defaults$2.borderCharacters["0"] = defaults$2.borderCharacters.none;
+defaults$2.borderCharacters["1"] = defaults$2.borderCharacters.solid;
+defaults$2.borderCharacters["2"] = defaults$2.borderCharacters.dashed;
 
-var defaults_1 = defaults;
+var defaults_1 = defaults$2;
 
 var colorName = {
 	"aliceblue": [240, 248, 255],
@@ -248,7 +248,7 @@ for (const key of Object.keys(colorName)) {
 	reverseKeywords[colorName[key]] = key;
 }
 
-const convert = {
+const convert$1 = {
 	rgb: {channels: 3, labels: 'rgb'},
 	hsl: {channels: 3, labels: 'hsl'},
 	hsv: {channels: 3, labels: 'hsv'},
@@ -266,30 +266,30 @@ const convert = {
 	gray: {channels: 1, labels: ['gray']}
 };
 
-var conversions = convert;
+var conversions = convert$1;
 
 // Hide .channels and .labels properties
-for (const model of Object.keys(convert)) {
-	if (!('channels' in convert[model])) {
+for (const model of Object.keys(convert$1)) {
+	if (!('channels' in convert$1[model])) {
 		throw new Error('missing channels property: ' + model);
 	}
 
-	if (!('labels' in convert[model])) {
+	if (!('labels' in convert$1[model])) {
 		throw new Error('missing channel labels property: ' + model);
 	}
 
-	if (convert[model].labels.length !== convert[model].channels) {
+	if (convert$1[model].labels.length !== convert$1[model].channels) {
 		throw new Error('channel and label counts mismatch: ' + model);
 	}
 
-	const {channels, labels} = convert[model];
-	delete convert[model].channels;
-	delete convert[model].labels;
-	Object.defineProperty(convert[model], 'channels', {value: channels});
-	Object.defineProperty(convert[model], 'labels', {value: labels});
+	const {channels, labels} = convert$1[model];
+	delete convert$1[model].channels;
+	delete convert$1[model].labels;
+	Object.defineProperty(convert$1[model], 'channels', {value: channels});
+	Object.defineProperty(convert$1[model], 'labels', {value: labels});
 }
 
-convert.rgb.hsl = function (rgb) {
+convert$1.rgb.hsl = function (rgb) {
 	const r = rgb[0] / 255;
 	const g = rgb[1] / 255;
 	const b = rgb[2] / 255;
@@ -328,7 +328,7 @@ convert.rgb.hsl = function (rgb) {
 	return [h, s * 100, l * 100];
 };
 
-convert.rgb.hsv = function (rgb) {
+convert$1.rgb.hsv = function (rgb) {
 	let rdif;
 	let gdif;
 	let bdif;
@@ -375,11 +375,11 @@ convert.rgb.hsv = function (rgb) {
 	];
 };
 
-convert.rgb.hwb = function (rgb) {
+convert$1.rgb.hwb = function (rgb) {
 	const r = rgb[0];
 	const g = rgb[1];
 	let b = rgb[2];
-	const h = convert.rgb.hsl(rgb)[0];
+	const h = convert$1.rgb.hsl(rgb)[0];
 	const w = 1 / 255 * Math.min(r, Math.min(g, b));
 
 	b = 1 - 1 / 255 * Math.max(r, Math.max(g, b));
@@ -387,7 +387,7 @@ convert.rgb.hwb = function (rgb) {
 	return [h, w * 100, b * 100];
 };
 
-convert.rgb.cmyk = function (rgb) {
+convert$1.rgb.cmyk = function (rgb) {
 	const r = rgb[0] / 255;
 	const g = rgb[1] / 255;
 	const b = rgb[2] / 255;
@@ -411,7 +411,7 @@ function comparativeDistance(x, y) {
 	);
 }
 
-convert.rgb.keyword = function (rgb) {
+convert$1.rgb.keyword = function (rgb) {
 	const reversed = reverseKeywords[rgb];
 	if (reversed) {
 		return reversed;
@@ -436,11 +436,11 @@ convert.rgb.keyword = function (rgb) {
 	return currentClosestKeyword;
 };
 
-convert.keyword.rgb = function (keyword) {
+convert$1.keyword.rgb = function (keyword) {
 	return colorName[keyword];
 };
 
-convert.rgb.xyz = function (rgb) {
+convert$1.rgb.xyz = function (rgb) {
 	let r = rgb[0] / 255;
 	let g = rgb[1] / 255;
 	let b = rgb[2] / 255;
@@ -457,8 +457,8 @@ convert.rgb.xyz = function (rgb) {
 	return [x * 100, y * 100, z * 100];
 };
 
-convert.rgb.lab = function (rgb) {
-	const xyz = convert.rgb.xyz(rgb);
+convert$1.rgb.lab = function (rgb) {
+	const xyz = convert$1.rgb.xyz(rgb);
 	let x = xyz[0];
 	let y = xyz[1];
 	let z = xyz[2];
@@ -478,7 +478,7 @@ convert.rgb.lab = function (rgb) {
 	return [l, a, b];
 };
 
-convert.hsl.rgb = function (hsl) {
+convert$1.hsl.rgb = function (hsl) {
 	const h = hsl[0] / 360;
 	const s = hsl[1] / 100;
 	const l = hsl[2] / 100;
@@ -526,7 +526,7 @@ convert.hsl.rgb = function (hsl) {
 	return rgb;
 };
 
-convert.hsl.hsv = function (hsl) {
+convert$1.hsl.hsv = function (hsl) {
 	const h = hsl[0];
 	let s = hsl[1] / 100;
 	let l = hsl[2] / 100;
@@ -542,7 +542,7 @@ convert.hsl.hsv = function (hsl) {
 	return [h, sv * 100, v * 100];
 };
 
-convert.hsv.rgb = function (hsv) {
+convert$1.hsv.rgb = function (hsv) {
 	const h = hsv[0] / 60;
 	const s = hsv[1] / 100;
 	let v = hsv[2] / 100;
@@ -570,7 +570,7 @@ convert.hsv.rgb = function (hsv) {
 	}
 };
 
-convert.hsv.hsl = function (hsv) {
+convert$1.hsv.hsl = function (hsv) {
 	const h = hsv[0];
 	const s = hsv[1] / 100;
 	const v = hsv[2] / 100;
@@ -589,7 +589,7 @@ convert.hsv.hsl = function (hsv) {
 };
 
 // http://dev.w3.org/csswg/css-color/#hwb-to-rgb
-convert.hwb.rgb = function (hwb) {
+convert$1.hwb.rgb = function (hwb) {
 	const h = hwb[0] / 360;
 	let wh = hwb[1] / 100;
 	let bl = hwb[2] / 100;
@@ -631,7 +631,7 @@ convert.hwb.rgb = function (hwb) {
 	return [r * 255, g * 255, b * 255];
 };
 
-convert.cmyk.rgb = function (cmyk) {
+convert$1.cmyk.rgb = function (cmyk) {
 	const c = cmyk[0] / 100;
 	const m = cmyk[1] / 100;
 	const y = cmyk[2] / 100;
@@ -644,7 +644,7 @@ convert.cmyk.rgb = function (cmyk) {
 	return [r * 255, g * 255, b * 255];
 };
 
-convert.xyz.rgb = function (xyz) {
+convert$1.xyz.rgb = function (xyz) {
 	const x = xyz[0] / 100;
 	const y = xyz[1] / 100;
 	const z = xyz[2] / 100;
@@ -676,7 +676,7 @@ convert.xyz.rgb = function (xyz) {
 	return [r * 255, g * 255, b * 255];
 };
 
-convert.xyz.lab = function (xyz) {
+convert$1.xyz.lab = function (xyz) {
 	let x = xyz[0];
 	let y = xyz[1];
 	let z = xyz[2];
@@ -696,7 +696,7 @@ convert.xyz.lab = function (xyz) {
 	return [l, a, b];
 };
 
-convert.lab.xyz = function (lab) {
+convert$1.lab.xyz = function (lab) {
 	const l = lab[0];
 	const a = lab[1];
 	const b = lab[2];
@@ -722,7 +722,7 @@ convert.lab.xyz = function (lab) {
 	return [x, y, z];
 };
 
-convert.lab.lch = function (lab) {
+convert$1.lab.lch = function (lab) {
 	const l = lab[0];
 	const a = lab[1];
 	const b = lab[2];
@@ -740,7 +740,7 @@ convert.lab.lch = function (lab) {
 	return [l, c, h];
 };
 
-convert.lch.lab = function (lch) {
+convert$1.lch.lab = function (lch) {
 	const l = lch[0];
 	const c = lch[1];
 	const h = lch[2];
@@ -752,9 +752,9 @@ convert.lch.lab = function (lch) {
 	return [l, a, b];
 };
 
-convert.rgb.ansi16 = function (args, saturation = null) {
+convert$1.rgb.ansi16 = function (args, saturation = null) {
 	const [r, g, b] = args;
-	let value = saturation === null ? convert.rgb.hsv(args)[2] : saturation; // Hsv -> ansi16 optimization
+	let value = saturation === null ? convert$1.rgb.hsv(args)[2] : saturation; // Hsv -> ansi16 optimization
 
 	value = Math.round(value / 50);
 
@@ -774,13 +774,13 @@ convert.rgb.ansi16 = function (args, saturation = null) {
 	return ansi;
 };
 
-convert.hsv.ansi16 = function (args) {
+convert$1.hsv.ansi16 = function (args) {
 	// Optimization here; we already know the value and don't need to get
 	// it converted for us.
-	return convert.rgb.ansi16(convert.hsv.rgb(args), args[2]);
+	return convert$1.rgb.ansi16(convert$1.hsv.rgb(args), args[2]);
 };
 
-convert.rgb.ansi256 = function (args) {
+convert$1.rgb.ansi256 = function (args) {
 	const r = args[0];
 	const g = args[1];
 	const b = args[2];
@@ -807,7 +807,7 @@ convert.rgb.ansi256 = function (args) {
 	return ansi;
 };
 
-convert.ansi16.rgb = function (args) {
+convert$1.ansi16.rgb = function (args) {
 	let color = args % 10;
 
 	// Handle greyscale
@@ -829,7 +829,7 @@ convert.ansi16.rgb = function (args) {
 	return [r, g, b];
 };
 
-convert.ansi256.rgb = function (args) {
+convert$1.ansi256.rgb = function (args) {
 	// Handle greyscale
 	if (args >= 232) {
 		const c = (args - 232) * 10 + 8;
@@ -846,7 +846,7 @@ convert.ansi256.rgb = function (args) {
 	return [r, g, b];
 };
 
-convert.rgb.hex = function (args) {
+convert$1.rgb.hex = function (args) {
 	const integer = ((Math.round(args[0]) & 0xFF) << 16)
 		+ ((Math.round(args[1]) & 0xFF) << 8)
 		+ (Math.round(args[2]) & 0xFF);
@@ -855,7 +855,7 @@ convert.rgb.hex = function (args) {
 	return '000000'.substring(string.length) + string;
 };
 
-convert.hex.rgb = function (args) {
+convert$1.hex.rgb = function (args) {
 	const match = args.toString(16).match(/[a-f0-9]{6}|[a-f0-9]{3}/i);
 	if (!match) {
 		return [0, 0, 0];
@@ -877,7 +877,7 @@ convert.hex.rgb = function (args) {
 	return [r, g, b];
 };
 
-convert.rgb.hcg = function (rgb) {
+convert$1.rgb.hcg = function (rgb) {
 	const r = rgb[0] / 255;
 	const g = rgb[1] / 255;
 	const b = rgb[2] / 255;
@@ -911,7 +911,7 @@ convert.rgb.hcg = function (rgb) {
 	return [hue * 360, chroma * 100, grayscale * 100];
 };
 
-convert.hsl.hcg = function (hsl) {
+convert$1.hsl.hcg = function (hsl) {
 	const s = hsl[1] / 100;
 	const l = hsl[2] / 100;
 
@@ -925,7 +925,7 @@ convert.hsl.hcg = function (hsl) {
 	return [hsl[0], c * 100, f * 100];
 };
 
-convert.hsv.hcg = function (hsv) {
+convert$1.hsv.hcg = function (hsv) {
 	const s = hsv[1] / 100;
 	const v = hsv[2] / 100;
 
@@ -939,7 +939,7 @@ convert.hsv.hcg = function (hsv) {
 	return [hsv[0], c * 100, f * 100];
 };
 
-convert.hcg.rgb = function (hcg) {
+convert$1.hcg.rgb = function (hcg) {
 	const h = hcg[0] / 360;
 	const c = hcg[1] / 100;
 	const g = hcg[2] / 100;
@@ -980,7 +980,7 @@ convert.hcg.rgb = function (hcg) {
 	];
 };
 
-convert.hcg.hsv = function (hcg) {
+convert$1.hcg.hsv = function (hcg) {
 	const c = hcg[1] / 100;
 	const g = hcg[2] / 100;
 
@@ -994,7 +994,7 @@ convert.hcg.hsv = function (hcg) {
 	return [hcg[0], f * 100, v * 100];
 };
 
-convert.hcg.hsl = function (hcg) {
+convert$1.hcg.hsl = function (hcg) {
 	const c = hcg[1] / 100;
 	const g = hcg[2] / 100;
 
@@ -1011,14 +1011,14 @@ convert.hcg.hsl = function (hcg) {
 	return [hcg[0], s * 100, l * 100];
 };
 
-convert.hcg.hwb = function (hcg) {
+convert$1.hcg.hwb = function (hcg) {
 	const c = hcg[1] / 100;
 	const g = hcg[2] / 100;
 	const v = c + g * (1.0 - c);
 	return [hcg[0], (v - c) * 100, (1 - v) * 100];
 };
 
-convert.hwb.hcg = function (hwb) {
+convert$1.hwb.hcg = function (hwb) {
 	const w = hwb[1] / 100;
 	const b = hwb[2] / 100;
 	const v = 1 - b;
@@ -1032,37 +1032,37 @@ convert.hwb.hcg = function (hwb) {
 	return [hwb[0], c * 100, g * 100];
 };
 
-convert.apple.rgb = function (apple) {
+convert$1.apple.rgb = function (apple) {
 	return [(apple[0] / 65535) * 255, (apple[1] / 65535) * 255, (apple[2] / 65535) * 255];
 };
 
-convert.rgb.apple = function (rgb) {
+convert$1.rgb.apple = function (rgb) {
 	return [(rgb[0] / 255) * 65535, (rgb[1] / 255) * 65535, (rgb[2] / 255) * 65535];
 };
 
-convert.gray.rgb = function (args) {
+convert$1.gray.rgb = function (args) {
 	return [args[0] / 100 * 255, args[0] / 100 * 255, args[0] / 100 * 255];
 };
 
-convert.gray.hsl = function (args) {
+convert$1.gray.hsl = function (args) {
 	return [0, 0, args[0]];
 };
 
-convert.gray.hsv = convert.gray.hsl;
+convert$1.gray.hsv = convert$1.gray.hsl;
 
-convert.gray.hwb = function (gray) {
+convert$1.gray.hwb = function (gray) {
 	return [0, 100, gray[0]];
 };
 
-convert.gray.cmyk = function (gray) {
+convert$1.gray.cmyk = function (gray) {
 	return [0, 0, 0, gray[0]];
 };
 
-convert.gray.lab = function (gray) {
+convert$1.gray.lab = function (gray) {
 	return [gray[0], 0, 0];
 };
 
-convert.gray.hex = function (gray) {
+convert$1.gray.hex = function (gray) {
 	const val = Math.round(gray[0] / 100 * 255) & 0xFF;
 	const integer = (val << 16) + (val << 8) + val;
 
@@ -1070,7 +1070,7 @@ convert.gray.hex = function (gray) {
 	return '000000'.substring(string.length) + string;
 };
 
-convert.rgb.gray = function (rgb) {
+convert$1.rgb.gray = function (rgb) {
 	const val = (rgb[0] + rgb[1] + rgb[2]) / 3;
 	return [val / 255 * 100];
 };
@@ -1170,7 +1170,7 @@ var route = function (fromModel) {
 	return conversion;
 };
 
-const convert$1 = {};
+const convert = {};
 
 const models = Object.keys(conversions);
 
@@ -1231,10 +1231,10 @@ function wrapRounded(fn) {
 }
 
 models.forEach(fromModel => {
-	convert$1[fromModel] = {};
+	convert[fromModel] = {};
 
-	Object.defineProperty(convert$1[fromModel], 'channels', {value: conversions[fromModel].channels});
-	Object.defineProperty(convert$1[fromModel], 'labels', {value: conversions[fromModel].labels});
+	Object.defineProperty(convert[fromModel], 'channels', {value: conversions[fromModel].channels});
+	Object.defineProperty(convert[fromModel], 'labels', {value: conversions[fromModel].labels});
 
 	const routes = route(fromModel);
 	const routeModels = Object.keys(routes);
@@ -1242,12 +1242,12 @@ models.forEach(fromModel => {
 	routeModels.forEach(toModel => {
 		const fn = routes[toModel];
 
-		convert$1[fromModel][toModel] = wrapRounded(fn);
-		convert$1[fromModel][toModel].raw = wrapRaw(fn);
+		convert[fromModel][toModel] = wrapRounded(fn);
+		convert[fromModel][toModel].raw = wrapRaw(fn);
 	});
 });
 
-var colorConvert = convert$1;
+var colorConvert = convert;
 
 var ansiStyles = createCommonjsModule(function (module) {
 
@@ -1419,7 +1419,7 @@ var browser = {
 	stderr: false
 };
 
-const stringReplaceAll = (string, substring, replacer) => {
+const stringReplaceAll$1 = (string, substring, replacer) => {
 	let index = string.indexOf(substring);
 	if (index === -1) {
 		return string;
@@ -1438,7 +1438,7 @@ const stringReplaceAll = (string, substring, replacer) => {
 	return returnValue;
 };
 
-const stringEncaseCRLFWithFirstIndex = (string, prefix, postfix, index) => {
+const stringEncaseCRLFWithFirstIndex$1 = (string, prefix, postfix, index) => {
 	let endIndex = 0;
 	let returnValue = '';
 	do {
@@ -1453,14 +1453,14 @@ const stringEncaseCRLFWithFirstIndex = (string, prefix, postfix, index) => {
 };
 
 var util = {
-	stringReplaceAll,
-	stringEncaseCRLFWithFirstIndex
+	stringReplaceAll: stringReplaceAll$1,
+	stringEncaseCRLFWithFirstIndex: stringEncaseCRLFWithFirstIndex$1
 };
 
 const TEMPLATE_REGEX = /(?:\\(u(?:[a-f\d]{4}|\{[a-f\d]{1,6}\})|x[a-f\d]{2}|.))|(?:\{(~)?(\w+(?:\([^)]*\))?(?:\.\w+(?:\([^)]*\))?)*)(?:[ \t]|(?=\r?\n)))|(\})|((?:.|[\r\n\f])+?)/gi;
 const STYLE_REGEX = /(?:^|\.)(\w+)(?:\(([^)]*)\))?/g;
 const STRING_REGEX = /^(['"])((?:\\.|(?!\1)[^\\])*)\1$/;
-const ESCAPE_REGEX = /\\(u(?:[a-f\d]{4}|\{[a-f\d]{1,6}\})|x[a-f\d]{2}|.)|([^\\])/gi;
+const ESCAPE_REGEX = /\\(u(?:[a-f\d]{4}|{[a-f\d]{1,6}})|x[a-f\d]{2}|.)|([^\\])/gi;
 
 const ESCAPES = new Map([
 	['n', '\n'],
@@ -1584,8 +1584,8 @@ var templates = (chalk, temporary) => {
 	chunks.push(chunk.join(''));
 
 	if (styles.length > 0) {
-		const errMsg = `Chalk template literal is missing ${styles.length} closing bracket${styles.length === 1 ? '' : 's'} (\`}\`)`;
-		throw new Error(errMsg);
+		const errMessage = `Chalk template literal is missing ${styles.length} closing bracket${styles.length === 1 ? '' : 's'} (\`}\`)`;
+		throw new Error(errMessage);
 	}
 
 	return chunks.join('');
@@ -1593,9 +1593,11 @@ var templates = (chalk, temporary) => {
 
 const {stdout: stdoutColor, stderr: stderrColor} = browser;
 const {
-	stringReplaceAll: stringReplaceAll$1,
-	stringEncaseCRLFWithFirstIndex: stringEncaseCRLFWithFirstIndex$1
+	stringReplaceAll,
+	stringEncaseCRLFWithFirstIndex
 } = util;
+
+const {isArray: isArray$1} = Array;
 
 // `supportsColor.level` → `ansiStyles.color[name]` mapping
 const levelMapping = [
@@ -1608,7 +1610,7 @@ const levelMapping = [
 const styles = Object.create(null);
 
 const applyOptions = (object, options = {}) => {
-	if (options.level > 3 || options.level < 0) {
+	if (options.level && !(Number.isInteger(options.level) && options.level >= 0 && options.level <= 3)) {
 		throw new Error('The `level` option should be an integer from 0 to 3');
 	}
 
@@ -1619,6 +1621,7 @@ const applyOptions = (object, options = {}) => {
 
 class ChalkClass {
 	constructor(options) {
+		// eslint-disable-next-line no-constructor-return
 		return chalkFactory(options);
 	}
 }
@@ -1725,14 +1728,19 @@ const createStyler = (open, close, parent) => {
 
 const createBuilder = (self, _styler, _isEmpty) => {
 	const builder = (...arguments_) => {
+		if (isArray$1(arguments_[0]) && isArray$1(arguments_[0].raw)) {
+			// Called as a template literal, for example: chalk.red`2 + 3 = {bold ${2+3}}`
+			return applyStyle(builder, chalkTag(builder, ...arguments_));
+		}
+
 		// Single argument is hot path, implicit coercion is faster than anything
 		// eslint-disable-next-line no-implicit-coercion
 		return applyStyle(builder, (arguments_.length === 1) ? ('' + arguments_[0]) : arguments_.join(' '));
 	};
 
-	// `__proto__` is used because we must return a function, but there is
+	// We alter the prototype because we must return a function, but there is
 	// no way to create a function with a different prototype
-	builder.__proto__ = proto; // eslint-disable-line no-proto
+	Object.setPrototypeOf(builder, proto);
 
 	builder._generator = self;
 	builder._styler = _styler;
@@ -1758,7 +1766,7 @@ const applyStyle = (self, string) => {
 			// Replace any instances already present with a re-opening code
 			// otherwise only the part of the string until said closing code
 			// will be colored, and the rest will simply be 'plain'.
-			string = stringReplaceAll$1(string, styler.close, styler.open);
+			string = stringReplaceAll(string, styler.close, styler.open);
 
 			styler = styler.parent;
 		}
@@ -1769,7 +1777,7 @@ const applyStyle = (self, string) => {
 	// after next line to fix a bleed issue on macOS: https://github.com/chalk/chalk/pull/92
 	const lfIndex = string.indexOf('\n');
 	if (lfIndex !== -1) {
-		string = stringEncaseCRLFWithFirstIndex$1(string, closeAll, openAll, lfIndex);
+		string = stringEncaseCRLFWithFirstIndex(string, closeAll, openAll, lfIndex);
 	}
 
 	return openAll + string + closeAll;
@@ -1779,7 +1787,7 @@ let template;
 const chalkTag = (chalk, ...strings) => {
 	const [firstString] = strings;
 
-	if (!Array.isArray(firstString)) {
+	if (!isArray$1(firstString) || !isArray$1(firstString.raw)) {
 		// If chalk() was called by itself or with a string,
 		// return the string itself as a string.
 		return strings.join(' ');
@@ -1809,24 +1817,18 @@ chalk.supportsColor = stdoutColor;
 chalk.stderr = Chalk({level: stderrColor ? stderrColor.level : 0}); // eslint-disable-line new-cap
 chalk.stderr.supportsColor = stderrColor;
 
-// For TypeScript
-chalk.Level = {
-	None: 0,
-	Basic: 1,
-	Ansi256: 2,
-	TrueColor: 3,
-	0: 'None',
-	1: 'Basic',
-	2: 'Ansi256',
-	3: 'TrueColor'
-};
-
 var source = chalk;
 
-const { FORCE_COLOR, NODE_DISABLE_COLORS, TERM } = {};
+let FORCE_COLOR, NODE_DISABLE_COLORS, NO_COLOR, TERM, isTTY=true;
+if (typeof {} !== 'undefined') {
+	({ FORCE_COLOR, NODE_DISABLE_COLORS, NO_COLOR, TERM } = {});
+	isTTY = {}.stdout ;
+}
 
 const $ = {
-	enabled: !NODE_DISABLE_COLORS && TERM !== 'dumb' && FORCE_COLOR !== '0',
+	enabled: !NODE_DISABLE_COLORS && NO_COLOR == null && TERM !== 'dumb' && (
+		FORCE_COLOR != null && FORCE_COLOR !== '0' || isTTY
+	),
 
 	// modifiers
 	reset: init(0, 0),
@@ -1867,7 +1869,7 @@ function run(arr, str) {
 		tmp = arr[i];
 		beg += tmp.open;
 		end += tmp.close;
-		if (str.includes(tmp.close)) {
+		if (!!~str.indexOf(tmp.close)) {
 			str = str.replace(tmp.rgx, tmp.close + tmp.open);
 		}
 	}
@@ -1917,14 +1919,17 @@ function init(open, close) {
 	};
 	return function (txt) {
 		if (this !== void 0 && this.has !== void 0) {
-			this.has.includes(open) || (this.has.push(open),this.keys.push(blk));
+			!!~this.has.indexOf(open) || (this.has.push(open),this.keys.push(blk));
 			return txt === void 0 ? this : $.enabled ? run(this.keys, txt+'') : txt+'';
 		}
 		return txt === void 0 ? chain([open], [blk]) : $.enabled ? run([blk], txt+'') : txt+'';
 	};
 }
 
-var kleur = $;
+var kleur$1 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	'default': $
+});
 
 var ansiRegex = ({onlyFirst = false} = {}) => {
 	const pattern = [
@@ -1935,7 +1940,9 @@ var ansiRegex = ({onlyFirst = false} = {}) => {
 	return new RegExp(pattern, onlyFirst ? undefined : 'g');
 };
 
-var stripAnsi = string => typeof string === 'string' ? string.replace(ansiRegex(), '') : string;
+var stripAnsi$1 = string => typeof string === 'string' ? string.replace(ansiRegex(), '') : string;
+
+var kleur = getCjsExportFromNamespace(kleur$1);
 
 var style = createCommonjsModule(function (module, exports) {
 // user kleur if we are in the browser
@@ -1953,7 +1960,7 @@ module.exports.style = (str, ...colors) => {
 module.exports.styleEachChar = (str, ...colors) => {
   // strip existing ansi chars so we dont loop them
   // @ TODO create a really clever workaround so that you can accrete styles
-  const chars = [...stripAnsi(str)];
+  const chars = [...stripAnsi$1(str)];
 
   // style each character
   const out = chars.reduce((prev, current) => {
@@ -1968,7 +1975,7 @@ module.exports.styleEachChar = (str, ...colors) => {
 
 module.exports.resetStyle = function (str) {
   this.configure({ reset: true });
-  return stripAnsi(str)
+  return stripAnsi$1(str)
 };
 
 module.exports.colorizeCell = (str, cellOptions, rowType) => {
@@ -1994,10 +2001,10 @@ module.exports.colorizeCell = (str, cellOptions, rowType) => {
   return str
 };
 });
-var style_1 = style.style;
-var style_2 = style.styleEachChar;
-var style_3 = style.resetStyle;
-var style_4 = style.colorizeCell;
+style.style;
+style.styleEachChar;
+style.resetStyle;
+style.colorizeCell;
 
 var clone_1 = createCommonjsModule(function (module) {
 var clone = (function() {
@@ -2021,11 +2028,9 @@ var clone = (function() {
  *    (optional - defaults to parent prototype).
 */
 function clone(parent, circular, depth, prototype) {
-  var filter;
   if (typeof circular === 'object') {
     depth = circular.depth;
     prototype = circular.prototype;
-    filter = circular.filter;
     circular = circular.circular;
   }
   // maintain two arrays for circular references, where corresponding parents
@@ -2157,7 +2162,7 @@ function __getRegExpFlags(re) {
 return clone;
 })();
 
-if ( module.exports) {
+if (module.exports) {
   module.exports = clone;
 }
 });
@@ -2325,7 +2330,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 
 
-var main = function (input, breakAtLength) {
+var main$1 = function (input, breakAtLength) {
 
   var str = input.toString();
   var charArr = [].concat(_toConsumableArray(str));
@@ -2351,10 +2356,12 @@ var main = function (input, breakAtLength) {
   return indexOfLastFitChar;
 };
 
-var toStr = Object.prototype.toString;
+var stripAnsi = string => typeof string === 'string' ? string.replace(ansiRegex(), '') : string;
+
+var toStr$8 = Object.prototype.toString;
 
 var isArguments = function isArguments(value) {
-	var str = toStr.call(value);
+	var str = toStr$8.call(value);
 	var isArgs = str === '[object Arguments]';
 	if (!isArgs) {
 		isArgs = str !== '[object Array]' &&
@@ -2362,16 +2369,16 @@ var isArguments = function isArguments(value) {
 			typeof value === 'object' &&
 			typeof value.length === 'number' &&
 			value.length >= 0 &&
-			toStr.call(value.callee) === '[object Function]';
+			toStr$8.call(value.callee) === '[object Function]';
 	}
 	return isArgs;
 };
 
-var keysShim;
+var keysShim$1;
 if (!Object.keys) {
 	// modified from https://github.com/es-shims/es5-shim
-	var has = Object.prototype.hasOwnProperty;
-	var toStr$1 = Object.prototype.toString;
+	var has$1 = Object.prototype.hasOwnProperty;
+	var toStr$7 = Object.prototype.toString;
 	var isArgs = isArguments; // eslint-disable-line global-require
 	var isEnumerable = Object.prototype.propertyIsEnumerable;
 	var hasDontEnumBug = !isEnumerable.call({ toString: null }, 'toString');
@@ -2419,7 +2426,7 @@ if (!Object.keys) {
 		if (typeof window === 'undefined') { return false; }
 		for (var k in window) {
 			try {
-				if (!excludedKeys['$' + k] && has.call(window, k) && window[k] !== null && typeof window[k] === 'object') {
+				if (!excludedKeys['$' + k] && has$1.call(window, k) && window[k] !== null && typeof window[k] === 'object') {
 					try {
 						equalsConstructorPrototype(window[k]);
 					} catch (e) {
@@ -2444,11 +2451,11 @@ if (!Object.keys) {
 		}
 	};
 
-	keysShim = function keys(object) {
+	keysShim$1 = function keys(object) {
 		var isObject = object !== null && typeof object === 'object';
-		var isFunction = toStr$1.call(object) === '[object Function]';
+		var isFunction = toStr$7.call(object) === '[object Function]';
 		var isArguments = isArgs(object);
-		var isString = isObject && toStr$1.call(object) === '[object String]';
+		var isString = isObject && toStr$7.call(object) === '[object String]';
 		var theKeys = [];
 
 		if (!isObject && !isFunction && !isArguments) {
@@ -2456,7 +2463,7 @@ if (!Object.keys) {
 		}
 
 		var skipProto = hasProtoEnumBug && isFunction;
-		if (isString && object.length > 0 && !has.call(object, 0)) {
+		if (isString && object.length > 0 && !has$1.call(object, 0)) {
 			for (var i = 0; i < object.length; ++i) {
 				theKeys.push(String(i));
 			}
@@ -2468,7 +2475,7 @@ if (!Object.keys) {
 			}
 		} else {
 			for (var name in object) {
-				if (!(skipProto && name === 'prototype') && has.call(object, name)) {
+				if (!(skipProto && name === 'prototype') && has$1.call(object, name)) {
 					theKeys.push(String(name));
 				}
 			}
@@ -2478,7 +2485,7 @@ if (!Object.keys) {
 			var skipConstructor = equalsConstructorPrototypeIfNotBuggy(object);
 
 			for (var k = 0; k < dontEnums.length; ++k) {
-				if (!(skipConstructor && dontEnums[k] === 'constructor') && has.call(object, dontEnums[k])) {
+				if (!(skipConstructor && dontEnums[k] === 'constructor') && has$1.call(object, dontEnums[k])) {
 					theKeys.push(dontEnums[k]);
 				}
 			}
@@ -2486,17 +2493,17 @@ if (!Object.keys) {
 		return theKeys;
 	};
 }
-var implementation = keysShim;
+var implementation$2 = keysShim$1;
 
-var slice = Array.prototype.slice;
+var slice$1 = Array.prototype.slice;
 
 
 var origKeys = Object.keys;
-var keysShim$1 = origKeys ? function keys(o) { return origKeys(o); } : implementation;
+var keysShim = origKeys ? function keys(o) { return origKeys(o); } : implementation$2;
 
 var originalKeys = Object.keys;
 
-keysShim$1.shim = function shimObjectKeys() {
+keysShim.shim = function shimObjectKeys() {
 	if (Object.keys) {
 		var keysWorksWithArguments = (function () {
 			// Safari 5.0 bug
@@ -2506,27 +2513,27 @@ keysShim$1.shim = function shimObjectKeys() {
 		if (!keysWorksWithArguments) {
 			Object.keys = function keys(object) { // eslint-disable-line func-name-matching
 				if (isArguments(object)) {
-					return originalKeys(slice.call(object));
+					return originalKeys(slice$1.call(object));
 				}
 				return originalKeys(object);
 			};
 		}
 	} else {
-		Object.keys = keysShim$1;
+		Object.keys = keysShim;
 	}
-	return Object.keys || keysShim$1;
+	return Object.keys || keysShim;
 };
 
-var objectKeys = keysShim$1;
+var objectKeys = keysShim;
 
-var hasSymbols = typeof Symbol === 'function' && typeof Symbol('foo') === 'symbol';
+var hasSymbols$4 = typeof Symbol === 'function' && typeof Symbol('foo') === 'symbol';
 
-var toStr$2 = Object.prototype.toString;
+var toStr$6 = Object.prototype.toString;
 var concat = Array.prototype.concat;
 var origDefineProperty = Object.defineProperty;
 
 var isFunction = function (fn) {
-	return typeof fn === 'function' && toStr$2.call(fn) === '[object Function]';
+	return typeof fn === 'function' && toStr$6.call(fn) === '[object Function]';
 };
 
 var arePropertyDescriptorsSupported = function () {
@@ -2563,7 +2570,7 @@ var defineProperty = function (object, name, value, predicate) {
 var defineProperties = function (object, map) {
 	var predicates = arguments.length > 2 ? arguments[2] : {};
 	var props = objectKeys(map);
-	if (hasSymbols) {
+	if (hasSymbols$4) {
 		props = concat.call(props, Object.getOwnPropertySymbols(map));
 	}
 	for (var i = 0; i < props.length; i += 1) {
@@ -2578,23 +2585,23 @@ var defineProperties_1 = defineProperties;
 /* eslint no-invalid-this: 1 */
 
 var ERROR_MESSAGE = 'Function.prototype.bind called on incompatible ';
-var slice$1 = Array.prototype.slice;
-var toStr$3 = Object.prototype.toString;
+var slice = Array.prototype.slice;
+var toStr$5 = Object.prototype.toString;
 var funcType = '[object Function]';
 
 var implementation$1 = function bind(that) {
     var target = this;
-    if (typeof target !== 'function' || toStr$3.call(target) !== funcType) {
+    if (typeof target !== 'function' || toStr$5.call(target) !== funcType) {
         throw new TypeError(ERROR_MESSAGE + target);
     }
-    var args = slice$1.call(arguments, 1);
+    var args = slice.call(arguments, 1);
 
     var bound;
     var binder = function () {
         if (this instanceof bound) {
             var result = target.apply(
                 this,
-                args.concat(slice$1.call(arguments))
+                args.concat(slice.call(arguments))
             );
             if (Object(result) === result) {
                 return result;
@@ -2603,7 +2610,7 @@ var implementation$1 = function bind(that) {
         } else {
             return target.apply(
                 that,
-                args.concat(slice$1.call(arguments))
+                args.concat(slice.call(arguments))
             );
         }
     };
@@ -2629,7 +2636,7 @@ var implementation$1 = function bind(that) {
 var functionBind = Function.prototype.bind || implementation$1;
 
 /* eslint complexity: [2, 18], max-statements: [2, 33] */
-var shams = function hasSymbols() {
+var shams$1 = function hasSymbols() {
 	if (typeof Symbol !== 'function' || typeof Object.getOwnPropertySymbols !== 'function') { return false; }
 	if (typeof Symbol.iterator === 'symbol') { return true; }
 
@@ -2669,16 +2676,16 @@ var shams = function hasSymbols() {
 	return true;
 };
 
-var origSymbol = commonjsGlobal.Symbol;
+var origSymbol$1 = commonjsGlobal.Symbol;
 
 
-var hasSymbols$1 = function hasNativeSymbols() {
-	if (typeof origSymbol !== 'function') { return false; }
+var hasSymbols$3 = function hasNativeSymbols() {
+	if (typeof origSymbol$1 !== 'function') { return false; }
 	if (typeof Symbol !== 'function') { return false; }
-	if (typeof origSymbol('foo') !== 'symbol') { return false; }
+	if (typeof origSymbol$1('foo') !== 'symbol') { return false; }
 	if (typeof Symbol('bar') !== 'symbol') { return false; }
 
-	return shams();
+	return shams$1();
 };
 
 /* globals
@@ -2688,19 +2695,19 @@ var hasSymbols$1 = function hasNativeSymbols() {
 
 var undefined$1;
 
-var $TypeError = TypeError;
+var $TypeError$d = TypeError;
 
-var $gOPD = Object.getOwnPropertyDescriptor;
-if ($gOPD) {
+var $gOPD$1 = Object.getOwnPropertyDescriptor;
+if ($gOPD$1) {
 	try {
-		$gOPD({}, '');
+		$gOPD$1({}, '');
 	} catch (e) {
-		$gOPD = null; // this is IE 8, which has a broken gOPD
+		$gOPD$1 = null; // this is IE 8, which has a broken gOPD
 	}
 }
 
-var throwTypeError = function () { throw new $TypeError(); };
-var ThrowTypeError = $gOPD
+var throwTypeError = function () { throw new $TypeError$d(); };
+var ThrowTypeError = $gOPD$1
 	? (function () {
 		try {
 			// eslint-disable-next-line no-unused-expressions, no-caller, no-restricted-properties
@@ -2709,7 +2716,7 @@ var ThrowTypeError = $gOPD
 		} catch (calleeThrows) {
 			try {
 				// IE 8 throws on Object.getOwnPropertyDescriptor(arguments, '')
-				return $gOPD(arguments, 'callee').get;
+				return $gOPD$1(arguments, 'callee').get;
 			} catch (gOPDthrows) {
 				return throwTypeError;
 			}
@@ -2717,12 +2724,12 @@ var ThrowTypeError = $gOPD
 	}())
 	: throwTypeError;
 
-var hasSymbols$2 = hasSymbols$1();
+var hasSymbols$2 = hasSymbols$3();
 
 var getProto = Object.getPrototypeOf || function (x) { return x.__proto__; }; // eslint-disable-line no-proto
-var generatorFunction =  undefined$1;
-var asyncFunction =  undefined$1;
-var asyncGenFunction =  undefined$1;
+var generatorFunction = undefined$1;
+var asyncFunction = undefined$1;
+var asyncGenFunction = undefined$1;
 
 var TypedArray = typeof Uint8Array === 'undefined' ? undefined$1 : getProto(Uint8Array);
 
@@ -2738,11 +2745,11 @@ var INTRINSICS = {
 	'%ArrayProto_values%': Array.prototype.values,
 	'%AsyncFromSyncIteratorPrototype%': undefined$1,
 	'%AsyncFunction%': asyncFunction,
-	'%AsyncFunctionPrototype%':  undefined$1,
-	'%AsyncGenerator%':  undefined$1,
+	'%AsyncFunctionPrototype%': undefined$1,
+	'%AsyncGenerator%': undefined$1,
 	'%AsyncGeneratorFunction%': asyncGenFunction,
-	'%AsyncGeneratorPrototype%':  undefined$1,
-	'%AsyncIteratorPrototype%':  undefined$1,
+	'%AsyncGeneratorPrototype%': undefined$1,
+	'%AsyncIteratorPrototype%': undefined$1,
 	'%Atomics%': typeof Atomics === 'undefined' ? undefined$1 : Atomics,
 	'%Boolean%': Boolean,
 	'%BooleanPrototype%': Boolean.prototype,
@@ -2765,9 +2772,9 @@ var INTRINSICS = {
 	'%Float64ArrayPrototype%': typeof Float64Array === 'undefined' ? undefined$1 : Float64Array.prototype,
 	'%Function%': Function,
 	'%FunctionPrototype%': Function.prototype,
-	'%Generator%':  undefined$1,
+	'%Generator%': undefined$1,
 	'%GeneratorFunction%': generatorFunction,
-	'%GeneratorPrototype%':  undefined$1,
+	'%GeneratorPrototype%': undefined$1,
 	'%Int8Array%': typeof Int8Array === 'undefined' ? undefined$1 : Int8Array,
 	'%Int8ArrayPrototype%': typeof Int8Array === 'undefined' ? undefined$1 : Int8Array.prototype,
 	'%Int16Array%': typeof Int16Array === 'undefined' ? undefined$1 : Int16Array,
@@ -2820,8 +2827,8 @@ var INTRINSICS = {
 	'%ThrowTypeError%': ThrowTypeError,
 	'%TypedArray%': TypedArray,
 	'%TypedArrayPrototype%': TypedArray ? TypedArray.prototype : undefined$1,
-	'%TypeError%': $TypeError,
-	'%TypeErrorPrototype%': $TypeError.prototype,
+	'%TypeError%': $TypeError$d,
+	'%TypeErrorPrototype%': $TypeError$d.prototype,
 	'%Uint8Array%': typeof Uint8Array === 'undefined' ? undefined$1 : Uint8Array,
 	'%Uint8ArrayPrototype%': typeof Uint8Array === 'undefined' ? undefined$1 : Uint8Array.prototype,
 	'%Uint8ClampedArray%': typeof Uint8ClampedArray === 'undefined' ? undefined$1 : Uint8ClampedArray,
@@ -2839,15 +2846,15 @@ var INTRINSICS = {
 };
 
 
-var $replace = functionBind.call(Function.call, String.prototype.replace);
+var $replace$1 = functionBind.call(Function.call, String.prototype.replace);
 
 /* adapted from https://github.com/lodash/lodash/blob/4.17.15/dist/lodash.js#L6735-L6744 */
 var rePropName = /[^%.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|%$))/g;
 var reEscapeChar = /\\(\\)?/g; /** Used to match backslashes in property paths. */
 var stringToPath = function stringToPath(string) {
 	var result = [];
-	$replace(string, rePropName, function (match, number, quote, subString) {
-		result[result.length] = quote ? $replace(subString, reEscapeChar, '$1') : (number || match);
+	$replace$1(string, rePropName, function (match, number, quote, subString) {
+		result[result.length] = quote ? $replace$1(subString, reEscapeChar, '$1') : (number || match);
 	});
 	return result;
 };
@@ -2860,7 +2867,7 @@ var getBaseIntrinsic = function getBaseIntrinsic(name, allowMissing) {
 
 	// istanbul ignore if // hopefully this is impossible to test :-)
 	if (typeof INTRINSICS[name] === 'undefined' && !allowMissing) {
-		throw new $TypeError('intrinsic ' + name + ' exists, but is not available. Please file an issue!');
+		throw new $TypeError$d('intrinsic ' + name + ' exists, but is not available. Please file an issue!');
 	}
 
 	return INTRINSICS[name];
@@ -2879,10 +2886,10 @@ var GetIntrinsic = function GetIntrinsic(name, allowMissing) {
 	var value = getBaseIntrinsic('%' + (parts.length > 0 ? parts[0] : '') + '%', allowMissing);
 	for (var i = 1; i < parts.length; i += 1) {
 		if (value != null) {
-			if ($gOPD && (i + 1) >= parts.length) {
-				var desc = $gOPD(value, parts[i]);
+			if ($gOPD$1 && (i + 1) >= parts.length) {
+				var desc = $gOPD$1(value, parts[i]);
 				if (!allowMissing && !(parts[i] in value)) {
-					throw new $TypeError('base intrinsic for ' + name + ' exists, but the property is not available.');
+					throw new $TypeError$d('base intrinsic for ' + name + ' exists, but the property is not available.');
 				}
 				value = desc ? (desc.get || desc.value) : value[parts[i]];
 			} else {
@@ -2933,12 +2940,12 @@ var match = String.prototype.match;
 var bigIntValueOf = typeof BigInt === 'function' ? BigInt.prototype.valueOf : null;
 
 var inspectCustom = require$$0.custom;
-var inspectSymbol = inspectCustom && isSymbol(inspectCustom) ? inspectCustom : null;
+var inspectSymbol = inspectCustom && isSymbol$1(inspectCustom) ? inspectCustom : null;
 
 var objectInspect = function inspect_(obj, options, depth, seen) {
     var opts = options || {};
 
-    if (has$1(opts, 'quoteStyle') && (opts.quoteStyle !== 'single' && opts.quoteStyle !== 'double')) {
+    if (has(opts, 'quoteStyle') && (opts.quoteStyle !== 'single' && opts.quoteStyle !== 'double')) {
         throw new TypeError('option "quoteStyle" must be "single" or "double"');
     }
 
@@ -2989,7 +2996,7 @@ var objectInspect = function inspect_(obj, options, depth, seen) {
         var name = nameOf(obj);
         return '[Function' + (name ? ': ' + name : '') + ']';
     }
-    if (isSymbol(obj)) {
+    if (isSymbol$1(obj)) {
         var symString = Symbol.prototype.toString.call(obj);
         return typeof obj === 'object' ? markBoxed(symString) : symString;
     }
@@ -3073,14 +3080,14 @@ function isArray(obj) { return toStr$4(obj) === '[object Array]'; }
 function isDate(obj) { return toStr$4(obj) === '[object Date]'; }
 function isRegExp(obj) { return toStr$4(obj) === '[object RegExp]'; }
 function isError(obj) { return toStr$4(obj) === '[object Error]'; }
-function isSymbol(obj) { return toStr$4(obj) === '[object Symbol]'; }
+function isSymbol$1(obj) { return toStr$4(obj) === '[object Symbol]'; }
 function isString(obj) { return toStr$4(obj) === '[object String]'; }
 function isNumber(obj) { return toStr$4(obj) === '[object Number]'; }
 function isBigInt(obj) { return toStr$4(obj) === '[object BigInt]'; }
 function isBoolean(obj) { return toStr$4(obj) === '[object Boolean]'; }
 
 var hasOwn = Object.prototype.hasOwnProperty || function (key) { return key in this; };
-function has$1(obj, key) {
+function has(obj, key) {
     return hasOwn.call(obj, key);
 }
 
@@ -3208,11 +3215,11 @@ function arrObjKeys(obj, inspect) {
     if (isArr) {
         xs.length = obj.length;
         for (var i = 0; i < obj.length; i++) {
-            xs[i] = has$1(obj, i) ? inspect(obj[i], obj) : '';
+            xs[i] = has(obj, i) ? inspect(obj[i], obj) : '';
         }
     }
     for (var key in obj) { // eslint-disable-line no-restricted-syntax
-        if (!has$1(obj, key)) { continue; } // eslint-disable-line no-restricted-syntax, no-continue
+        if (!has(obj, key)) { continue; } // eslint-disable-line no-restricted-syntax, no-continue
         if (isArr && String(Number(key)) === key && key < obj.length) { continue; } // eslint-disable-line no-restricted-syntax, no-continue
         if ((/[^\w$]/).test(key)) {
             xs.push(inspect(key, obj) + ': ' + inspect(obj[key], obj));
@@ -3231,7 +3238,7 @@ var IsPropertyKey = function IsPropertyKey(argument) {
 
 // https://www.ecma-international.org/ecma-262/5.1/#sec-8
 
-var Type = function Type(x) {
+var Type$1 = function Type(x) {
 	if (x === null) {
 		return 'Null';
 	}
@@ -3254,14 +3261,14 @@ var Type = function Type(x) {
 
 // https://www.ecma-international.org/ecma-262/6.0/#sec-tostring
 
-var Type$1 = function Type$1(x) {
+var Type = function Type(x) {
 	if (typeof x === 'symbol') {
 		return 'Symbol';
 	}
-	return Type(x);
+	return Type$1(x);
 };
 
-var $TypeError$1 = GetIntrinsic('%TypeError%');
+var $TypeError$c = GetIntrinsic('%TypeError%');
 
 
 
@@ -3277,12 +3284,12 @@ var $TypeError$1 = GetIntrinsic('%TypeError%');
 
 var Get = function Get(O, P) {
 	// 7.3.1.1
-	if (Type$1(O) !== 'Object') {
-		throw new $TypeError$1('Assertion failed: Type(O) is not Object');
+	if (Type(O) !== 'Object') {
+		throw new $TypeError$c('Assertion failed: Type(O) is not Object');
 	}
 	// 7.3.1.2
 	if (!IsPropertyKey(P)) {
-		throw new $TypeError$1('Assertion failed: IsPropertyKey(P) is not true, got ' + objectInspect(P));
+		throw new $TypeError$c('Assertion failed: IsPropertyKey(P) is not true, got ' + objectInspect(P));
 	}
 	// 7.3.1.3
 	return O[P];
@@ -3298,15 +3305,15 @@ var callBound = function callBoundIntrinsic(name, allowMissing) {
 	return intrinsic;
 };
 
-var $Array = GetIntrinsic('%Array%');
+var $Array$1 = GetIntrinsic('%Array%');
 
 // eslint-disable-next-line global-require
-var toStr$5 = !$Array.isArray && callBound('Object.prototype.toString');
+var toStr$3 = !$Array$1.isArray && callBound('Object.prototype.toString');
 
 // https://www.ecma-international.org/ecma-262/6.0/#sec-isarray
 
-var IsArray = $Array.isArray || function IsArray(argument) {
-	return toStr$5(argument) === '[object Array]';
+var IsArray = $Array$1.isArray || function IsArray(argument) {
+	return toStr$3(argument) === '[object Array]';
 };
 
 // https://www.ecma-international.org/ecma-262/6.0/#sec-isconstructor
@@ -3323,10 +3330,10 @@ var $isNaN = Number.isNaN || function (a) { return a !== a; };
 
 var _isFinite = Number.isFinite || function (x) { return typeof x === 'number' && !$isNaN(x) && x !== Infinity && x !== -Infinity; };
 
-var $Math = GetIntrinsic('%Math%');
+var $Math$2 = GetIntrinsic('%Math%');
 
-var $floor = $Math.floor;
-var $abs = $Math.abs;
+var $floor$1 = $Math$2.floor;
+var $abs$1 = $Math$2.abs;
 
 
 
@@ -3337,13 +3344,13 @@ var IsInteger = function IsInteger(argument) {
 	if (typeof argument !== 'number' || _isNaN(argument) || !_isFinite(argument)) {
 		return false;
 	}
-	var abs = $abs(argument);
-	return $floor(abs) === abs;
+	var abs = $abs$1(argument);
+	return $floor$1(abs) === abs;
 };
 
-var $Array$1 = GetIntrinsic('%Array%');
+var $Array = GetIntrinsic('%Array%');
 var $species = GetIntrinsic('%Symbol.species%', true);
-var $TypeError$2 = GetIntrinsic('%TypeError%');
+var $TypeError$b = GetIntrinsic('%TypeError%');
 
 
 
@@ -3355,7 +3362,7 @@ var $TypeError$2 = GetIntrinsic('%TypeError%');
 
 var ArraySpeciesCreate = function ArraySpeciesCreate(originalArray, length) {
 	if (!IsInteger(length) || length < 0) {
-		throw new $TypeError$2('Assertion failed: length must be an integer >= 0');
+		throw new $TypeError$b('Assertion failed: length must be an integer >= 0');
 	}
 	var len = length === 0 ? 0 : length;
 	var C;
@@ -3367,7 +3374,7 @@ var ArraySpeciesCreate = function ArraySpeciesCreate(originalArray, length) {
 		// 	if C is another realm's Array, C = undefined
 		// 	Object.getPrototypeOf(Object.getPrototypeOf(Object.getPrototypeOf(Array))) === null ?
 		// }
-		if ($species && Type$1(C) === 'Object') {
+		if ($species && Type(C) === 'Object') {
 			C = Get(C, $species);
 			if (C === null) {
 				C = void 0;
@@ -3375,18 +3382,18 @@ var ArraySpeciesCreate = function ArraySpeciesCreate(originalArray, length) {
 		}
 	}
 	if (typeof C === 'undefined') {
-		return $Array$1(len);
+		return $Array(len);
 	}
 	if (!IsConstructor(C)) {
-		throw new $TypeError$2('C must be a constructor');
+		throw new $TypeError$b('C must be a constructor');
 	}
 	return new C(len); // Construct(C, len);
 };
 
 var $Math$1 = GetIntrinsic('%Math%');
-var $Number = GetIntrinsic('%Number%');
+var $Number$1 = GetIntrinsic('%Number%');
 
-var maxSafeInteger = $Number.MAX_SAFE_INTEGER || $Math$1.pow(2, 53) - 1;
+var maxSafeInteger = $Number$1.MAX_SAFE_INTEGER || $Math$1.pow(2, 53) - 1;
 
 var fnToStr = Function.prototype.toString;
 
@@ -3409,18 +3416,18 @@ var tryFunctionObject = function tryFunctionToStr(value) {
 		return false;
 	}
 };
-var toStr$6 = Object.prototype.toString;
+var toStr$2 = Object.prototype.toString;
 var fnClass = '[object Function]';
 var genClass = '[object GeneratorFunction]';
-var hasToStringTag = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
+var hasToStringTag$2 = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
 
 var isCallable = function isCallable(value) {
 	if (!value) { return false; }
 	if (typeof value !== 'function' && typeof value !== 'object') { return false; }
 	if (typeof value === 'function' && !value.prototype) { return true; }
-	if (hasToStringTag) { return tryFunctionObject(value); }
+	if (hasToStringTag$2) { return tryFunctionObject(value); }
 	if (isES6ClassFn(value)) { return false; }
-	var strClass = toStr$6.call(value);
+	var strClass = toStr$2.call(value);
 	return strClass === fnClass || strClass === genClass;
 };
 
@@ -3428,7 +3435,7 @@ var isCallable = function isCallable(value) {
 
 var IsCallable = isCallable;
 
-var $TypeError$3 = GetIntrinsic('%TypeError%');
+var $TypeError$a = GetIntrinsic('%TypeError%');
 
 
 
@@ -3439,7 +3446,7 @@ var $TypeError$3 = GetIntrinsic('%TypeError%');
 var Call = function Call(F, V) {
 	var args = arguments.length > 2 ? arguments[2] : [];
 	if (!IsCallable(F)) {
-		throw new $TypeError$3(objectInspect(F) + ' is not a function');
+		throw new $TypeError$a(objectInspect(F) + ' is not a function');
 	}
 	return F.apply(V, args);
 };
@@ -3457,7 +3464,7 @@ if ($defineProperty) {
 
 
 
-var $isEnumerable = callBound('Object.prototype.propertyIsEnumerable');
+var $isEnumerable$1 = callBound('Object.prototype.propertyIsEnumerable');
 
 // eslint-disable-next-line max-params
 var DefineOwnProperty = function DefineOwnProperty(IsDataDescriptor, SameValue, FromPropertyDescriptor, O, P, desc) {
@@ -3471,7 +3478,7 @@ var DefineOwnProperty = function DefineOwnProperty(IsDataDescriptor, SameValue, 
 		}
 
 		// fallback for ES3
-		if (P in O && $isEnumerable(O, P) !== !!desc['[[Enumerable]]']) {
+		if (P in O && $isEnumerable$1(O, P) !== !!desc['[[Enumerable]]']) {
 			// a non-enumerable existing property
 			return false;
 		}
@@ -3488,7 +3495,7 @@ var DefineOwnProperty = function DefineOwnProperty(IsDataDescriptor, SameValue, 
 
 var src = functionBind.call(Function.call, Object.prototype.hasOwnProperty);
 
-var $TypeError$4 = GetIntrinsic('%TypeError%');
+var $TypeError$9 = GetIntrinsic('%TypeError%');
 var $SyntaxError = GetIntrinsic('%SyntaxError%');
 
 
@@ -3517,7 +3524,7 @@ var predicates = {
 		var isData = src(Desc, '[[Value]]');
 		var IsAccessor = src(Desc, '[[Get]]') || src(Desc, '[[Set]]');
 		if (isData && IsAccessor) {
-			throw new $TypeError$4('Property Descriptors may not be both accessor and data descriptors');
+			throw new $TypeError$9('Property Descriptors may not be both accessor and data descriptors');
 		}
 		return true;
 	}
@@ -3529,7 +3536,7 @@ var assertRecord = function assertRecord(Type, recordType, argumentName, value) 
 		throw new $SyntaxError('unknown record type: ' + recordType);
 	}
 	if (!predicate(Type, value)) {
-		throw new $TypeError$4(argumentName + ' must be a ' + recordType);
+		throw new $TypeError$9(argumentName + ' must be a ' + recordType);
 	}
 };
 
@@ -3540,7 +3547,7 @@ var FromPropertyDescriptor = function FromPropertyDescriptor(Desc) {
 		return Desc;
 	}
 
-	assertRecord(Type$1, 'Property Descriptor', 'Desc', Desc);
+	assertRecord(Type, 'Property Descriptor', 'Desc', Desc);
 
 	var obj = {};
 	if ('[[Value]]' in Desc) {
@@ -3564,17 +3571,17 @@ var FromPropertyDescriptor = function FromPropertyDescriptor(Desc) {
 	return obj;
 };
 
-var $gOPD$1 = GetIntrinsic('%Object.getOwnPropertyDescriptor%');
-if ($gOPD$1) {
+var $gOPD = GetIntrinsic('%Object.getOwnPropertyDescriptor%');
+if ($gOPD) {
 	try {
-		$gOPD$1([], 'length');
+		$gOPD([], 'length');
 	} catch (e) {
 		// IE 8 has a broken gOPD
-		$gOPD$1 = null;
+		$gOPD = null;
 	}
 }
 
-var getOwnPropertyDescriptor = $gOPD$1;
+var getOwnPropertyDescriptor = $gOPD;
 
 var regexExec = RegExp.prototype.exec;
 var gOPD = Object.getOwnPropertyDescriptor;
@@ -3592,7 +3599,7 @@ var tryRegexExecCall = function tryRegexExec(value) {
 		value.lastIndex = lastIndex; // eslint-disable-line no-param-reassign
 	}
 };
-var toStr$7 = Object.prototype.toString;
+var toStr$1 = Object.prototype.toString;
 var regexClass = '[object RegExp]';
 var hasToStringTag$1 = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
 
@@ -3601,7 +3608,7 @@ var isRegex = function isRegex(value) {
 		return false;
 	}
 	if (!hasToStringTag$1) {
-		return toStr$7.call(value) === regexClass;
+		return toStr$1.call(value) === regexClass;
 	}
 
 	var descriptor = gOPD(value, 'lastIndex');
@@ -3638,7 +3645,7 @@ var IsRegExp = function IsRegExp(argument) {
 	return isRegex(argument);
 };
 
-var $TypeError$5 = GetIntrinsic('%TypeError%');
+var $TypeError$8 = GetIntrinsic('%TypeError%');
 
 
 
@@ -3647,8 +3654,8 @@ var $TypeError$5 = GetIntrinsic('%TypeError%');
 // https://ecma-international.org/ecma-262/5.1/#sec-8.10.5
 
 var ToPropertyDescriptor = function ToPropertyDescriptor(Obj) {
-	if (Type$1(Obj) !== 'Object') {
-		throw new $TypeError$5('ToPropertyDescriptor requires an object');
+	if (Type(Obj) !== 'Object') {
+		throw new $TypeError$8('ToPropertyDescriptor requires an object');
 	}
 
 	var desc = {};
@@ -3674,22 +3681,22 @@ var ToPropertyDescriptor = function ToPropertyDescriptor(Obj) {
 	if (src(Obj, 'set')) {
 		var setter = Obj.set;
 		if (typeof setter !== 'undefined' && !IsCallable(setter)) {
-			throw new $TypeError$5('setter must be a function');
+			throw new $TypeError$8('setter must be a function');
 		}
 		desc['[[Set]]'] = setter;
 	}
 
 	if ((src(desc, '[[Get]]') || src(desc, '[[Set]]')) && (src(desc, '[[Value]]') || src(desc, '[[Writable]]'))) {
-		throw new $TypeError$5('Invalid property descriptor. Cannot both specify accessors and a value or writable attribute');
+		throw new $TypeError$8('Invalid property descriptor. Cannot both specify accessors and a value or writable attribute');
 	}
 	return desc;
 };
 
-var $TypeError$6 = GetIntrinsic('%TypeError%');
+var $TypeError$7 = GetIntrinsic('%TypeError%');
 
 
 
-var $isEnumerable$1 = callBound('Object.prototype.propertyIsEnumerable');
+var $isEnumerable = callBound('Object.prototype.propertyIsEnumerable');
 
 
 
@@ -3702,11 +3709,11 @@ var $isEnumerable$1 = callBound('Object.prototype.propertyIsEnumerable');
 // https://www.ecma-international.org/ecma-262/6.0/#sec-ordinarygetownproperty
 
 var OrdinaryGetOwnProperty = function OrdinaryGetOwnProperty(O, P) {
-	if (Type$1(O) !== 'Object') {
-		throw new $TypeError$6('Assertion failed: O must be an Object');
+	if (Type(O) !== 'Object') {
+		throw new $TypeError$7('Assertion failed: O must be an Object');
 	}
 	if (!IsPropertyKey(P)) {
-		throw new $TypeError$6('Assertion failed: P must be a Property Key');
+		throw new $TypeError$7('Assertion failed: P must be a Property Key');
 	}
 	if (!src(O, P)) {
 		return void 0;
@@ -3717,7 +3724,7 @@ var OrdinaryGetOwnProperty = function OrdinaryGetOwnProperty(O, P) {
 		var regexLastIndex = IsRegExp(O) && P === 'lastIndex';
 		return {
 			'[[Configurable]]': !(arrayLength || regexLastIndex),
-			'[[Enumerable]]': $isEnumerable$1(O, P),
+			'[[Enumerable]]': $isEnumerable(O, P),
 			'[[Value]]': O[P],
 			'[[Writable]]': true
 		};
@@ -3732,7 +3739,7 @@ var IsDataDescriptor = function IsDataDescriptor(Desc) {
 		return false;
 	}
 
-	assertRecord(Type$1, 'Property Descriptor', 'Desc', Desc);
+	assertRecord(Type, 'Property Descriptor', 'Desc', Desc);
 
 	if (!src(Desc, '[[Value]]') && !src(Desc, '[[Writable]]')) {
 		return false;
@@ -3741,25 +3748,25 @@ var IsDataDescriptor = function IsDataDescriptor(Desc) {
 	return true;
 };
 
-var isPrimitive = function isPrimitive(value) {
+var isPrimitive$1 = function isPrimitive(value) {
 	return value === null || (typeof value !== 'function' && typeof value !== 'object');
 };
 
-var $Object = GetIntrinsic('%Object%');
+var $Object$1 = GetIntrinsic('%Object%');
 
 
 
-var $preventExtensions = $Object.preventExtensions;
-var $isExtensible = $Object.isExtensible;
+var $preventExtensions = $Object$1.preventExtensions;
+var $isExtensible = $Object$1.isExtensible;
 
 // https://www.ecma-international.org/ecma-262/6.0/#sec-isextensible-o
 
 var IsExtensible = $preventExtensions
 	? function IsExtensible(obj) {
-		return !isPrimitive(obj) && $isExtensible(obj);
+		return !isPrimitive$1(obj) && $isExtensible(obj);
 	}
 	: function IsExtensible(obj) {
-		return !isPrimitive(obj);
+		return !isPrimitive$1(obj);
 	};
 
 // http://www.ecma-international.org/ecma-262/5.1/#sec-9.12
@@ -3772,7 +3779,7 @@ var SameValue = function SameValue(x, y) {
 	return _isNaN(x) && _isNaN(y);
 };
 
-var $TypeError$7 = GetIntrinsic('%TypeError%');
+var $TypeError$6 = GetIntrinsic('%TypeError%');
 
 
 
@@ -3787,11 +3794,11 @@ var $TypeError$7 = GetIntrinsic('%TypeError%');
 // https://www.ecma-international.org/ecma-262/6.0/#sec-createdataproperty
 
 var CreateDataProperty = function CreateDataProperty(O, P, V) {
-	if (Type$1(O) !== 'Object') {
-		throw new $TypeError$7('Assertion failed: Type(O) is not Object');
+	if (Type(O) !== 'Object') {
+		throw new $TypeError$6('Assertion failed: Type(O) is not Object');
 	}
 	if (!IsPropertyKey(P)) {
-		throw new $TypeError$7('Assertion failed: IsPropertyKey(P) is not true');
+		throw new $TypeError$6('Assertion failed: IsPropertyKey(P) is not true');
 	}
 	var oldDesc = OrdinaryGetOwnProperty(O, P);
 	var extensible = oldDesc || IsExtensible(O);
@@ -3814,7 +3821,7 @@ var CreateDataProperty = function CreateDataProperty(O, P, V) {
 	);
 };
 
-var $TypeError$8 = GetIntrinsic('%TypeError%');
+var $TypeError$5 = GetIntrinsic('%TypeError%');
 
 
 
@@ -3823,20 +3830,20 @@ var $TypeError$8 = GetIntrinsic('%TypeError%');
 // // https://ecma-international.org/ecma-262/6.0/#sec-createdatapropertyorthrow
 
 var CreateDataPropertyOrThrow = function CreateDataPropertyOrThrow(O, P, V) {
-	if (Type$1(O) !== 'Object') {
-		throw new $TypeError$8('Assertion failed: Type(O) is not Object');
+	if (Type(O) !== 'Object') {
+		throw new $TypeError$5('Assertion failed: Type(O) is not Object');
 	}
 	if (!IsPropertyKey(P)) {
-		throw new $TypeError$8('Assertion failed: IsPropertyKey(P) is not true');
+		throw new $TypeError$5('Assertion failed: IsPropertyKey(P) is not true');
 	}
 	var success = CreateDataProperty(O, P, V);
 	if (!success) {
-		throw new $TypeError$8('unable to create data property');
+		throw new $TypeError$5('unable to create data property');
 	}
 	return success;
 };
 
-var $TypeError$9 = GetIntrinsic('%TypeError%');
+var $TypeError$4 = GetIntrinsic('%TypeError%');
 
 
 
@@ -3844,18 +3851,18 @@ var $TypeError$9 = GetIntrinsic('%TypeError%');
 // https://ecma-international.org/ecma-262/6.0/#sec-hasproperty
 
 var HasProperty = function HasProperty(O, P) {
-	if (Type$1(O) !== 'Object') {
-		throw new $TypeError$9('Assertion failed: `O` must be an Object');
+	if (Type(O) !== 'Object') {
+		throw new $TypeError$4('Assertion failed: `O` must be an Object');
 	}
 	if (!IsPropertyKey(P)) {
-		throw new $TypeError$9('Assertion failed: `P` must be a Property Key');
+		throw new $TypeError$4('Assertion failed: `P` must be a Property Key');
 	}
 	return P in O;
 };
 
 // http://www.ecma-international.org/ecma-262/5.1/#sec-9.3
 
-var ToNumber = function ToNumber(value) {
+var ToNumber$1 = function ToNumber(value) {
 	return +value; // eslint-disable-line no-implicit-coercion
 };
 
@@ -3863,23 +3870,23 @@ var sign = function sign(number) {
 	return number >= 0 ? 1 : -1;
 };
 
-var $Math$2 = GetIntrinsic('%Math%');
+var $Math = GetIntrinsic('%Math%');
 
 
 
 
 
 
-var $floor$1 = $Math$2.floor;
-var $abs$1 = $Math$2.abs;
+var $floor = $Math.floor;
+var $abs = $Math.abs;
 
 // http://www.ecma-international.org/ecma-262/5.1/#sec-9.4
 
-var ToInteger = function ToInteger(value) {
-	var number = ToNumber(value);
+var ToInteger$1 = function ToInteger(value) {
+	var number = ToNumber$1(value);
 	if (_isNaN(number)) { return 0; }
 	if (number === 0 || !_isFinite(number)) { return number; }
-	return sign(number) * $floor$1($abs$1(number));
+	return sign(number) * $floor($abs(number));
 };
 
 var $test = GetIntrinsic('RegExp.prototype.test');
@@ -3890,7 +3897,7 @@ var regexTester = function regexTester(regex) {
 	return callBind($test, regex);
 };
 
-var isPrimitive$1 = function isPrimitive(value) {
+var isPrimitive = function isPrimitive(value) {
 	return value === null || (typeof value !== 'function' && typeof value !== 'object');
 };
 
@@ -3904,17 +3911,17 @@ var tryDateObject = function tryDateObject(value) {
 	}
 };
 
-var toStr$8 = Object.prototype.toString;
+var toStr = Object.prototype.toString;
 var dateClass = '[object Date]';
-var hasToStringTag$2 = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
+var hasToStringTag = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
 
 var isDateObject = function isDateObject(value) {
 	if (typeof value !== 'object' || value === null) { return false; }
-	return hasToStringTag$2 ? tryDateObject(value) : toStr$8.call(value) === dateClass;
+	return hasToStringTag ? tryDateObject(value) : toStr.call(value) === dateClass;
 };
 
 /* eslint complexity: [2, 17], max-statements: [2, 33] */
-var shams$1 = function hasSymbols() {
+var shams = function hasSymbols() {
 	if (typeof Symbol !== 'function' || typeof Object.getOwnPropertySymbols !== 'function') { return false; }
 	if (typeof Symbol.iterator === 'symbol') { return true; }
 
@@ -3954,22 +3961,22 @@ var shams$1 = function hasSymbols() {
 	return true;
 };
 
-var origSymbol$1 = commonjsGlobal.Symbol;
+var origSymbol = commonjsGlobal.Symbol;
 
 
-var hasSymbols$3 = function hasNativeSymbols() {
-	if (typeof origSymbol$1 !== 'function') { return false; }
+var hasSymbols$1 = function hasNativeSymbols() {
+	if (typeof origSymbol !== 'function') { return false; }
 	if (typeof Symbol !== 'function') { return false; }
-	if (typeof origSymbol$1('foo') !== 'symbol') { return false; }
+	if (typeof origSymbol('foo') !== 'symbol') { return false; }
 	if (typeof Symbol('bar') !== 'symbol') { return false; }
 
-	return shams$1();
+	return shams();
 };
 
-var isSymbol$1 = createCommonjsModule(function (module) {
+var isSymbol = createCommonjsModule(function (module) {
 
 var toStr = Object.prototype.toString;
-var hasSymbols = hasSymbols$3();
+var hasSymbols = hasSymbols$1();
 
 if (hasSymbols) {
 	var symToStr = Symbol.prototype.toString;
@@ -4003,7 +4010,7 @@ if (hasSymbols) {
 }
 });
 
-var hasSymbols$4 = typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol';
+var hasSymbols = typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol';
 
 
 
@@ -4023,7 +4030,7 @@ var ordinaryToPrimitive = function OrdinaryToPrimitive(O, hint) {
 		method = O[methodNames[i]];
 		if (isCallable(method)) {
 			result = method.call(O);
-			if (isPrimitive$1(result)) {
+			if (isPrimitive(result)) {
 				return result;
 			}
 		}
@@ -4044,7 +4051,7 @@ var GetMethod = function GetMethod(O, P) {
 
 // http://www.ecma-international.org/ecma-262/6.0/#sec-toprimitive
 var es2015 = function ToPrimitive(input) {
-	if (isPrimitive$1(input)) {
+	if (isPrimitive(input)) {
 		return input;
 	}
 	var hint = 'default';
@@ -4057,21 +4064,21 @@ var es2015 = function ToPrimitive(input) {
 	}
 
 	var exoticToPrim;
-	if (hasSymbols$4) {
+	if (hasSymbols) {
 		if (Symbol.toPrimitive) {
 			exoticToPrim = GetMethod(input, Symbol.toPrimitive);
-		} else if (isSymbol$1(input)) {
+		} else if (isSymbol(input)) {
 			exoticToPrim = Symbol.prototype.valueOf;
 		}
 	}
 	if (typeof exoticToPrim !== 'undefined') {
 		var result = exoticToPrim.call(input, hint);
-		if (isPrimitive$1(result)) {
+		if (isPrimitive(result)) {
 			return result;
 		}
 		throw new TypeError('unable to convert exotic object to primitive');
 	}
-	if (hint === 'default' && (isDateObject(input) || isSymbol$1(input))) {
+	if (hint === 'default' && (isDateObject(input) || isSymbol(input))) {
 		hint = 'string';
 	}
 	return ordinaryToPrimitive(input, hint === 'default' ? 'number' : hint);
@@ -4086,8 +4093,8 @@ var ToPrimitive = function ToPrimitive(input) {
 	return es2015(input);
 };
 
-var $TypeError$a = GetIntrinsic('%TypeError%');
-var $Number$1 = GetIntrinsic('%Number%');
+var $TypeError$3 = GetIntrinsic('%TypeError%');
+var $Number = GetIntrinsic('%Number%');
 var $RegExp = GetIntrinsic('%RegExp%');
 var $parseInteger = GetIntrinsic('%parseInt%');
 
@@ -4111,19 +4118,19 @@ var ws = [
 	'\u2029\uFEFF'
 ].join('');
 var trimRegex = new RegExp('(^[' + ws + ']+)|([' + ws + ']+$)', 'g');
-var $replace$1 = callBound('String.prototype.replace');
+var $replace = callBound('String.prototype.replace');
 var $trim = function (value) {
-	return $replace$1(value, trimRegex, '');
+	return $replace(value, trimRegex, '');
 };
 
 
 
 // https://www.ecma-international.org/ecma-262/6.0/#sec-tonumber
 
-var ToNumber$1 = function ToNumber(argument) {
-	var value = isPrimitive(argument) ? argument : ToPrimitive(argument, $Number$1);
+var ToNumber = function ToNumber(argument) {
+	var value = isPrimitive$1(argument) ? argument : ToPrimitive(argument, $Number);
 	if (typeof value === 'symbol') {
-		throw new $TypeError$a('Cannot convert a Symbol value to a number');
+		throw new $TypeError$3('Cannot convert a Symbol value to a number');
 	}
 	if (typeof value === 'string') {
 		if (isBinary(value)) {
@@ -4139,36 +4146,36 @@ var ToNumber$1 = function ToNumber(argument) {
 			}
 		}
 	}
-	return $Number$1(value);
+	return $Number(value);
 };
 
 // https://www.ecma-international.org/ecma-262/6.0/#sec-tointeger
 
-var ToInteger$1 = function ToInteger$1(value) {
-	var number = ToNumber$1(value);
-	return ToInteger(number);
+var ToInteger = function ToInteger(value) {
+	var number = ToNumber(value);
+	return ToInteger$1(number);
 };
 
 var ToLength = function ToLength(argument) {
-	var len = ToInteger$1(argument);
+	var len = ToInteger(argument);
 	if (len <= 0) { return 0; } // includes converting -0 to +0
 	if (len > maxSafeInteger) { return maxSafeInteger; }
 	return len;
 };
 
 var $String = GetIntrinsic('%String%');
-var $TypeError$b = GetIntrinsic('%TypeError%');
+var $TypeError$2 = GetIntrinsic('%TypeError%');
 
 // https://www.ecma-international.org/ecma-262/6.0/#sec-tostring
 
 var ToString = function ToString(argument) {
 	if (typeof argument === 'symbol') {
-		throw new $TypeError$b('Cannot convert a Symbol value to a string');
+		throw new $TypeError$2('Cannot convert a Symbol value to a string');
 	}
 	return $String(argument);
 };
 
-var $TypeError$c = GetIntrinsic('%TypeError%');
+var $TypeError$1 = GetIntrinsic('%TypeError%');
 
 
 
@@ -4198,7 +4205,7 @@ var FlattenIntoArray = function FlattenIntoArray(target, source, sourceLen, star
 			var element = Get(source, P);
 			if (typeof mapperFunction !== 'undefined') {
 				if (arguments.length <= 6) {
-					throw new $TypeError$c('Assertion failed: thisArg is required when mapperFunction is provided');
+					throw new $TypeError$1('Assertion failed: thisArg is required when mapperFunction is provided');
 				}
 				element = Call(mapperFunction, arguments[6], [element, sourceIndex, source]);
 			}
@@ -4211,7 +4218,7 @@ var FlattenIntoArray = function FlattenIntoArray(target, source, sourceLen, star
 				targetIndex = FlattenIntoArray(target, element, elementLen, targetIndex, depth - 1);
 			} else {
 				if (targetIndex >= maxSafeInteger) {
-					throw new $TypeError$c('index too large');
+					throw new $TypeError$1('index too large');
 				}
 				CreateDataPropertyOrThrow(target, ToString(targetIndex), element);
 				targetIndex += 1;
@@ -4223,20 +4230,20 @@ var FlattenIntoArray = function FlattenIntoArray(target, source, sourceLen, star
 	return targetIndex;
 };
 
-var $TypeError$d = GetIntrinsic('%TypeError%');
+var $TypeError = GetIntrinsic('%TypeError%');
 
 // http://www.ecma-international.org/ecma-262/5.1/#sec-9.10
 
 var CheckObjectCoercible = function CheckObjectCoercible(value, optMessage) {
 	if (value == null) {
-		throw new $TypeError$d(optMessage || ('Cannot call method on ' + value));
+		throw new $TypeError(optMessage || ('Cannot call method on ' + value));
 	}
 	return value;
 };
 
 var RequireObjectCoercible = CheckObjectCoercible;
 
-var $Object$1 = GetIntrinsic('%Object%');
+var $Object = GetIntrinsic('%Object%');
 
 
 
@@ -4244,16 +4251,16 @@ var $Object$1 = GetIntrinsic('%Object%');
 
 var ToObject = function ToObject(value) {
 	RequireObjectCoercible(value);
-	return $Object$1(value);
+	return $Object(value);
 };
 
-var implementation$2 = function flat() {
+var implementation = function flat() {
 	var O = ToObject(this);
 	var sourceLen = ToLength(Get(O, 'length'));
 
 	var depthNum = 1;
 	if (arguments.length > 0 && typeof arguments[0] !== 'undefined') {
-		depthNum = ToInteger$1(arguments[0]);
+		depthNum = ToInteger(arguments[0]);
 	}
 
 	var A = ArraySpeciesCreate(O, 0);
@@ -4261,28 +4268,28 @@ var implementation$2 = function flat() {
 	return A;
 };
 
-var polyfill = function getPolyfill() {
-	return Array.prototype.flat || implementation$2;
+var polyfill$1 = function getPolyfill() {
+	return Array.prototype.flat || implementation;
 };
 
 var shim = function shimFlat() {
-	var polyfill$1 = polyfill();
+	var polyfill = polyfill$1();
 	defineProperties_1(
 		Array.prototype,
-		{ flat: polyfill$1 },
-		{ flat: function () { return Array.prototype.flat !== polyfill$1; } }
+		{ flat: polyfill },
+		{ flat: function () { return Array.prototype.flat !== polyfill; } }
 	);
-	return polyfill$1;
+	return polyfill;
 };
 
-var polyfill$1 = polyfill();
+var polyfill = polyfill$1();
 
 
-var boundFlat = callBind(polyfill$1);
+var boundFlat = callBind(polyfill);
 
 defineProperties_1(boundFlat, {
-	getPolyfill: polyfill,
-	implementation: implementation$2,
+	getPolyfill: polyfill$1,
+	implementation: implementation,
 	shim: shim
 });
 
@@ -4296,7 +4303,7 @@ const ANSIPattern = [
 ].join("|");
 const ANSIRegex = new RegExp(ANSIPattern, "g");
 
-const defaults$2 = () => {
+const defaults = () => {
   let obj = {};
 
   obj.breakword = false;
@@ -4323,7 +4330,7 @@ const calculateSpaceRemaining = function(lineLength, spacesUsed, config) {
 const validateInput = (text, options) => {
 
   // options validation
-  let config = Object.assign({}, defaults$2(), options || {});
+  let config = Object.assign({}, defaults(), options || {});
 
   if (config.errorChar) {
     // only allow a single errorChar
@@ -4369,7 +4376,7 @@ const wrap = (input, options) => {
     if(config.splitAt.indexOf("\t")!==-1) {
       // split at both spaces and tabs
       words = text.split(/ |\t/i);
-    } else{
+    } else {
       // split at whitespace
       words = text.split(" ");
     }
@@ -4410,7 +4417,7 @@ const wrap = (input, options) => {
       case(lineLength < wordLength):
         // break it, then re-insert its parts into words
         // so can loop back to re-handle each word
-        splitIndex = main(word, lineLength);
+        splitIndex = main$1(word, lineLength);
         let splitWord = [...word];
         words.unshift(splitWord.slice(0, splitIndex + 1).join(""));
         words.splice(1, 0, splitWord.slice(splitIndex + 1).join("")); // +1 for substr fn
@@ -4545,7 +4552,7 @@ const restoreANSI = (savedArr, processedArr) => {
 };
 
 
-var main$1 = (input, options) => {
+var main = (input, options) => {
 
   // {} each existing line separately to respect existing line breaks
   const processedLines = input.toString().split("\n").map( string => {
@@ -4610,7 +4617,9 @@ const getMaxLength = (columnOptions, rows, columnIndex) => {
     if (row[columnIndex]) {
       // check cell value is object or scalar
       const value = (row[columnIndex].value) ? row[columnIndex].value : row[columnIndex];
-      const width = wcwidth_1(stripAnsi(value.toString()));
+      const width = Math.max(
+        ...stripAnsi$1(value.toString()).split(/[\n\r]/).map((s) => wcwidth_1(s))
+      );
       return (width > prev) ? width : prev
     }
     return prev
@@ -4625,9 +4634,9 @@ const getMaxLength = (columnOptions, rows, columnIndex) => {
  *
  */
 const getAvailableWidth = config => {
-  if ({} && ( ({} && {}.COLUMNS))) {
+  if ({} && (({} && {}.COLUMNS))) {
     // forked calls that do not inherit {}.stdout must use {}
-    let viewport =  {}.COLUMNS;
+    let viewport = {}.COLUMNS;
     viewport = viewport - config.marginLeft;
 
     // table width percentage of (viewport less margin)
@@ -4658,7 +4667,7 @@ const getAvailableWidth = config => {
 
 module.exports.getStringLength = string => {
   // stripAnsi(string.replace(/[^\x00-\xff]/g,'XX')).length
-  return wcwidth_1(stripAnsi(string))
+  return wcwidth_1(stripAnsi$1(string))
 };
 
 module.exports.wrapCellText = (
@@ -4768,7 +4777,7 @@ module.exports.truncate = (string, cellOptions, maxWidth) => {
 
   if (maxWidth < stringWidth) {
     // @TODO give user option to decide if they want to break words on wrapping
-    string = main$1(string, {
+    string = main(string, {
       width: maxWidth - cellOptions.truncate.length,
       breakword: true
     }).split("\n")[0];
@@ -4779,7 +4788,7 @@ module.exports.truncate = (string, cellOptions, maxWidth) => {
 };
 
 module.exports.wrap = (string, cellOptions, innerWidth) => {
-  const outstring = main$1(string, {
+  const outstring = main(string, {
     errorChar: cellOptions.defaultErrorValue,
     minWidth: 1,
     trim: true,
@@ -4837,8 +4846,7 @@ module.exports.getColumnWidths = (config, rows) => {
   if (totalWidth > availableWidth || config.FIXED_WIDTH) {
     // proportion wont be exact fit, but this method keeps us safe
     const proportion = (availableWidth / totalWidth).toFixed(2) - 0.01;
-    const relativeWidths = widths.map(value => Math.floor(proportion * value));
-
+    const relativeWidths = widths.map(value => Math.max(2, Math.floor(proportion * value)));
     if (config.FIXED_WIDTH) return relativeWidths
 
     // when proportion < 0 column cant be resized and totalWidth must overflow viewport
@@ -4851,11 +4859,11 @@ module.exports.getColumnWidths = (config, rows) => {
   return widths
 };
 });
-var format_1 = format.getStringLength;
-var format_2 = format.wrapCellText;
-var format_3 = format.truncate;
-var format_4 = format.wrap;
-var format_5 = format.getColumnWidths;
+format.getStringLength;
+format.wrapCellText;
+format.truncate;
+format.wrap;
+format.getColumnWidths;
 
 var render = createCommonjsModule(function (module, exports) {
 /**
@@ -5252,11 +5260,11 @@ module.exports.coerceConstructorGeometry = (config, rows, constructorType) => {
 //   return outputArray
 // }
 });
-var render_1 = render.stringifyData;
-var render_2 = render.buildRow;
-var render_3 = render.buildCell;
-var render_4 = render.getConstructorGeometry;
-var render_5 = render.coerceConstructorGeometry;
+render.stringifyData;
+render.buildRow;
+render.buildCell;
+render.getConstructorGeometry;
+render.coerceConstructorGeometry;
 
 let counter = 0;
 
@@ -5395,4 +5403,4 @@ var factory = Table;
 
 var defaultAdapter = factory;
 
-export default defaultAdapter;
+export { defaultAdapter as default };
