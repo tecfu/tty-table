@@ -28,7 +28,7 @@ declare namespace TtyTable {
     paddingRight?: number;
     paddingTop?: number;
     value: string;
-    width: string | number;
+    width?: string | number;
   }
 
   export interface Options {
