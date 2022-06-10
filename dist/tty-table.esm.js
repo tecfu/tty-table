@@ -1460,7 +1460,7 @@ var util = {
 const TEMPLATE_REGEX = /(?:\\(u(?:[a-f\d]{4}|\{[a-f\d]{1,6}\})|x[a-f\d]{2}|.))|(?:\{(~)?(\w+(?:\([^)]*\))?(?:\.\w+(?:\([^)]*\))?)*)(?:[ \t]|(?=\r?\n)))|(\})|((?:.|[\r\n\f])+?)/gi;
 const STYLE_REGEX = /(?:^|\.)(\w+)(?:\(([^)]*)\))?/g;
 const STRING_REGEX = /^(['"])((?:\\.|(?!\1)[^\\])*)\1$/;
-const ESCAPE_REGEX = /\\(u(?:[a-f\d]{4}|\{[a-f\d]{1,6}\})|x[a-f\d]{2}|.)|([^\\])/gi;
+const ESCAPE_REGEX = /\\(u(?:[a-f\d]{4}|{[a-f\d]{1,6}})|x[a-f\d]{2}|.)|([^\\])/gi;
 
 const ESCAPES = new Map([
 	['n', '\n'],
@@ -1584,8 +1584,8 @@ var templates = (chalk, temporary) => {
 	chunks.push(chunk.join(''));
 
 	if (styles.length > 0) {
-		const errMsg = `Chalk template literal is missing ${styles.length} closing bracket${styles.length === 1 ? '' : 's'} (\`}\`)`;
-		throw new Error(errMsg);
+		const errMessage = `Chalk template literal is missing ${styles.length} closing bracket${styles.length === 1 ? '' : 's'} (\`}\`)`;
+		throw new Error(errMessage);
 	}
 
 	return chunks.join('');
@@ -1596,6 +1596,8 @@ const {
 	stringReplaceAll: stringReplaceAll$1,
 	stringEncaseCRLFWithFirstIndex: stringEncaseCRLFWithFirstIndex$1
 } = util;
+
+const {isArray} = Array;
 
 // `supportsColor.level` → `ansiStyles.color[name]` mapping
 const levelMapping = [
@@ -1608,7 +1610,7 @@ const levelMapping = [
 const styles = Object.create(null);
 
 const applyOptions = (object, options = {}) => {
-	if (options.level > 3 || options.level < 0) {
+	if (options.level && !(Number.isInteger(options.level) && options.level >= 0 && options.level <= 3)) {
 		throw new Error('The `level` option should be an integer from 0 to 3');
 	}
 
@@ -1619,6 +1621,7 @@ const applyOptions = (object, options = {}) => {
 
 class ChalkClass {
 	constructor(options) {
+		// eslint-disable-next-line no-constructor-return
 		return chalkFactory(options);
 	}
 }
@@ -1725,14 +1728,19 @@ const createStyler = (open, close, parent) => {
 
 const createBuilder = (self, _styler, _isEmpty) => {
 	const builder = (...arguments_) => {
+		if (isArray(arguments_[0]) && isArray(arguments_[0].raw)) {
+			// Called as a template literal, for example: chalk.red`2 + 3 = {bold ${2+3}}`
+			return applyStyle(builder, chalkTag(builder, ...arguments_));
+		}
+
 		// Single argument is hot path, implicit coercion is faster than anything
 		// eslint-disable-next-line no-implicit-coercion
 		return applyStyle(builder, (arguments_.length === 1) ? ('' + arguments_[0]) : arguments_.join(' '));
 	};
 
-	// `__proto__` is used because we must return a function, but there is
+	// We alter the prototype because we must return a function, but there is
 	// no way to create a function with a different prototype
-	builder.__proto__ = proto; // eslint-disable-line no-proto
+	Object.setPrototypeOf(builder, proto);
 
 	builder._generator = self;
 	builder._styler = _styler;
@@ -1779,7 +1787,7 @@ let template;
 const chalkTag = (chalk, ...strings) => {
 	const [firstString] = strings;
 
-	if (!Array.isArray(firstString)) {
+	if (!isArray(firstString) || !isArray(firstString.raw)) {
 		// If chalk() was called by itself or with a string,
 		// return the string itself as a string.
 		return strings.join(' ');
@@ -1809,24 +1817,18 @@ chalk.supportsColor = stdoutColor;
 chalk.stderr = Chalk({level: stderrColor ? stderrColor.level : 0}); // eslint-disable-line new-cap
 chalk.stderr.supportsColor = stderrColor;
 
-// For TypeScript
-chalk.Level = {
-	None: 0,
-	Basic: 1,
-	Ansi256: 2,
-	TrueColor: 3,
-	0: 'None',
-	1: 'Basic',
-	2: 'Ansi256',
-	3: 'TrueColor'
-};
-
 var source = chalk;
 
-const { FORCE_COLOR, NODE_DISABLE_COLORS, TERM } = {};
+let FORCE_COLOR, NODE_DISABLE_COLORS, NO_COLOR, TERM, isTTY=true;
+if (typeof {} !== 'undefined') {
+	({ FORCE_COLOR, NODE_DISABLE_COLORS, NO_COLOR, TERM } = {});
+	isTTY = {}.stdout ;
+}
 
 const $ = {
-	enabled: !NODE_DISABLE_COLORS && TERM !== 'dumb' && FORCE_COLOR !== '0',
+	enabled: !NODE_DISABLE_COLORS && NO_COLOR == null && TERM !== 'dumb' && (
+		FORCE_COLOR != null && FORCE_COLOR !== '0' || isTTY
+	),
 
 	// modifiers
 	reset: init(0, 0),
@@ -1867,7 +1869,7 @@ function run(arr, str) {
 		tmp = arr[i];
 		beg += tmp.open;
 		end += tmp.close;
-		if (str.includes(tmp.close)) {
+		if (!!~str.indexOf(tmp.close)) {
 			str = str.replace(tmp.rgx, tmp.close + tmp.open);
 		}
 	}
@@ -1917,14 +1919,17 @@ function init(open, close) {
 	};
 	return function (txt) {
 		if (this !== void 0 && this.has !== void 0) {
-			this.has.includes(open) || (this.has.push(open),this.keys.push(blk));
+			!!~this.has.indexOf(open) || (this.has.push(open),this.keys.push(blk));
 			return txt === void 0 ? this : $.enabled ? run(this.keys, txt+'') : txt+'';
 		}
 		return txt === void 0 ? chain([open], [blk]) : $.enabled ? run([blk], txt+'') : txt+'';
 	};
 }
 
-var kleur = $;
+var kleur = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	'default': $
+});
 
 var ansiRegex = ({onlyFirst = false} = {}) => {
 	const pattern = [
@@ -1937,9 +1942,11 @@ var ansiRegex = ({onlyFirst = false} = {}) => {
 
 var stripAnsi = string => typeof string === 'string' ? string.replace(ansiRegex(), '') : string;
 
+var kleur$1 = getCjsExportFromNamespace(kleur);
+
 var style = createCommonjsModule(function (module, exports) {
 // user kleur if we are in the browser
-const colorLib = ({} && {}.stdout) ? source : kleur;
+const colorLib = ({} && {}.stdout) ? source : kleur$1;
 
 
 
@@ -2350,6 +2357,8 @@ var main = function (input, breakAtLength) {
   //break after this character
   return indexOfLastFitChar;
 };
+
+var stripAnsi$1 = string => typeof string === 'string' ? string.replace(ansiRegex(), '') : string;
 
 var toStr = Object.prototype.toString;
 
@@ -3004,7 +3013,7 @@ var objectInspect = function inspect_(obj, options, depth, seen) {
         s += '</' + String(obj.nodeName).toLowerCase() + '>';
         return s;
     }
-    if (isArray(obj)) {
+    if (isArray$1(obj)) {
         if (obj.length === 0) { return '[]'; }
         return '[ ' + arrObjKeys(obj, inspect).join(', ') + ' ]';
     }
@@ -3069,7 +3078,7 @@ function quote(s) {
     return String(s).replace(/"/g, '&quot;');
 }
 
-function isArray(obj) { return toStr$4(obj) === '[object Array]'; }
+function isArray$1(obj) { return toStr$4(obj) === '[object Array]'; }
 function isDate(obj) { return toStr$4(obj) === '[object Date]'; }
 function isRegExp(obj) { return toStr$4(obj) === '[object RegExp]'; }
 function isError(obj) { return toStr$4(obj) === '[object Error]'; }
@@ -3203,7 +3212,7 @@ function collectionOf(type, size, entries) {
 }
 
 function arrObjKeys(obj, inspect) {
-    var isArr = isArray(obj);
+    var isArr = isArray$1(obj);
     var xs = [];
     if (isArr) {
         xs.length = obj.length;
@@ -4554,7 +4563,7 @@ var main$1 = (input, options) => {
     const savedANSI = splitAnsiInput(string);
 
     // strip ANSI
-    string = stripAnsi(string);
+    string = stripAnsi$1(string);
 
     // add newlines to string
     string = wrap(string, options);
@@ -4610,7 +4619,9 @@ const getMaxLength = (columnOptions, rows, columnIndex) => {
     if (row[columnIndex]) {
       // check cell value is object or scalar
       const value = (row[columnIndex].value) ? row[columnIndex].value : row[columnIndex];
-      const width = wcwidth_1(stripAnsi(value.toString()));
+      const width = Math.max(
+        ...stripAnsi(value.toString()).split(/[\n\r]/).map((s) => wcwidth_1(s))
+      );
       return (width > prev) ? width : prev
     }
     return prev
@@ -4837,8 +4848,7 @@ module.exports.getColumnWidths = (config, rows) => {
   if (totalWidth > availableWidth || config.FIXED_WIDTH) {
     // proportion wont be exact fit, but this method keeps us safe
     const proportion = (availableWidth / totalWidth).toFixed(2) - 0.01;
-    const relativeWidths = widths.map(value => Math.floor(proportion * value));
-
+    const relativeWidths = widths.map(value => Math.max(2, Math.floor(proportion * value)));
     if (config.FIXED_WIDTH) return relativeWidths
 
     // when proportion < 0 column cant be resized and totalWidth must overflow viewport
