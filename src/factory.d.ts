@@ -18,7 +18,7 @@ declare namespace TtyTable {
     color?: string;
     footerAlign?: string;
     footerColor?: string;
-    formatter: Formatter;
+    formatter?: Formatter;
     headerAlign?: string;
     headerColor?: string;
     marginLeft?: number;
