@@ -27,7 +27,8 @@ const rows = [
   [],
   ["special sauce", 0.10, "yes"],
   [null, 1.50, "no", "extra element", "another extra element"],
-  ["macaroni and cheese", 3.75]
+  ["macaroni and cheese", 3.75],
+  [0, 0, 0]
 ]
 
 // Example with objects as rows
@@ -46,6 +47,11 @@ const rows2 = [
   {
     item: "macaroni and cheese",
     price: 3.75
+  },
+  {
+    item: 0,
+    price: 0,
+    organic: 0
   }
 ]
 

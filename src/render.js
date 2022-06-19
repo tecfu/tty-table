@@ -252,7 +252,7 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
 
       default:
         // elem is assumed to be a scalar
-        cellValue = elem || ""
+        cellValue = elem
     }
 
     // run formatter
