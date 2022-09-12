@@ -274,6 +274,8 @@ module.exports.getColumnWidths = (config, rows) => {
       const totalRelativeWidths = relativeWidths.reduce((prev, current) => prev + current)
       widths = (totalRelativeWidths < totalWidth) ? relativeWidths : widths
     }
+  } else {
+    widths = widths.map(Math.floor)
   }
 
   return widths
