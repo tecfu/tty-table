@@ -1,15 +1,15 @@
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-function commonjsRequire () {
-	throw new Error('Dynamic requires are not currently supported by @rollup/plugin-commonjs');
-}
-
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
 
 function getCjsExportFromNamespace (n) {
 	return n && n['default'] || n;
+}
+
+function commonjsRequire () {
+	throw new Error('Dynamic requires are not currently supported by @rollup/plugin-commonjs');
 }
 
 // @TODO split defaults into table and cell settings
@@ -1821,7 +1821,7 @@ var source = chalk;
 
 let FORCE_COLOR, NODE_DISABLE_COLORS, NO_COLOR, TERM, isTTY=true;
 if (typeof {} !== 'undefined') {
-	({ FORCE_COLOR, NODE_DISABLE_COLORS, NO_COLOR, TERM } = {});
+	({ FORCE_COLOR, NODE_DISABLE_COLORS, NO_COLOR, TERM } = {} || {});
 	isTTY = {}.stdout ;
 }
 
@@ -1933,7 +1933,7 @@ var kleur = /*#__PURE__*/Object.freeze({
 
 var ansiRegex = ({onlyFirst = false} = {}) => {
 	const pattern = [
-		'[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
+		'[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
 		'(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))'
 	].join('|');
 
@@ -2358,8 +2358,6 @@ var main = function (input, breakAtLength) {
   return indexOfLastFitChar;
 };
 
-var stripAnsi$1 = string => typeof string === 'string' ? string.replace(ansiRegex(), '') : string;
-
 var toStr = Object.prototype.toString;
 
 var isArguments = function isArguments(value) {
@@ -2528,72 +2526,69 @@ keysShim$1.shim = function shimObjectKeys() {
 
 var objectKeys = keysShim$1;
 
-var hasSymbols = typeof Symbol === 'function' && typeof Symbol('foo') === 'symbol';
+/* eslint complexity: [2, 18], max-statements: [2, 33] */
+var shams = function hasSymbols() {
+	if (typeof Symbol !== 'function' || typeof Object.getOwnPropertySymbols !== 'function') { return false; }
+	if (typeof Symbol.iterator === 'symbol') { return true; }
 
-var toStr$2 = Object.prototype.toString;
-var concat = Array.prototype.concat;
-var origDefineProperty = Object.defineProperty;
-
-var isFunction = function (fn) {
-	return typeof fn === 'function' && toStr$2.call(fn) === '[object Function]';
-};
-
-var arePropertyDescriptorsSupported = function () {
 	var obj = {};
-	try {
-		origDefineProperty(obj, 'x', { enumerable: false, value: obj });
-		// eslint-disable-next-line no-unused-vars, no-restricted-syntax
-		for (var _ in obj) { // jscs:ignore disallowUnusedVariables
-			return false;
-		}
-		return obj.x === obj;
-	} catch (e) { /* this is IE 8. */
-		return false;
-	}
-};
-var supportsDescriptors = origDefineProperty && arePropertyDescriptorsSupported();
+	var sym = Symbol('test');
+	var symObj = Object(sym);
+	if (typeof sym === 'string') { return false; }
 
-var defineProperty = function (object, name, value, predicate) {
-	if (name in object && (!isFunction(predicate) || !predicate())) {
-		return;
-	}
-	if (supportsDescriptors) {
-		origDefineProperty(object, name, {
-			configurable: true,
-			enumerable: false,
-			value: value,
-			writable: true
-		});
-	} else {
-		object[name] = value;
-	}
-};
+	if (Object.prototype.toString.call(sym) !== '[object Symbol]') { return false; }
+	if (Object.prototype.toString.call(symObj) !== '[object Symbol]') { return false; }
 
-var defineProperties = function (object, map) {
-	var predicates = arguments.length > 2 ? arguments[2] : {};
-	var props = objectKeys(map);
-	if (hasSymbols) {
-		props = concat.call(props, Object.getOwnPropertySymbols(map));
+	// temp disabled per https://github.com/ljharb/object.assign/issues/17
+	// if (sym instanceof Symbol) { return false; }
+	// temp disabled per https://github.com/WebReflection/get-own-property-symbols/issues/4
+	// if (!(symObj instanceof Symbol)) { return false; }
+
+	// if (typeof Symbol.prototype.toString !== 'function') { return false; }
+	// if (String(sym) !== Symbol.prototype.toString.call(sym)) { return false; }
+
+	var symVal = 42;
+	obj[sym] = symVal;
+	for (sym in obj) { return false; } // eslint-disable-line no-restricted-syntax, no-unreachable-loop
+	if (typeof Object.keys === 'function' && Object.keys(obj).length !== 0) { return false; }
+
+	if (typeof Object.getOwnPropertyNames === 'function' && Object.getOwnPropertyNames(obj).length !== 0) { return false; }
+
+	var syms = Object.getOwnPropertySymbols(obj);
+	if (syms.length !== 1 || syms[0] !== sym) { return false; }
+
+	if (!Object.prototype.propertyIsEnumerable.call(obj, sym)) { return false; }
+
+	if (typeof Object.getOwnPropertyDescriptor === 'function') {
+		var descriptor = Object.getOwnPropertyDescriptor(obj, sym);
+		if (descriptor.value !== symVal || descriptor.enumerable !== true) { return false; }
 	}
-	for (var i = 0; i < props.length; i += 1) {
-		defineProperty(object, props[i], map[props[i]], predicates[props[i]]);
-	}
+
+	return true;
 };
 
-defineProperties.supportsDescriptors = !!supportsDescriptors;
+var origSymbol = typeof Symbol !== 'undefined' && Symbol;
 
-var defineProperties_1 = defineProperties;
+
+var hasSymbols = function hasNativeSymbols() {
+	if (typeof origSymbol !== 'function') { return false; }
+	if (typeof Symbol !== 'function') { return false; }
+	if (typeof origSymbol('foo') !== 'symbol') { return false; }
+	if (typeof Symbol('bar') !== 'symbol') { return false; }
+
+	return shams();
+};
 
 /* eslint no-invalid-this: 1 */
 
 var ERROR_MESSAGE = 'Function.prototype.bind called on incompatible ';
 var slice$1 = Array.prototype.slice;
-var toStr$3 = Object.prototype.toString;
+var toStr$2 = Object.prototype.toString;
 var funcType = '[object Function]';
 
 var implementation$1 = function bind(that) {
     var target = this;
-    if (typeof target !== 'function' || toStr$3.call(target) !== funcType) {
+    if (typeof target !== 'function' || toStr$2.call(target) !== funcType) {
         throw new TypeError(ERROR_MESSAGE + target);
     }
     var args = slice$1.call(arguments, 1);
@@ -2637,67 +2632,20 @@ var implementation$1 = function bind(that) {
 
 var functionBind = Function.prototype.bind || implementation$1;
 
-/* eslint complexity: [2, 18], max-statements: [2, 33] */
-var shams = function hasSymbols() {
-	if (typeof Symbol !== 'function' || typeof Object.getOwnPropertySymbols !== 'function') { return false; }
-	if (typeof Symbol.iterator === 'symbol') { return true; }
-
-	var obj = {};
-	var sym = Symbol('test');
-	var symObj = Object(sym);
-	if (typeof sym === 'string') { return false; }
-
-	if (Object.prototype.toString.call(sym) !== '[object Symbol]') { return false; }
-	if (Object.prototype.toString.call(symObj) !== '[object Symbol]') { return false; }
-
-	// temp disabled per https://github.com/ljharb/object.assign/issues/17
-	// if (sym instanceof Symbol) { return false; }
-	// temp disabled per https://github.com/WebReflection/get-own-property-symbols/issues/4
-	// if (!(symObj instanceof Symbol)) { return false; }
-
-	// if (typeof Symbol.prototype.toString !== 'function') { return false; }
-	// if (String(sym) !== Symbol.prototype.toString.call(sym)) { return false; }
-
-	var symVal = 42;
-	obj[sym] = symVal;
-	for (sym in obj) { return false; } // eslint-disable-line no-restricted-syntax
-	if (typeof Object.keys === 'function' && Object.keys(obj).length !== 0) { return false; }
-
-	if (typeof Object.getOwnPropertyNames === 'function' && Object.getOwnPropertyNames(obj).length !== 0) { return false; }
-
-	var syms = Object.getOwnPropertySymbols(obj);
-	if (syms.length !== 1 || syms[0] !== sym) { return false; }
-
-	if (!Object.prototype.propertyIsEnumerable.call(obj, sym)) { return false; }
-
-	if (typeof Object.getOwnPropertyDescriptor === 'function') {
-		var descriptor = Object.getOwnPropertyDescriptor(obj, sym);
-		if (descriptor.value !== symVal || descriptor.enumerable !== true) { return false; }
-	}
-
-	return true;
-};
-
-var origSymbol = commonjsGlobal.Symbol;
-
-
-var hasSymbols$1 = function hasNativeSymbols() {
-	if (typeof origSymbol !== 'function') { return false; }
-	if (typeof Symbol !== 'function') { return false; }
-	if (typeof origSymbol('foo') !== 'symbol') { return false; }
-	if (typeof Symbol('bar') !== 'symbol') { return false; }
-
-	return shams();
-};
-
-/* globals
-	Atomics,
-	SharedArrayBuffer,
-*/
+var src = functionBind.call(Function.call, Object.prototype.hasOwnProperty);
 
 var undefined$1;
 
+var $SyntaxError = SyntaxError;
+var $Function = Function;
 var $TypeError = TypeError;
+
+// eslint-disable-next-line consistent-return
+var getEvalledConstructor = function (expressionSyntax) {
+	try {
+		return $Function('"use strict"; return (' + expressionSyntax + ').constructor;')();
+	} catch (e) {}
+};
 
 var $gOPD = Object.getOwnPropertyDescriptor;
 if ($gOPD) {
@@ -2708,7 +2656,9 @@ if ($gOPD) {
 	}
 }
 
-var throwTypeError = function () { throw new $TypeError(); };
+var throwTypeError = function () {
+	throw new $TypeError();
+};
 var ThrowTypeError = $gOPD
 	? (function () {
 		try {
@@ -2726,194 +2676,570 @@ var ThrowTypeError = $gOPD
 	}())
 	: throwTypeError;
 
-var hasSymbols$2 = hasSymbols$1();
+var hasSymbols$1 = hasSymbols();
 
 var getProto = Object.getPrototypeOf || function (x) { return x.__proto__; }; // eslint-disable-line no-proto
-var generatorFunction =  undefined$1;
-var asyncFunction =  undefined$1;
-var asyncGenFunction =  undefined$1;
+
+var needsEval = {};
 
 var TypedArray = typeof Uint8Array === 'undefined' ? undefined$1 : getProto(Uint8Array);
 
 var INTRINSICS = {
+	'%AggregateError%': typeof AggregateError === 'undefined' ? undefined$1 : AggregateError,
 	'%Array%': Array,
 	'%ArrayBuffer%': typeof ArrayBuffer === 'undefined' ? undefined$1 : ArrayBuffer,
-	'%ArrayBufferPrototype%': typeof ArrayBuffer === 'undefined' ? undefined$1 : ArrayBuffer.prototype,
-	'%ArrayIteratorPrototype%': hasSymbols$2 ? getProto([][Symbol.iterator]()) : undefined$1,
-	'%ArrayPrototype%': Array.prototype,
-	'%ArrayProto_entries%': Array.prototype.entries,
-	'%ArrayProto_forEach%': Array.prototype.forEach,
-	'%ArrayProto_keys%': Array.prototype.keys,
-	'%ArrayProto_values%': Array.prototype.values,
+	'%ArrayIteratorPrototype%': hasSymbols$1 ? getProto([][Symbol.iterator]()) : undefined$1,
 	'%AsyncFromSyncIteratorPrototype%': undefined$1,
-	'%AsyncFunction%': asyncFunction,
-	'%AsyncFunctionPrototype%':  undefined$1,
-	'%AsyncGenerator%':  undefined$1,
-	'%AsyncGeneratorFunction%': asyncGenFunction,
-	'%AsyncGeneratorPrototype%':  undefined$1,
-	'%AsyncIteratorPrototype%':  undefined$1,
+	'%AsyncFunction%': needsEval,
+	'%AsyncGenerator%': needsEval,
+	'%AsyncGeneratorFunction%': needsEval,
+	'%AsyncIteratorPrototype%': needsEval,
 	'%Atomics%': typeof Atomics === 'undefined' ? undefined$1 : Atomics,
+	'%BigInt%': typeof BigInt === 'undefined' ? undefined$1 : BigInt,
+	'%BigInt64Array%': typeof BigInt64Array === 'undefined' ? undefined$1 : BigInt64Array,
+	'%BigUint64Array%': typeof BigUint64Array === 'undefined' ? undefined$1 : BigUint64Array,
 	'%Boolean%': Boolean,
-	'%BooleanPrototype%': Boolean.prototype,
 	'%DataView%': typeof DataView === 'undefined' ? undefined$1 : DataView,
-	'%DataViewPrototype%': typeof DataView === 'undefined' ? undefined$1 : DataView.prototype,
 	'%Date%': Date,
-	'%DatePrototype%': Date.prototype,
 	'%decodeURI%': decodeURI,
 	'%decodeURIComponent%': decodeURIComponent,
 	'%encodeURI%': encodeURI,
 	'%encodeURIComponent%': encodeURIComponent,
 	'%Error%': Error,
-	'%ErrorPrototype%': Error.prototype,
 	'%eval%': eval, // eslint-disable-line no-eval
 	'%EvalError%': EvalError,
-	'%EvalErrorPrototype%': EvalError.prototype,
 	'%Float32Array%': typeof Float32Array === 'undefined' ? undefined$1 : Float32Array,
-	'%Float32ArrayPrototype%': typeof Float32Array === 'undefined' ? undefined$1 : Float32Array.prototype,
 	'%Float64Array%': typeof Float64Array === 'undefined' ? undefined$1 : Float64Array,
-	'%Float64ArrayPrototype%': typeof Float64Array === 'undefined' ? undefined$1 : Float64Array.prototype,
-	'%Function%': Function,
-	'%FunctionPrototype%': Function.prototype,
-	'%Generator%':  undefined$1,
-	'%GeneratorFunction%': generatorFunction,
-	'%GeneratorPrototype%':  undefined$1,
+	'%FinalizationRegistry%': typeof FinalizationRegistry === 'undefined' ? undefined$1 : FinalizationRegistry,
+	'%Function%': $Function,
+	'%GeneratorFunction%': needsEval,
 	'%Int8Array%': typeof Int8Array === 'undefined' ? undefined$1 : Int8Array,
-	'%Int8ArrayPrototype%': typeof Int8Array === 'undefined' ? undefined$1 : Int8Array.prototype,
 	'%Int16Array%': typeof Int16Array === 'undefined' ? undefined$1 : Int16Array,
-	'%Int16ArrayPrototype%': typeof Int16Array === 'undefined' ? undefined$1 : Int8Array.prototype,
 	'%Int32Array%': typeof Int32Array === 'undefined' ? undefined$1 : Int32Array,
-	'%Int32ArrayPrototype%': typeof Int32Array === 'undefined' ? undefined$1 : Int32Array.prototype,
 	'%isFinite%': isFinite,
 	'%isNaN%': isNaN,
-	'%IteratorPrototype%': hasSymbols$2 ? getProto(getProto([][Symbol.iterator]())) : undefined$1,
+	'%IteratorPrototype%': hasSymbols$1 ? getProto(getProto([][Symbol.iterator]())) : undefined$1,
 	'%JSON%': typeof JSON === 'object' ? JSON : undefined$1,
-	'%JSONParse%': typeof JSON === 'object' ? JSON.parse : undefined$1,
 	'%Map%': typeof Map === 'undefined' ? undefined$1 : Map,
-	'%MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols$2 ? undefined$1 : getProto(new Map()[Symbol.iterator]()),
-	'%MapPrototype%': typeof Map === 'undefined' ? undefined$1 : Map.prototype,
+	'%MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols$1 ? undefined$1 : getProto(new Map()[Symbol.iterator]()),
 	'%Math%': Math,
 	'%Number%': Number,
-	'%NumberPrototype%': Number.prototype,
 	'%Object%': Object,
-	'%ObjectPrototype%': Object.prototype,
-	'%ObjProto_toString%': Object.prototype.toString,
-	'%ObjProto_valueOf%': Object.prototype.valueOf,
 	'%parseFloat%': parseFloat,
 	'%parseInt%': parseInt,
 	'%Promise%': typeof Promise === 'undefined' ? undefined$1 : Promise,
-	'%PromisePrototype%': typeof Promise === 'undefined' ? undefined$1 : Promise.prototype,
-	'%PromiseProto_then%': typeof Promise === 'undefined' ? undefined$1 : Promise.prototype.then,
-	'%Promise_all%': typeof Promise === 'undefined' ? undefined$1 : Promise.all,
-	'%Promise_reject%': typeof Promise === 'undefined' ? undefined$1 : Promise.reject,
-	'%Promise_resolve%': typeof Promise === 'undefined' ? undefined$1 : Promise.resolve,
 	'%Proxy%': typeof Proxy === 'undefined' ? undefined$1 : Proxy,
 	'%RangeError%': RangeError,
-	'%RangeErrorPrototype%': RangeError.prototype,
 	'%ReferenceError%': ReferenceError,
-	'%ReferenceErrorPrototype%': ReferenceError.prototype,
 	'%Reflect%': typeof Reflect === 'undefined' ? undefined$1 : Reflect,
 	'%RegExp%': RegExp,
-	'%RegExpPrototype%': RegExp.prototype,
 	'%Set%': typeof Set === 'undefined' ? undefined$1 : Set,
-	'%SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols$2 ? undefined$1 : getProto(new Set()[Symbol.iterator]()),
-	'%SetPrototype%': typeof Set === 'undefined' ? undefined$1 : Set.prototype,
+	'%SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols$1 ? undefined$1 : getProto(new Set()[Symbol.iterator]()),
 	'%SharedArrayBuffer%': typeof SharedArrayBuffer === 'undefined' ? undefined$1 : SharedArrayBuffer,
-	'%SharedArrayBufferPrototype%': typeof SharedArrayBuffer === 'undefined' ? undefined$1 : SharedArrayBuffer.prototype,
 	'%String%': String,
-	'%StringIteratorPrototype%': hasSymbols$2 ? getProto(''[Symbol.iterator]()) : undefined$1,
-	'%StringPrototype%': String.prototype,
-	'%Symbol%': hasSymbols$2 ? Symbol : undefined$1,
-	'%SymbolPrototype%': hasSymbols$2 ? Symbol.prototype : undefined$1,
-	'%SyntaxError%': SyntaxError,
-	'%SyntaxErrorPrototype%': SyntaxError.prototype,
+	'%StringIteratorPrototype%': hasSymbols$1 ? getProto(''[Symbol.iterator]()) : undefined$1,
+	'%Symbol%': hasSymbols$1 ? Symbol : undefined$1,
+	'%SyntaxError%': $SyntaxError,
 	'%ThrowTypeError%': ThrowTypeError,
 	'%TypedArray%': TypedArray,
-	'%TypedArrayPrototype%': TypedArray ? TypedArray.prototype : undefined$1,
 	'%TypeError%': $TypeError,
-	'%TypeErrorPrototype%': $TypeError.prototype,
 	'%Uint8Array%': typeof Uint8Array === 'undefined' ? undefined$1 : Uint8Array,
-	'%Uint8ArrayPrototype%': typeof Uint8Array === 'undefined' ? undefined$1 : Uint8Array.prototype,
 	'%Uint8ClampedArray%': typeof Uint8ClampedArray === 'undefined' ? undefined$1 : Uint8ClampedArray,
-	'%Uint8ClampedArrayPrototype%': typeof Uint8ClampedArray === 'undefined' ? undefined$1 : Uint8ClampedArray.prototype,
 	'%Uint16Array%': typeof Uint16Array === 'undefined' ? undefined$1 : Uint16Array,
-	'%Uint16ArrayPrototype%': typeof Uint16Array === 'undefined' ? undefined$1 : Uint16Array.prototype,
 	'%Uint32Array%': typeof Uint32Array === 'undefined' ? undefined$1 : Uint32Array,
-	'%Uint32ArrayPrototype%': typeof Uint32Array === 'undefined' ? undefined$1 : Uint32Array.prototype,
 	'%URIError%': URIError,
-	'%URIErrorPrototype%': URIError.prototype,
 	'%WeakMap%': typeof WeakMap === 'undefined' ? undefined$1 : WeakMap,
-	'%WeakMapPrototype%': typeof WeakMap === 'undefined' ? undefined$1 : WeakMap.prototype,
-	'%WeakSet%': typeof WeakSet === 'undefined' ? undefined$1 : WeakSet,
-	'%WeakSetPrototype%': typeof WeakSet === 'undefined' ? undefined$1 : WeakSet.prototype
+	'%WeakRef%': typeof WeakRef === 'undefined' ? undefined$1 : WeakRef,
+	'%WeakSet%': typeof WeakSet === 'undefined' ? undefined$1 : WeakSet
+};
+
+try {
+	null.error; // eslint-disable-line no-unused-expressions
+} catch (e) {
+	// https://github.com/tc39/proposal-shadowrealm/pull/384#issuecomment-1364264229
+	var errorProto = getProto(getProto(e));
+	INTRINSICS['%Error.prototype%'] = errorProto;
+}
+
+var doEval = function doEval(name) {
+	var value;
+	if (name === '%AsyncFunction%') {
+		value = getEvalledConstructor('async function () {}');
+	} else if (name === '%GeneratorFunction%') {
+		value = getEvalledConstructor('function* () {}');
+	} else if (name === '%AsyncGeneratorFunction%') {
+		value = getEvalledConstructor('async function* () {}');
+	} else if (name === '%AsyncGenerator%') {
+		var fn = doEval('%AsyncGeneratorFunction%');
+		if (fn) {
+			value = fn.prototype;
+		}
+	} else if (name === '%AsyncIteratorPrototype%') {
+		var gen = doEval('%AsyncGenerator%');
+		if (gen) {
+			value = getProto(gen.prototype);
+		}
+	}
+
+	INTRINSICS[name] = value;
+
+	return value;
+};
+
+var LEGACY_ALIASES = {
+	'%ArrayBufferPrototype%': ['ArrayBuffer', 'prototype'],
+	'%ArrayPrototype%': ['Array', 'prototype'],
+	'%ArrayProto_entries%': ['Array', 'prototype', 'entries'],
+	'%ArrayProto_forEach%': ['Array', 'prototype', 'forEach'],
+	'%ArrayProto_keys%': ['Array', 'prototype', 'keys'],
+	'%ArrayProto_values%': ['Array', 'prototype', 'values'],
+	'%AsyncFunctionPrototype%': ['AsyncFunction', 'prototype'],
+	'%AsyncGenerator%': ['AsyncGeneratorFunction', 'prototype'],
+	'%AsyncGeneratorPrototype%': ['AsyncGeneratorFunction', 'prototype', 'prototype'],
+	'%BooleanPrototype%': ['Boolean', 'prototype'],
+	'%DataViewPrototype%': ['DataView', 'prototype'],
+	'%DatePrototype%': ['Date', 'prototype'],
+	'%ErrorPrototype%': ['Error', 'prototype'],
+	'%EvalErrorPrototype%': ['EvalError', 'prototype'],
+	'%Float32ArrayPrototype%': ['Float32Array', 'prototype'],
+	'%Float64ArrayPrototype%': ['Float64Array', 'prototype'],
+	'%FunctionPrototype%': ['Function', 'prototype'],
+	'%Generator%': ['GeneratorFunction', 'prototype'],
+	'%GeneratorPrototype%': ['GeneratorFunction', 'prototype', 'prototype'],
+	'%Int8ArrayPrototype%': ['Int8Array', 'prototype'],
+	'%Int16ArrayPrototype%': ['Int16Array', 'prototype'],
+	'%Int32ArrayPrototype%': ['Int32Array', 'prototype'],
+	'%JSONParse%': ['JSON', 'parse'],
+	'%JSONStringify%': ['JSON', 'stringify'],
+	'%MapPrototype%': ['Map', 'prototype'],
+	'%NumberPrototype%': ['Number', 'prototype'],
+	'%ObjectPrototype%': ['Object', 'prototype'],
+	'%ObjProto_toString%': ['Object', 'prototype', 'toString'],
+	'%ObjProto_valueOf%': ['Object', 'prototype', 'valueOf'],
+	'%PromisePrototype%': ['Promise', 'prototype'],
+	'%PromiseProto_then%': ['Promise', 'prototype', 'then'],
+	'%Promise_all%': ['Promise', 'all'],
+	'%Promise_reject%': ['Promise', 'reject'],
+	'%Promise_resolve%': ['Promise', 'resolve'],
+	'%RangeErrorPrototype%': ['RangeError', 'prototype'],
+	'%ReferenceErrorPrototype%': ['ReferenceError', 'prototype'],
+	'%RegExpPrototype%': ['RegExp', 'prototype'],
+	'%SetPrototype%': ['Set', 'prototype'],
+	'%SharedArrayBufferPrototype%': ['SharedArrayBuffer', 'prototype'],
+	'%StringPrototype%': ['String', 'prototype'],
+	'%SymbolPrototype%': ['Symbol', 'prototype'],
+	'%SyntaxErrorPrototype%': ['SyntaxError', 'prototype'],
+	'%TypedArrayPrototype%': ['TypedArray', 'prototype'],
+	'%TypeErrorPrototype%': ['TypeError', 'prototype'],
+	'%Uint8ArrayPrototype%': ['Uint8Array', 'prototype'],
+	'%Uint8ClampedArrayPrototype%': ['Uint8ClampedArray', 'prototype'],
+	'%Uint16ArrayPrototype%': ['Uint16Array', 'prototype'],
+	'%Uint32ArrayPrototype%': ['Uint32Array', 'prototype'],
+	'%URIErrorPrototype%': ['URIError', 'prototype'],
+	'%WeakMapPrototype%': ['WeakMap', 'prototype'],
+	'%WeakSetPrototype%': ['WeakSet', 'prototype']
 };
 
 
+
+var $concat = functionBind.call(Function.call, Array.prototype.concat);
+var $spliceApply = functionBind.call(Function.apply, Array.prototype.splice);
 var $replace = functionBind.call(Function.call, String.prototype.replace);
+var $strSlice = functionBind.call(Function.call, String.prototype.slice);
+var $exec = functionBind.call(Function.call, RegExp.prototype.exec);
 
 /* adapted from https://github.com/lodash/lodash/blob/4.17.15/dist/lodash.js#L6735-L6744 */
 var rePropName = /[^%.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|%$))/g;
 var reEscapeChar = /\\(\\)?/g; /** Used to match backslashes in property paths. */
 var stringToPath = function stringToPath(string) {
+	var first = $strSlice(string, 0, 1);
+	var last = $strSlice(string, -1);
+	if (first === '%' && last !== '%') {
+		throw new $SyntaxError('invalid intrinsic syntax, expected closing `%`');
+	} else if (last === '%' && first !== '%') {
+		throw new $SyntaxError('invalid intrinsic syntax, expected opening `%`');
+	}
 	var result = [];
 	$replace(string, rePropName, function (match, number, quote, subString) {
-		result[result.length] = quote ? $replace(subString, reEscapeChar, '$1') : (number || match);
+		result[result.length] = quote ? $replace(subString, reEscapeChar, '$1') : number || match;
 	});
 	return result;
 };
 /* end adaptation */
 
 var getBaseIntrinsic = function getBaseIntrinsic(name, allowMissing) {
-	if (!(name in INTRINSICS)) {
-		throw new SyntaxError('intrinsic ' + name + ' does not exist!');
+	var intrinsicName = name;
+	var alias;
+	if (src(LEGACY_ALIASES, intrinsicName)) {
+		alias = LEGACY_ALIASES[intrinsicName];
+		intrinsicName = '%' + alias[0] + '%';
 	}
 
-	// istanbul ignore if // hopefully this is impossible to test :-)
-	if (typeof INTRINSICS[name] === 'undefined' && !allowMissing) {
-		throw new $TypeError('intrinsic ' + name + ' exists, but is not available. Please file an issue!');
+	if (src(INTRINSICS, intrinsicName)) {
+		var value = INTRINSICS[intrinsicName];
+		if (value === needsEval) {
+			value = doEval(intrinsicName);
+		}
+		if (typeof value === 'undefined' && !allowMissing) {
+			throw new $TypeError('intrinsic ' + name + ' exists, but is not available. Please file an issue!');
+		}
+
+		return {
+			alias: alias,
+			name: intrinsicName,
+			value: value
+		};
 	}
 
-	return INTRINSICS[name];
+	throw new $SyntaxError('intrinsic ' + name + ' does not exist!');
 };
 
-var GetIntrinsic = function GetIntrinsic(name, allowMissing) {
+var getIntrinsic = function GetIntrinsic(name, allowMissing) {
 	if (typeof name !== 'string' || name.length === 0) {
-		throw new TypeError('intrinsic name must be a non-empty string');
+		throw new $TypeError('intrinsic name must be a non-empty string');
 	}
 	if (arguments.length > 1 && typeof allowMissing !== 'boolean') {
-		throw new TypeError('"allowMissing" argument must be a boolean');
+		throw new $TypeError('"allowMissing" argument must be a boolean');
 	}
 
+	if ($exec(/^%?[^%]*%?$/, name) === null) {
+		throw new $SyntaxError('`%` may not be present anywhere but at the beginning and end of the intrinsic name');
+	}
 	var parts = stringToPath(name);
+	var intrinsicBaseName = parts.length > 0 ? parts[0] : '';
 
-	var value = getBaseIntrinsic('%' + (parts.length > 0 ? parts[0] : '') + '%', allowMissing);
-	for (var i = 1; i < parts.length; i += 1) {
-		if (value != null) {
-			if ($gOPD && (i + 1) >= parts.length) {
-				var desc = $gOPD(value, parts[i]);
-				if (!allowMissing && !(parts[i] in value)) {
+	var intrinsic = getBaseIntrinsic('%' + intrinsicBaseName + '%', allowMissing);
+	var intrinsicRealName = intrinsic.name;
+	var value = intrinsic.value;
+	var skipFurtherCaching = false;
+
+	var alias = intrinsic.alias;
+	if (alias) {
+		intrinsicBaseName = alias[0];
+		$spliceApply(parts, $concat([0, 1], alias));
+	}
+
+	for (var i = 1, isOwn = true; i < parts.length; i += 1) {
+		var part = parts[i];
+		var first = $strSlice(part, 0, 1);
+		var last = $strSlice(part, -1);
+		if (
+			(
+				(first === '"' || first === "'" || first === '`')
+				|| (last === '"' || last === "'" || last === '`')
+			)
+			&& first !== last
+		) {
+			throw new $SyntaxError('property names with quotes must have matching quotes');
+		}
+		if (part === 'constructor' || !isOwn) {
+			skipFurtherCaching = true;
+		}
+
+		intrinsicBaseName += '.' + part;
+		intrinsicRealName = '%' + intrinsicBaseName + '%';
+
+		if (src(INTRINSICS, intrinsicRealName)) {
+			value = INTRINSICS[intrinsicRealName];
+		} else if (value != null) {
+			if (!(part in value)) {
+				if (!allowMissing) {
 					throw new $TypeError('base intrinsic for ' + name + ' exists, but the property is not available.');
 				}
-				value = desc ? (desc.get || desc.value) : value[parts[i]];
+				return void undefined$1;
+			}
+			if ($gOPD && (i + 1) >= parts.length) {
+				var desc = $gOPD(value, part);
+				isOwn = !!desc;
+
+				// By convention, when a data property is converted to an accessor
+				// property to emulate a data property that does not suffer from
+				// the override mistake, that accessor's getter is marked with
+				// an `originalValue` property. Here, when we detect this, we
+				// uphold the illusion by pretending to see that original data
+				// property, i.e., returning the value rather than the getter
+				// itself.
+				if (isOwn && 'get' in desc && !('originalValue' in desc.get)) {
+					value = desc.get;
+				} else {
+					value = value[part];
+				}
 			} else {
-				value = value[parts[i]];
+				isOwn = src(value, part);
+				value = value[part];
+			}
+
+			if (isOwn && !skipFurtherCaching) {
+				INTRINSICS[intrinsicRealName] = value;
 			}
 		}
 	}
 	return value;
 };
 
-var $Function = GetIntrinsic('%Function%');
-var $apply = $Function.apply;
-var $call = $Function.call;
+var $defineProperty = getIntrinsic('%Object.defineProperty%', true);
 
-var callBind = function callBind() {
-	return functionBind.apply($call, arguments);
+var hasPropertyDescriptors = function hasPropertyDescriptors() {
+	if ($defineProperty) {
+		try {
+			$defineProperty({}, 'a', { value: 1 });
+			return true;
+		} catch (e) {
+			// IE 8 has a broken defineProperty
+			return false;
+		}
+	}
+	return false;
 };
 
-var apply = function applyBind() {
-	return functionBind.apply($apply, arguments);
+hasPropertyDescriptors.hasArrayLengthDefineBug = function hasArrayLengthDefineBug() {
+	// node v0.6 has a bug where array lengths can be Set but not Defined
+	if (!hasPropertyDescriptors()) {
+		return null;
+	}
+	try {
+		return $defineProperty([], 'length', { value: 1 }).length !== 1;
+	} catch (e) {
+		// In Firefox 4-22, defining length on an array throws an exception.
+		return true;
+	}
 };
-callBind.apply = apply;
+
+var hasPropertyDescriptors_1 = hasPropertyDescriptors;
+
+var hasSymbols$2 = typeof Symbol === 'function' && typeof Symbol('foo') === 'symbol';
+
+var toStr$3 = Object.prototype.toString;
+var concat = Array.prototype.concat;
+var origDefineProperty = Object.defineProperty;
+
+var isFunction = function (fn) {
+	return typeof fn === 'function' && toStr$3.call(fn) === '[object Function]';
+};
+
+var hasPropertyDescriptors$1 = hasPropertyDescriptors_1();
+
+var supportsDescriptors = origDefineProperty && hasPropertyDescriptors$1;
+
+var defineProperty = function (object, name, value, predicate) {
+	if (name in object) {
+		if (predicate === true) {
+			if (object[name] === value) {
+				return;
+			}
+		} else if (!isFunction(predicate) || !predicate()) {
+			return;
+		}
+	}
+	if (supportsDescriptors) {
+		origDefineProperty(object, name, {
+			configurable: true,
+			enumerable: false,
+			value: value,
+			writable: true
+		});
+	} else {
+		object[name] = value; // eslint-disable-line no-param-reassign
+	}
+};
+
+var defineProperties = function (object, map) {
+	var predicates = arguments.length > 2 ? arguments[2] : {};
+	var props = objectKeys(map);
+	if (hasSymbols$2) {
+		props = concat.call(props, Object.getOwnPropertySymbols(map));
+	}
+	for (var i = 0; i < props.length; i += 1) {
+		defineProperty(object, props[i], map[props[i]], predicates[props[i]]);
+	}
+};
+
+defineProperties.supportsDescriptors = !!supportsDescriptors;
+
+var defineProperties_1 = defineProperties;
+
+var callBind = createCommonjsModule(function (module) {
+
+
+
+
+var $apply = getIntrinsic('%Function.prototype.apply%');
+var $call = getIntrinsic('%Function.prototype.call%');
+var $reflectApply = getIntrinsic('%Reflect.apply%', true) || functionBind.call($call, $apply);
+
+var $gOPD = getIntrinsic('%Object.getOwnPropertyDescriptor%', true);
+var $defineProperty = getIntrinsic('%Object.defineProperty%', true);
+var $max = getIntrinsic('%Math.max%');
+
+if ($defineProperty) {
+	try {
+		$defineProperty({}, 'a', { value: 1 });
+	} catch (e) {
+		// IE 8 has a broken defineProperty
+		$defineProperty = null;
+	}
+}
+
+module.exports = function callBind(originalFunction) {
+	var func = $reflectApply(functionBind, $call, arguments);
+	if ($gOPD && $defineProperty) {
+		var desc = $gOPD(func, 'length');
+		if (desc.configurable) {
+			// original length, plus the receiver, minus any additional arguments (after the receiver)
+			$defineProperty(
+				func,
+				'length',
+				{ value: 1 + $max(0, originalFunction.length - (arguments.length - 1)) }
+			);
+		}
+	}
+	return func;
+};
+
+var applyBind = function applyBind() {
+	return $reflectApply(functionBind, $apply, arguments);
+};
+
+if ($defineProperty) {
+	$defineProperty(module.exports, 'apply', { value: applyBind });
+} else {
+	module.exports.apply = applyBind;
+}
+});
+var callBind_1 = callBind.apply;
+
+var $abs = getIntrinsic('%Math.abs%');
+
+// http://262.ecma-international.org/5.1/#sec-5.2
+
+var abs = function abs(x) {
+	return $abs(x);
+};
+
+// https://262.ecma-international.org/5.1/#sec-8
+
+var Type = function Type(x) {
+	if (x === null) {
+		return 'Null';
+	}
+	if (typeof x === 'undefined') {
+		return 'Undefined';
+	}
+	if (typeof x === 'function' || typeof x === 'object') {
+		return 'Object';
+	}
+	if (typeof x === 'number') {
+		return 'Number';
+	}
+	if (typeof x === 'boolean') {
+		return 'Boolean';
+	}
+	if (typeof x === 'string') {
+		return 'String';
+	}
+};
+
+// https://262.ecma-international.org/11.0/#sec-ecmascript-data-types-and-values
+
+var Type$1 = function Type$1(x) {
+	if (typeof x === 'symbol') {
+		return 'Symbol';
+	}
+	if (typeof x === 'bigint') {
+		return 'BigInt';
+	}
+	return Type(x);
+};
+
+// var modulo = require('./modulo');
+var $floor = Math.floor;
+
+// http://262.ecma-international.org/11.0/#eqn-floor
+
+var floor = function floor(x) {
+	// return x - modulo(x, 1);
+	if (Type$1(x) === 'BigInt') {
+		return x;
+	}
+	return $floor(x);
+};
+
+var _isNaN = Number.isNaN || function isNaN(a) {
+	return a !== a;
+};
+
+var _isFinite = function (x) { return (typeof x === 'number' || typeof x === 'bigint') && !_isNaN(x) && x !== Infinity && x !== -Infinity; };
+
+// https://tc39.es/ecma262/#sec-isintegralnumber
+
+var IsIntegralNumber = function IsIntegralNumber(argument) {
+	if (Type$1(argument) !== 'Number' || _isNaN(argument) || !_isFinite(argument)) {
+		return false;
+	}
+	var absValue = abs(argument);
+	return floor(absValue) === absValue;
+};
+
+var test = {
+	foo: {}
+};
+
+var $Object = Object;
+
+var hasProto = function hasProto() {
+	return { __proto__: test }.foo === test.foo && !({ __proto__: null } instanceof $Object);
+};
+
+var $ArrayPrototype = getIntrinsic('%Array.prototype%');
+var $RangeError = getIntrinsic('%RangeError%');
+var $SyntaxError$1 = getIntrinsic('%SyntaxError%');
+var $TypeError$1 = getIntrinsic('%TypeError%');
+
+
+
+var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1;
+
+var hasProto$1 = hasProto();
+
+var $setProto = getIntrinsic('%Object.setPrototypeOf%', true) || (
+	hasProto$1
+		? function (O, proto) {
+			O.__proto__ = proto; // eslint-disable-line no-proto, no-param-reassign
+			return O;
+		}
+		: null
+);
+
+// https://262.ecma-international.org/12.0/#sec-arraycreate
+
+var ArrayCreate = function ArrayCreate(length) {
+	if (!IsIntegralNumber(length) || length < 0) {
+		throw new $TypeError$1('Assertion failed: `length` must be an integer Number >= 0');
+	}
+	if (length > MAX_ARRAY_LENGTH) {
+		throw new $RangeError('length is greater than (2**32 - 1)');
+	}
+	var proto = arguments.length > 1 ? arguments[1] : $ArrayPrototype;
+	var A = []; // steps 3, 5
+	if (proto !== $ArrayPrototype) { // step 4
+		if (!$setProto) {
+			throw new $SyntaxError$1('ArrayCreate: a `proto` argument that is not `Array.prototype` is not supported in an environment that does not support setting the [[Prototype]]');
+		}
+		$setProto(A, proto);
+	}
+	if (length !== 0) { // bypasses the need for step 6
+		A.length = length;
+	}
+	/* step 6, the above as a shortcut for the below
+	OrdinaryDefineOwnProperty(A, 'length', {
+		'[[Configurable]]': false,
+		'[[Enumerable]]': false,
+		'[[Value]]': length,
+		'[[Writable]]': true
+	});
+	*/
+	return A;
+};
 
 var _nodeResolve_empty = {};
 
@@ -2922,7 +3248,7 @@ var _nodeResolve_empty$1 = /*#__PURE__*/Object.freeze({
 	'default': _nodeResolve_empty
 });
 
-var require$$0 = getCjsExportFromNamespace(_nodeResolve_empty$1);
+var utilInspect = getCjsExportFromNamespace(_nodeResolve_empty$1);
 
 var hasMap = typeof Map === 'function' && Map.prototype;
 var mapSizeDescriptor = Object.getOwnPropertyDescriptor && hasMap ? Object.getOwnPropertyDescriptor(Map.prototype, 'size') : null;
@@ -2936,13 +3262,64 @@ var hasWeakMap = typeof WeakMap === 'function' && WeakMap.prototype;
 var weakMapHas = hasWeakMap ? WeakMap.prototype.has : null;
 var hasWeakSet = typeof WeakSet === 'function' && WeakSet.prototype;
 var weakSetHas = hasWeakSet ? WeakSet.prototype.has : null;
+var hasWeakRef = typeof WeakRef === 'function' && WeakRef.prototype;
+var weakRefDeref = hasWeakRef ? WeakRef.prototype.deref : null;
 var booleanValueOf = Boolean.prototype.valueOf;
 var objectToString = Object.prototype.toString;
-var match = String.prototype.match;
+var functionToString = Function.prototype.toString;
+var $match = String.prototype.match;
+var $slice = String.prototype.slice;
+var $replace$1 = String.prototype.replace;
+var $toUpperCase = String.prototype.toUpperCase;
+var $toLowerCase = String.prototype.toLowerCase;
+var $test = RegExp.prototype.test;
+var $concat$1 = Array.prototype.concat;
+var $join = Array.prototype.join;
+var $arrSlice = Array.prototype.slice;
+var $floor$1 = Math.floor;
 var bigIntValueOf = typeof BigInt === 'function' ? BigInt.prototype.valueOf : null;
+var gOPS = Object.getOwnPropertySymbols;
+var symToString = typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol' ? Symbol.prototype.toString : null;
+var hasShammedSymbols = typeof Symbol === 'function' && typeof Symbol.iterator === 'object';
+// ie, `has-tostringtag/shams
+var toStringTag = typeof Symbol === 'function' && Symbol.toStringTag && (typeof Symbol.toStringTag === hasShammedSymbols ? 'object' : 'symbol')
+    ? Symbol.toStringTag
+    : null;
+var isEnumerable$1 = Object.prototype.propertyIsEnumerable;
 
-var inspectCustom = require$$0.custom;
-var inspectSymbol = inspectCustom && isSymbol(inspectCustom) ? inspectCustom : null;
+var gPO = (typeof Reflect === 'function' ? Reflect.getPrototypeOf : Object.getPrototypeOf) || (
+    [].__proto__ === Array.prototype // eslint-disable-line no-proto
+        ? function (O) {
+            return O.__proto__; // eslint-disable-line no-proto
+        }
+        : null
+);
+
+function addNumericSeparator(num, str) {
+    if (
+        num === Infinity
+        || num === -Infinity
+        || num !== num
+        || (num && num > -1000 && num < 1000)
+        || $test.call(/e/, str)
+    ) {
+        return str;
+    }
+    var sepRegex = /[0-9](?=(?:[0-9]{3})+(?![0-9]))/g;
+    if (typeof num === 'number') {
+        var int = num < 0 ? -$floor$1(-num) : $floor$1(num); // trunc(num)
+        if (int !== num) {
+            var intStr = String(int);
+            var dec = $slice.call(str, intStr.length + 1);
+            return $replace$1.call(intStr, sepRegex, '$&_') + '.' + $replace$1.call($replace$1.call(dec, /([0-9]{3})/g, '$&_'), /_$/, '');
+        }
+    }
+    return $replace$1.call(str, sepRegex, '$&_');
+}
+
+
+var inspectCustom = utilInspect.custom;
+var inspectSymbol = isSymbol(inspectCustom) ? inspectCustom : null;
 
 var objectInspect = function inspect_(obj, options, depth, seen) {
     var opts = options || {};
@@ -2950,6 +3327,31 @@ var objectInspect = function inspect_(obj, options, depth, seen) {
     if (has$1(opts, 'quoteStyle') && (opts.quoteStyle !== 'single' && opts.quoteStyle !== 'double')) {
         throw new TypeError('option "quoteStyle" must be "single" or "double"');
     }
+    if (
+        has$1(opts, 'maxStringLength') && (typeof opts.maxStringLength === 'number'
+            ? opts.maxStringLength < 0 && opts.maxStringLength !== Infinity
+            : opts.maxStringLength !== null
+        )
+    ) {
+        throw new TypeError('option "maxStringLength", if provided, must be a positive integer, Infinity, or `null`');
+    }
+    var customInspect = has$1(opts, 'customInspect') ? opts.customInspect : true;
+    if (typeof customInspect !== 'boolean' && customInspect !== 'symbol') {
+        throw new TypeError('option "customInspect", if provided, must be `true`, `false`, or `\'symbol\'`');
+    }
+
+    if (
+        has$1(opts, 'indent')
+        && opts.indent !== null
+        && opts.indent !== '\t'
+        && !(parseInt(opts.indent, 10) === opts.indent && opts.indent > 0)
+    ) {
+        throw new TypeError('option "indent" must be "\\t", an integer > 0, or `null`');
+    }
+    if (has$1(opts, 'numericSeparator') && typeof opts.numericSeparator !== 'boolean') {
+        throw new TypeError('option "numericSeparator", if provided, must be `true` or `false`');
+    }
+    var numericSeparator = opts.numericSeparator;
 
     if (typeof obj === 'undefined') {
         return 'undefined';
@@ -2968,17 +3370,21 @@ var objectInspect = function inspect_(obj, options, depth, seen) {
         if (obj === 0) {
             return Infinity / obj > 0 ? '0' : '-0';
         }
-        return String(obj);
+        var str = String(obj);
+        return numericSeparator ? addNumericSeparator(obj, str) : str;
     }
-    if (typeof obj === 'bigint') { // eslint-disable-line valid-typeof
-        return String(obj) + 'n';
+    if (typeof obj === 'bigint') {
+        var bigIntStr = String(obj) + 'n';
+        return numericSeparator ? addNumericSeparator(obj, bigIntStr) : bigIntStr;
     }
 
     var maxDepth = typeof opts.depth === 'undefined' ? 5 : opts.depth;
     if (typeof depth === 'undefined') { depth = 0; }
     if (depth >= maxDepth && maxDepth > 0 && typeof obj === 'object') {
-        return '[Object]';
+        return isArray$1(obj) ? '[Array]' : '[Object]';
     }
+
+    var indent = getIndent(opts, depth);
 
     if (typeof seen === 'undefined') {
         seen = [];
@@ -2986,68 +3392,92 @@ var objectInspect = function inspect_(obj, options, depth, seen) {
         return '[Circular]';
     }
 
-    function inspect(value, from) {
+    function inspect(value, from, noIndent) {
         if (from) {
-            seen = seen.slice();
+            seen = $arrSlice.call(seen);
             seen.push(from);
+        }
+        if (noIndent) {
+            var newOpts = {
+                depth: opts.depth
+            };
+            if (has$1(opts, 'quoteStyle')) {
+                newOpts.quoteStyle = opts.quoteStyle;
+            }
+            return inspect_(value, newOpts, depth + 1, seen);
         }
         return inspect_(value, opts, depth + 1, seen);
     }
 
-    if (typeof obj === 'function') {
+    if (typeof obj === 'function' && !isRegExp(obj)) { // in older engines, regexes are callable
         var name = nameOf(obj);
-        return '[Function' + (name ? ': ' + name : '') + ']';
+        var keys = arrObjKeys(obj, inspect);
+        return '[Function' + (name ? ': ' + name : ' (anonymous)') + ']' + (keys.length > 0 ? ' { ' + $join.call(keys, ', ') + ' }' : '');
     }
     if (isSymbol(obj)) {
-        var symString = Symbol.prototype.toString.call(obj);
-        return typeof obj === 'object' ? markBoxed(symString) : symString;
+        var symString = hasShammedSymbols ? $replace$1.call(String(obj), /^(Symbol\(.*\))_[^)]*$/, '$1') : symToString.call(obj);
+        return typeof obj === 'object' && !hasShammedSymbols ? markBoxed(symString) : symString;
     }
     if (isElement(obj)) {
-        var s = '<' + String(obj.nodeName).toLowerCase();
+        var s = '<' + $toLowerCase.call(String(obj.nodeName));
         var attrs = obj.attributes || [];
         for (var i = 0; i < attrs.length; i++) {
             s += ' ' + attrs[i].name + '=' + wrapQuotes(quote(attrs[i].value), 'double', opts);
         }
         s += '>';
         if (obj.childNodes && obj.childNodes.length) { s += '...'; }
-        s += '</' + String(obj.nodeName).toLowerCase() + '>';
+        s += '</' + $toLowerCase.call(String(obj.nodeName)) + '>';
         return s;
     }
     if (isArray$1(obj)) {
         if (obj.length === 0) { return '[]'; }
-        return '[ ' + arrObjKeys(obj, inspect).join(', ') + ' ]';
+        var xs = arrObjKeys(obj, inspect);
+        if (indent && !singleLineValues(xs)) {
+            return '[' + indentedJoin(xs, indent) + ']';
+        }
+        return '[ ' + $join.call(xs, ', ') + ' ]';
     }
     if (isError(obj)) {
         var parts = arrObjKeys(obj, inspect);
+        if (!('cause' in Error.prototype) && 'cause' in obj && !isEnumerable$1.call(obj, 'cause')) {
+            return '{ [' + String(obj) + '] ' + $join.call($concat$1.call('[cause]: ' + inspect(obj.cause), parts), ', ') + ' }';
+        }
         if (parts.length === 0) { return '[' + String(obj) + ']'; }
-        return '{ [' + String(obj) + '] ' + parts.join(', ') + ' }';
+        return '{ [' + String(obj) + '] ' + $join.call(parts, ', ') + ' }';
     }
-    if (typeof obj === 'object') {
-        if (inspectSymbol && typeof obj[inspectSymbol] === 'function') {
-            return obj[inspectSymbol]();
-        } else if (typeof obj.inspect === 'function') {
+    if (typeof obj === 'object' && customInspect) {
+        if (inspectSymbol && typeof obj[inspectSymbol] === 'function' && utilInspect) {
+            return utilInspect(obj, { depth: maxDepth - depth });
+        } else if (customInspect !== 'symbol' && typeof obj.inspect === 'function') {
             return obj.inspect();
         }
     }
     if (isMap(obj)) {
         var mapParts = [];
-        mapForEach.call(obj, function (value, key) {
-            mapParts.push(inspect(key, obj) + ' => ' + inspect(value, obj));
-        });
-        return collectionOf('Map', mapSize.call(obj), mapParts);
+        if (mapForEach) {
+            mapForEach.call(obj, function (value, key) {
+                mapParts.push(inspect(key, obj, true) + ' => ' + inspect(value, obj));
+            });
+        }
+        return collectionOf('Map', mapSize.call(obj), mapParts, indent);
     }
     if (isSet(obj)) {
         var setParts = [];
-        setForEach.call(obj, function (value) {
-            setParts.push(inspect(value, obj));
-        });
-        return collectionOf('Set', setSize.call(obj), setParts);
+        if (setForEach) {
+            setForEach.call(obj, function (value) {
+                setParts.push(inspect(value, obj));
+            });
+        }
+        return collectionOf('Set', setSize.call(obj), setParts, indent);
     }
     if (isWeakMap(obj)) {
         return weakCollectionOf('WeakMap');
     }
     if (isWeakSet(obj)) {
         return weakCollectionOf('WeakSet');
+    }
+    if (isWeakRef(obj)) {
+        return weakCollectionOf('WeakRef');
     }
     if (isNumber(obj)) {
         return markBoxed(inspect(Number(obj)));
@@ -3062,9 +3492,17 @@ var objectInspect = function inspect_(obj, options, depth, seen) {
         return markBoxed(inspect(String(obj)));
     }
     if (!isDate(obj) && !isRegExp(obj)) {
-        var xs = arrObjKeys(obj, inspect);
-        if (xs.length === 0) { return '{}'; }
-        return '{ ' + xs.join(', ') + ' }';
+        var ys = arrObjKeys(obj, inspect);
+        var isPlainObject = gPO ? gPO(obj) === Object.prototype : obj instanceof Object || obj.constructor === Object;
+        var protoTag = obj instanceof Object ? '' : 'null prototype';
+        var stringTag = !isPlainObject && toStringTag && Object(obj) === obj && toStringTag in obj ? $slice.call(toStr$4(obj), 8, -1) : protoTag ? 'Object' : '';
+        var constructorTag = isPlainObject || typeof obj.constructor !== 'function' ? '' : obj.constructor.name ? obj.constructor.name + ' ' : '';
+        var tag = constructorTag + (stringTag || protoTag ? '[' + $join.call($concat$1.call([], stringTag || [], protoTag || []), ': ') + '] ' : '');
+        if (ys.length === 0) { return tag + '{}'; }
+        if (indent) {
+            return tag + '{' + indentedJoin(ys, indent) + '}';
+        }
+        return tag + '{ ' + $join.call(ys, ', ') + ' }';
     }
     return String(obj);
 };
@@ -3075,18 +3513,45 @@ function wrapQuotes(s, defaultStyle, opts) {
 }
 
 function quote(s) {
-    return String(s).replace(/"/g, '&quot;');
+    return $replace$1.call(String(s), /"/g, '&quot;');
 }
 
-function isArray$1(obj) { return toStr$4(obj) === '[object Array]'; }
-function isDate(obj) { return toStr$4(obj) === '[object Date]'; }
-function isRegExp(obj) { return toStr$4(obj) === '[object RegExp]'; }
-function isError(obj) { return toStr$4(obj) === '[object Error]'; }
-function isSymbol(obj) { return toStr$4(obj) === '[object Symbol]'; }
-function isString(obj) { return toStr$4(obj) === '[object String]'; }
-function isNumber(obj) { return toStr$4(obj) === '[object Number]'; }
-function isBigInt(obj) { return toStr$4(obj) === '[object BigInt]'; }
-function isBoolean(obj) { return toStr$4(obj) === '[object Boolean]'; }
+function isArray$1(obj) { return toStr$4(obj) === '[object Array]' && (!toStringTag || !(typeof obj === 'object' && toStringTag in obj)); }
+function isDate(obj) { return toStr$4(obj) === '[object Date]' && (!toStringTag || !(typeof obj === 'object' && toStringTag in obj)); }
+function isRegExp(obj) { return toStr$4(obj) === '[object RegExp]' && (!toStringTag || !(typeof obj === 'object' && toStringTag in obj)); }
+function isError(obj) { return toStr$4(obj) === '[object Error]' && (!toStringTag || !(typeof obj === 'object' && toStringTag in obj)); }
+function isString(obj) { return toStr$4(obj) === '[object String]' && (!toStringTag || !(typeof obj === 'object' && toStringTag in obj)); }
+function isNumber(obj) { return toStr$4(obj) === '[object Number]' && (!toStringTag || !(typeof obj === 'object' && toStringTag in obj)); }
+function isBoolean(obj) { return toStr$4(obj) === '[object Boolean]' && (!toStringTag || !(typeof obj === 'object' && toStringTag in obj)); }
+
+// Symbol and BigInt do have Symbol.toStringTag by spec, so that can't be used to eliminate false positives
+function isSymbol(obj) {
+    if (hasShammedSymbols) {
+        return obj && typeof obj === 'object' && obj instanceof Symbol;
+    }
+    if (typeof obj === 'symbol') {
+        return true;
+    }
+    if (!obj || typeof obj !== 'object' || !symToString) {
+        return false;
+    }
+    try {
+        symToString.call(obj);
+        return true;
+    } catch (e) {}
+    return false;
+}
+
+function isBigInt(obj) {
+    if (!obj || typeof obj !== 'object' || !bigIntValueOf) {
+        return false;
+    }
+    try {
+        bigIntValueOf.call(obj);
+        return true;
+    } catch (e) {}
+    return false;
+}
 
 var hasOwn = Object.prototype.hasOwnProperty || function (key) { return key in this; };
 function has$1(obj, key) {
@@ -3099,7 +3564,7 @@ function toStr$4(obj) {
 
 function nameOf(f) {
     if (f.name) { return f.name; }
-    var m = match.call(f, /^function\s*([\w$]+)/);
+    var m = $match.call(functionToString.call(f), /^function\s*([\w$]+)/);
     if (m) { return m[1]; }
     return null;
 }
@@ -3140,6 +3605,17 @@ function isWeakMap(x) {
             return true;
         }
         return x instanceof WeakMap; // core-js workaround, pre-v2.5.0
+    } catch (e) {}
+    return false;
+}
+
+function isWeakRef(x) {
+    if (!weakRefDeref || !x || typeof x !== 'object') {
+        return false;
+    }
+    try {
+        weakRefDeref.call(x);
+        return true;
     } catch (e) {}
     return false;
 }
@@ -3185,18 +3661,27 @@ function isElement(x) {
 }
 
 function inspectString(str, opts) {
+    if (str.length > opts.maxStringLength) {
+        var remaining = str.length - opts.maxStringLength;
+        var trailer = '... ' + remaining + ' more character' + (remaining > 1 ? 's' : '');
+        return inspectString($slice.call(str, 0, opts.maxStringLength), opts) + trailer;
+    }
     // eslint-disable-next-line no-control-regex
-    var s = str.replace(/(['\\])/g, '\\$1').replace(/[\x00-\x1f]/g, lowbyte);
+    var s = $replace$1.call($replace$1.call(str, /(['\\])/g, '\\$1'), /[\x00-\x1f]/g, lowbyte);
     return wrapQuotes(s, 'single', opts);
 }
 
 function lowbyte(c) {
     var n = c.charCodeAt(0);
     var x = {
-        8: 'b', 9: 't', 10: 'n', 12: 'f', 13: 'r'
+        8: 'b',
+        9: 't',
+        10: 'n',
+        12: 'f',
+        13: 'r'
     }[n];
     if (x) { return '\\' + x; }
-    return '\\x' + (n < 0x10 ? '0' : '') + n.toString(16);
+    return '\\x' + (n < 0x10 ? '0' : '') + $toUpperCase.call(n.toString(16));
 }
 
 function markBoxed(str) {
@@ -3207,8 +3692,39 @@ function weakCollectionOf(type) {
     return type + ' { ? }';
 }
 
-function collectionOf(type, size, entries) {
-    return type + ' (' + size + ') {' + entries.join(', ') + '}';
+function collectionOf(type, size, entries, indent) {
+    var joinedEntries = indent ? indentedJoin(entries, indent) : $join.call(entries, ', ');
+    return type + ' (' + size + ') {' + joinedEntries + '}';
+}
+
+function singleLineValues(xs) {
+    for (var i = 0; i < xs.length; i++) {
+        if (indexOf(xs[i], '\n') >= 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function getIndent(opts, depth) {
+    var baseIndent;
+    if (opts.indent === '\t') {
+        baseIndent = '\t';
+    } else if (typeof opts.indent === 'number' && opts.indent > 0) {
+        baseIndent = $join.call(Array(opts.indent + 1), ' ');
+    } else {
+        return null;
+    }
+    return {
+        base: baseIndent,
+        prev: $join.call(Array(depth + 1), baseIndent)
+    };
+}
+
+function indentedJoin(xs, indent) {
+    if (xs.length === 0) { return ''; }
+    var lineJoiner = '\n' + indent.prev + indent.base;
+    return lineJoiner + $join.call(xs, ',' + lineJoiner) + '\n' + indent.prev;
 }
 
 function arrObjKeys(obj, inspect) {
@@ -3220,184 +3736,353 @@ function arrObjKeys(obj, inspect) {
             xs[i] = has$1(obj, i) ? inspect(obj[i], obj) : '';
         }
     }
+    var syms = typeof gOPS === 'function' ? gOPS(obj) : [];
+    var symMap;
+    if (hasShammedSymbols) {
+        symMap = {};
+        for (var k = 0; k < syms.length; k++) {
+            symMap['$' + syms[k]] = syms[k];
+        }
+    }
+
     for (var key in obj) { // eslint-disable-line no-restricted-syntax
         if (!has$1(obj, key)) { continue; } // eslint-disable-line no-restricted-syntax, no-continue
         if (isArr && String(Number(key)) === key && key < obj.length) { continue; } // eslint-disable-line no-restricted-syntax, no-continue
-        if ((/[^\w$]/).test(key)) {
+        if (hasShammedSymbols && symMap['$' + key] instanceof Symbol) {
+            // this is to prevent shammed Symbols, which are stored as strings, from being included in the string key section
+            continue; // eslint-disable-line no-restricted-syntax, no-continue
+        } else if ($test.call(/[^\w$]/, key)) {
             xs.push(inspect(key, obj) + ': ' + inspect(obj[key], obj));
         } else {
             xs.push(key + ': ' + inspect(obj[key], obj));
         }
     }
+    if (typeof gOPS === 'function') {
+        for (var j = 0; j < syms.length; j++) {
+            if (isEnumerable$1.call(obj, syms[j])) {
+                xs.push('[' + inspect(syms[j]) + ']: ' + inspect(obj[syms[j]], obj));
+            }
+        }
+    }
     return xs;
 }
 
-// https://www.ecma-international.org/ecma-262/6.0/#sec-ispropertykey
+// https://262.ecma-international.org/6.0/#sec-ispropertykey
 
 var IsPropertyKey = function IsPropertyKey(argument) {
 	return typeof argument === 'string' || typeof argument === 'symbol';
 };
 
-// https://www.ecma-international.org/ecma-262/5.1/#sec-8
-
-var Type = function Type(x) {
-	if (x === null) {
-		return 'Null';
-	}
-	if (typeof x === 'undefined') {
-		return 'Undefined';
-	}
-	if (typeof x === 'function' || typeof x === 'object') {
-		return 'Object';
-	}
-	if (typeof x === 'number') {
-		return 'Number';
-	}
-	if (typeof x === 'boolean') {
-		return 'Boolean';
-	}
-	if (typeof x === 'string') {
-		return 'String';
-	}
-};
-
-// https://www.ecma-international.org/ecma-262/6.0/#sec-tostring
-
-var Type$1 = function Type$1(x) {
-	if (typeof x === 'symbol') {
-		return 'Symbol';
-	}
-	return Type(x);
-};
-
-var $TypeError$1 = GetIntrinsic('%TypeError%');
+var $TypeError$2 = getIntrinsic('%TypeError%');
 
 
 
 
 
 
-/**
- * 7.3.1 Get (O, P) - https://ecma-international.org/ecma-262/6.0/#sec-get-o-p
- * 1. Assert: Type(O) is Object.
- * 2. Assert: IsPropertyKey(P) is true.
- * 3. Return O.[[Get]](P, O).
- */
+// https://262.ecma-international.org/6.0/#sec-get-o-p
 
 var Get = function Get(O, P) {
 	// 7.3.1.1
 	if (Type$1(O) !== 'Object') {
-		throw new $TypeError$1('Assertion failed: Type(O) is not Object');
+		throw new $TypeError$2('Assertion failed: Type(O) is not Object');
 	}
 	// 7.3.1.2
 	if (!IsPropertyKey(P)) {
-		throw new $TypeError$1('Assertion failed: IsPropertyKey(P) is not true, got ' + objectInspect(P));
+		throw new $TypeError$2('Assertion failed: IsPropertyKey(P) is not true, got ' + objectInspect(P));
 	}
 	// 7.3.1.3
 	return O[P];
 };
 
-var $indexOf = callBind(GetIntrinsic('String.prototype.indexOf'));
+var $indexOf = callBind(getIntrinsic('String.prototype.indexOf'));
 
 var callBound = function callBoundIntrinsic(name, allowMissing) {
-	var intrinsic = GetIntrinsic(name, !!allowMissing);
-	if (typeof intrinsic === 'function' && $indexOf(name, '.prototype.')) {
+	var intrinsic = getIntrinsic(name, !!allowMissing);
+	if (typeof intrinsic === 'function' && $indexOf(name, '.prototype.') > -1) {
 		return callBind(intrinsic);
 	}
 	return intrinsic;
 };
 
-var $Array = GetIntrinsic('%Array%');
+var $Array = getIntrinsic('%Array%');
 
 // eslint-disable-next-line global-require
 var toStr$5 = !$Array.isArray && callBound('Object.prototype.toString');
-
-// https://www.ecma-international.org/ecma-262/6.0/#sec-isarray
 
 var IsArray = $Array.isArray || function IsArray(argument) {
 	return toStr$5(argument) === '[object Array]';
 };
 
-// https://www.ecma-international.org/ecma-262/6.0/#sec-isconstructor
+// https://262.ecma-international.org/6.0/#sec-isarray
+var IsArray$1 = IsArray;
 
-var IsConstructor = function IsConstructor(argument) {
-	return typeof argument === 'function' && !!argument.prototype; // unfortunately there's no way to truly check this without try/catch `new argument`
-};
+// TODO: remove, semver-major
 
-var _isNaN = Number.isNaN || function isNaN(a) {
-	return a !== a;
-};
+var GetIntrinsic = getIntrinsic;
 
-var $isNaN = Number.isNaN || function (a) { return a !== a; };
+var $TypeError$3 = getIntrinsic('%TypeError%');
 
-var _isFinite = Number.isFinite || function (x) { return typeof x === 'number' && !$isNaN(x) && x !== Infinity && x !== -Infinity; };
-
-var $Math = GetIntrinsic('%Math%');
-
-var $floor = $Math.floor;
-var $abs = $Math.abs;
-
-
-
-
-// https://www.ecma-international.org/ecma-262/6.0/#sec-isinteger
-
-var IsInteger = function IsInteger(argument) {
-	if (typeof argument !== 'number' || _isNaN(argument) || !_isFinite(argument)) {
+var isPropertyDescriptor = function IsPropertyDescriptor(ES, Desc) {
+	if (ES.Type(Desc) !== 'Object') {
 		return false;
 	}
-	var abs = $abs(argument);
-	return $floor(abs) === abs;
-};
+	var allowed = {
+		'[[Configurable]]': true,
+		'[[Enumerable]]': true,
+		'[[Get]]': true,
+		'[[Set]]': true,
+		'[[Value]]': true,
+		'[[Writable]]': true
+	};
 
-var $Array$1 = GetIntrinsic('%Array%');
-var $species = GetIntrinsic('%Symbol.species%', true);
-var $TypeError$2 = GetIntrinsic('%TypeError%');
-
-
-
-
-
-
-
-// https://ecma-international.org/ecma-262/6.0/#sec-arrayspeciescreate
-
-var ArraySpeciesCreate = function ArraySpeciesCreate(originalArray, length) {
-	if (!IsInteger(length) || length < 0) {
-		throw new $TypeError$2('Assertion failed: length must be an integer >= 0');
-	}
-	var len = length === 0 ? 0 : length;
-	var C;
-	var isArray = IsArray(originalArray);
-	if (isArray) {
-		C = Get(originalArray, 'constructor');
-		// TODO: figure out how to make a cross-realm normal Array, a same-realm Array
-		// if (IsConstructor(C)) {
-		// 	if C is another realm's Array, C = undefined
-		// 	Object.getPrototypeOf(Object.getPrototypeOf(Object.getPrototypeOf(Array))) === null ?
-		// }
-		if ($species && Type$1(C) === 'Object') {
-			C = Get(C, $species);
-			if (C === null) {
-				C = void 0;
-			}
+	for (var key in Desc) { // eslint-disable-line no-restricted-syntax
+		if (src(Desc, key) && !allowed[key]) {
+			return false;
 		}
 	}
-	if (typeof C === 'undefined') {
-		return $Array$1(len);
+
+	if (ES.IsDataDescriptor(Desc) && ES.IsAccessorDescriptor(Desc)) {
+		throw new $TypeError$3('Property Descriptors may not be both accessor and data descriptors');
 	}
-	if (!IsConstructor(C)) {
-		throw new $TypeError$2('C must be a constructor');
-	}
-	return new C(len); // Construct(C, len);
+	return true;
 };
 
-var $Math$1 = GetIntrinsic('%Math%');
-var $Number = GetIntrinsic('%Number%');
+var $defineProperty$1 = hasPropertyDescriptors_1() && getIntrinsic('%Object.defineProperty%', true);
 
-var maxSafeInteger = $Number.MAX_SAFE_INTEGER || $Math$1.pow(2, 53) - 1;
+var hasArrayLengthDefineBug = hasPropertyDescriptors_1.hasArrayLengthDefineBug();
+
+// eslint-disable-next-line global-require
+var isArray$2 = hasArrayLengthDefineBug && IsArray;
+
+
+
+var $isEnumerable = callBound('Object.prototype.propertyIsEnumerable');
+
+// eslint-disable-next-line max-params
+var DefineOwnProperty = function DefineOwnProperty(IsDataDescriptor, SameValue, FromPropertyDescriptor, O, P, desc) {
+	if (!$defineProperty$1) {
+		if (!IsDataDescriptor(desc)) {
+			// ES3 does not support getters/setters
+			return false;
+		}
+		if (!desc['[[Configurable]]'] || !desc['[[Writable]]']) {
+			return false;
+		}
+
+		// fallback for ES3
+		if (P in O && $isEnumerable(O, P) !== !!desc['[[Enumerable]]']) {
+			// a non-enumerable existing property
+			return false;
+		}
+
+		// property does not exist at all, or exists but is enumerable
+		var V = desc['[[Value]]'];
+		// eslint-disable-next-line no-param-reassign
+		O[P] = V; // will use [[Define]]
+		return SameValue(O[P], V);
+	}
+	if (
+		hasArrayLengthDefineBug
+		&& P === 'length'
+		&& '[[Value]]' in desc
+		&& isArray$2(O)
+		&& O.length !== desc['[[Value]]']
+	) {
+		// eslint-disable-next-line no-param-reassign
+		O.length = desc['[[Value]]'];
+		return O.length === desc['[[Value]]'];
+	}
+
+	$defineProperty$1(O, P, FromPropertyDescriptor(desc));
+	return true;
+};
+
+// https://262.ecma-international.org/13.0/#sec-match-records
+
+var isMatchRecord = function isMatchRecord(record) {
+	return (
+		src(record, '[[StartIndex]]')
+        && src(record, '[[EndIndex]]')
+        && record['[[StartIndex]]'] >= 0
+        && record['[[EndIndex]]'] >= record['[[StartIndex]]']
+        && String(parseInt(record['[[StartIndex]]'], 10)) === String(record['[[StartIndex]]'])
+        && String(parseInt(record['[[EndIndex]]'], 10)) === String(record['[[EndIndex]]'])
+	);
+};
+
+var $TypeError$4 = getIntrinsic('%TypeError%');
+var $SyntaxError$2 = getIntrinsic('%SyntaxError%');
+
+
+
+
+
+var predicates = {
+	// https://262.ecma-international.org/6.0/#sec-property-descriptor-specification-type
+	'Property Descriptor': function isPropertyDescriptor(Desc) {
+		var allowed = {
+			'[[Configurable]]': true,
+			'[[Enumerable]]': true,
+			'[[Get]]': true,
+			'[[Set]]': true,
+			'[[Value]]': true,
+			'[[Writable]]': true
+		};
+
+		if (!Desc) {
+			return false;
+		}
+		for (var key in Desc) { // eslint-disable-line
+			if (src(Desc, key) && !allowed[key]) {
+				return false;
+			}
+		}
+
+		var isData = src(Desc, '[[Value]]');
+		var IsAccessor = src(Desc, '[[Get]]') || src(Desc, '[[Set]]');
+		if (isData && IsAccessor) {
+			throw new $TypeError$4('Property Descriptors may not be both accessor and data descriptors');
+		}
+		return true;
+	},
+	// https://262.ecma-international.org/13.0/#sec-match-records
+	'Match Record': isMatchRecord,
+	'Iterator Record': function isIteratorRecord(value) {
+		return src(value, '[[Iterator]]') && src(value, '[[NextMethod]]') && src(value, '[[Done]]');
+	},
+	'PromiseCapability Record': function isPromiseCapabilityRecord(value) {
+		return !!value
+			&& src(value, '[[Resolve]]')
+			&& typeof value['[[Resolve]]'] === 'function'
+			&& src(value, '[[Reject]]')
+			&& typeof value['[[Reject]]'] === 'function'
+			&& src(value, '[[Promise]]')
+			&& value['[[Promise]]']
+			&& typeof value['[[Promise]]'].then === 'function';
+	},
+	'AsyncGeneratorRequest Record': function isAsyncGeneratorRequestRecord(value) {
+		return !!value
+			&& src(value, '[[Completion]]') // TODO: confirm is a completion record
+			&& src(value, '[[Capability]]')
+			&& predicates['PromiseCapability Record'](value['[[Capability]]']);
+	}
+};
+
+var assertRecord = function assertRecord(Type, recordType, argumentName, value) {
+	var predicate = predicates[recordType];
+	if (typeof predicate !== 'function') {
+		throw new $SyntaxError$2('unknown record type: ' + recordType);
+	}
+	if (Type(value) !== 'Object' || !predicate(value)) {
+		throw new $TypeError$4(argumentName + ' must be a ' + recordType);
+	}
+};
+
+var fromPropertyDescriptor = function fromPropertyDescriptor(Desc) {
+	if (typeof Desc === 'undefined') {
+		return Desc;
+	}
+	var obj = {};
+	if ('[[Value]]' in Desc) {
+		obj.value = Desc['[[Value]]'];
+	}
+	if ('[[Writable]]' in Desc) {
+		obj.writable = !!Desc['[[Writable]]'];
+	}
+	if ('[[Get]]' in Desc) {
+		obj.get = Desc['[[Get]]'];
+	}
+	if ('[[Set]]' in Desc) {
+		obj.set = Desc['[[Set]]'];
+	}
+	if ('[[Enumerable]]' in Desc) {
+		obj.enumerable = !!Desc['[[Enumerable]]'];
+	}
+	if ('[[Configurable]]' in Desc) {
+		obj.configurable = !!Desc['[[Configurable]]'];
+	}
+	return obj;
+};
+
+// https://262.ecma-international.org/6.0/#sec-frompropertydescriptor
+
+var FromPropertyDescriptor = function FromPropertyDescriptor(Desc) {
+	if (typeof Desc !== 'undefined') {
+		assertRecord(Type$1, 'Property Descriptor', 'Desc', Desc);
+	}
+
+	return fromPropertyDescriptor(Desc);
+};
+
+// https://262.ecma-international.org/5.1/#sec-8.10.1
+
+var IsAccessorDescriptor = function IsAccessorDescriptor(Desc) {
+	if (typeof Desc === 'undefined') {
+		return false;
+	}
+
+	assertRecord(Type$1, 'Property Descriptor', 'Desc', Desc);
+
+	if (!src(Desc, '[[Get]]') && !src(Desc, '[[Set]]')) {
+		return false;
+	}
+
+	return true;
+};
+
+// https://262.ecma-international.org/5.1/#sec-8.10.2
+
+var IsDataDescriptor = function IsDataDescriptor(Desc) {
+	if (typeof Desc === 'undefined') {
+		return false;
+	}
+
+	assertRecord(Type$1, 'Property Descriptor', 'Desc', Desc);
+
+	if (!src(Desc, '[[Value]]') && !src(Desc, '[[Writable]]')) {
+		return false;
+	}
+
+	return true;
+};
+
+// http://262.ecma-international.org/5.1/#sec-9.12
+
+var SameValue = function SameValue(x, y) {
+	if (x === y) { // 0 === -0, but they are not identical.
+		if (x === 0) { return 1 / x === 1 / y; }
+		return true;
+	}
+	return _isNaN(x) && _isNaN(y);
+};
+
+// http://262.ecma-international.org/5.1/#sec-9.2
+
+var ToBoolean = function ToBoolean(value) { return !!value; };
 
 var fnToStr = Function.prototype.toString;
+var reflectApply = typeof Reflect === 'object' && Reflect !== null && Reflect.apply;
+var badArrayLike;
+var isCallableMarker;
+if (typeof reflectApply === 'function' && typeof Object.defineProperty === 'function') {
+	try {
+		badArrayLike = Object.defineProperty({}, 'length', {
+			get: function () {
+				throw isCallableMarker;
+			}
+		});
+		isCallableMarker = {};
+		// eslint-disable-next-line no-throw-literal
+		reflectApply(function () { throw 42; }, null, badArrayLike);
+	} catch (_) {
+		if (_ !== isCallableMarker) {
+			reflectApply = null;
+		}
+	}
+} else {
+	reflectApply = null;
+}
 
 var constructorRegex = /^\s*class\b/;
 var isES6ClassFn = function isES6ClassFunction(value) {
@@ -3419,241 +4104,74 @@ var tryFunctionObject = function tryFunctionToStr(value) {
 	}
 };
 var toStr$6 = Object.prototype.toString;
+var objectClass = '[object Object]';
 var fnClass = '[object Function]';
 var genClass = '[object GeneratorFunction]';
-var hasToStringTag = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
+var ddaClass = '[object HTMLAllCollection]'; // IE 11
+var ddaClass2 = '[object HTML document.all class]';
+var ddaClass3 = '[object HTMLCollection]'; // IE 9-10
+var hasToStringTag = typeof Symbol === 'function' && !!Symbol.toStringTag; // better: use `has-tostringtag`
 
-var isCallable = function isCallable(value) {
-	if (!value) { return false; }
-	if (typeof value !== 'function' && typeof value !== 'object') { return false; }
-	if (typeof value === 'function' && !value.prototype) { return true; }
-	if (hasToStringTag) { return tryFunctionObject(value); }
-	if (isES6ClassFn(value)) { return false; }
-	var strClass = toStr$6.call(value);
-	return strClass === fnClass || strClass === genClass;
-};
+var isIE68 = !(0 in [,]); // eslint-disable-line no-sparse-arrays, comma-spacing
 
-// http://www.ecma-international.org/ecma-262/5.1/#sec-9.11
+var isDDA = function isDocumentDotAll() { return false; };
+if (typeof document === 'object') {
+	// Firefox 3 canonicalizes DDA to undefined when it's not accessed directly
+	var all = document.all;
+	if (toStr$6.call(all) === toStr$6.call(document.all)) {
+		isDDA = function isDocumentDotAll(value) {
+			/* globals document: false */
+			// in IE 6-8, typeof document.all is "object" and it's truthy
+			if ((isIE68 || !value) && (typeof value === 'undefined' || typeof value === 'object')) {
+				try {
+					var str = toStr$6.call(value);
+					return (
+						str === ddaClass
+						|| str === ddaClass2
+						|| str === ddaClass3 // opera 12.16
+						|| str === objectClass // IE 6-8
+					) && value('') == null; // eslint-disable-line eqeqeq
+				} catch (e) { /**/ }
+			}
+			return false;
+		};
+	}
+}
+
+var isCallable = reflectApply
+	? function isCallable(value) {
+		if (isDDA(value)) { return true; }
+		if (!value) { return false; }
+		if (typeof value !== 'function' && typeof value !== 'object') { return false; }
+		try {
+			reflectApply(value, null, badArrayLike);
+		} catch (e) {
+			if (e !== isCallableMarker) { return false; }
+		}
+		return !isES6ClassFn(value) && tryFunctionObject(value);
+	}
+	: function isCallable(value) {
+		if (isDDA(value)) { return true; }
+		if (!value) { return false; }
+		if (typeof value !== 'function' && typeof value !== 'object') { return false; }
+		if (hasToStringTag) { return tryFunctionObject(value); }
+		if (isES6ClassFn(value)) { return false; }
+		var strClass = toStr$6.call(value);
+		if (strClass !== fnClass && strClass !== genClass && !(/^\[object HTML/).test(strClass)) { return false; }
+		return tryFunctionObject(value);
+	};
+
+// http://262.ecma-international.org/5.1/#sec-9.11
 
 var IsCallable = isCallable;
 
-var $TypeError$3 = GetIntrinsic('%TypeError%');
+var $TypeError$5 = getIntrinsic('%TypeError%');
 
 
 
 
 
-// https://www.ecma-international.org/ecma-262/6.0/#sec-call
-
-var Call = function Call(F, V) {
-	var args = arguments.length > 2 ? arguments[2] : [];
-	if (!IsCallable(F)) {
-		throw new $TypeError$3(objectInspect(F) + ' is not a function');
-	}
-	return F.apply(V, args);
-};
-
-var $defineProperty = GetIntrinsic('%Object.defineProperty%', true);
-
-if ($defineProperty) {
-	try {
-		$defineProperty({}, 'a', { value: 1 });
-	} catch (e) {
-		// IE 8 has a broken defineProperty
-		$defineProperty = null;
-	}
-}
-
-
-
-var $isEnumerable = callBound('Object.prototype.propertyIsEnumerable');
-
-// eslint-disable-next-line max-params
-var DefineOwnProperty = function DefineOwnProperty(IsDataDescriptor, SameValue, FromPropertyDescriptor, O, P, desc) {
-	if (!$defineProperty) {
-		if (!IsDataDescriptor(desc)) {
-			// ES3 does not support getters/setters
-			return false;
-		}
-		if (!desc['[[Configurable]]'] || !desc['[[Writable]]']) {
-			return false;
-		}
-
-		// fallback for ES3
-		if (P in O && $isEnumerable(O, P) !== !!desc['[[Enumerable]]']) {
-			// a non-enumerable existing property
-			return false;
-		}
-
-		// property does not exist at all, or exists but is enumerable
-		var V = desc['[[Value]]'];
-		// eslint-disable-next-line no-param-reassign
-		O[P] = V; // will use [[Define]]
-		return SameValue(O[P], V);
-	}
-	$defineProperty(O, P, FromPropertyDescriptor(desc));
-	return true;
-};
-
-var src = functionBind.call(Function.call, Object.prototype.hasOwnProperty);
-
-var $TypeError$4 = GetIntrinsic('%TypeError%');
-var $SyntaxError = GetIntrinsic('%SyntaxError%');
-
-
-
-var predicates = {
-	// https://ecma-international.org/ecma-262/6.0/#sec-property-descriptor-specification-type
-	'Property Descriptor': function isPropertyDescriptor(Type, Desc) {
-		if (Type(Desc) !== 'Object') {
-			return false;
-		}
-		var allowed = {
-			'[[Configurable]]': true,
-			'[[Enumerable]]': true,
-			'[[Get]]': true,
-			'[[Set]]': true,
-			'[[Value]]': true,
-			'[[Writable]]': true
-		};
-
-		for (var key in Desc) { // eslint-disable-line
-			if (src(Desc, key) && !allowed[key]) {
-				return false;
-			}
-		}
-
-		var isData = src(Desc, '[[Value]]');
-		var IsAccessor = src(Desc, '[[Get]]') || src(Desc, '[[Set]]');
-		if (isData && IsAccessor) {
-			throw new $TypeError$4('Property Descriptors may not be both accessor and data descriptors');
-		}
-		return true;
-	}
-};
-
-var assertRecord = function assertRecord(Type, recordType, argumentName, value) {
-	var predicate = predicates[recordType];
-	if (typeof predicate !== 'function') {
-		throw new $SyntaxError('unknown record type: ' + recordType);
-	}
-	if (!predicate(Type, value)) {
-		throw new $TypeError$4(argumentName + ' must be a ' + recordType);
-	}
-};
-
-// https://www.ecma-international.org/ecma-262/6.0/#sec-frompropertydescriptor
-
-var FromPropertyDescriptor = function FromPropertyDescriptor(Desc) {
-	if (typeof Desc === 'undefined') {
-		return Desc;
-	}
-
-	assertRecord(Type$1, 'Property Descriptor', 'Desc', Desc);
-
-	var obj = {};
-	if ('[[Value]]' in Desc) {
-		obj.value = Desc['[[Value]]'];
-	}
-	if ('[[Writable]]' in Desc) {
-		obj.writable = Desc['[[Writable]]'];
-	}
-	if ('[[Get]]' in Desc) {
-		obj.get = Desc['[[Get]]'];
-	}
-	if ('[[Set]]' in Desc) {
-		obj.set = Desc['[[Set]]'];
-	}
-	if ('[[Enumerable]]' in Desc) {
-		obj.enumerable = Desc['[[Enumerable]]'];
-	}
-	if ('[[Configurable]]' in Desc) {
-		obj.configurable = Desc['[[Configurable]]'];
-	}
-	return obj;
-};
-
-var $gOPD$1 = GetIntrinsic('%Object.getOwnPropertyDescriptor%');
-if ($gOPD$1) {
-	try {
-		$gOPD$1([], 'length');
-	} catch (e) {
-		// IE 8 has a broken gOPD
-		$gOPD$1 = null;
-	}
-}
-
-var getOwnPropertyDescriptor = $gOPD$1;
-
-var regexExec = RegExp.prototype.exec;
-var gOPD = Object.getOwnPropertyDescriptor;
-
-var tryRegexExecCall = function tryRegexExec(value) {
-	try {
-		var lastIndex = value.lastIndex;
-		value.lastIndex = 0; // eslint-disable-line no-param-reassign
-
-		regexExec.call(value);
-		return true;
-	} catch (e) {
-		return false;
-	} finally {
-		value.lastIndex = lastIndex; // eslint-disable-line no-param-reassign
-	}
-};
-var toStr$7 = Object.prototype.toString;
-var regexClass = '[object RegExp]';
-var hasToStringTag$1 = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
-
-var isRegex = function isRegex(value) {
-	if (!value || typeof value !== 'object') {
-		return false;
-	}
-	if (!hasToStringTag$1) {
-		return toStr$7.call(value) === regexClass;
-	}
-
-	var descriptor = gOPD(value, 'lastIndex');
-	var hasLastIndexDataProperty = descriptor && src(descriptor, 'value');
-	if (!hasLastIndexDataProperty) {
-		return false;
-	}
-
-	return tryRegexExecCall(value);
-};
-
-// http://www.ecma-international.org/ecma-262/5.1/#sec-9.2
-
-var ToBoolean = function ToBoolean(value) { return !!value; };
-
-var $match = GetIntrinsic('%Symbol.match%', true);
-
-
-
-
-
-// https://ecma-international.org/ecma-262/6.0/#sec-isregexp
-
-var IsRegExp = function IsRegExp(argument) {
-	if (!argument || typeof argument !== 'object') {
-		return false;
-	}
-	if ($match) {
-		var isRegExp = argument[$match];
-		if (typeof isRegExp !== 'undefined') {
-			return ToBoolean(isRegExp);
-		}
-	}
-	return isRegex(argument);
-};
-
-var $TypeError$5 = GetIntrinsic('%TypeError%');
-
-
-
-
-
-// https://ecma-international.org/ecma-262/5.1/#sec-8.10.5
+// https://262.ecma-international.org/5.1/#sec-8.10.5
 
 var ToPropertyDescriptor = function ToPropertyDescriptor(Obj) {
 	if (Type$1(Obj) !== 'Object') {
@@ -3676,7 +4194,7 @@ var ToPropertyDescriptor = function ToPropertyDescriptor(Obj) {
 	if (src(Obj, 'get')) {
 		var getter = Obj.get;
 		if (typeof getter !== 'undefined' && !IsCallable(getter)) {
-			throw new TypeError('getter must be a function');
+			throw new $TypeError$5('getter must be a function');
 		}
 		desc['[[Get]]'] = getter;
 	}
@@ -3694,11 +4212,7 @@ var ToPropertyDescriptor = function ToPropertyDescriptor(Obj) {
 	return desc;
 };
 
-var $TypeError$6 = GetIntrinsic('%TypeError%');
-
-
-
-var $isEnumerable$1 = callBound('Object.prototype.propertyIsEnumerable');
+var $TypeError$6 = getIntrinsic('%TypeError%');
 
 
 
@@ -3708,60 +4222,173 @@ var $isEnumerable$1 = callBound('Object.prototype.propertyIsEnumerable');
 
 
 
-// https://www.ecma-international.org/ecma-262/6.0/#sec-ordinarygetownproperty
 
-var OrdinaryGetOwnProperty = function OrdinaryGetOwnProperty(O, P) {
+
+
+// https://262.ecma-international.org/6.0/#sec-definepropertyorthrow
+
+var DefinePropertyOrThrow = function DefinePropertyOrThrow(O, P, desc) {
 	if (Type$1(O) !== 'Object') {
-		throw new $TypeError$6('Assertion failed: O must be an Object');
+		throw new $TypeError$6('Assertion failed: Type(O) is not Object');
 	}
+
 	if (!IsPropertyKey(P)) {
-		throw new $TypeError$6('Assertion failed: P must be a Property Key');
+		throw new $TypeError$6('Assertion failed: IsPropertyKey(P) is not true');
 	}
-	if (!src(O, P)) {
-		return void 0;
+
+	var Desc = isPropertyDescriptor({
+		Type: Type$1,
+		IsDataDescriptor: IsDataDescriptor,
+		IsAccessorDescriptor: IsAccessorDescriptor
+	}, desc) ? desc : ToPropertyDescriptor(desc);
+	if (!isPropertyDescriptor({
+		Type: Type$1,
+		IsDataDescriptor: IsDataDescriptor,
+		IsAccessorDescriptor: IsAccessorDescriptor
+	}, Desc)) {
+		throw new $TypeError$6('Assertion failed: Desc is not a valid Property Descriptor');
 	}
-	if (!getOwnPropertyDescriptor) {
-		// ES3 / IE 8 fallback
-		var arrayLength = IsArray(O) && P === 'length';
-		var regexLastIndex = IsRegExp(O) && P === 'lastIndex';
-		return {
-			'[[Configurable]]': !(arrayLength || regexLastIndex),
-			'[[Enumerable]]': $isEnumerable$1(O, P),
-			'[[Value]]': O[P],
-			'[[Writable]]': true
-		};
-	}
-	return ToPropertyDescriptor(getOwnPropertyDescriptor(O, P));
+
+	return DefineOwnProperty(
+		IsDataDescriptor,
+		SameValue,
+		FromPropertyDescriptor,
+		O,
+		P,
+		Desc
+	);
 };
 
-// https://www.ecma-international.org/ecma-262/6.0/#sec-isdatadescriptor
+var IsConstructor = createCommonjsModule(function (module) {
 
-var IsDataDescriptor = function IsDataDescriptor(Desc) {
-	if (typeof Desc === 'undefined') {
-		return false;
+
+
+var $construct = GetIntrinsic('%Reflect.construct%', true);
+
+var DefinePropertyOrThrow$1 = DefinePropertyOrThrow;
+try {
+	DefinePropertyOrThrow$1({}, '', { '[[Get]]': function () {} });
+} catch (e) {
+	// Accessor properties aren't supported
+	DefinePropertyOrThrow$1 = null;
+}
+
+// https://262.ecma-international.org/6.0/#sec-isconstructor
+
+if (DefinePropertyOrThrow$1 && $construct) {
+	var isConstructorMarker = {};
+	var badArrayLike = {};
+	DefinePropertyOrThrow$1(badArrayLike, 'length', {
+		'[[Get]]': function () {
+			throw isConstructorMarker;
+		},
+		'[[Enumerable]]': true
+	});
+
+	module.exports = function IsConstructor(argument) {
+		try {
+			// `Reflect.construct` invokes `IsConstructor(target)` before `Get(args, 'length')`:
+			$construct(argument, badArrayLike);
+		} catch (err) {
+			return err === isConstructorMarker;
+		}
+	};
+} else {
+	module.exports = function IsConstructor(argument) {
+		// unfortunately there's no way to truly check this without try/catch `new argument` in old environments
+		return typeof argument === 'function' && !!argument.prototype;
+	};
+}
+});
+
+var $species = getIntrinsic('%Symbol.species%', true);
+var $TypeError$7 = getIntrinsic('%TypeError%');
+
+
+
+
+
+
+
+
+// https://262.ecma-international.org/12.0/#sec-arrayspeciescreate
+
+var ArraySpeciesCreate = function ArraySpeciesCreate(originalArray, length) {
+	if (!IsIntegralNumber(length) || length < 0) {
+		throw new $TypeError$7('Assertion failed: length must be an integer >= 0');
 	}
 
-	assertRecord(Type$1, 'Property Descriptor', 'Desc', Desc);
-
-	if (!src(Desc, '[[Value]]') && !src(Desc, '[[Writable]]')) {
-		return false;
+	var isArray = IsArray$1(originalArray);
+	if (!isArray) {
+		return ArrayCreate(length);
 	}
 
-	return true;
+	var C = Get(originalArray, 'constructor');
+	// TODO: figure out how to make a cross-realm normal Array, a same-realm Array
+	// if (IsConstructor(C)) {
+	// 	if C is another realm's Array, C = undefined
+	// 	Object.getPrototypeOf(Object.getPrototypeOf(Object.getPrototypeOf(Array))) === null ?
+	// }
+	if ($species && Type$1(C) === 'Object') {
+		C = Get(C, $species);
+		if (C === null) {
+			C = void 0;
+		}
+	}
+
+	if (typeof C === 'undefined') {
+		return ArrayCreate(length);
+	}
+	if (!IsConstructor(C)) {
+		throw new $TypeError$7('C must be a constructor');
+	}
+	return new C(length); // Construct(C, length);
 };
+
+var $Math = getIntrinsic('%Math%');
+var $Number = getIntrinsic('%Number%');
+
+var maxSafeInteger = $Number.MAX_SAFE_INTEGER || $Math.pow(2, 53) - 1;
+
+var $TypeError$8 = getIntrinsic('%TypeError%');
+
+
+
+var $apply = getIntrinsic('%Reflect.apply%', true) || callBound('Function.prototype.apply');
+
+// https://262.ecma-international.org/6.0/#sec-call
+
+var Call = function Call(F, V) {
+	var argumentsList = arguments.length > 2 ? arguments[2] : [];
+	if (!IsArray$1(argumentsList)) {
+		throw new $TypeError$8('Assertion failed: optional `argumentsList`, if provided, must be a List');
+	}
+	return $apply(F, V, argumentsList);
+};
+
+var $gOPD$1 = getIntrinsic('%Object.getOwnPropertyDescriptor%', true);
+
+if ($gOPD$1) {
+	try {
+		$gOPD$1([], 'length');
+	} catch (e) {
+		// IE 8 has a broken gOPD
+		$gOPD$1 = null;
+	}
+}
+
+var gopd = $gOPD$1;
 
 var isPrimitive = function isPrimitive(value) {
 	return value === null || (typeof value !== 'function' && typeof value !== 'object');
 };
 
-var $Object = GetIntrinsic('%Object%');
+var $preventExtensions = getIntrinsic('%Object.preventExtensions%', true);
+var $isExtensible = getIntrinsic('%Object.isExtensible%', true);
 
 
 
-var $preventExtensions = $Object.preventExtensions;
-var $isExtensible = $Object.isExtensible;
-
-// https://www.ecma-international.org/ecma-262/6.0/#sec-isextensible-o
+// https://262.ecma-international.org/6.0/#sec-isextensible-o
 
 var IsExtensible = $preventExtensions
 	? function IsExtensible(obj) {
@@ -3771,17 +4398,31 @@ var IsExtensible = $preventExtensions
 		return !isPrimitive(obj);
 	};
 
-// http://www.ecma-international.org/ecma-262/5.1/#sec-9.12
-
-var SameValue = function SameValue(x, y) {
-	if (x === y) { // 0 === -0, but they are not identical.
-		if (x === 0) { return 1 / x === 1 / y; }
-		return true;
-	}
-	return _isNaN(x) && _isNaN(y);
+var isFullyPopulatedPropertyDescriptor = function isFullyPopulatedPropertyDescriptor(ES, Desc) {
+	return !!Desc
+		&& typeof Desc === 'object'
+		&& '[[Enumerable]]' in Desc
+		&& '[[Configurable]]' in Desc
+		&& (ES.IsAccessorDescriptor(Desc) || ES.IsDataDescriptor(Desc));
 };
 
-var $TypeError$7 = GetIntrinsic('%TypeError%');
+// https://262.ecma-international.org/6.0/#sec-isgenericdescriptor
+
+var IsGenericDescriptor = function IsGenericDescriptor(Desc) {
+	if (typeof Desc === 'undefined') {
+		return false;
+	}
+
+	assertRecord(Type$1, 'Property Descriptor', 'Desc', Desc);
+
+	if (!IsAccessorDescriptor(Desc) && !IsDataDescriptor(Desc)) {
+		return true;
+	}
+
+	return false;
+};
+
+var $TypeError$9 = getIntrinsic('%TypeError%');
 
 
 
@@ -3793,118 +4434,298 @@ var $TypeError$7 = GetIntrinsic('%TypeError%');
 
 
 
-// https://www.ecma-international.org/ecma-262/6.0/#sec-createdataproperty
+
+
+// https://262.ecma-international.org/13.0/#sec-validateandapplypropertydescriptor
+
+// see https://github.com/tc39/ecma262/pull/2468 for ES2022 changes
+
+// eslint-disable-next-line max-lines-per-function, max-statements, max-params
+var ValidateAndApplyPropertyDescriptor = function ValidateAndApplyPropertyDescriptor(O, P, extensible, Desc, current) {
+	var oType = Type$1(O);
+	if (oType !== 'Undefined' && oType !== 'Object') {
+		throw new $TypeError$9('Assertion failed: O must be undefined or an Object');
+	}
+	if (!IsPropertyKey(P)) {
+		throw new $TypeError$9('Assertion failed: P must be a Property Key');
+	}
+	if (Type$1(extensible) !== 'Boolean') {
+		throw new $TypeError$9('Assertion failed: extensible must be a Boolean');
+	}
+	if (!isPropertyDescriptor({
+		Type: Type$1,
+		IsDataDescriptor: IsDataDescriptor,
+		IsAccessorDescriptor: IsAccessorDescriptor
+	}, Desc)) {
+		throw new $TypeError$9('Assertion failed: Desc must be a Property Descriptor');
+	}
+	if (Type$1(current) !== 'Undefined' && !isPropertyDescriptor({
+		Type: Type$1,
+		IsDataDescriptor: IsDataDescriptor,
+		IsAccessorDescriptor: IsAccessorDescriptor
+	}, current)) {
+		throw new $TypeError$9('Assertion failed: current must be a Property Descriptor, or undefined');
+	}
+
+	if (Type$1(current) === 'Undefined') { // step 2
+		if (!extensible) {
+			return false; // step 2.a
+		}
+		if (oType === 'Undefined') {
+			return true; // step 2.b
+		}
+		if (IsAccessorDescriptor(Desc)) { // step 2.c
+			return DefineOwnProperty(
+				IsDataDescriptor,
+				SameValue,
+				FromPropertyDescriptor,
+				O,
+				P,
+				Desc
+			);
+		}
+		// step 2.d
+		return DefineOwnProperty(
+			IsDataDescriptor,
+			SameValue,
+			FromPropertyDescriptor,
+			O,
+			P,
+			{
+				'[[Configurable]]': !!Desc['[[Configurable]]'],
+				'[[Enumerable]]': !!Desc['[[Enumerable]]'],
+				'[[Value]]': Desc['[[Value]]'],
+				'[[Writable]]': !!Desc['[[Writable]]']
+			}
+		);
+	}
+
+	// 3. Assert: current is a fully populated Property Descriptor.
+	if (!isFullyPopulatedPropertyDescriptor({
+		IsAccessorDescriptor: IsAccessorDescriptor,
+		IsDataDescriptor: IsDataDescriptor
+	}, current)) {
+		throw new $TypeError$9('`current`, when present, must be a fully populated and valid Property Descriptor');
+	}
+
+	// 4. If every field in Desc is absent, return true.
+	// this can't really match the assertion that it's a Property Descriptor in our JS implementation
+
+	// 5. If current.[[Configurable]] is false, then
+	if (!current['[[Configurable]]']) {
+		if ('[[Configurable]]' in Desc && Desc['[[Configurable]]']) {
+			// step 5.a
+			return false;
+		}
+		if ('[[Enumerable]]' in Desc && !SameValue(Desc['[[Enumerable]]'], current['[[Enumerable]]'])) {
+			// step 5.b
+			return false;
+		}
+		if (!IsGenericDescriptor(Desc) && !SameValue(IsAccessorDescriptor(Desc), IsAccessorDescriptor(current))) {
+			// step 5.c
+			return false;
+		}
+		if (IsAccessorDescriptor(current)) { // step 5.d
+			if ('[[Get]]' in Desc && !SameValue(Desc['[[Get]]'], current['[[Get]]'])) {
+				return false;
+			}
+			if ('[[Set]]' in Desc && !SameValue(Desc['[[Set]]'], current['[[Set]]'])) {
+				return false;
+			}
+		} else if (!current['[[Writable]]']) { // step 5.e
+			if ('[[Writable]]' in Desc && Desc['[[Writable]]']) {
+				return false;
+			}
+			if ('[[Value]]' in Desc && !SameValue(Desc['[[Value]]'], current['[[Value]]'])) {
+				return false;
+			}
+		}
+	}
+
+	// 6. If O is not undefined, then
+	if (oType !== 'Undefined') {
+		var configurable;
+		var enumerable;
+		if (IsDataDescriptor(current) && IsAccessorDescriptor(Desc)) { // step 6.a
+			configurable = ('[[Configurable]]' in Desc ? Desc : current)['[[Configurable]]'];
+			enumerable = ('[[Enumerable]]' in Desc ? Desc : current)['[[Enumerable]]'];
+			// Replace the property named P of object O with an accessor property having [[Configurable]] and [[Enumerable]] attributes as described by current and each other attribute set to its default value.
+			return DefineOwnProperty(
+				IsDataDescriptor,
+				SameValue,
+				FromPropertyDescriptor,
+				O,
+				P,
+				{
+					'[[Configurable]]': !!configurable,
+					'[[Enumerable]]': !!enumerable,
+					'[[Get]]': ('[[Get]]' in Desc ? Desc : current)['[[Get]]'],
+					'[[Set]]': ('[[Set]]' in Desc ? Desc : current)['[[Set]]']
+				}
+			);
+		} else if (IsAccessorDescriptor(current) && IsDataDescriptor(Desc)) {
+			configurable = ('[[Configurable]]' in Desc ? Desc : current)['[[Configurable]]'];
+			enumerable = ('[[Enumerable]]' in Desc ? Desc : current)['[[Enumerable]]'];
+			// i. Replace the property named P of object O with a data property having [[Configurable]] and [[Enumerable]] attributes as described by current and each other attribute set to its default value.
+			return DefineOwnProperty(
+				IsDataDescriptor,
+				SameValue,
+				FromPropertyDescriptor,
+				O,
+				P,
+				{
+					'[[Configurable]]': !!configurable,
+					'[[Enumerable]]': !!enumerable,
+					'[[Value]]': ('[[Value]]' in Desc ? Desc : current)['[[Value]]'],
+					'[[Writable]]': !!('[[Writable]]' in Desc ? Desc : current)['[[Writable]]']
+				}
+			);
+		}
+
+		// For each field of Desc that is present, set the corresponding attribute of the property named P of object O to the value of the field.
+		return DefineOwnProperty(
+			IsDataDescriptor,
+			SameValue,
+			FromPropertyDescriptor,
+			O,
+			P,
+			Desc
+		);
+	}
+
+	return true; // step 7
+};
+
+var $SyntaxError$3 = getIntrinsic('%SyntaxError%');
+var $TypeError$a = getIntrinsic('%TypeError%');
+
+
+
+
+
+
+
+
+
+
+
+
+// https://262.ecma-international.org/6.0/#sec-ordinarydefineownproperty
+
+var OrdinaryDefineOwnProperty = function OrdinaryDefineOwnProperty(O, P, Desc) {
+	if (Type$1(O) !== 'Object') {
+		throw new $TypeError$a('Assertion failed: O must be an Object');
+	}
+	if (!IsPropertyKey(P)) {
+		throw new $TypeError$a('Assertion failed: P must be a Property Key');
+	}
+	if (!isPropertyDescriptor({
+		Type: Type$1,
+		IsDataDescriptor: IsDataDescriptor,
+		IsAccessorDescriptor: IsAccessorDescriptor
+	}, Desc)) {
+		throw new $TypeError$a('Assertion failed: Desc must be a Property Descriptor');
+	}
+	if (!gopd) {
+		// ES3/IE 8 fallback
+		if (IsAccessorDescriptor(Desc)) {
+			throw new $SyntaxError$3('This environment does not support accessor property descriptors.');
+		}
+		var creatingNormalDataProperty = !(P in O)
+			&& Desc['[[Writable]]']
+			&& Desc['[[Enumerable]]']
+			&& Desc['[[Configurable]]']
+			&& '[[Value]]' in Desc;
+		var settingExistingDataProperty = (P in O)
+			&& (!('[[Configurable]]' in Desc) || Desc['[[Configurable]]'])
+			&& (!('[[Enumerable]]' in Desc) || Desc['[[Enumerable]]'])
+			&& (!('[[Writable]]' in Desc) || Desc['[[Writable]]'])
+			&& '[[Value]]' in Desc;
+		if (creatingNormalDataProperty || settingExistingDataProperty) {
+			O[P] = Desc['[[Value]]']; // eslint-disable-line no-param-reassign
+			return SameValue(O[P], Desc['[[Value]]']);
+		}
+		throw new $SyntaxError$3('This environment does not support defining non-writable, non-enumerable, or non-configurable properties');
+	}
+	var desc = gopd(O, P);
+	var current = desc && ToPropertyDescriptor(desc);
+	var extensible = IsExtensible(O);
+	return ValidateAndApplyPropertyDescriptor(O, P, extensible, Desc, current);
+};
+
+var $TypeError$b = getIntrinsic('%TypeError%');
+
+
+
+
+
+// https://262.ecma-international.org/6.0/#sec-createdataproperty
 
 var CreateDataProperty = function CreateDataProperty(O, P, V) {
 	if (Type$1(O) !== 'Object') {
-		throw new $TypeError$7('Assertion failed: Type(O) is not Object');
+		throw new $TypeError$b('Assertion failed: Type(O) is not Object');
 	}
 	if (!IsPropertyKey(P)) {
-		throw new $TypeError$7('Assertion failed: IsPropertyKey(P) is not true');
+		throw new $TypeError$b('Assertion failed: IsPropertyKey(P) is not true');
 	}
-	var oldDesc = OrdinaryGetOwnProperty(O, P);
-	var extensible = oldDesc || IsExtensible(O);
-	var immutable = oldDesc && (!oldDesc.writable || !oldDesc.configurable);
-	if (immutable || !extensible) {
-		return false;
-	}
-	return DefineOwnProperty(
-		IsDataDescriptor,
-		SameValue,
-		FromPropertyDescriptor,
-		O,
-		P,
-		{
-			'[[Configurable]]': true,
-			'[[Enumerable]]': true,
-			'[[Value]]': V,
-			'[[Writable]]': true
-		}
-	);
+	var newDesc = {
+		'[[Configurable]]': true,
+		'[[Enumerable]]': true,
+		'[[Value]]': V,
+		'[[Writable]]': true
+	};
+	return OrdinaryDefineOwnProperty(O, P, newDesc);
 };
 
-var $TypeError$8 = GetIntrinsic('%TypeError%');
+var $TypeError$c = getIntrinsic('%TypeError%');
 
 
 
 
 
-// // https://ecma-international.org/ecma-262/6.0/#sec-createdatapropertyorthrow
+// // https://262.ecma-international.org/6.0/#sec-createdatapropertyorthrow
 
 var CreateDataPropertyOrThrow = function CreateDataPropertyOrThrow(O, P, V) {
 	if (Type$1(O) !== 'Object') {
-		throw new $TypeError$8('Assertion failed: Type(O) is not Object');
+		throw new $TypeError$c('Assertion failed: Type(O) is not Object');
 	}
 	if (!IsPropertyKey(P)) {
-		throw new $TypeError$8('Assertion failed: IsPropertyKey(P) is not true');
+		throw new $TypeError$c('Assertion failed: IsPropertyKey(P) is not true');
 	}
 	var success = CreateDataProperty(O, P, V);
 	if (!success) {
-		throw new $TypeError$8('unable to create data property');
+		throw new $TypeError$c('unable to create data property');
 	}
 	return success;
 };
 
-var $TypeError$9 = GetIntrinsic('%TypeError%');
+var $TypeError$d = getIntrinsic('%TypeError%');
 
 
 
 
-// https://ecma-international.org/ecma-262/6.0/#sec-hasproperty
+// https://262.ecma-international.org/6.0/#sec-hasproperty
 
 var HasProperty = function HasProperty(O, P) {
 	if (Type$1(O) !== 'Object') {
-		throw new $TypeError$9('Assertion failed: `O` must be an Object');
+		throw new $TypeError$d('Assertion failed: `O` must be an Object');
 	}
 	if (!IsPropertyKey(P)) {
-		throw new $TypeError$9('Assertion failed: `P` must be a Property Key');
+		throw new $TypeError$d('Assertion failed: `P` must be a Property Key');
 	}
 	return P in O;
-};
-
-// http://www.ecma-international.org/ecma-262/5.1/#sec-9.3
-
-var ToNumber = function ToNumber(value) {
-	return +value; // eslint-disable-line no-implicit-coercion
-};
-
-var sign = function sign(number) {
-	return number >= 0 ? 1 : -1;
-};
-
-var $Math$2 = GetIntrinsic('%Math%');
-
-
-
-
-
-
-var $floor$1 = $Math$2.floor;
-var $abs$1 = $Math$2.abs;
-
-// http://www.ecma-international.org/ecma-262/5.1/#sec-9.4
-
-var ToInteger = function ToInteger(value) {
-	var number = ToNumber(value);
-	if (_isNaN(number)) { return 0; }
-	if (number === 0 || !_isFinite(number)) { return number; }
-	return sign(number) * $floor$1($abs$1(number));
-};
-
-var $test = GetIntrinsic('RegExp.prototype.test');
-
-
-
-var regexTester = function regexTester(regex) {
-	return callBind($test, regex);
 };
 
 var isPrimitive$1 = function isPrimitive(value) {
 	return value === null || (typeof value !== 'function' && typeof value !== 'object');
 };
 
+var shams$1 = function hasToStringTagShams() {
+	return shams() && !!Symbol.toStringTag;
+};
+
 var getDay = Date.prototype.getDay;
-var tryDateObject = function tryDateObject(value) {
+var tryDateObject = function tryDateGetDayCall(value) {
 	try {
 		getDay.call(value);
 		return true;
@@ -3913,74 +4734,23 @@ var tryDateObject = function tryDateObject(value) {
 	}
 };
 
-var toStr$8 = Object.prototype.toString;
+var toStr$7 = Object.prototype.toString;
 var dateClass = '[object Date]';
-var hasToStringTag$2 = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
+var hasToStringTag$1 = shams$1();
 
 var isDateObject = function isDateObject(value) {
-	if (typeof value !== 'object' || value === null) { return false; }
-	return hasToStringTag$2 ? tryDateObject(value) : toStr$8.call(value) === dateClass;
-};
-
-/* eslint complexity: [2, 17], max-statements: [2, 33] */
-var shams$1 = function hasSymbols() {
-	if (typeof Symbol !== 'function' || typeof Object.getOwnPropertySymbols !== 'function') { return false; }
-	if (typeof Symbol.iterator === 'symbol') { return true; }
-
-	var obj = {};
-	var sym = Symbol('test');
-	var symObj = Object(sym);
-	if (typeof sym === 'string') { return false; }
-
-	if (Object.prototype.toString.call(sym) !== '[object Symbol]') { return false; }
-	if (Object.prototype.toString.call(symObj) !== '[object Symbol]') { return false; }
-
-	// temp disabled per https://github.com/ljharb/object.assign/issues/17
-	// if (sym instanceof Symbol) { return false; }
-	// temp disabled per https://github.com/WebReflection/get-own-property-symbols/issues/4
-	// if (!(symObj instanceof Symbol)) { return false; }
-
-	// if (typeof Symbol.prototype.toString !== 'function') { return false; }
-	// if (String(sym) !== Symbol.prototype.toString.call(sym)) { return false; }
-
-	var symVal = 42;
-	obj[sym] = symVal;
-	for (sym in obj) { return false; } // eslint-disable-line no-restricted-syntax
-	if (typeof Object.keys === 'function' && Object.keys(obj).length !== 0) { return false; }
-
-	if (typeof Object.getOwnPropertyNames === 'function' && Object.getOwnPropertyNames(obj).length !== 0) { return false; }
-
-	var syms = Object.getOwnPropertySymbols(obj);
-	if (syms.length !== 1 || syms[0] !== sym) { return false; }
-
-	if (!Object.prototype.propertyIsEnumerable.call(obj, sym)) { return false; }
-
-	if (typeof Object.getOwnPropertyDescriptor === 'function') {
-		var descriptor = Object.getOwnPropertyDescriptor(obj, sym);
-		if (descriptor.value !== symVal || descriptor.enumerable !== true) { return false; }
+	if (typeof value !== 'object' || value === null) {
+		return false;
 	}
-
-	return true;
-};
-
-var origSymbol$1 = commonjsGlobal.Symbol;
-
-
-var hasSymbols$3 = function hasNativeSymbols() {
-	if (typeof origSymbol$1 !== 'function') { return false; }
-	if (typeof Symbol !== 'function') { return false; }
-	if (typeof origSymbol$1('foo') !== 'symbol') { return false; }
-	if (typeof Symbol('bar') !== 'symbol') { return false; }
-
-	return shams$1();
+	return hasToStringTag$1 ? tryDateObject(value) : toStr$7.call(value) === dateClass;
 };
 
 var isSymbol$1 = createCommonjsModule(function (module) {
 
 var toStr = Object.prototype.toString;
-var hasSymbols = hasSymbols$3();
+var hasSymbols$1 = hasSymbols();
 
-if (hasSymbols) {
+if (hasSymbols$1) {
 	var symToStr = Symbol.prototype.toString;
 	var symStringRegex = /^Symbol\(.*\)$/;
 	var isSymbolObject = function isRealSymbolObject(value) {
@@ -4012,7 +4782,7 @@ if (hasSymbols) {
 }
 });
 
-var hasSymbols$4 = typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol';
+var hasSymbols$3 = typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol';
 
 
 
@@ -4066,7 +4836,7 @@ var es2015 = function ToPrimitive(input) {
 	}
 
 	var exoticToPrim;
-	if (hasSymbols$4) {
+	if (hasSymbols$3) {
 		if (Symbol.toPrimitive) {
 			exoticToPrim = GetMethod(input, Symbol.toPrimitive);
 		} else if (isSymbol$1(input)) {
@@ -4086,7 +4856,7 @@ var es2015 = function ToPrimitive(input) {
 	return ordinaryToPrimitive(input, hint === 'default' ? 'number' : hint);
 };
 
-// https://www.ecma-international.org/ecma-262/6.0/#sec-toprimitive
+// https://262.ecma-international.org/6.0/#sec-toprimitive
 
 var ToPrimitive = function ToPrimitive(input) {
 	if (arguments.length > 1) {
@@ -4095,89 +4865,259 @@ var ToPrimitive = function ToPrimitive(input) {
 	return es2015(input);
 };
 
-var $TypeError$a = GetIntrinsic('%TypeError%');
-var $Number$1 = GetIntrinsic('%Number%');
-var $RegExp = GetIntrinsic('%RegExp%');
-var $parseInteger = GetIntrinsic('%parseInt%');
+var hasToStringTag$2 = shams$1();
+var has$2;
+var $exec$1;
+var isRegexMarker;
+var badStringifier;
 
+if (hasToStringTag$2) {
+	has$2 = callBound('Object.prototype.hasOwnProperty');
+	$exec$1 = callBound('RegExp.prototype.exec');
+	isRegexMarker = {};
 
+	var throwRegexMarker = function () {
+		throw isRegexMarker;
+	};
+	badStringifier = {
+		toString: throwRegexMarker,
+		valueOf: throwRegexMarker
+	};
 
-
-
-var $strSlice = callBound('String.prototype.slice');
-var isBinary = regexTester(/^0b[01]+$/i);
-var isOctal = regexTester(/^0o[0-7]+$/i);
-var isInvalidHexLiteral = regexTester(/^[-+]0x[0-9a-f]+$/i);
-var nonWS = ['\u0085', '\u200b', '\ufffe'].join('');
-var nonWSregex = new $RegExp('[' + nonWS + ']', 'g');
-var hasNonWS = regexTester(nonWSregex);
-
-// whitespace from: https://es5.github.io/#x15.5.4.20
-// implementation from https://github.com/es-shims/es5-shim/blob/v3.4.0/es5-shim.js#L1304-L1324
-var ws = [
-	'\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003',
-	'\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028',
-	'\u2029\uFEFF'
-].join('');
-var trimRegex = new RegExp('(^[' + ws + ']+)|([' + ws + ']+$)', 'g');
-var $replace$1 = callBound('String.prototype.replace');
-var $trim = function (value) {
-	return $replace$1(value, trimRegex, '');
-};
-
-
-
-// https://www.ecma-international.org/ecma-262/6.0/#sec-tonumber
-
-var ToNumber$1 = function ToNumber(argument) {
-	var value = isPrimitive(argument) ? argument : ToPrimitive(argument, $Number$1);
-	if (typeof value === 'symbol') {
-		throw new $TypeError$a('Cannot convert a Symbol value to a number');
+	if (typeof Symbol.toPrimitive === 'symbol') {
+		badStringifier[Symbol.toPrimitive] = throwRegexMarker;
 	}
-	if (typeof value === 'string') {
-		if (isBinary(value)) {
-			return ToNumber($parseInteger($strSlice(value, 2), 2));
-		} else if (isOctal(value)) {
-			return ToNumber($parseInteger($strSlice(value, 2), 8));
-		} else if (hasNonWS(value) || isInvalidHexLiteral(value)) {
-			return NaN;
-		} else {
-			var trimmed = $trim(value);
-			if (trimmed !== value) {
-				return ToNumber(trimmed);
-			}
+}
+
+var $toString = callBound('Object.prototype.toString');
+var gOPD = Object.getOwnPropertyDescriptor;
+var regexClass = '[object RegExp]';
+
+var isRegex = hasToStringTag$2
+	// eslint-disable-next-line consistent-return
+	? function isRegex(value) {
+		if (!value || typeof value !== 'object') {
+			return false;
+		}
+
+		var descriptor = gOPD(value, 'lastIndex');
+		var hasLastIndexDataProperty = descriptor && has$2(descriptor, 'value');
+		if (!hasLastIndexDataProperty) {
+			return false;
+		}
+
+		try {
+			$exec$1(value, badStringifier);
+		} catch (e) {
+			return e === isRegexMarker;
 		}
 	}
-	return $Number$1(value);
+	: function isRegex(value) {
+		// In older browsers, typeof regex incorrectly returns 'function'
+		if (!value || (typeof value !== 'object' && typeof value !== 'function')) {
+			return false;
+		}
+
+		return $toString(value) === regexClass;
+	};
+
+var $exec$2 = callBound('RegExp.prototype.exec');
+var $TypeError$e = getIntrinsic('%TypeError%');
+
+var safeRegexTest = function regexTester(regex) {
+	if (!isRegex(regex)) {
+		throw new $TypeError$e('`regex` must be a RegExp');
+	}
+	return function test(s) {
+		return $exec$2(regex, s) !== null;
+	};
 };
 
-// https://www.ecma-international.org/ecma-262/6.0/#sec-tointeger
+var $TypeError$f = getIntrinsic('%TypeError%');
 
-var ToInteger$1 = function ToInteger$1(value) {
-	var number = ToNumber$1(value);
-	return ToInteger(number);
+// http://262.ecma-international.org/5.1/#sec-9.10
+
+var CheckObjectCoercible = function CheckObjectCoercible(value, optMessage) {
+	if (value == null) {
+		throw new $TypeError$f(optMessage || ('Cannot call method on ' + value));
+	}
+	return value;
+};
+
+var RequireObjectCoercible = CheckObjectCoercible;
+
+var $String = getIntrinsic('%String%');
+var $TypeError$g = getIntrinsic('%TypeError%');
+
+// https://262.ecma-international.org/6.0/#sec-tostring
+
+var ToString = function ToString(argument) {
+	if (typeof argument === 'symbol') {
+		throw new $TypeError$g('Cannot convert a Symbol value to a string');
+	}
+	return $String(argument);
+};
+
+var $replace$2 = callBound('String.prototype.replace');
+
+var mvsIsWS = (/^\s$/).test('\u180E');
+/* eslint-disable no-control-regex */
+var leftWhitespace = mvsIsWS
+	? /^[\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF]+/
+	: /^[\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF]+/;
+var rightWhitespace = mvsIsWS
+	? /[\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF]+$/
+	: /[\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF]+$/;
+/* eslint-enable no-control-regex */
+
+var implementation$2 = function trim() {
+	var S = ToString(RequireObjectCoercible(this));
+	return $replace$2($replace$2(S, leftWhitespace, ''), rightWhitespace, '');
+};
+
+var zeroWidthSpace = '\u200b';
+var mongolianVowelSeparator = '\u180E';
+
+var polyfill = function getPolyfill() {
+	if (
+		String.prototype.trim
+		&& zeroWidthSpace.trim() === zeroWidthSpace
+		&& mongolianVowelSeparator.trim() === mongolianVowelSeparator
+		&& ('_' + mongolianVowelSeparator).trim() === ('_' + mongolianVowelSeparator)
+		&& (mongolianVowelSeparator + '_').trim() === (mongolianVowelSeparator + '_')
+	) {
+		return String.prototype.trim;
+	}
+	return implementation$2;
+};
+
+var shim = function shimStringTrim() {
+	var polyfill$1 = polyfill();
+	defineProperties_1(String.prototype, { trim: polyfill$1 }, {
+		trim: function testTrim() {
+			return String.prototype.trim !== polyfill$1;
+		}
+	});
+	return polyfill$1;
+};
+
+var bound = callBind(polyfill());
+var boundMethod = function trim(receiver) {
+	RequireObjectCoercible(receiver);
+	return bound(receiver);
+};
+
+defineProperties_1(boundMethod, {
+	getPolyfill: polyfill,
+	implementation: implementation$2,
+	shim: shim
+});
+
+var string_prototype_trim = boundMethod;
+
+var $Number$1 = getIntrinsic('%Number%');
+var $RegExp = getIntrinsic('%RegExp%');
+var $TypeError$h = getIntrinsic('%TypeError%');
+var $parseInteger = getIntrinsic('%parseInt%');
+
+
+
+
+var $strSlice$1 = callBound('String.prototype.slice');
+var isBinary = safeRegexTest(/^0b[01]+$/i);
+var isOctal = safeRegexTest(/^0o[0-7]+$/i);
+var isInvalidHexLiteral = safeRegexTest(/^[-+]0x[0-9a-f]+$/i);
+var nonWS = ['\u0085', '\u200b', '\ufffe'].join('');
+var nonWSregex = new $RegExp('[' + nonWS + ']', 'g');
+var hasNonWS = safeRegexTest(nonWSregex);
+
+
+
+
+
+// https://262.ecma-international.org/13.0/#sec-stringtonumber
+
+var StringToNumber = function StringToNumber(argument) {
+	if (Type$1(argument) !== 'String') {
+		throw new $TypeError$h('Assertion failed: `argument` is not a String');
+	}
+	if (isBinary(argument)) {
+		return $Number$1($parseInteger($strSlice$1(argument, 2), 2));
+	}
+	if (isOctal(argument)) {
+		return $Number$1($parseInteger($strSlice$1(argument, 2), 8));
+	}
+	if (hasNonWS(argument) || isInvalidHexLiteral(argument)) {
+		return NaN;
+	}
+	var trimmed = string_prototype_trim(argument);
+	if (trimmed !== argument) {
+		return StringToNumber(trimmed);
+	}
+	return $Number$1(argument);
+};
+
+var $TypeError$i = getIntrinsic('%TypeError%');
+var $Number$2 = getIntrinsic('%Number%');
+
+
+
+
+
+// https://262.ecma-international.org/13.0/#sec-tonumber
+
+var ToNumber = function ToNumber(argument) {
+	var value = isPrimitive(argument) ? argument : ToPrimitive(argument, $Number$2);
+	if (typeof value === 'symbol') {
+		throw new $TypeError$i('Cannot convert a Symbol value to a number');
+	}
+	if (typeof value === 'bigint') {
+		throw new $TypeError$i('Conversion from \'BigInt\' to \'number\' is not allowed.');
+	}
+	if (typeof value === 'string') {
+		return StringToNumber(value);
+	}
+	return $Number$2(value);
+};
+
+var sign = function sign(number) {
+	return number >= 0 ? 1 : -1;
+};
+
+// https://262.ecma-international.org/12.0/#sec-tointegerorinfinity
+
+var ToIntegerOrInfinity = function ToIntegerOrInfinity(value) {
+	var number = ToNumber(value);
+	if (_isNaN(number) || number === 0) { return 0; }
+	if (!_isFinite(number)) { return number; }
+	var integer = floor(abs(number));
+	if (integer === 0) { return 0; }
+	return sign(number) * integer;
 };
 
 var ToLength = function ToLength(argument) {
-	var len = ToInteger$1(argument);
+	var len = ToIntegerOrInfinity(argument);
 	if (len <= 0) { return 0; } // includes converting -0 to +0
 	if (len > maxSafeInteger) { return maxSafeInteger; }
 	return len;
 };
 
-var $String = GetIntrinsic('%String%');
-var $TypeError$b = GetIntrinsic('%TypeError%');
+var $TypeError$j = getIntrinsic('%TypeError%');
 
-// https://www.ecma-international.org/ecma-262/6.0/#sec-tostring
 
-var ToString = function ToString(argument) {
-	if (typeof argument === 'symbol') {
-		throw new $TypeError$b('Cannot convert a Symbol value to a string');
+
+
+
+// https://262.ecma-international.org/11.0/#sec-lengthofarraylike
+
+var LengthOfArrayLike = function LengthOfArrayLike(obj) {
+	if (Type$1(obj) !== 'Object') {
+		throw new $TypeError$j('Assertion failed: `obj` must be an Object');
 	}
-	return $String(argument);
+	return ToLength(Get(obj, 'length'));
 };
 
-var $TypeError$c = GetIntrinsic('%TypeError%');
+var $TypeError$k = getIntrinsic('%TypeError%');
 
 
 
@@ -4189,9 +5129,9 @@ var $TypeError$c = GetIntrinsic('%TypeError%');
 
 
 
-// https://ecma-international.org/ecma-262/10.0/#sec-flattenintoarray
+// https://262.ecma-international.org/11.0/#sec-flattenintoarray
 
-// eslint-disable-next-line max-params, max-statements
+// eslint-disable-next-line max-params
 var FlattenIntoArray = function FlattenIntoArray(target, source, sourceLen, start, depth) {
 	var mapperFunction;
 	if (arguments.length > 5) {
@@ -4207,20 +5147,20 @@ var FlattenIntoArray = function FlattenIntoArray(target, source, sourceLen, star
 			var element = Get(source, P);
 			if (typeof mapperFunction !== 'undefined') {
 				if (arguments.length <= 6) {
-					throw new $TypeError$c('Assertion failed: thisArg is required when mapperFunction is provided');
+					throw new $TypeError$k('Assertion failed: thisArg is required when mapperFunction is provided');
 				}
 				element = Call(mapperFunction, arguments[6], [element, sourceIndex, source]);
 			}
 			var shouldFlatten = false;
 			if (depth > 0) {
-				shouldFlatten = IsArray(element);
+				shouldFlatten = IsArray$1(element);
 			}
 			if (shouldFlatten) {
-				var elementLen = ToLength(Get(element, 'length'));
+				var elementLen = LengthOfArrayLike(element);
 				targetIndex = FlattenIntoArray(target, element, elementLen, targetIndex, depth - 1);
 			} else {
 				if (targetIndex >= maxSafeInteger) {
-					throw new $TypeError$c('index too large');
+					throw new $TypeError$k('index too large');
 				}
 				CreateDataPropertyOrThrow(target, ToString(targetIndex), element);
 				targetIndex += 1;
@@ -4232,37 +5172,24 @@ var FlattenIntoArray = function FlattenIntoArray(target, source, sourceLen, star
 	return targetIndex;
 };
 
-var $TypeError$d = GetIntrinsic('%TypeError%');
-
-// http://www.ecma-international.org/ecma-262/5.1/#sec-9.10
-
-var CheckObjectCoercible = function CheckObjectCoercible(value, optMessage) {
-	if (value == null) {
-		throw new $TypeError$d(optMessage || ('Cannot call method on ' + value));
-	}
-	return value;
-};
-
-var RequireObjectCoercible = CheckObjectCoercible;
-
-var $Object$1 = GetIntrinsic('%Object%');
+var $Object$1 = getIntrinsic('%Object%');
 
 
 
-// https://www.ecma-international.org/ecma-262/6.0/#sec-toobject
+// https://262.ecma-international.org/6.0/#sec-toobject
 
 var ToObject = function ToObject(value) {
 	RequireObjectCoercible(value);
 	return $Object$1(value);
 };
 
-var implementation$2 = function flat() {
+var implementation$3 = function flat() {
 	var O = ToObject(this);
 	var sourceLen = ToLength(Get(O, 'length'));
 
 	var depthNum = 1;
 	if (arguments.length > 0 && typeof arguments[0] !== 'undefined') {
-		depthNum = ToInteger$1(arguments[0]);
+		depthNum = ToIntegerOrInfinity(arguments[0]);
 	}
 
 	var A = ArraySpeciesCreate(O, 0);
@@ -4270,29 +5197,51 @@ var implementation$2 = function flat() {
 	return A;
 };
 
-var polyfill = function getPolyfill() {
-	return Array.prototype.flat || implementation$2;
+var polyfill$1 = function getPolyfill() {
+	return Array.prototype.flat || implementation$3;
 };
 
-var shim = function shimFlat() {
-	var polyfill$1 = polyfill();
+var hasUnscopables = typeof Symbol === 'function' && typeof Symbol.unscopables === 'symbol';
+
+var map = hasUnscopables && Array.prototype[Symbol.unscopables];
+
+var $TypeError$l = TypeError;
+
+var esShimUnscopables = function shimUnscopables(method) {
+	if (typeof method !== 'string' || !method) {
+		throw new $TypeError$l('method must be a non-empty string');
+	}
+	if (!src(Array.prototype, method)) {
+		throw new $TypeError$l('method must be on Array.prototype');
+	}
+	if (hasUnscopables) {
+		map[method] = true;
+	}
+};
+
+var shim$1 = function shimFlat() {
+	var polyfill = polyfill$1();
+
 	defineProperties_1(
 		Array.prototype,
-		{ flat: polyfill$1 },
-		{ flat: function () { return Array.prototype.flat !== polyfill$1; } }
+		{ flat: polyfill },
+		{ flat: function () { return Array.prototype.flat !== polyfill; } }
 	);
-	return polyfill$1;
+
+	esShimUnscopables('flat');
+
+	return polyfill;
 };
 
-var polyfill$1 = polyfill();
+var polyfill$2 = polyfill$1();
 
 
-var boundFlat = callBind(polyfill$1);
+var boundFlat = callBind(polyfill$2);
 
 defineProperties_1(boundFlat, {
-	getPolyfill: polyfill,
-	implementation: implementation$2,
-	shim: shim
+	getPolyfill: polyfill$1,
+	implementation: implementation$3,
+	shim: shim$1
 });
 
 var array_prototype_flat = boundFlat;
@@ -4378,7 +5327,7 @@ const wrap = (input, options) => {
     if(config.splitAt.indexOf("\t")!==-1) {
       // split at both spaces and tabs
       words = text.split(/ |\t/i);
-    } else{
+    } else {
       // split at whitespace
       words = text.split(" ");
     }
@@ -4563,7 +5512,7 @@ var main$1 = (input, options) => {
     const savedANSI = splitAnsiInput(string);
 
     // strip ANSI
-    string = stripAnsi$1(string);
+    string = stripAnsi(string);
 
     // add newlines to string
     string = wrap(string, options);
@@ -4856,6 +5805,8 @@ module.exports.getColumnWidths = (config, rows) => {
       const totalRelativeWidths = relativeWidths.reduce((prev, current) => prev + current);
       widths = (totalRelativeWidths < totalWidth) ? relativeWidths : widths;
     }
+  } else {
+    widths = widths.map(Math.floor);
   }
 
   return widths
@@ -5119,7 +6070,7 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
 
       default:
         // elem is assumed to be a scalar
-        cellValue = elem || "";
+        cellValue = elem;
     }
 
     // run formatter
