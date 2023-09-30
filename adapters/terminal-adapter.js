@@ -111,15 +111,21 @@ const runTable = function (header, body) {
   previousHeight = t1.height
 }
 
+const chunks = []
 process.stdin.resume()
 process.stdin.setEncoding("utf8")
 process.stdin.on("data", function (chunk) {
+  chunks.push(chunk)
+})
+process.stdin.on("end", function () {
+  const stdin = chunks.join("")
+
   // handle dataFormats
   switch (true) {
     case (dataFormat === "json"):
       let data
       try {
-        data = JSON.parse(chunk)
+        data = JSON.parse(stdin)
       } catch (e) {
         emitError(
           "JSON parse error",
@@ -136,7 +142,7 @@ process.stdin.on("data", function (chunk) {
         }
       })
 
-      csv.parse(chunk, formatterOptions, function (err, data) {
+      csv.parse(stdin, formatterOptions, function (err, data) {
       // validate csv
         if (err || typeof data === "undefined") {
           emitError(
