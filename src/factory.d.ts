@@ -41,6 +41,7 @@ declare namespace TtyTable {
     errorOnNull?: boolean;
     truncate?: string | boolean;
     width?: string;
+    footerColor?: string;
   }
 
   export interface Config extends Options {
