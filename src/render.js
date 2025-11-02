@@ -1,5 +1,6 @@
 const Style = require("./style.js")
 const Format = require("./format.js")
+const stripAnsi = require("strip-ansi")
 
 /**
  * Converts arrays of data into arrays of cell strings
@@ -231,6 +232,9 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
       case (typeof elem === "undefined" || elem === null):
         // replace undefined/null elem values with placeholder
         cellValue = (config.errorOnNull) ? config.defaultErrorValue : config.defaultValue
+        if (!Style.isColorEnabled()) {
+          cellValue = stripAnsi(cellValue)
+        }
         // @TODO add to elem defaults
         cellOptions.isNull = true
         break

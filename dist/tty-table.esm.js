@@ -2000,11 +2000,16 @@ module.exports.colorizeCell = (str, cellOptions, rowType) => {
 
   return str
 };
+
+module.exports.isColorEnabled = () => {
+  return ({} && {}.stdout) ? colorLib.level > 0 : colorLib.enabled
+};
 });
 var style_1 = style.style;
 var style_2 = style.styleEachChar;
 var style_3 = style.resetStyle;
 var style_4 = style.colorizeCell;
+var style_5 = style.isColorEnabled;
 
 var clone_1 = createCommonjsModule(function (module) {
 var clone = (function() {
@@ -6036,7 +6041,7 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
   const cellOptions = Object.assign(
     { reset: false },
     config,
-    (rowType === "body") ? config.columnSettings[columnIndex] : {}, // ignore columnSettings for footer
+    (rowType !== "header") ? config.columnSettings[columnIndex] : {},
     (typeof elem === "object") ? elem : {}
   );
 
@@ -6049,6 +6054,9 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
       case (typeof elem === "undefined" || elem === null):
         // replace undefined/null elem values with placeholder
         cellValue = (config.errorOnNull) ? config.defaultErrorValue : config.defaultValue;
+        if (!style.isColorEnabled()) {
+          cellValue = stripAnsi(cellValue);
+        }
         // @TODO add to elem defaults
         cellOptions.isNull = true;
         break
@@ -6079,7 +6087,7 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
     }
 
     // run formatter
-    if (typeof cellOptions.formatter === "function") {
+    if (rowType === "body" && typeof cellOptions.formatter === "function") {
       cellValue = cellOptions.formatter
         .bind({
           configure: function (object) {

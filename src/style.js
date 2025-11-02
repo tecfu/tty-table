@@ -56,3 +56,7 @@ module.exports.colorizeCell = (str, cellOptions, rowType) => {
 
   return str
 }
+
+module.exports.isColorEnabled = () => {
+  return (process && process.stdout) ? colorLib.level > 0 : colorLib.enabled
+}
