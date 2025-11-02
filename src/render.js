@@ -218,7 +218,7 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
   const cellOptions = Object.assign(
     { reset: false },
     config,
-    (rowType === "body") ? config.columnSettings[columnIndex] : {}, // ignore columnSettings for footer
+    (rowType !== "header") ? config.columnSettings[columnIndex] : {},
     (typeof elem === "object") ? elem : {}
   )
 
@@ -261,7 +261,7 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
     }
 
     // run formatter
-    if (typeof cellOptions.formatter === "function") {
+    if (rowType === "body" && typeof cellOptions.formatter === "function") {
       cellValue = cellOptions.formatter
         .bind({
           configure: function (object) {

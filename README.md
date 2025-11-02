@@ -1,4 +1,4 @@
-# tty-table 端子台
+# tty-table
 
 [![NPM version](https://badge.fury.io/js/tty-table.svg)](http://badge.fury.io/js/tty-table) [![Coverage Status](https://coveralls.io/repos/github/tecfu/tty-table/badge.svg?branch=master)](https://coveralls.io/github/tecfu/tty-table?branch=master)
 ---
