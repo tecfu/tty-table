@@ -2,11 +2,16 @@ require("../test/example-utils.js").quickInit()
 const Table = require("../")
 const chalk = require("chalk")
 
-const makeBlue = function (val) { return this.style(val, "bgBlue", "white") }
+const makeRed = function (val) {
+  if (val === "") {
+    return this.style("?", "white", "bgRed")
+  }
+  return val
+}
 
 const header = [
-  { value: "Name", formatter: makeBlue },
-  { value: "Email" },
+  { value: "Name", formatter: makeRed },
+  { value: "Email", formatter: makeRed },
   { value: "Note" }
 ]
 

@@ -251,7 +251,7 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
           style: Style.style,
           resetStyle: Style.resetStyle
         })(
-          (!cellOptions.isNull) ? cellValue : "",
+          cellValue,
           columnIndex,
           rowIndex,
           rowData,
@@ -274,7 +274,7 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
           style: Style.style,
           resetStyle: Style.resetStyle
         })(
-          (!cellOptions.isNull) ? cellValue : "",
+          cellValue,
           columnIndex,
           rowIndex,
           rowData,

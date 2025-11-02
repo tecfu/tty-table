@@ -178,7 +178,7 @@ const footer = [
 | color | <code>string</code> | default: terminal default color |
 | compact | <code>boolean</code> | default: false <br/> Removes horizontal borders when true. |
 | defaultErrorValue | <code>mixed</code> | default: '�' |
-| defaultValue | <code>mixed</code> | default: '?' |
+| defaultValue | <code>mixed</code> | default: '""' |
 | errorOnNull | <code>boolean</code> | default: false |
 | truncate | <code>mixed</code> | default: false <br/> When this property is set to a string, cell contents will be truncated by that string instead of wrapped when they extend beyond of the width of the cell.  <br/> For example if: <br/> <code>"truncate":"..."</code> <br/> the cell will be truncated with "..." <br/> Note: tty-table wraps overflowing cell text into multiple lines by default, so you would likely only utilize `truncate` for extremely long values. |
 | width | <code>string</code> | default: "100%" <br/> Width of the table. Can be a percentage of i.e. "50%" or a fixed number of columns in the terminal viewport i.e. "100". <br/> Note: When you use a percentage, your table will be "responsive".|
