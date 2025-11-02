@@ -34,7 +34,7 @@ const header = [
     formatter: function (value) {
       const str = `$${value.toFixed(2)}`
       return (value > 5) ? this.style(str, "green", "bold")
-        : this.style(str, "red", "underline")
+        : this.style(str, "red", "bold")
     }
   },
   {

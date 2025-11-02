@@ -31,7 +31,12 @@ module.exports.stringifyData = (config, inputData) => {
   if (global.columnWidths[config.tableId]) {
     config.table.columnWidths = global.columnWidths[config.tableId]
   } else {
-    global.columnWidths[config.tableId] = config.table.columnWidths = Format.getColumnWidths(config, rows)
+    const formattedRows = rows.map((row, rowIndex) => {
+      return row.map((cell, cellIndex) => {
+        return exports.buildCell(config, cell, cellIndex, "body", rowIndex, rows, inputData, true)
+      })
+    })
+    global.columnWidths[config.tableId] = config.table.columnWidths = Format.getColumnWidths(config, formattedRows)
   }
 
   // stringify header cells
@@ -207,7 +212,7 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
   return linedRow
 }
 
-module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowData, inputData) => {
+module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowData, inputData, dryRun = false) => {
   let cellValue = null
 
   const cellOptions = Object.assign(
@@ -271,6 +276,10 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
           rowData,
           inputData
         )
+    }
+
+    if (dryRun) {
+      return cellValue
     }
   }
 

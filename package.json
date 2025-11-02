@@ -1,6 +1,6 @@
 {
   "name": "tty-table",
-  "version": "4.2.3",
+  "version": "4.2.4",
   "description": "Node cli table",
   "main": "src/main.js",
   "types": "src/factory.d.ts",
@@ -25,7 +25,7 @@
     "save-tests": "node npm_scripts/run-examples.js save",
     "view-examples": "node npm_scripts/run-examples.js view",
     "lint": "npx eslint adapters/*.js src/*.js",
-    "lint-fix": "npx eslint adapters/*.js src/*.js --fix",
+    "lint-fix": "npx eslint adapters/*.js src/*.js examples/*.js --fix",
     "lint-examples": "npx eslint examples/",
     "lint-fix-examples": "npx eslint examples/ --fix",
     "prepublishOnly": "npm run dist",
