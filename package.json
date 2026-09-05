@@ -31,7 +31,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "prepublishOnly": "npm run typecheck && npm test && npm run build",
+    "prepublishOnly": "npm run typecheck && npm run build && npm test && npm run test:unit",
     "test:unit": "vitest run"
   },
   "repository": {

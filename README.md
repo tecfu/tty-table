@@ -4,13 +4,13 @@ A TypeScript-first terminal table renderer with a compatibility-oriented factory
 
 ## What's new in 6.0
 
-- Pure TypeScript implementation with generated declarations.
-- Deterministic measurement → layout → render pipeline.
+- TypeScript API surface with generated declarations; battle-tested CommonJS runtime core.
+- Compatibility verified by the example-based regression suite (`npm test`).
 - ANSI-safe display-width calculation and Unicode-aware wrapping/truncation.
 - Typed column/table options and formatter context.
 - ESM and CommonJS package exports.
 - Modern Node.js LTS baseline (Node 20+).
-- Minimal build toolchain: TypeScript, tsup, Vitest, ESLint.
+- Minimal build toolchain: TypeScript, tsup, Vitest, Mocha, ESLint.
 - CLI is implemented as a separate TypeScript adapter.
 - A standalone browser bundle is produced for direct use from a browser console or `<script>` tag.
 - Legacy `Table(header, rows, footer, options)` and `Table(rows, options)` construction remains supported.
@@ -25,10 +25,10 @@ The published package provides both ESM and CommonJS entry points for Node.js. T
 
 ### Browser and browser console
 
-The table renderer remains usable in browsers. The core runtime does not depend on Node.js APIs; Node-only functionality is isolated to the CLI adapter. The build also produces a standalone browser bundle at `dist/browser/tty-table.js`, so it can be loaded directly with a `<script>` tag without a bundler:
+The table renderer remains usable in browsers. The core runtime does not depend on Node.js APIs; Node-only functionality is isolated to the CLI adapter. The build produces a single self-contained browser bundle at `dist/browser/tty-table.global.js`, so it can be loaded directly with a `<script>` tag without a bundler:
 
 ```html
-<script src="./dist/browser/tty-table.js"></script>
+<script src="./dist/browser/tty-table.global.js"></script>
 <script>
   const table = TtyTable.default([
     { value: "name" },
@@ -44,7 +44,7 @@ The table renderer remains usable in browsers. The core runtime does not depend 
 
 For browser applications using a bundler, import the normal package entry; bundlers can use the `browser` package field to select the browser build.
 
-The browser bundle is an IIFE that exposes `TtyTable` globally and includes the runtime dependency needed for Unicode display-width calculations. It does not include the Node.js CLI or its Node-only dependencies.
+The browser bundle is a single compiled IIFE file that exposes `TtyTable` globally and includes the runtime dependency needed for Unicode display-width calculations. It does not include the Node.js CLI or its Node-only dependencies.
 
 ## API
 
@@ -82,8 +82,9 @@ Widths are measured in terminal display columns, not JavaScript string length. A
 ```sh
 npm install
 npm run typecheck
-npm test
-npm run build
+npm run build   # required before npm test: the regression suite runs examples against dist/
+npm test        # example-based golden-file regression suite
+npm run test:unit  # vitest unit suite
 npm run lint
 ```
 
