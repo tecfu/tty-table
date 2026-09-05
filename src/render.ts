@@ -50,12 +50,12 @@ export const renderTable = (header: unknown[], input: unknown[], footer: unknown
   const rows = input.map((row) => rowValues(row, header, (options as TableOptions & { adapter?: string }).adapter))
   config.columnSettings = header.map((item) => typeof item === "object" && item !== null ? item as ColumnOptions : {})
   const widths = getColumnWidths(config, rows)
-  const border = config.borderCharacters[String(config.borderStyle)] ?? config.borderCharacters.solid
+  const border = config.borderCharacters[String(config.borderStyle)] ?? config.borderCharacters.solid ?? []
+  const top = border[0] ?? { v: "", l: "", j: "", h: "", r: "" }
+  const middle = border[1] ?? top
+  const bottom = border[2] ?? middle
   const margin = " ".repeat(config.marginLeft)
-  const horizontal = (part: 0 | 1 | 2): string => {
-    const b = border[part]
-    return margin + b.l + widths.map((w) => b.h.repeat(Math.max(0, w - 1))).join(b.j) + b.r
-  }
+  const horizontal = (b: typeof top): string => margin + b.l + widths.map((w) => b.h.repeat(Math.max(0, w - 1))).join(b.j) + b.r
 
   const renderRow = (row: unknown[], type: "header" | "body" | "footer", rowIndex: number): string[] => {
     const cells = widths.map((width, i) => {
@@ -67,22 +67,22 @@ export const renderTable = (header: unknown[], input: unknown[], footer: unknown
       return formatCell(colored, width, col, type === "header" ? (col.headerAlign ?? config.headerAlign) : type === "footer" ? config.footerAlign : (col.align ?? config.align))
     })
     const height = Math.max(1, ...cells.map((c) => c.length))
-    return Array.from({ length: height }, (_, line) => margin + border[1].v + cells.map((c) => c[line] ?? " ".repeat(widths[cells.indexOf(c)])).join(border[1].v) + border[1].v)
+    return Array.from({ length: height }, (_, line) => margin + middle.v + cells.map((c, i) => c[line] ?? " ".repeat(widths[i] ?? 0)).join(middle.v) + middle.v)
   }
 
-  const sections: string[][] = []
+  const sections: string[] = []
   const showHeader = config.showHeader !== false && (config.showHeader === true || header.some((h) => h && typeof h === "object" && ((h as ColumnOptions).value || (h as ColumnOptions).alias)))
   if (showHeader) sections.push(...renderRow(header, "header", 0))
   rows.forEach((row, i) => sections.push(...renderRow(row, "body", i)))
   if (footer.length) sections.push(...renderRow(footer, "footer", 0))
 
-  const lines = [horizontal(0)]
+  const lines = [horizontal(top)]
   sections.forEach((line, index) => {
     lines.push(line)
     const last = index === sections.length - 1
-    if (!last && !(config.compact && rows[index]?.length === 0)) lines.push(horizontal(1))
+    if (!last && !(config.compact && index >= (showHeader ? renderRow(header, "header", 0).length : 0))) lines.push(horizontal(middle))
   })
-  lines.push(horizontal(2))
+  lines.push(horizontal(bottom))
   const output = "\n".repeat(config.marginTop) + lines.join("\n")
   config.height = output.split(/\r?\n/).length
   return { output, height: config.height }
