@@ -1,8 +1,8 @@
-const stripAnsi = require("strip-ansi")
-const smartwrap = require("smartwrap")
-const wcwidth = require("wcwidth")
+import stripAnsi from "strip-ansi"
+import smartwrap from "smartwrap"
+import wcwidth from "wcwidth"
 
-const addPadding = (config, width) => {
+const addPadding = (config: any, width: number) => {
   return width + config.paddingLeft + config.paddingRight
 }
 
@@ -14,13 +14,13 @@ const addPadding = (config, width) => {
  * @param integer columnIndex
  * @returns string
  */
-const getMaxLength = (columnOptions, rows, columnIndex) => {
-  let iterable
+const getMaxLength = (columnOptions: any, rows: any[], columnIndex: number) => {
+  let iterable: any[]
 
   // add header value, alias to calculate width when applicable
   if (columnOptions && (columnOptions.value || columnOptions.alias)) {
     // string we use from header
-    let val = columnOptions.alias || columnOptions.value
+    let val: any = columnOptions.alias || columnOptions.value
     val = val.toString()
     // create a row with value in the current columnIndex
     const headerRow = Array(rows[0].length)
@@ -33,7 +33,7 @@ const getMaxLength = (columnOptions, rows, columnIndex) => {
     iterable = rows
   }
 
-  const widest = iterable.reduce((prev, row) => {
+  const widest = iterable.reduce((prev: number, row: any) => {
     if (row[columnIndex]) {
       // check cell value is object or scalar
       const value = (row[columnIndex].value) ? row[columnIndex].value : row[columnIndex]
@@ -53,10 +53,10 @@ const getMaxLength = (columnOptions, rows, columnIndex) => {
  *
  *
  */
-const getAvailableWidth = config => {
+const getAvailableWidth = (config: any) => {
   if (process && ((process.stdout && process.stdout.columns) || (process.env && process.env.COLUMNS))) {
     // forked calls that do not inherit process.stdout must use process.env
-    let viewport = (process.stdout && process.stdout.columns) ? process.stdout.columns : process.env.COLUMNS
+    let viewport: any = (process.stdout && process.stdout.columns) ? process.stdout.columns : process.env.COLUMNS
     viewport = viewport - config.marginLeft
 
     // table width percentage of (viewport less margin)
@@ -78,45 +78,45 @@ const getAvailableWidth = config => {
 
   // browser
   /* istanbul ignore next */
-  if (typeof window !== "undefined") return window.innerWidth // eslint-disable-line
+  if (typeof (globalThis as any).window !== "undefined") return (globalThis as any).window.innerWidth
 
   // process.stdout.columns does not exist. assume redirecting to write stream
   // use 80 columns, which is VT200 standard
   return config.COLUMNS - config.marginLeft
 }
 
-module.exports.getStringLength = string => {
+export const getStringLength = (str: string) => {
   // stripAnsi(string.replace(/[^\x00-\xff]/g,'XX')).length
-  return wcwidth(stripAnsi(string))
+  return wcwidth(stripAnsi(str))
 }
 
-module.exports.wrapCellText = (
-  config,
-  cellValue,
-  columnIndex,
-  cellOptions,
-  rowType
+export const wrapCellText = (
+  config: any,
+  cellValue: any,
+  columnIndex: number,
+  cellOptions: any,
+  rowType: string
 ) => {
   // ANSI chararacters that demarcate the start/end of a line
-  const startAnsiRegexp = /^(\033\[[0-9;]*m)+/
-  const endAnsiRegexp = /(\033\[[0-9;]*m)+$/
+  const startAnsiRegexp = /^(\x1b\[[0-9;]*m)+/
+  const endAnsiRegexp = /(\x1b\[[0-9;]*m)+$/
 
   // coerce cell value to string
-  let string = cellValue.toString()
+  let str = cellValue.toString()
 
   // store matching ANSI characters
-  const startMatches = string.match(startAnsiRegexp) || [""]
+  const startMatches = str.match(startAnsiRegexp) || [""]
 
   // remove ANSI start-of-line chars
-  string = string.replace(startAnsiRegexp, "")
+  str = str.replace(startAnsiRegexp, "")
 
   // store matching ANSI characters so can be later re-attached
-  const endMatches = string.match(endAnsiRegexp) || [""]
+  const endMatches = str.match(endAnsiRegexp) || [""]
 
   // remove ANSI end-of-line chars
-  string = string.replace(endAnsiRegexp, "")
+  str = str.replace(endAnsiRegexp, "")
 
-  let alignTgt
+  let alignTgt: string
 
   switch (rowType) {
     case ("header"):
@@ -147,16 +147,16 @@ module.exports.wrapCellText = (
     - config.GUTTER
 
   if (typeof config.truncate === "string") {
-    string = exports.truncate(string, cellOptions, innerWidth)
+    str = truncate(str, cellOptions, innerWidth)
   } else {
-    string = exports.wrap(string, cellOptions, innerWidth)
+    str = wrap(str, cellOptions, innerWidth)
   }
 
   // format each line
-  const cell = string.split("\n").map(line => {
+  const cell = str.split("\n").map((line: string) => {
     line = line.trim()
 
-    const lineLength = exports.getStringLength(line)
+    const lineLength = getStringLength(line)
 
     // alignment
     if (lineLength < columnWidth) {
@@ -192,23 +192,23 @@ module.exports.wrapCellText = (
   return { cell, innerWidth }
 }
 
-module.exports.truncate = (string, cellOptions, maxWidth) => {
-  const stringWidth = wcwidth(string)
+export const truncate = (str: string, cellOptions: any, maxWidth: number) => {
+  const stringWidth = wcwidth(str)
 
   if (maxWidth < stringWidth) {
     // @TODO give user option to decide if they want to break words on wrapping
-    string = smartwrap(string, {
+    str = (smartwrap as any)(str, {
       width: maxWidth - cellOptions.truncate.length,
       breakword: true
     }).split("\n")[0]
-    string = string + cellOptions.truncate
+    str = str + cellOptions.truncate
   }
 
-  return string
+  return str
 }
 
-module.exports.wrap = (string, cellOptions, innerWidth) => {
-  const outstring = smartwrap(string, {
+export const wrap = (str: string, cellOptions: any, innerWidth: number) => {
+  const outstring = (smartwrap as any)(str, {
     errorChar: cellOptions.defaultErrorValue,
     minWidth: 1,
     trim: true,
@@ -218,16 +218,16 @@ module.exports.wrap = (string, cellOptions, innerWidth) => {
   return outstring
 }
 
-module.exports.getColumnWidths = (config, rows) => {
+export const getColumnWidths = (config: any, rows: any[]) => {
   const availableWidth = getAvailableWidth(config)
 
   // iterate over the header if we have it, iterate over the first row
   // if we do not (to step through the correct number of columns)
-  const iterable = (config.table.header[0] && config.table.header[0].length > 0)
+  const iterable: any[] = (config.table.header[0] && config.table.header[0].length > 0)
     ? config.table.header[0] : rows[0]
 
-  let widths = iterable.map((column, columnIndex) => {
-    let result
+  let widths: number[] = iterable.map((column: any, columnIndex: number) => {
+    let result: number
 
     switch (true) {
       // column width is a percentage of table width specified in column header
@@ -242,7 +242,7 @@ module.exports.getColumnWidths = (config, rows) => {
         break
 
       // 'auto' sets column width to its longest value in the initial data set
-      default:
+      default: {
         const columnOptions = (config.table.header[0][columnIndex])
           ? config.table.header[0][columnIndex] : {}
         const measurableRows = (rows.length) ? rows : config.table.header[0]
@@ -252,6 +252,7 @@ module.exports.getColumnWidths = (config, rows) => {
         // add spaces for padding if not centered
         // @TODO test with if not centered conditional
         result = addPadding(config, result)
+      }
     }
 
     // add space for gutter
@@ -260,18 +261,18 @@ module.exports.getColumnWidths = (config, rows) => {
   })
 
   // calculate sum of all column widths (including marginLeft)
-  const totalWidth = widths.reduce((prev, current) => prev + current)
+  const totalWidth = widths.reduce((prev: number, current: number) => prev + current)
 
   // proportionately resize columns when necessary
   if (totalWidth > availableWidth || config.FIXED_WIDTH) {
     // proportion wont be exact fit, but this method keeps us safe
-    const proportion = (availableWidth / totalWidth).toFixed(2) - 0.01
-    const relativeWidths = widths.map(value => Math.max(2, Math.floor(proportion * value)))
+    const proportion = (availableWidth / totalWidth).toFixed(2) as unknown as number - 0.01
+    const relativeWidths = widths.map((value: number) => Math.max(2, Math.floor(proportion * value)))
     if (config.FIXED_WIDTH) return relativeWidths
 
     // when proportion < 0 column cant be resized and totalWidth must overflow viewport
     if (proportion > 0) {
-      const totalRelativeWidths = relativeWidths.reduce((prev, current) => prev + current)
+      const totalRelativeWidths = relativeWidths.reduce((prev: number, current: number) => prev + current)
       widths = (totalRelativeWidths < totalWidth) ? relativeWidths : widths
     }
   } else {

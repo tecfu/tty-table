@@ -1,5 +1,4 @@
 import { defineConfig } from "tsup"
-import { resolve } from "node:path"
 import { readFileSync } from "node:fs"
 
 export default defineConfig({
@@ -11,15 +10,19 @@ export default defineConfig({
   noExternal: ["wcwidth", "kleur", "strip-ansi", "smartwrap"],
   esbuildPlugins: [
     {
-      // stub modules the browser never calls: yargs (smartwrap's CLI dep) and
-      // chalk (unused: style.js falls back to kleur when process.stdout is
-      // absent) — same trick as the legacy browserify build's --ignore flags
+      // stub modules the browser never calls: yargs (smartwrap's CLI dep),
+      // chalk (unused: style.ts falls back to kleur when process.stdout is
+      // absent), node builtins pulled in by deps, object-inspect (needs util),
+      // and the terminal adapters — same trick as the legacy browserify
+      // build's --ignore flags
       name: "stub-browser-only-deps",
       setup(build) {
-        const empty = resolve("src/shims/empty.js")
-        const inspect = resolve("src/shims/inspect.js")
-        build.onResolve({ filter: /^(chalk|yargs|util|os|fs|path|tty)$/ }, () => ({ path: empty }))
-        build.onResolve({ filter: /^object-inspect$/ }, () => ({ path: inspect }))
+        build.onResolve({ filter: /^(chalk|yargs|util|os|fs|path|tty|object-inspect)$/ }, () => ({ path: "stub", namespace: "stub" }))
+        build.onResolve({ filter: /adapters\// }, () => ({ path: "stub", namespace: "stub" }))
+        build.onLoad({ filter: /.*/, namespace: "stub" }, (args) => ({
+          contents: args.path === "stub" ? "module.exports = {}" : "module.exports = function () { return '' }",
+          loader: "js"
+        }))
       }
     },
     {
@@ -40,7 +43,7 @@ export default defineConfig({
   clean: false,
   outDir: "dist/browser",
   banner: {
-    // minimal process shim: style.js branches on process.stdout and kleur reads
+    // minimal process shim: style.ts branches on process.stdout and kleur reads
     // process.env — browserify provided this implicitly, esbuild needs it explicit
     js: "var process = typeof process !== 'undefined' ? process : { env: {} };"
   },

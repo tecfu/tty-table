@@ -1,4 +1,4 @@
-var Factory = require("../src/factory.js")
+var Factory = require("../dist/index.js")
 
 var Table = function (options) {
   options = options || {}
