@@ -15,9 +15,9 @@ export const borderCharacters: Record<string, BorderCharacters[]> = {
   ],
   "0": [], "1": [], "2": []
 }
-borderCharacters["0"] = borderCharacters.none
-borderCharacters["1"] = borderCharacters.solid
-borderCharacters["2"] = borderCharacters.dashed
+borderCharacters["0"] = borderCharacters.none!
+borderCharacters["1"] = borderCharacters.solid!
+borderCharacters["2"] = borderCharacters.dashed!
 
 export const defaults: RenderConfig = {
   borderCharacters, align: "center", headerAlign: "center", footerAlign: "center", borderColor: false, borderStyle: "solid", color: false,
