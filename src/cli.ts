@@ -20,7 +20,11 @@ const main = async (): Promise<void> => {
   for (const [key, value] of Object.entries(argv)) if (key.startsWith("options-")) options[key.slice(8)] = value
 
   let header: unknown[] = []
-  if (argv.config) header = JSON.parse(fs.readFileSync(path.resolve(argv.config), "utf8")) as unknown[]
+  if (argv.config) {
+    const parsedHeader: unknown = JSON.parse(fs.readFileSync(path.resolve(argv.config), "utf8"))
+    if (!Array.isArray(parsedHeader)) fail("Configuration error", "The header configuration must be a JSON array.")
+    header = parsedHeader
+  }
 
   const stdin = await new Promise<string>((resolve) => {
     let data = ""
@@ -29,29 +33,30 @@ const main = async (): Promise<void> => {
     process.stdin.on("end", () => resolve(data))
   })
 
-  const fail = (title: string, detail: string): never => {
+  function fail(title: string, detail: string): never {
     console.error(`\n${style(title, "white", "bgRed")}\n\n${detail}`)
     process.exit(1)
   }
 
-  let rows: unknown[] = []
+  let rows: unknown[]
   if (argv.format === "json") {
     try {
       const parsed: unknown = JSON.parse(stdin)
-      if (!Array.isArray(parsed)) {
-        fail("JSON parse error", "Please provide a JSON array or use --format csv.")
-      }
-      rows = parsed as unknown[]
+      rows = Array.isArray(parsed) ? parsed : fail("JSON parse error", "Please provide a JSON array or use --format csv.")
     } catch {
       fail("JSON parse error", "Please provide valid JSON or use --format csv.")
     }
   } else {
     try {
-      const csvParse = parse as unknown as (input: string, options: Record<string, unknown>) => unknown[]
-      rows = csvParse(stdin, {
-        delimiter: argv["csv-delimiter"],
-        escape: argv["csv-escape"],
-        record_delimiter: argv["csv-rowDelimiter"]
+      rows = await new Promise<unknown[]>((resolve, reject) => {
+        parse(stdin, {
+          delimiter: argv["csv-delimiter"],
+          escape: argv["csv-escape"],
+          record_delimiter: argv["csv-rowDelimiter"]
+        }, (error, records) => {
+          if (error) reject(error)
+          else resolve(records as unknown[])
+        })
       })
     } catch {
       fail("CSV parse error", "Please provide valid comma-separated values or use --format json.")
