@@ -5,19 +5,23 @@
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  "browser": "dist/index.js",
+  "browser": "dist/browser/tty-table.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./browser": {
+      "types": "./dist/browser.d.ts",
+      "import": "./dist/browser.js"
     }
   },
   "engines": { "node": ">=20" },
   "bin": { "tty-table": "dist/cli.cjs" },
   "files": ["dist/", "README.md", "LICENSE.txt"],
   "scripts": {
-    "build": "tsup",
+    "build": "tsup && tsup --config tsup.browser.config.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
