@@ -17,10 +17,12 @@
     "node": ">=20"
   },
   "bin": {
-    "tty-table": "dist/cli.js"
+    "tty-table": "adapters/terminal-adapter.js"
   },
   "files": [
     "dist/",
+    "adapters/",
+    "src/",
     "README.md",
     "LICENSE.txt"
   ],
@@ -32,7 +34,9 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepublishOnly": "npm run typecheck && npm run build && npm test && npm run test:unit",
-    "test:unit": "vitest run"
+    "test:unit": "vitest run",
+    "view-examples": "node npm_scripts/run-examples.js view",
+    "save-tests": "node npm_scripts/run-examples.js save"
   },
   "repository": {
     "type": "git",
