@@ -5,7 +5,7 @@ import { parse, parser } from "csv"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 import Table from "./index"
-import { style } from "./style"
+import { style } from "./ansi"
 
 const main = async (): Promise<void> => {
   const argv = await yargs(hideBin(process.argv)).options({
@@ -66,7 +66,7 @@ const main = async (): Promise<void> => {
     }
   }
 
-  const table = Table(header, rows, options)
+  const table = Table(header as never, rows, options as never)
   process.stdout.write(table.render() + "\n")
 }
 

@@ -1,10 +1,8 @@
-import {Table, Formatter, Header, Options} from "./factory";
-
 export = TtyTable;
 
-declare function TtyTable(headers: (string | Header | Formatter)[], body: string[][] | object[], footers: (string | Header | Formatter)[], config?: Options): Table;
-declare function TtyTable(header: (string | Header | Formatter)[], body: any[], config?: Options): Table;
-declare function TtyTable(body: any[], config?: Options): Table;
+declare function TtyTable(headers: (string | TtyTable.Header | TtyTable.Formatter)[], body: string[][] | object[], footers: (string | TtyTable.Header | TtyTable.Formatter)[], config?: TtyTable.Options): TtyTable.Table;
+declare function TtyTable(header: (string | TtyTable.Header | TtyTable.Formatter)[], body: unknown[], config?: TtyTable.Options): TtyTable.Table;
+declare function TtyTable(body: unknown[], config?: TtyTable.Options): TtyTable.Table;
 
 declare namespace TtyTable {
 
@@ -40,7 +38,7 @@ declare namespace TtyTable {
     defaultValue?: string;
     errorOnNull?: boolean;
     truncate?: string | boolean;
-    width?: string;
+    width?: string | number;
     footerColor?: string;
   }
 

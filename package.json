@@ -2,37 +2,61 @@
   "name": "tty-table",
   "version": "6.0.0",
   "description": "Typed terminal table renderer for Node.js and browsers",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "browser": "dist/browser/tty-table.js",
+  "browser": "dist/browser/tty-table.global.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     }
   },
-  "engines": { "node": ">=20" },
-  "bin": { "tty-table": "dist/cli.cjs" },
-  "files": ["dist/", "README.md", "LICENSE.txt"],
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "tty-table": "dist/cli.js"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE.txt"
+  ],
   "scripts": {
     "build": "tsup && tsup --config tsup.browser.config.ts",
-    "test": "vitest run",
+    "test": "npx mocha",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+    "prepublishOnly": "npm run typecheck && npm test && npm run build",
+    "test:unit": "vitest run"
   },
-  "repository": { "type": "git", "url": "https://github.com/tecfu/tty-table.git" },
-  "keywords": ["table", "cli-table", "terminal table", "console table", "ascii table"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tecfu/tty-table.git"
+  },
+  "keywords": [
+    "table",
+    "cli-table",
+    "terminal table",
+    "console table",
+    "ascii table"
+  ],
   "author": "Tecfu",
   "license": "MIT",
-  "bugs": { "url": "https://github.com/tecfu/tty-table/issues" },
+  "bugs": {
+    "url": "https://github.com/tecfu/tty-table/issues"
+  },
   "homepage": "https://github.com/tecfu/tty-table",
   "dependencies": {
+    "chalk": "^4.1.2",
     "csv": "^6.3.11",
+    "kleur": "^4.1.5",
+    "smartwrap": "^2.0.2",
+    "strip-ansi": "^6.0.1",
     "wcwidth": "^1.0.1",
     "yargs": "^17.7.2"
   },
@@ -41,10 +65,16 @@
     "@types/node": "^22.15.0",
     "@types/wcwidth": "^1.0.2",
     "@types/yargs": "^17.0.33",
+    "chai": "^4.5.0",
+    "commander": "^4.1.1",
     "eslint": "^9.30.0",
-    "typescript-eslint": "^8.35.0",
-    "typescript": "^5.8.3",
+    "glob": "^13.0.6",
+    "grunt": "^1.6.3",
+    "mocha": "^12.0.0",
     "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.35.0",
     "vitest": "^3.2.4"
-  }
+  },
+  "defaultTestColumns": 90
 }
