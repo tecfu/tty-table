@@ -1,14 +1,58 @@
-const defaults = require("./defaults.js")
-const Render = require("./render.js")
-const Style = require("./style.js")
+import defaults from "./defaults"
+import { stringifyData } from "./render"
+import { resetStyle, style, styleEachChar } from "./style"
+
 let counter = 0
 
-const Factory = function (paramsArr) {
-  const _configKey = Symbol.config
-  let header = []
-  const body = []
-  let footer = []
-  let options = {}
+export interface Formatter {
+  (cellValue: any, columnIndex: number, rowIndex: number, rowData: any, inputData: any): string
+}
+
+export interface Header {
+  alias?: string
+  align?: string
+  color?: string
+  footerAlign?: string
+  footerColor?: string
+  formatter?: Formatter
+  headerAlign?: string
+  headerColor?: string
+  marginLeft?: number
+  marginTop?: number
+  paddingBottom?: number
+  paddingLeft?: number
+  paddingRight?: number
+  paddingTop?: number
+  value: string
+  width?: string | number
+}
+
+export interface Options {
+  borderStyle?: string
+  borderColor?: string
+  color?: string
+  compact?: boolean
+  defaultErrorValue?: string
+  defaultValue?: string
+  errorOnNull?: boolean
+  truncate?: string | boolean
+  width?: string | number
+  footerColor?: string
+  [key: string]: unknown
+}
+
+export interface Table extends Array<any> {
+  render(): string
+  height?: number
+  [key: string]: any
+}
+
+const Factory = function (paramsArr: any[]): any {
+  const _configKey = (Symbol as any).config // legacy quirk: evaluates to undefined; kept for behavior parity
+  let header: any = []
+  const body: any[] = []
+  let footer: any = []
+  let options: any = {}
 
   // handle different parameter scenarios
   switch (true) {
@@ -51,16 +95,21 @@ const Factory = function (paramsArr) {
       body.push(...paramsArr[0])
       break
 
-    // adapter called: i.e. `require('tty-table')('automattic-cli')`
-    case (paramsArr.length === 1 && typeof paramsArr[0] === "string"):
-      // esbuild cannot bundle expression requires, so map the known adapters statically;
-      // fall back to a native require for any others at runtime
-      const adapters = {
+    // adapter called: i.e. `require('tty-table')('automattic-cli-table')`
+    case (paramsArr.length === 1 && typeof paramsArr[0] === "string"): {
+      // known adapters are mapped statically so bundlers leave them external;
+      // a dynamic require(`../adapters/${name}`) fallback would make esbuild
+      // eagerly bundle every adapters/* file (candidate scanning), which then
+      // fails on their ../dist/index.js requires at build time
+      const adapters: Record<string, () => any> = {
         "automattic-cli-table": () => require("../adapters/automattic-cli-table.js"),
         "default-adapter": () => require("../adapters/default-adapter.js"),
         "terminal-adapter": () => require("../adapters/terminal-adapter.js")
       }
-      return (adapters[paramsArr[0]] || (() => require(`../adapters/${paramsArr[0]}`)))()
+      const load = adapters[paramsArr[0]]
+      if (!load) throw new Error(`Unknown adapter: "${paramsArr[0]}". Available adapters: ${Object.keys(adapters).join(", ")}`)
+      return load()
+    }
 
     /* istanbul ignore next */
     default:
@@ -70,7 +119,7 @@ const Factory = function (paramsArr) {
 
   // for "deep" copy, use JSON.parse
   const cloneddefaults = JSON.parse(JSON.stringify(defaults))
-  const config = Object.assign({}, cloneddefaults, options)
+  const config: any = Object.assign({}, cloneddefaults, options)
 
   // backfixes for shortened option names
   config.align = config.alignment || config.align
@@ -82,9 +131,9 @@ const Factory = function (paramsArr) {
   // if borderColor customized, color the border character set
   if (config.borderColor) {
     config.borderCharacters[config.borderStyle]
-      = config.borderCharacters[config.borderStyle].map(function (obj) {
+      = config.borderCharacters[config.borderStyle].map(function (obj: any) {
         Object.keys(obj).forEach(function (key) {
-          obj[key] = Style.style(obj[key], config.borderColor)
+          obj[key] = style(obj[key], config.borderColor)
         })
         return obj
       })
@@ -110,7 +159,7 @@ const Factory = function (paramsArr) {
   config.tableId = counter
 
   // create a new object with an Array prototype
-  const tableObject = Object.create(body)
+  const tableObject: any = Object.create(body)
 
   // save configuration to new object
   tableObject[_configKey] = config
@@ -125,8 +174,8 @@ const Factory = function (paramsArr) {
    * console.log(str); //outputs table
    * ```
   */
-  tableObject.render = function () {
-    const output = Render.stringifyData(this[_configKey], this.slice(0)) // get string output
+  tableObject.render = function (this: any) {
+    const output = stringifyData(this[_configKey], this.slice(0)) // get string output
     tableObject.height = this[_configKey].height
     return output
   }
@@ -134,11 +183,19 @@ const Factory = function (paramsArr) {
   return tableObject
 }
 
-const Table = function () {
-  return new Factory(arguments)
+interface TtyTableFactory {
+  (headers: (string | Header | Formatter)[], body: unknown[], footers: (string | Header | Formatter)[], config?: Options): Table
+  (header: (string | Header | Formatter)[], body: unknown[], config?: Options): Table
+  (body: unknown[], config?: Options): Table
+  resetStyle(str: string): string
+  style(str: string, ...colors: string[]): string
 }
 
-Table.resetStyle = Style.resetStyle
-Table.style = Style.styleEachChar
+const Table = function (...params: any[]) {
+  return Factory(params)
+} as unknown as TtyTableFactory
 
-module.exports = Table
+Table.resetStyle = resetStyle
+Table.style = styleEachChar
+
+export default Table

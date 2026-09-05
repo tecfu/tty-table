@@ -1,2 +1,2 @@
-const Factory = require("./../src/factory.js")
+const Factory = require("./../dist/index.js")
 module.exports = Factory

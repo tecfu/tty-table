@@ -2,7 +2,8 @@
 const path = require("path")
 const fs = require("fs")
 const csv = require("csv")
-const style = require("../src/style").style
+const ttytable = require("../dist/index.js")
+const style = ttytable.style
 let yargs = require("yargs")
 
 yargs.epilog("Copyright github.com/tecfu 2018")
@@ -85,7 +86,7 @@ if (yargs.header) {
 // because different dataFormats
 const runTable = function (header, body) {
   // footer = [],
-  const Table = require("../src/factory.js")
+  const Table = ttytable
   options.terminalAdapter = true
   const t1 = Table(header, body, options)
 

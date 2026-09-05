@@ -1,5 +1,7 @@
+import type { BorderCharacters } from "./types"
+
 // @TODO split defaults into table and cell settings
-const defaults = {
+const defaults: Record<string, any> & { borderCharacters: Record<string, BorderCharacters[]> } = {
   borderCharacters: {
     invisible: [
       { v: " ", l: " ", j: " ", h: " ", r: " " },
@@ -63,8 +65,8 @@ const defaults = {
 }
 
 // support deprecated border style values
-defaults.borderCharacters["0"] = defaults.borderCharacters.none
-defaults.borderCharacters["1"] = defaults.borderCharacters.solid
-defaults.borderCharacters["2"] = defaults.borderCharacters.dashed
+defaults.borderCharacters["0"] = defaults.borderCharacters.none!
+defaults.borderCharacters["1"] = defaults.borderCharacters.solid!
+defaults.borderCharacters["2"] = defaults.borderCharacters.dashed!
 
-module.exports = defaults
+export default defaults

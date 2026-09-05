@@ -1,6 +1,6 @@
-const Style = require("./style.js")
-const Format = require("./format.js")
-const stripAnsi = require("strip-ansi")
+import { colorizeCell, isColorEnabled, style, resetStyle } from "./style"
+import { wrapCellText, getColumnWidths } from "./format"
+import stripAnsi from "strip-ansi"
 
 /**
  * Converts arrays of data into arrays of cell strings
@@ -8,36 +8,36 @@ const stripAnsi = require("strip-ansi")
  * @param {Array<Array<string>|object|TtyTable.Formatter>} inputData
  * @returns {Array<string>}
  */
-module.exports.stringifyData = (config, inputData) => {
-  const sections = {
+export const stringifyData = (config: any, inputData: any[]) => {
+  const sections: any = {
     header: [],
     body: [],
     footer: []
   }
   const marginLeft = Array(config.marginLeft + 1).join(" ")
   const borderStyle = config.borderCharacters[config.borderStyle]
-  const borders = []
+  const borders: any[] = []
 
   // support backwards compatibility cli-table's multiple constructor geometries
   // @TODO deprecate and support only a single format
-  const constructorType = exports.getConstructorGeometry(inputData[0] || [], config)
-  const rows = exports.coerceConstructorGeometry(config, inputData, constructorType)
+  const constructorType = getConstructorGeometry(inputData[0] || [], config)
+  const rows = coerceConstructorGeometry(config, inputData, constructorType)
 
   // when streaming values to tty-table, we don't want column widths to change
   // from one rows set to the next, so we save the first set of widths and reuse
-  if (!global.columnWidths) {
-    global.columnWidths = {}
+  if (!(global as any).columnWidths) {
+    (global as any).columnWidths = {}
   }
 
-  if (global.columnWidths[config.tableId]) {
-    config.table.columnWidths = global.columnWidths[config.tableId]
+  if ((global as any).columnWidths[config.tableId]) {
+    config.table.columnWidths = (global as any).columnWidths[config.tableId]
   } else {
-    const formattedRows = rows.map((row, rowIndex) => {
-      return row.map((cell, cellIndex) => {
-        return exports.buildCell(config, cell, cellIndex, "body", rowIndex, rows, inputData, true)
+    const formattedRows = rows.map((row: any[], rowIndex: number) => {
+      return row.map((cell: any, cellIndex: number) => {
+        return buildCell(config, cell, cellIndex, "body", rowIndex, rows, inputData, true)
       })
     })
-    global.columnWidths[config.tableId] = config.table.columnWidths = Format.getColumnWidths(config, formattedRows)
+    ;(global as any).columnWidths[config.tableId] = config.table.columnWidths = getColumnWidths(config, formattedRows)
   }
 
   // stringify header cells
@@ -48,9 +48,9 @@ module.exports.stringifyData = (config, inputData) => {
       break
 
     case (config.showHeader === true): // explicitly true, show
-    case (!!config.table.header[0].find(obj => obj.value || obj.alias)): //  atleast one named column, show header
-      sections.header = config.table.header.map(row => {
-        return exports.buildRow(config, row, "header", null, rows, inputData)
+    case (!!config.table.header[0].find((obj: any) => obj.value || obj.alias)): //  atleast one named column, show header
+      sections.header = config.table.header.map((row: any[]) => {
+        return buildRow(config, row, "header", null, rows, inputData)
       })
       break
 
@@ -59,15 +59,15 @@ module.exports.stringifyData = (config, inputData) => {
   }
 
   // stringify body cells
-  sections.body = rows.map((row, rowIndex) => {
-    return exports.buildRow(config, row, "body", rowIndex, rows, inputData)
+  sections.body = rows.map((row: any[], rowIndex: number) => {
+    return buildRow(config, row, "body", rowIndex, rows, inputData)
   })
 
   // stringify footer cells
   sections.footer = (config.table.footer instanceof Array && config.table.footer.length > 0) ? [config.table.footer] : []
 
-  sections.footer = sections.footer.map(row => {
-    return exports.buildRow(config, row, "footer", null, rows, inputData)
+  sections.footer = sections.footer.map((row: any[]) => {
+    return buildRow(config, row, "footer", null, rows, inputData)
   })
 
   // apply borders
@@ -77,7 +77,7 @@ module.exports.stringifyData = (config, inputData) => {
     borders[a] = borderStyle[a].l
 
     // add joined borders for each column
-    config.table.columnWidths.forEach((columnWidth, index, arr) => {
+    config.table.columnWidths.forEach((columnWidth: number, index: number, arr: number[]) => {
       // Math.max because otherwise columns 1 wide wont have horizontal border
       borders[a] += Array(Math.max(columnWidth, 2)).join(borderStyle[a].h)
       borders[a] += ((index + 1 < arr.length) ? borderStyle[a].j : "")
@@ -94,14 +94,14 @@ module.exports.stringifyData = (config, inputData) => {
   let output = borders[0]
 
   // for each section (header,body,footer)
-  Object.keys(sections).forEach((p, i) => {
+  Object.keys(sections).forEach((p: string, i: number) => {
     // for each row in the section
     while (sections[p].length) {
       const row = sections[p].shift()
 
       // if(row.length === 0) {break}
 
-      row.forEach(line => {
+      row.forEach((line: string[]) => {
         // vertical row borders
         output = `${output
           + marginLeft
@@ -153,12 +153,12 @@ module.exports.stringifyData = (config, inputData) => {
   return finalOutput
 }
 
-module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) => {
+export const buildRow = (config: any, row: any[], rowType: string, rowIndex: number | null, rowData: any[], inputData: any[]) => {
   let minRowHeight = 0
 
   // tag row as empty if empty, used for `compact` option
   if (row.length === 0 && config.compact) {
-    row.empty = true
+    (row as any).empty = true
     return row
   }
 
@@ -173,8 +173,8 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
   }
 
   // convert each element in row to cell format
-  row = row.map((elem, elemIndex) => {
-    const cell = exports.buildCell(config, elem, elemIndex, rowType, rowIndex, rowData, inputData)
+  row = row.map((elem: any, elemIndex: number) => {
+    const cell = buildCell(config, elem, elemIndex, rowType, rowIndex, rowData, inputData)
     minRowHeight = (minRowHeight < cell.length) ? cell.length : minRowHeight
     return cell
   })
@@ -183,10 +183,10 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
   minRowHeight = (rowType === "header") ? minRowHeight
     : minRowHeight + (config.paddingBottom + config.paddingTop)
 
-  const linedRow = Array.apply(null, { length: minRowHeight })
+  const linedRow: any[] = Array.apply(null, { length: minRowHeight } as any)
     .map(Function.call, () => [])
 
-  row.forEach(function (cell, a) {
+  row.forEach(function (cell: string[], a: number) {
     const whitespace = Array(config.table.columnWidths[a]).join(" ")
 
     if (rowType === "body") {
@@ -213,10 +213,10 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
   return linedRow
 }
 
-module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowData, inputData, dryRun = false) => {
-  let cellValue = null
+export const buildCell = (config: any, elem: any, columnIndex: number, rowType: string, rowIndex: number | null, rowData: any[], inputData: any[], dryRun = false) => {
+  let cellValue: any = null
 
-  const cellOptions = Object.assign(
+  const cellOptions: any = Object.assign(
     { reset: false },
     config,
     (rowType !== "header") ? config.columnSettings[columnIndex] : {},
@@ -232,7 +232,7 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
       case (typeof elem === "undefined" || elem === null):
         // replace undefined/null elem values with placeholder
         cellValue = (config.errorOnNull) ? config.defaultErrorValue : config.defaultValue
-        if (!Style.isColorEnabled()) {
+        if (!isColorEnabled()) {
           cellValue = stripAnsi(cellValue)
         }
         // @TODO add to elem defaults
@@ -244,12 +244,12 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
         break
 
       case (typeof elem === "function"):
-        cellValue = elem.bind({
-          configure: function (object) {
+        cellValue = (elem as Function).bind({
+          configure: function (object: any) {
             return Object.assign(cellOptions, object)
           },
-          style: Style.style,
-          resetStyle: Style.resetStyle
+          style: style,
+          resetStyle: resetStyle
         })(
           cellValue,
           columnIndex,
@@ -268,11 +268,11 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
     if (rowType === "body" && typeof cellOptions.formatter === "function") {
       cellValue = cellOptions.formatter
         .bind({
-          configure: function (object) {
+          configure: function (object: any) {
             return Object.assign(cellOptions, object)
           },
-          style: Style.style,
-          resetStyle: Style.resetStyle
+          style: style,
+          resetStyle: resetStyle
         })(
           cellValue,
           columnIndex,
@@ -293,11 +293,11 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
   // we apply default styles to the cell after it runs through the formatter
   // and omit those default styles if the user applied `this.resetStyle`
   if (!cellOptions.reset) {
-    cellValue = Style.colorizeCell(cellValue, cellOptions, rowType)
+    cellValue = colorizeCell(cellValue, cellOptions, rowType)
   }
 
   // textwrap cellValue
-  const { cell, innerWidth } = Format.wrapCellText(cellOptions, cellValue, columnIndex, cellOptions, rowType)
+  const { cell, innerWidth } = wrapCellText(cellOptions, cellValue, columnIndex, cellOptions, rowType)
 
   if (rowType === "header") {
     config.table.columnInnerWidths.push(innerWidth)
@@ -309,8 +309,8 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
 /**
  * Check for a backwards compatible (cli-table) constructor
  */
-module.exports.getConstructorGeometry = (row, config) => {
-  let type
+export const getConstructorGeometry = (row: any, config: any) => {
+  let type: string
 
   // rows passed as an object
   if (typeof row === "object" && !(row instanceof Array)) {
@@ -318,7 +318,7 @@ module.exports.getConstructorGeometry = (row, config) => {
 
     if (config.adapter === "automattic") {
       // detected cross table
-      const key = keys[0]
+      const key = keys[0]!
 
       if (row[key] instanceof Array) {
         type = "automattic-cross"
@@ -341,17 +341,17 @@ module.exports.getConstructorGeometry = (row, config) => {
 /**
  * Coerce backwards compatible constructor styles
  */
-module.exports.coerceConstructorGeometry = (config, rows, constructorType) => {
-  let output = []
+export const coerceConstructorGeometry = (config: any, rows: any[], constructorType: string) => {
+  let output: any[] = []
   switch (constructorType) {
     case ("automattic-cross"):
       // assign header styles to first column
       config.columnSettings[0] = config.columnSettings[0] || {}
       config.columnSettings[0].color = config.headerColor
 
-      output = rows.map(obj => {
-        const arr = []
-        const key = Object.keys(obj)[0]
+      output = rows.map((obj: any) => {
+        const arr: any[] = []
+        const key = Object.keys(obj)[0]!
         arr.push(key)
         return arr.concat(obj[key])
       })
@@ -362,8 +362,8 @@ module.exports.coerceConstructorGeometry = (config, rows, constructorType) => {
       config.columnSettings[0] = config.columnSettings[0] || {}
       config.columnSettings[0].color = config.headerColor
 
-      output = rows.map(function (value) {
-        const key = Object.keys(value)[0]
+      output = rows.map(function (value: any) {
+        const key = Object.keys(value)[0]!
         return [key, value[key]]
       })
       break
@@ -371,13 +371,13 @@ module.exports.coerceConstructorGeometry = (config, rows, constructorType) => {
     case ("o-horizontal"):
       // cell property names are specified in header columns
       if (config.table.header[0].length
-        && config.table.header[0].every(obj => obj.value)) {
-        output = rows.map(row => config.table.header[0]
-          .map(obj => row[obj.value]))
+        && config.table.header[0].every((obj: any) => obj.value)) {
+        output = rows.map((row: any) => config.table.header[0]
+          .map((obj: any) => row[obj.value]))
       } // eslint-disable-line brace-style
       // no property names given, default to object property order
       else {
-        output = rows.map(obj => Object.values(obj))
+        output = rows.map((obj: any) => Object.values(obj))
       }
       break
 
@@ -393,7 +393,7 @@ module.exports.coerceConstructorGeometry = (config, rows, constructorType) => {
 
 // @TODO For rotating horizontal data into a vertical table
 // assumes all rows are same length
-// module.exports.verticalizeMatrix = (config, inputArray) => {
+// export const verticalizeMatrix = (config, inputArray) => {
 //
 //   // grow to # arrays equal to number of columns in input array
 //   let outputArray = []
