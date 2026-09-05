@@ -12,7 +12,39 @@ A TypeScript-first terminal table renderer with a compatibility-oriented factory
 - Modern Node.js LTS baseline (Node 20+).
 - Minimal build toolchain: TypeScript, tsup, Vitest, ESLint.
 - CLI is implemented as a separate TypeScript adapter.
+- A standalone browser bundle is produced for direct use from a browser console or `<script>` tag.
 - Legacy `Table(header, rows, footer, options)` and `Table(rows, options)` construction remains supported.
+
+## Compatibility
+
+### Node.js
+
+**v6 requires Node.js 20 or newer.** This is a breaking change from the v5 line, which supported older Node.js releases. If your application must remain on an older Node version, stay on the v5 release line.
+
+The published package provides both ESM and CommonJS entry points for Node.js. The CLI requires Node.js 20+ as well.
+
+### Browser and browser console
+
+The table renderer remains usable in browsers. The core runtime does not depend on Node.js APIs; Node-only functionality is isolated to the CLI adapter. The build also produces a standalone browser bundle at `dist/browser/tty-table.js`, so it can be loaded directly with a `<script>` tag without a bundler:
+
+```html
+<script src="./dist/browser/tty-table.js"></script>
+<script>
+  const table = TtyTable.default([
+    { value: "name" },
+    { value: "score", align: "right" }
+  ], [
+    { name: "Ada", score: 100 },
+    { name: "Grace", score: 98 }
+  ])
+
+  console.log(table.render())
+</script>
+```
+
+For browser applications using a bundler, import the normal package entry; bundlers can use the `browser` package field to select the browser build.
+
+The browser bundle is an IIFE that exposes `TtyTable` globally and includes the runtime dependency needed for Unicode display-width calculations. It does not include the Node.js CLI or its Node-only dependencies.
 
 ## API
 
@@ -36,7 +68,7 @@ console.log(table.render())
 New code can use the explicit context form:
 
 ```ts
-const formatter = ((value) => String(value).toUpperCase()) as typeof Object
+const formatter = (value: unknown) => String(value).toUpperCase()
 ```
 
 The compatibility callback signature is still accepted. New integrations should prefer a formatter that accepts the documented context object and avoid relying on dynamic `this` mutation.
@@ -55,4 +87,4 @@ npm run build
 npm run lint
 ```
 
-The old Grunt/Babel/Browserify/Rollup pipeline has been removed. The package now builds ESM, CommonJS, and declaration output directly from TypeScript.
+The old Grunt/Babel/Browserify/Rollup pipeline has been removed. The package now builds ESM, CommonJS, declarations, and a standalone browser bundle directly from TypeScript.
