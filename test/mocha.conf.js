@@ -9,7 +9,6 @@ const chai = require("chai"),
   fs = require("fs"),
   path = require("path"),
   glob = require("glob"),
-  grunt = require("grunt"),
   exec = require("child_process").exec,
   pkg = require("../package.json"),
   savedTestDir = path.join(__dirname, "/saved_test_outputs")
@@ -31,7 +30,7 @@ exampleScripts.forEach(function(element) {
       exec(`COLUMNS=${pkg.defaultTestColumns} node ${element} --color=always`,
         function (error, stdout /* , stderr */) {
           if (error !== null) {
-            grunt.log.error(`Exec error: ${error}`)
+            console.error(`Exec error: ${error}`)
           }
           var subname = fileName.replace(/\..*/, ""),
             filepath = path.join(savedTestDir, `${subname}-output.txt`),
