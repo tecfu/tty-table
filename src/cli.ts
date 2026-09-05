@@ -38,18 +38,21 @@ const main = async (): Promise<void> => {
   if (argv.format === "json") {
     try {
       const parsed: unknown = JSON.parse(stdin)
-      if (!Array.isArray(parsed)) fail("JSON parse error", "Please provide a JSON array or use --format csv.")
-      rows = parsed
+      if (!Array.isArray(parsed)) {
+        fail("JSON parse error", "Please provide a JSON array or use --format csv.")
+      }
+      rows = parsed as unknown[]
     } catch {
       fail("JSON parse error", "Please provide valid JSON or use --format csv.")
     }
   } else {
     try {
-      rows = parse(stdin, {
+      const csvParse = parse as unknown as (input: string, options: Record<string, unknown>) => unknown[]
+      rows = csvParse(stdin, {
         delimiter: argv["csv-delimiter"],
         escape: argv["csv-escape"],
         record_delimiter: argv["csv-rowDelimiter"]
-      }) as unknown as unknown[]
+      })
     } catch {
       fail("CSV parse error", "Please provide valid comma-separated values or use --format json.")
     }
