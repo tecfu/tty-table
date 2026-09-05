@@ -7,3 +7,6 @@ tags
 temp
 .idea
 scratch-files
+
+# build output
+dist

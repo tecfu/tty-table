@@ -53,7 +53,14 @@ const Factory = function (paramsArr) {
 
     // adapter called: i.e. `require('tty-table')('automattic-cli')`
     case (paramsArr.length === 1 && typeof paramsArr[0] === "string"):
-      return require(`../adapters/${paramsArr[0]}`)
+      // esbuild cannot bundle expression requires, so map the known adapters statically;
+      // fall back to a native require for any others at runtime
+      const adapters = {
+        "automattic-cli-table": () => require("../adapters/automattic-cli-table.js"),
+        "default-adapter": () => require("../adapters/default-adapter.js"),
+        "terminal-adapter": () => require("../adapters/terminal-adapter.js")
+      }
+      return (adapters[paramsArr[0]] || (() => require(`../adapters/${paramsArr[0]}`)))()
 
     /* istanbul ignore next */
     default:
