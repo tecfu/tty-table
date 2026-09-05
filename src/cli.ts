@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from "node:fs"
 import path from "node:path"
-import { parse } from "csv"
+import { parse, parser } from "csv"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 import Table from "./index"
@@ -49,7 +49,7 @@ const main = async (): Promise<void> => {
   } else {
     try {
       rows = await new Promise<unknown[]>((resolve, reject) => {
-        const csvOptions: Parameters<typeof parse>[1] = {
+        const csvOptions: parser.Options = {
           delimiter: argv["csv-delimiter"],
           record_delimiter: argv["csv-rowDelimiter"]
         }
