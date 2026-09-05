@@ -18,5 +18,5 @@
     "types": ["node", "vitest/globals"],
     "outDir": "dist"
   },
-  "include": ["src/**/*.ts", "test/**/*.ts", "eslint.config.js", "tsup.config.ts"]
+  "include": ["src/**/*.ts", "test/**/*.ts", "vitest.config.ts", "eslint.config.js", "tsup.config.ts"]
 }
