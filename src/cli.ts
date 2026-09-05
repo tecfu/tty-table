@@ -49,11 +49,14 @@ const main = async (): Promise<void> => {
   } else {
     try {
       rows = await new Promise<unknown[]>((resolve, reject) => {
-        parse(stdin, {
+        const csvOptions: Parameters<typeof parse>[1] = {
           delimiter: argv["csv-delimiter"],
-          escape: argv["csv-escape"],
           record_delimiter: argv["csv-rowDelimiter"]
-        }, (error, records) => {
+        }
+        const escape = argv["csv-escape"]
+        if (escape !== undefined) csvOptions.escape = escape
+
+        parse(stdin, csvOptions, (error, records) => {
           if (error) reject(error)
           else resolve(records as unknown[])
         })
