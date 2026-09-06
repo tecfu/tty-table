@@ -55,7 +55,6 @@ export const stringifyData = (config: any, inputData: any[]) => {
 
     for (let rowIndex = 0; rowIndex < section.length; rowIndex++) {
       const row = section[rowIndex]
-
       row.forEach((line: string[]) => {
         output.push(marginLeft + borderStyle[1].v + line.join(borderStyle[1].v) + borderStyle[1].v + "\n")
       })
@@ -76,7 +75,6 @@ export const stringifyData = (config: any, inputData: any[]) => {
   }
 
   output.push(borders[2])
-
   const finalOutput = "\n".repeat(config.marginTop) + output.join("")
   config.height = finalOutput.split(/\r\n|\r|\n/).length
   return finalOutput
@@ -104,12 +102,10 @@ export const buildRow = (config: any, row: any[], rowType: string, rowIndex: num
 
   row.forEach(function (cell: string[], a: number) {
     const whitespace = " ".repeat(Math.max(config.table.columnWidths[a] - 1, 0))
-
     if (rowType === "body") {
       for (let i = 0; i < config.paddingTop; i++) cell.unshift(whitespace)
       for (let i = 0; i < config.paddingBottom; i++) cell.push(whitespace)
     }
-
     for (let i = 0; i < minRowHeight; i++) linedRow[i].push((typeof cell[i] !== "undefined") ? cell[i] : whitespace)
   })
 
@@ -135,10 +131,10 @@ export const buildCell = (config: any, elem: any, columnIndex: number, rowType: 
         if (!isColorEnabled()) cellValue = stripAnsi(cellValue)
         cellOptions.isNull = true
         break
-      case (typeof elem === "object" && elem !== null && typeof elem.value !== "undefined'):
+      case (typeof elem === "object" && elem !== null && typeof elem.value !== "undefined"):
         cellValue = elem.value
         break
-      case (typeof elem === "function'):
+      case (typeof elem === "function"):
         cellValue = (elem as Function).bind({
           configure: function (object: any) { return Object.assign(cellOptions, object) },
           style: style,
