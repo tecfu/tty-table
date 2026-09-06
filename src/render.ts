@@ -41,7 +41,7 @@ export const stringifyData = (config: any, inputData: any[]) => {
   for (let a = 0; a < 3; a++) {
     borders[a] = borderStyle[a].l
     config.table.columnWidths.forEach((columnWidth: number, index: number, arr: number[]) => {
-      borders[a] += " ".repeat(Math.max(columnWidth, 2) - 1)
+      borders[a] += borderStyle[a].h.repeat(Math.max(columnWidth, 2) - 1)
       borders[a] += ((index + 1 < arr.length) ? borderStyle[a].j : "")
     })
     borders[a] += borderStyle[a].r
@@ -52,7 +52,6 @@ export const stringifyData = (config: any, inputData: any[]) => {
 
   for (const [sectionIndex, sectionName] of Object.keys(sections).entries()) {
     const section = sections[sectionName]
-
     for (let rowIndex = 0; rowIndex < section.length; rowIndex++) {
       const row = section[rowIndex]
       row.forEach((line: string[]) => {
