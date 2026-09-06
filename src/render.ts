@@ -6,7 +6,7 @@ export const stringifyData = (config: any, inputData: any[]) => {
   const sections: any = { header: [], body: [], footer: [] }
   const marginLeft = " ".repeat(config.marginLeft)
   const borderStyle = config.borderCharacters[config.borderStyle]
-  const borders: string[] = []
+  const borders: any[] = []
 
   const constructorType = getConstructorGeometry(inputData[0] || [], config)
   const rows = coerceConstructorGeometry(config, inputData, constructorType)
