@@ -14,9 +14,9 @@ export const stringifyData = (config: any, inputData: any[]) => {
     body: [],
     footer: []
   }
-  const marginLeft = Array(config.marginLeft + 1).join(" ")
+  const marginLeft = " ".repeat(config.marginLeft)
   const borderStyle = config.borderCharacters[config.borderStyle]
-  const borders: any[] = []
+  const borders: string[] = []
 
   // support backwards compatibility cli-table's multiple constructor geometries
   // @TODO deprecate and support only a single format
@@ -79,7 +79,7 @@ export const stringifyData = (config: any, inputData: any[]) => {
     // add joined borders for each column
     config.table.columnWidths.forEach((columnWidth: number, index: number, arr: number[]) => {
       // Math.max because otherwise columns 1 wide wont have horizontal border
-      borders[a] += Array(Math.max(columnWidth, 2)).join(borderStyle[a].h)
+      borders[a] += " ".repeat(Math.max(columnWidth - 1, 0))
       borders[a] += ((index + 1 < arr.length) ? borderStyle[a].j : "")
     })
 
@@ -90,21 +90,26 @@ export const stringifyData = (config: any, inputData: any[]) => {
     borders[a] = (a < 2) ? `${marginLeft + borders[a]}\n` : marginLeft + borders[a]
   }
 
-  // top horizontal border
-  let output = borders[0]
+  // Build output as chunks instead of repeatedly concatenating the complete
+  // output string. Repeated string concatenation makes large tables needlessly
+  // expensive because each append may copy the accumulated output.
+  const output: string[] = [borders[0]]
 
   // for each section (header,body,footer)
-  Object.keys(sections).forEach((p: string, i: number) => {
-    // for each row in the section
-    while (sections[p].length) {
-      const row = sections[p].shift()
+  for (const [sectionIndex, sectionName] of Object.keys(sections).entries()) {
+    const section = sections[sectionName]
+
+    // for each row in the section. Use an index instead of shift(), which
+    // requires moving the remaining array elements on every iteration.
+    for (let rowIndex = 0; rowIndex < section.length; rowIndex++) {
+      const row = section[rowIndex]
 
       // if(row.length === 0) {break}
 
       row.forEach((line: string[]) => {
         // vertical row borders
-        output = `${output
-          + marginLeft
+        output.push(
+          marginLeft
           // left vertical border
           + borderStyle[1].v
           // join cells on vertical border
@@ -112,24 +117,25 @@ export const stringifyData = (config: any, inputData: any[]) => {
           // right vertical border
           + borderStyle[1].v
           // end of line
-        }\n`
+          + "\n"
+        )
       })
 
       // bottom horizontal row border
       switch (true) {
       // skip if end of body and no footer
-        case (sections[p].length === 0
-             && i === 1
+        case (rowIndex === section.length - 1
+             && sectionIndex === 1
              && sections.footer.length === 0):
           break
 
         // skip if end of footer
-        case (sections[p].length === 0
-             && i === 2):
+        case (rowIndex === section.length - 1
+             && sectionIndex === 2):
           break
 
         // skip if compact
-        case (config.compact && p === "body" && !row.empty):
+        case (config.compact && sectionName === "body" && !row.empty):
           break
 
         // skip if border style is "none"
@@ -137,15 +143,15 @@ export const stringifyData = (config: any, inputData: any[]) => {
           break
 
         default:
-          output += borders[1]
+          output.push(borders[1])
       }
     }
-  })
+  }
 
   // bottom horizontal border
-  output += borders[2]
+  output.push(borders[2])
 
-  const finalOutput = Array(config.marginTop + 1).join("\n") + output
+  const finalOutput = "\n".repeat(config.marginTop) + output.join("")
 
   // record the height of the output
   config.height = finalOutput.split(/\r\n|\r|\n/).length
@@ -187,7 +193,7 @@ export const buildRow = (config: any, row: any[], rowType: string, rowIndex: num
     .map(Function.call, () => [])
 
   row.forEach(function (cell: string[], a: number) {
-    const whitespace = Array(config.table.columnWidths[a]).join(" ")
+    const whitespace = " ".repeat(Math.max(config.table.columnWidths[a] - 1, 0))
 
     if (rowType === "body") {
       // add whitespace for top padding
@@ -406,6 +412,4 @@ export const coerceConstructorGeometry = (config: any, rows: any[], constructorT
 //   inputArray.forEach(row => {
 //     row.forEach((element, index) => outputArray[index].push(element))
 //   })
-//
-//   return outputArray
 // }
