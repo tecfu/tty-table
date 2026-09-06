@@ -6,6 +6,18 @@ const addPadding = (config: any, width: number) => {
   return width + config.paddingLeft + config.paddingRight
 }
 
+const getDisplayWidth = (value: any) => {
+  const lines = stripAnsi(value.toString()).split(/[\n\r]/)
+  let widest = 0
+
+  for (const line of lines) {
+    const width = wcwidth(line)
+    if (width > widest) widest = width
+  }
+
+  return widest
+}
+
 /**
  * Returns the widest cell give a collection of rows
  *
@@ -15,35 +27,23 @@ const addPadding = (config: any, width: number) => {
  * @returns string
  */
 const getMaxLength = (columnOptions: any, rows: any[], columnIndex: number) => {
-  let iterable: any[]
+  let widest = 0
 
-  // add header value, alias to calculate width when applicable
+  // Include the header value without allocating a copied rows array or a
+  // synthetic header row for every column.
   if (columnOptions && (columnOptions.value || columnOptions.alias)) {
-    // string we use from header
-    let val: any = columnOptions.alias || columnOptions.value
-    val = val.toString()
-    // create a row with value in the current columnIndex
-    const headerRow = Array(rows[0].length)
-    headerRow[columnIndex] = val
-    // add header row to new array we will check for max value width
-    iterable = rows.slice()
-    iterable.push(headerRow)
-  } else {
-    // no header value, just use rows to derive max width
-    iterable = rows
+    const value = columnOptions.alias || columnOptions.value
+    widest = getDisplayWidth(value)
   }
 
-  const widest = iterable.reduce((prev: number, row: any) => {
+  for (const row of rows) {
     if (row[columnIndex]) {
       // check cell value is object or scalar
       const value = (row[columnIndex].value) ? row[columnIndex].value : row[columnIndex]
-      const width = Math.max(
-        ...stripAnsi(value.toString()).split(/[\n\r]/).map((s) => wcwidth(s))
-      )
-      return (width > prev) ? width : prev
+      const width = getDisplayWidth(value)
+      if (width > widest) widest = width
     }
-    return prev
-  }, 0)
+  }
 
   return widest
 }
@@ -167,21 +167,21 @@ export const wrapCellText = (
           emptySpace--
           const padBoth = Math.floor(emptySpace / 2)
           const padRemainder = emptySpace % 2
-          line = Array(padBoth + 1).join(" ")
+          line = " ".repeat(padBoth)
             + line
-            + Array(padBoth + 1 + padRemainder).join(" ")
+            + " ".repeat(padBoth + padRemainder)
           break
 
         case (cellOptions[alignTgt] === "right"):
-          line = Array(emptySpace - cellOptions.paddingRight).join(" ")
+          line = " ".repeat(emptySpace - cellOptions.paddingRight - 1)
             + line
-            + Array(cellOptions.paddingRight + 1).join(" ")
+            + " ".repeat(cellOptions.paddingRight)
           break
 
         default:
-          line = Array(cellOptions.paddingLeft + 1).join(" ")
+          line = " ".repeat(cellOptions.paddingLeft)
             + line
-            + Array(emptySpace - cellOptions.paddingLeft).join(" ")
+            + " ".repeat(emptySpace - cellOptions.paddingLeft - 1)
       }
     }
 
