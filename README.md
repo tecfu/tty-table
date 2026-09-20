@@ -33,6 +33,61 @@ $ node examples/data/fake-stream.js | tty-table --format json --header examples/
 $ tty-table -h
 ```
 
+### MCP server
+
+Expose tty-table to MCP clients (Claude, IDE agents, Cursor, etc.) over stdio.
+
+#### Client configuration
+
+```json
+{
+  "mcpServers": {
+    "tty-table": {
+      "command": "npx",
+      "args": ["-y", "--package=tty-table", "tty-table-mcp"]
+    }
+  }
+}
+```
+
+#### Tools
+
+| Tool | Description |
+|------|-------------|
+| `render_table` | Render data as an ASCII/Unicode terminal table. Accepts `header`, `rows`, and any tty-table `options`; returns the rendered table as text. |
+
+**Arguments for `render_table`:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `header` | `(string \| {value, align?, width?})[]` | no | Column definitions |
+| `rows` | `(unknown[] \| Record<string, unknown>)[]` | yes | Row data (arrays of cells, or objects keyed by column name) |
+| `options` | `object` | no | Any tty-table option (e.g. `width`, `borderStyle`, `align`, `compact`) |
+
+Example tool call:
+
+```json
+{
+  "header": [{ "value": "name" }, { "value": "score", "align": "right" }],
+  "rows": [["Ada", 100], ["Grace", 98]],
+  "options": { "width": 40 }
+}
+```
+
+Rendered result:
+
+```text
+  ┌───────┬───────┐
+  │ name  │ score │
+  ├───────┼───────┤
+  │  Ada  │   100 │
+  ├───────┼───────┤
+  │ Grace │    98 │
+  └───────┴───────┘
+```
+
+> Additional tools may be added in future releases under the same MCP server.
+
 ### Browser & Browser Console 
 
 - View in Chrome or Chromium at [http://localhost:8070/examples/browser-example.html](http://localhost:8070/examples/browser-example.html) using a dockerized apache instance:

@@ -4,6 +4,7 @@ export default defineConfig({
   entry: {
     index: "src/index.ts",
     cli: "src/cli.ts",
+    mcp: "src/mcp.ts",
     browser: "src/browser.ts"
   },
   format: ["esm", "cjs"],
