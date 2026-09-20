@@ -1,4 +1,6 @@
 import { describe, it, expect } from "vitest"
+import { Client } from "@modelcontextprotocol/sdk/client/index.js"
+import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js"
 import { handleRenderTable, createMcpServer, renderTableInputSchema } from "../src/mcp"
 
 describe("MCP render_table tool", () => {
@@ -56,12 +58,24 @@ describe("MCP render_table tool", () => {
     expect(first!.text.length).toBeGreaterThan(0)
   })
 
-  it("createMcpServer registers the render_table tool", () => {
+  it("serves render_table over a live connection", async () => {
     const server = createMcpServer()
-    // The high-level McpServer keeps registered tools internally;
-    // presence of the factory is enough for a lightweight smoke check.
-    expect(server).toBeDefined()
-    expect(typeof server.registerTool).toBe("function")
+    const client = new Client({ name: "test-client", version: "0.0.0" })
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair()
+    await Promise.all([server.connect(serverTransport), client.connect(clientTransport)])
+    try {
+      const { tools } = await client.listTools()
+      expect(tools.map(t => t.name)).toContain("render_table")
+
+      // schema-to-handler wiring, end to end
+      const result = await client.callTool({ name: "render_table", arguments: { rows: [["in-memory"]] } })
+      expect(result.isError).toBeUndefined()
+      const content = result.content as Array<{ type: string; text: string }>
+      expect(content[0]!.text).toContain("in-memory")
+    } finally {
+      await client.close()
+      await server.close()
+    }
   })
 
   it("exposes a Zod-compatible input schema", () => {
