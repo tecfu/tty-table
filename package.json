@@ -17,7 +17,8 @@
     "node": ">=20"
   },
   "bin": {
-    "tty-table": "adapters/terminal-adapter.js"
+    "tty-table": "adapters/terminal-adapter.js",
+    "tty-table-mcp": "dist/mcp.js"
   },
   "files": [
     "dist/",
@@ -55,13 +56,15 @@
   },
   "homepage": "https://github.com/tecfu/tty-table",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "chalk": "^4.1.2",
     "csv": "^6.3.11",
     "kleur": "^4.1.5",
     "smartwrap": "^2.0.2",
     "strip-ansi": "^6.0.1",
     "wcwidth": "^1.0.1",
-    "yargs": "^17.7.2"
+    "yargs": "^17.7.2",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.0",

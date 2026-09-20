@@ -33,6 +33,46 @@ $ node examples/data/fake-stream.js | tty-table --format json --header examples/
 $ tty-table -h
 ```
 
+### MCP server
+
+Expose tty-table to MCP clients (Claude, IDE agents, etc.) over stdio:
+
+```json
+{
+  "mcpServers": {
+    "tty-table": {
+      "command": "npx",
+      "args": ["-y", "tty-table-mcp"]
+    }
+  }
+}
+```
+
+The server exposes a single tool, `render_table`, which accepts `header` (strings or `{value, align, width}` objects), `rows` (arrays of cells, or objects keyed by column name) and any tty-table `options` (e.g. `{"width": 80}`), and returns the rendered table as text.
+
+Tool call arguments:
+
+```json
+{
+  "header": [{ "value": "name" }, { "value": "score", "align": "right" }],
+  "rows": [["Ada", 100], ["Grace", 98]],
+  "options": { "width": 40 }
+}
+```
+
+Rendered result:
+
+```text
+
+  ┌───────┬───────┐
+  │ name  │ score │
+  ├───────┼───────┤
+  │  Ada  │   100 │
+  ├───────┼───────┤
+  │ Grace │    98 │
+  └───────┴───────┘
+```
+
 ### Browser & Browser Console 
 
 - View in Chrome or Chromium at [http://localhost:8070/examples/browser-example.html](http://localhost:8070/examples/browser-example.html) using a dockerized apache instance:
