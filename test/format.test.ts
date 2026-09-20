@@ -13,6 +13,10 @@ describe("smartwrap v4 integration", () => {
   it("does not truncate text that already fits", () => {
     expect(truncate("abcdef", { truncate: "…" }, 10)).toBe("abcdef")
   })
+
+  it("budgets multi-cell truncate strings by display width", () => {
+    expect(displayWidth(truncate("abcdefghijk", { truncate: "⚡" }, 10))).toBe(10)
+  })
 })
 
 describe("breakword width vs legacy wcwidth disagreements", () => {

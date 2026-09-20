@@ -189,9 +189,9 @@ export const truncate = (str: string, cellOptions: any, maxWidth: number) => {
   if (maxWidth < stringWidth) {
     // @TODO give user option to decide if they want to break words on wrapping
     str = smartwrap(str, {
-      width: maxWidth - cellOptions.truncate.length,
+      width: maxWidth - displayWidth(cellOptions.truncate),
       breakword: true
-    }).split("\n")[0] ?? str
+    }).split("\n")[0]!
     str = str + cellOptions.truncate
   }
 
