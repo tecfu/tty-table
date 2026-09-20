@@ -112,7 +112,7 @@ Rendered result:
 - ANSI-safe display-width calculation and Unicode-aware wrapping/truncation.
 - Typed column/table options and formatter context.
 - ESM and CommonJS package exports.
-- Modern Node.js LTS baseline (Node 20+).
+- Modern Node.js LTS baseline (Node 22+; raised from 20+ when adopting smartwrap v4).
 - A standalone browser bundle is produced for direct use from a browser console or `<script>` tag.
 - Legacy `Table(header, rows, footer, options)` and `Table(rows, options)` construction remains supported.
 
@@ -120,9 +120,9 @@ Rendered result:
 
 ### Node.js
 
-**v6 requires Node.js 20 or newer.** This is a breaking change from the v5 line, which supported older Node.js releases. If your application must remain on an older Node version, stay on the v5 release line.
+**Current releases require Node.js 22 or newer.** This is a breaking change from the Node 20 baseline used by early v6 releases (and from the v5 line, which supported older Node.js releases). The floor was raised to match `smartwrap@4` / `breakword@2.1.0`. If your application must remain on Node 20, stay on a prior tty-table release until you can upgrade.
 
-The published package provides both ESM and CommonJS entry points for Node.js. The CLI requires Node.js 20+ as well.
+The published package provides both ESM and CommonJS entry points for Node.js. The CLI requires Node.js 22+ as well.
 
 ## API
 
@@ -153,7 +153,9 @@ The compatibility callback signature is still accepted. New integrations should 
 
 ### Width semantics
 
-Widths are measured in terminal display columns, not JavaScript string length. ANSI escape sequences are ignored for measurement; wide Unicode characters are counted using `wcwidth`. Wrapping and truncation operate on the same measurement primitive.
+Widths are measured in terminal display columns, not JavaScript string length. ANSI escape sequences are ignored for measurement; Unicode code points are counted using [`breakword.width()`](https://github.com/tecfu/breakword) (Unicode 18.0.0 East Asian Width + UAX #51 Emoji_Presentation). Wrapping and truncation operate on the same display-width semantics.
+
+Compared with older releases that used `wcwidth`, some symbols that were previously treated as 1 cell are now 2 cells (for example `⚡` U+26A1). Tables containing those characters may reflow slightly; measurement is now aligned with the same library used for wrapping.
 
 ## Development
 

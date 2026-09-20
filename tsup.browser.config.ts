@@ -7,7 +7,7 @@ export default defineConfig({
   globalName: "TtyTable",
   target: "es2020",
   bundle: true,
-  noExternal: ["wcwidth", "kleur", "strip-ansi", "smartwrap"],
+  noExternal: ["breakword", "kleur", "strip-ansi", "smartwrap"],
   esbuildPlugins: [
     {
       // stub modules the browser never calls: yargs (smartwrap's CLI dep),

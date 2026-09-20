@@ -1,21 +1,12 @@
-import stripAnsi from "strip-ansi"
 import smartwrap from "smartwrap"
-import wcwidth from "wcwidth"
+import { displayWidth } from "./ansi"
 
 const addPadding = (config: any, width: number) => {
   return width + config.paddingLeft + config.paddingRight
 }
 
 const getDisplayWidth = (value: any) => {
-  const lines = stripAnsi(value.toString()).split(/[\n\r]/)
-  let widest = 0
-
-  for (const line of lines) {
-    const width = wcwidth(line)
-    if (width > widest) widest = width
-  }
-
-  return widest
+  return displayWidth(value.toString())
 }
 
 /**
@@ -87,7 +78,7 @@ const getAvailableWidth = (config: any) => {
 
 export const getStringLength = (str: string) => {
   // stripAnsi(string.replace(/[^\x00-\xff]/g,'XX')).length
-  return wcwidth(stripAnsi(str))
+  return displayWidth(str)
 }
 
 export const wrapCellText = (
@@ -193,14 +184,14 @@ export const wrapCellText = (
 }
 
 export const truncate = (str: string, cellOptions: any, maxWidth: number) => {
-  const stringWidth = wcwidth(str)
+  const stringWidth = displayWidth(str)
 
   if (maxWidth < stringWidth) {
     // @TODO give user option to decide if they want to break words on wrapping
-    str = (smartwrap as any)(str, {
+    str = smartwrap(str, {
       width: maxWidth - cellOptions.truncate.length,
       breakword: true
-    }).split("\n")[0]
+    }).split("\n")[0] ?? str
     str = str + cellOptions.truncate
   }
 
@@ -208,7 +199,7 @@ export const truncate = (str: string, cellOptions: any, maxWidth: number) => {
 }
 
 export const wrap = (str: string, cellOptions: any, innerWidth: number) => {
-  const outstring = (smartwrap as any)(str, {
+  const outstring = smartwrap(str, {
     errorChar: cellOptions.defaultErrorValue,
     minWidth: 1,
     trim: true,

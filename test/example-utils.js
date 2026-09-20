@@ -1,6 +1,6 @@
 const chalk = require("chalk"),
   stripAnsi = require("strip-ansi"),
-  wcwidth = require("wcwidth"),
+  breakword = require("breakword"),
   util = require("util")
 
 const messageLog = {
@@ -119,7 +119,7 @@ const library = {
    * @return {number}
    */
   getStringWidth: function (str) {
-    return wcwidth(stripAnsi(str))
+    return [...stripAnsi(str)].reduce((width, char) => width + breakword.width(char), 0)
   },
 
   /**
