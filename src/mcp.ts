@@ -29,9 +29,9 @@ export const renderTableInputSchema = {
 }
 
 export type RenderTableArgs = {
-  header?: z.infer<typeof headerEntry>[]
+  header?: Array<z.infer<typeof headerEntry>> | undefined
   rows: Array<unknown[] | Record<string, unknown>>
-  options?: Record<string, unknown>
+  options?: Record<string, unknown> | undefined
 }
 
 /**
@@ -44,7 +44,7 @@ export function handleRenderTable({ header, rows, options }: RenderTableArgs) {
     const opts = (options ?? {}) as Options
     // JSON input never carries explicit undefined, so the parsed shape
     // satisfies Header despite exactOptionalPropertyTypes
-    const head = header as unknown as (string | Header)[]
+    const head = header as unknown as (string | Header)[] | undefined
     const table = head?.length ? Table(head, rows, opts) : Table(rows, opts)
     return { content: [{ type: "text" as const, text: table.render() }] }
   } catch (error) {
@@ -71,7 +71,7 @@ export function createMcpServer() {
         "Returns the rendered table as text.",
       inputSchema: renderTableInputSchema
     },
-    handleRenderTable
+    (args) => handleRenderTable(args)
   )
 
   return server

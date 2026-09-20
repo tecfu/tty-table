@@ -14,8 +14,10 @@ describe("MCP render_table tool", () => {
 
     expect(result.isError).toBeUndefined()
     expect(result.content).toHaveLength(1)
-    expect(result.content[0].type).toBe("text")
-    const text = result.content[0].text
+    const first = result.content[0]
+    expect(first).toBeDefined()
+    expect(first!.type).toBe("text")
+    const text = first!.text
     expect(text).toContain("name")
     expect(text).toContain("score")
     expect(text).toContain("Ada")
@@ -32,7 +34,9 @@ describe("MCP render_table tool", () => {
     })
 
     expect(result.isError).toBeUndefined()
-    const text = result.content[0].text
+    const first = result.content[0]
+    expect(first).toBeDefined()
+    const text = first!.text
     expect(text).toContain("Ada")
     expect(text).toContain("Grace")
   })
@@ -46,8 +50,10 @@ describe("MCP render_table tool", () => {
     })
 
     expect(result.isError).toBe(true)
-    expect(result.content[0].type).toBe("text")
-    expect(result.content[0].text.length).toBeGreaterThan(0)
+    const first = result.content[0]
+    expect(first).toBeDefined()
+    expect(first!.type).toBe("text")
+    expect(first!.text.length).toBeGreaterThan(0)
   })
 
   it("createMcpServer registers the render_table tool", () => {
