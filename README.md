@@ -35,7 +35,9 @@ $ tty-table -h
 
 ### MCP server
 
-Expose tty-table to MCP clients (Claude, IDE agents, etc.) over stdio:
+Expose tty-table to MCP clients (Claude, IDE agents, Cursor, etc.) over stdio.
+
+#### Client configuration
 
 ```json
 {
@@ -48,9 +50,21 @@ Expose tty-table to MCP clients (Claude, IDE agents, etc.) over stdio:
 }
 ```
 
-The server exposes a single tool, `render_table`, which accepts `header` (strings or `{value, align, width}` objects), `rows` (arrays of cells, or objects keyed by column name) and any tty-table `options` (e.g. `{"width": 80}`), and returns the rendered table as text.
+#### Tools
 
-Tool call arguments:
+| Tool | Description |
+|------|-------------|
+| `render_table` | Render data as an ASCII/Unicode terminal table. Accepts `header`, `rows`, and any tty-table `options`; returns the rendered table as text. |
+
+**Arguments for `render_table`:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `header` | `(string \| {value, align?, width?})[]` | no | Column definitions |
+| `rows` | `(unknown[] \| Record<string, unknown>)[]` | yes | Row data (arrays of cells, or objects keyed by column name) |
+| `options` | `object` | no | Any tty-table option (e.g. `width`, `borderStyle`, `align`, `compact`) |
+
+Example tool call:
 
 ```json
 {
@@ -63,7 +77,6 @@ Tool call arguments:
 Rendered result:
 
 ```text
-
   ┌───────┬───────┐
   │ name  │ score │
   ├───────┼───────┤
@@ -72,6 +85,8 @@ Rendered result:
   │ Grace │    98 │
   └───────┴───────┘
 ```
+
+> Additional tools may be added in future releases under the same MCP server.
 
 ### Browser & Browser Console 
 
