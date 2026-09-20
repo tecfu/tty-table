@@ -1,6 +1,6 @@
 {
   "name": "tty-table",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "Typed terminal table renderer for Node.js and browsers",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
