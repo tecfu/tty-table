@@ -42,7 +42,7 @@ Expose tty-table to MCP clients (Claude, IDE agents, etc.) over stdio:
   "mcpServers": {
     "tty-table": {
       "command": "npx",
-      "args": ["-y", "tty-table-mcp"]
+      "args": ["-y", "tty-table", "tty-table-mcp"]
     }
   }
 }

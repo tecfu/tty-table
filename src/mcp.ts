@@ -4,6 +4,10 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod"
 import Table from "./index"
 import type { Header, Options } from "./index"
+import pkg from "../package.json"
+
+// pkg is bundled at build time by tsup, keeping serverInfo.version in sync
+// with the package version without a runtime filesystem read
 
 const headerEntry = z.union([
   z.string(),
@@ -14,7 +18,7 @@ const headerEntry = z.union([
   })
 ])
 
-const server = new McpServer({ name: "tty-table", version: "1.0.0" })
+const server = new McpServer({ name: "tty-table", version: pkg.version })
 
 server.registerTool(
   "render_table",
