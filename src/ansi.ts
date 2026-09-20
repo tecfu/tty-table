@@ -1,3 +1,5 @@
+import breakword from "breakword"
+
 const ANSI = /\u001B\[[0-?]*[ -\/]*[@-~]/g
 
 const codes: Record<string, string> = {
@@ -7,8 +9,11 @@ const codes: Record<string, string> = {
 }
 
 export const stripAnsi = (value: string): string => value.replace(ANSI, "")
-export const displayWidth = (value: string, wcwidth: (s: string) => number): number =>
-  Math.max(0, ...stripAnsi(value).split(/\r?\n/).map(wcwidth))
+const codePointWidth = (value: string): number =>
+  [...value].reduce((total, char) => total + breakword.width(char), 0)
+
+export const displayWidth = (value: string): number =>
+  Math.max(0, ...stripAnsi(value).split(/\r?\n/).map(codePointWidth))
 
 export const style = (value: string, ...styles: string[]): string => {
   const active = styles.map((s) => codes[s]).filter(Boolean)
@@ -18,25 +23,3 @@ export const style = (value: string, ...styles: string[]): string => {
 export const styleEachChar = (value: string, ...styles: string[]): string =>
   [...stripAnsi(value)].map((char) => style(char, ...styles)).join("")
 
-export const ansiSafeSlice = (value: string, width: number, wcwidth: (s: string) => number): string => {
-  if (width <= 0) return ""
-  let out = ""
-  let visible = 0
-  let i = 0
-  while (i < value.length && visible < width) {
-    ANSI.lastIndex = i
-    const match = ANSI.exec(value)
-    if (match?.index === i) {
-      out += match[0]
-      i += match[0].length
-      continue
-    }
-    const cp = String.fromCodePoint(value.codePointAt(i)!)
-    const w = wcwidth(cp)
-    if (visible + w > width) break
-    out += cp
-    visible += w
-    i += cp.length
-  }
-  return out
-}

@@ -27,7 +27,7 @@ export default defineConfig({
       }
     }
   ],
-  noExternal: ["wcwidth"],
+  noExternal: ["breakword"],
   // restore legacy CJS interop: require("tty-table") must be the callable factory
   footer: {
     js: ";if (typeof module !== \"undefined\" && typeof module.exports?.default === \"function\") { module.exports = Object.assign(module.exports.default, module.exports) }"

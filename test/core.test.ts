@@ -1,6 +1,5 @@
 import Table from "../src"
 import { displayWidth, stripAnsi } from "../src/ansi"
-import wcwidth from "wcwidth"
 
 describe("typed table core", () => {
   it("renders the legacy array constructor", () => {
@@ -18,13 +17,18 @@ describe("typed table core", () => {
   it("measures ANSI and wide Unicode by display width", () => {
     const value = "\u001b[31m漢字\u001b[0m"
     expect(stripAnsi(value)).toBe("漢字")
-    expect(displayWidth(value, wcwidth)).toBe(4)
+    expect(displayWidth(value)).toBe(4)
+  })
+
+  it("measures emoji and combining marks using breakword width semantics", () => {
+    expect(displayWidth("😀a")).toBe(3)
+    expect(displayWidth("e\u0301")).toBe(1)
   })
 
   it("keeps a fixed table width when requested", () => {
     const output = Table([{ value: "name", width: 12 }], [["abcdefghijklm"]], { width: 16, truncate: "…" }).render()
     const lines = output.split("\n").filter(Boolean)
-    expect(lines.every((line) => displayWidth(line, wcwidth) <= 18)).toBe(true)
+    expect(lines.every((line) => displayWidth(line) <= 18)).toBe(true)
   })
 
   it("supports formatter context without requiring this binding", () => {
