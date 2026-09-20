@@ -1,6 +1,6 @@
 # Release Notes
 
-## 7.0.0 (Unreleased)
+## 7.0.0 (2026-09-20)
 
 ### Breaking Changes
 
