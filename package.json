@@ -1,6 +1,6 @@
 {
   "name": "tty-table",
-  "version": "6.0.1",
+  "version": "6.1.0",
   "description": "Typed terminal table renderer for Node.js and browsers",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -79,7 +79,7 @@
     "tsup": "^8.5.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.35.0",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.11"
   },
   "defaultTestColumns": 90
 }
