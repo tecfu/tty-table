@@ -12,6 +12,12 @@
 - `smartwrap` upgraded from `^2.0.2` to `^4.0.0` (ships its own TypeScript types; local shim removed).
 - Direct dependency on `breakword`; `wcwidth` removed.
 
+## 7.0.1 (2026-09-20)
+
+### Other
+
+- Consolidate terminal colors on `chalk`; drop direct dependency on `kleur` (browser colorize now uses a fixed-level chalk instance).
+
 ## 5.0.0 (2025-11-01)
 
 ### Breaking Changes
