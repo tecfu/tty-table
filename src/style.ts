@@ -1,47 +1,42 @@
 import chalk from "chalk"
-import kleur from "kleur"
 import stripAnsi from "strip-ansi"
 
-// use kleur if we are in the browser
-const colorLib: any = (process && process.stdout) ? chalk : kleur
+const colorLib = typeof process !== "undefined" && process.stdout
+  ? chalk
+  : new chalk.Instance({ level: 1 })
 
-export const style = (str: any, ...colors: string[]): string => {
-  const out = colors.reduce(function (input: any, color: string) {
-    return colorLib[color](input)
-  }, str)
-  return out
+const colorize = (value: string, color: string): string => {
+  const fn = (colorLib as unknown as Record<string, unknown>)[color]
+  return typeof fn === "function" ? (fn as (value: string) => string)(value) : value
 }
 
-export const styleEachChar = (str: any, ...colors: string[]): string => {
-  // strip existing ansi chars so we dont loop them
-  // @ TODO create a really clever workaround so that you can accrete styles
+export const style = (str: string, ...colors: string[]): string =>
+  colors.reduce(colorize, str)
+
+export const styleEachChar = (str: string, ...colors: string[]): string => {
   const chars = [...stripAnsi(str)]
 
-  // style each character
-  const out = chars.reduce((prev: string, current: string) => {
-    const coded = colors.reduce((input: string, color: string) => {
-      return colorLib[color](input)
-    }, current)
-    return prev + coded
+  return chars.reduce((result, char) => {
+    return result + colors.reduce(colorize, char)
   }, "")
-
-  return out
 }
 
-export const resetStyle = function (this: any, str: any) {
+// Formatter callbacks use configure() to set per-cell options. resetStyle therefore
+// needs the formatter's this binding to disable subsequent cell colorization.
+export const resetStyle = function (this: any, str: string): string {
   this.configure({ reset: true })
   return stripAnsi(str)
 }
 
-export const colorizeCell = (str: any, cellOptions: any, rowType: string) => {
-  let color: any = false // false will keep terminal default
+export const colorizeCell = (str: string, cellOptions: any, rowType: string): string => {
+  let color: string | false = false
 
   switch (true) {
-    case (rowType === "body"):
+    case rowType === "body":
       color = cellOptions.color || color
       break
 
-    case (rowType === "header"):
+    case rowType === "header":
       color = cellOptions.headerColor || color
       break
 
@@ -56,6 +51,4 @@ export const colorizeCell = (str: any, cellOptions: any, rowType: string) => {
   return str
 }
 
-export const isColorEnabled = () => {
-  return (process && process.stdout) ? colorLib.level > 0 : colorLib.enabled
-}
+export const isColorEnabled = (): boolean => colorLib.level > 0

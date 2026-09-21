@@ -1,6 +1,5 @@
 require("../test/example-utils.js").quickInit()
 const Table = require("../")
-const { green, red, italic } = require("kleur")
 
 const header = [
   {
@@ -14,9 +13,9 @@ const header = [
     align: "left",
     headerAlign: "left",
     footerAlign: "left",
-    formatter: (cellValue) => {
+    formatter: function (cellValue) {
       if (typeof cellValue !== "number") return cellValue
-      return cellValue > 60 ? green(cellValue) : red(cellValue)
+      return this.style(String(cellValue), cellValue > 60 ? "green" : "red")
     }
   }
 ]
@@ -29,9 +28,9 @@ const rows = [
 ]
 const footer = [
   "Total",
-  (cellValue, columnIndex, rowIndex, rowData) => {
+  function (cellValue, columnIndex, rowIndex, rowData) {
     const total = Math.round(rowData.map((i) => i[1]).reduce((p, c) => p + c) / 5)
-    return italic(total)
+    return this.style(String(total), "italic")
   }
 ]
 const renderedTable = Table(header, rows, footer).render()
