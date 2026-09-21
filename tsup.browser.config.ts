@@ -7,20 +7,30 @@ export default defineConfig({
   globalName: "TtyTable",
   target: "es2020",
   bundle: true,
-  noExternal: ["breakword", "kleur", "strip-ansi", "smartwrap"],
+  noExternal: ["breakword", "chalk", "strip-ansi", "smartwrap"],
   esbuildPlugins: [
     {
-      // stub modules the browser never calls: yargs (smartwrap's CLI dep),
-      // chalk (unused: style.ts falls back to kleur when process.stdout is
-      // absent), node builtins pulled in by deps, object-inspect (needs util),
+      // Stub modules the browser never calls: yargs (smartwrap's CLI dep),
+      // node builtins pulled in by deps, object-inspect (needs util),
       // and the terminal adapters — same trick as the legacy browserify
-      // build's --ignore flags
+      // build's --ignore flags. Chalk 4's supports-color module also calls
+      // tty.isatty() during initialization, so its browser stub needs that
+      // one small part of the Node tty API.
       name: "stub-browser-only-deps",
       setup(build) {
-        build.onResolve({ filter: /^(chalk|yargs|util|os|fs|path|tty|object-inspect)$/ }, () => ({ path: "stub", namespace: "stub" }))
-        build.onResolve({ filter: /adapters\// }, () => ({ path: "stub", namespace: "stub" }))
+        build.onResolve({ filter: /^(yargs|util|os|fs|path|tty|object-inspect)$/ }, (args) => ({
+          path: args.path,
+          namespace: "stub"
+        }))
+        build.onResolve({ filter: /adapters\// }, () => ({ path: "adapter", namespace: "stub" }))
         build.onLoad({ filter: /.*/, namespace: "stub" }, (args) => ({
-          contents: args.path === "stub" ? "module.exports = {}" : "module.exports = function () { return '' }",
+          contents: args.path === "tty"
+            ? "module.exports = { isatty: function () { return false } }"
+            : args.path === "os"
+              ? "module.exports = { release: function () { return '' } }"
+              : args.path === "adapter"
+                ? "module.exports = function () { return '' }"
+                : "module.exports = {}",
           loader: "js"
         }))
       }
@@ -32,7 +42,7 @@ export default defineConfig({
       setup(build) {
         build.onLoad({ filter: /smartwrap[\\/]src[\\/]main\.js$/ }, (args) => ({
           contents: readFileSync(args.path, "utf8")
-            .replace("while((result = ANSIRegex.exec(text))", "var result;\n  while((result = ANSIRegex.exec(text))"),
+            .replace("while((result = ANSIRegex.exec(text))", "var result;\\n  while((result = ANSIRegex.exec(text))"),
           loader: "js"
         }))
       }
@@ -43,8 +53,8 @@ export default defineConfig({
   clean: false,
   outDir: "dist/browser",
   banner: {
-    // minimal process shim: style.ts branches on process.stdout and kleur reads
-    // process.env — browserify provided this implicitly, esbuild needs it explicit
-    js: "var process = typeof process !== 'undefined' ? process : { env: {} };"
+    // Force the bundled library down its browser path while providing the
+    // process fields Chalk/supports-color may inspect during initialization.
+    js: 'var process = typeof process !== "undefined" ? process : { env: { TERM: "", TERM_PROGRAM: "", COLORTERM: "" }, platform: "browser", stdout: undefined, argv: [] };'
   },
 })
