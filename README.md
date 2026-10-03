@@ -100,7 +100,8 @@ The published package ships a standalone IIFE bundle that exposes a `TtyTable` g
 </script>
 ```
 
-- View the full example in Chrome or Chromium by opening [examples/browser-example.html](examples/browser-example.html) (e.g. served with `npx serve .` or any static file server).
+- Try it online before installing: [live example on JSFiddle](https://jsfiddle.net/eg1Lf705/)
+- View the full example locally in Chrome or Chromium by opening [examples/browser-example.html](examples/browser-example.html) (e.g. served with `npx serve .` or any static file server).
 - [source: examples/browser-example.html](examples/browser-example.html)
 
 ![Browser Console Example](https://user-images.githubusercontent.com/7478359/74614563-cbcaff00-50e6-11ea-9101-5457497696b8.jpg "tty-table in the browser console") 
