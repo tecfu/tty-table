@@ -1,11 +1,12 @@
 <!doctype html>
 <html>
   <head>
-    <script src="https://cdn.jsdelivr.net/npm/ansi_up@4.0.4/ansi_up.min.js"></script>
-    <script src="./../dist/browser/tty-table.global.js"></script>
-    <script>
+    <script src="https://cdn.jsdelivr.net/npm/tty-table@7/dist/browser/tty-table.global.js"></script>
+    <script type="module">
+      import { AnsiUp } from "https://cdn.jsdelivr.net/npm/ansi_up@6/+esm"
+
       const Table = TtyTable.default
-      
+
       let header = [
         {
           value: "item",
@@ -66,7 +67,7 @@
       ]
 
       const options = {
-        borderStyle: "solid", // only "dashed" works with iife module
+        borderStyle: "solid",
         borderColor: "green",
         paddingBottom: 0,
         headerAlign: "center",
@@ -81,14 +82,12 @@
       var ansi_up = new AnsiUp;
       var html = ansi_up.ansi_to_html(ANSI);
 
-      setTimeout(function(){
-         document.getElementById('example').innerHTML = html;
-      },200);
+      document.getElementById('example').innerHTML = html;
     </script>
   </head>
   <body>
     <h2>Source: examples/browser-example.html</h2>
-    Only known to be supported in Chrome > 79.
+    Loads the standalone browser bundle of the published package (tty-table@7) from a CDN, so no build step is required.
     <pre>
       <span id="example"></span>
     </pre>

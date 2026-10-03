@@ -88,33 +88,26 @@ Rendered result:
 
 > Additional tools may be added in future releases under the same MCP server.
 
-### Browser & Browser Console 
+### Browser & Browser Console
 
-- View in Chrome or Chromium at [http://localhost:8070/examples/browser-example.html](http://localhost:8070/examples/browser-example.html) using a dockerized apache instance:
+The published package ships a standalone IIFE bundle that exposes a `TtyTable` global. Load it directly from a CDN — no install or build step required:
 
-    ```sh
-    git clone https://github.com/tecfu/tty-table
-    cd tty-table
-    docker run -dit --name tty-table-in-browser -p 8070:80 -v "$PWD":/usr/local/apache2/htdocs/ httpd:2.4
-    ```
+```html
+<script src="https://cdn.jsdelivr.net/npm/tty-table@7/dist/browser/tty-table.global.js"></script>
+<script>
+  const Table = TtyTable.default
+  console.log(Table([{ value: "name" }, { value: "score" }], [["Ada", 100]], null).render())
+</script>
+```
 
-- [live demo (chrome only): jsfiddle](https://jsfiddle.net/nb14eyav/)
-- [live demo (chrome only): plnkr](https://plnkr.co/edit/iQn9xn5yCY4NUkXRF87o?p=preview)
+- Try it online before installing: [live example on JSFiddle](https://jsfiddle.net/eg1Lf705/)
+- View the full example locally in Chrome or Chromium by opening [examples/browser-example.html](examples/browser-example.html) (e.g. served with `npx serve .` or any static file server).
 - [source: examples/browser-example.html](examples/browser-example.html)
 
 ![Browser Console Example](https://user-images.githubusercontent.com/7478359/74614563-cbcaff00-50e6-11ea-9101-5457497696b8.jpg "tty-table in the browser console") 
 
 <br/>
 <br/>
-
-## What's new in 6.0
-
-- ANSI-safe display-width calculation and Unicode-aware wrapping/truncation.
-- Typed column/table options and formatter context.
-- ESM and CommonJS package exports.
-- Modern Node.js LTS baseline (Node 22+; raised from 20+ when adopting smartwrap v4).
-- A standalone browser bundle is produced for direct use from a browser console or `<script>` tag.
-- Legacy `Table(header, rows, footer, options)` and `Table(rows, options)` construction remains supported.
 
 ## Compatibility
 
@@ -140,6 +133,8 @@ const table = Table(
 
 console.log(table.render())
 ```
+
+Legacy `Table(header, rows, footer, options)` and `Table(rows, options)` construction remains supported.
 
 ### Formatter context
 
