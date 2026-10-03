@@ -100,7 +100,7 @@ The published package ships a standalone IIFE bundle that exposes a `TtyTable` g
 </script>
 ```
 
-- Try it online before installing: [live example on JSFiddle](https://jsfiddle.net/eg1Lf705/)
+- Try it online before installing: [live example on JSFiddle](https://jsfiddle.net/u9dqv14j/)
 - View the full example locally in Chrome or Chromium by opening [examples/browser-example.html](examples/browser-example.html) (e.g. served with `npx serve .` or any static file server).
 - [source: examples/browser-example.html](examples/browser-example.html)
 
