@@ -36,4 +36,16 @@ describe("typed table core", () => {
     const table = Table([{ value: "name", formatter }], [["ada"]])
     expect(table.render()).toContain("ADA")
   })
+
+  it("keeps formatter configure() scoped to the cell that called it", () => {
+    // Cells share one merged option object per column, so a configure() call must
+    // not become visible to the cells rendered after it.
+    const formatter = function (this: any, value: unknown) {
+      if (String(value) === "aa") this.configure({ align: "right" })
+      return String(value)
+    } as any
+    const output = Table([{ value: "wide header", formatter }], [["aa"], ["bb"]]).render()
+    const [first, second] = output.split("\n").filter((line) => /aa|bb/.test(line))
+    expect(first!.indexOf("aa")).toBeGreaterThan(second!.indexOf("bb"))
+  })
 })
