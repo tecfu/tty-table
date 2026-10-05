@@ -4,6 +4,18 @@ import { resetStyle, style, styleEachChar } from "./style"
 
 let counter = 0
 
+/**
+ * Copy rows into the table's own array.
+ *
+ * `body.push(...rows)` passes every row as a call argument, and V8 refuses more
+ * than roughly 125k of them: a 200k-row dataset died with
+ * `RangeError: Maximum call stack size exceeded` before a single cell was
+ * rendered. A loop has no such limit.
+ */
+const appendRows = (target: any[], source: any[]) => {
+  for (let i = 0; i < source.length; i++) target.push(source[i])
+}
+
 export interface Formatter {
   (cellValue: any, columnIndex: number, rowIndex: number, rowData: any, inputData: any): string
 }
@@ -59,7 +71,7 @@ const Factory = function (paramsArr: any[]): any {
     // header, rows, footer, and options
     case (paramsArr.length === 4):
       header = paramsArr[0]
-      body.push(...paramsArr[1]) // creates new array to store our rows (body)
+      appendRows(body, paramsArr[1]) // creates new array to store our rows (body)
       footer = paramsArr[2]
       options = paramsArr[3]
       break
@@ -67,32 +79,32 @@ const Factory = function (paramsArr: any[]): any {
     // header, rows, footer
     case (paramsArr.length === 3 && paramsArr[2] instanceof Array):
       header = paramsArr[0]
-      body.push(...paramsArr[1]) // creates new array to store our rows
+      appendRows(body, paramsArr[1]) // creates new array to store our rows
       footer = paramsArr[2]
       break
 
     // header, rows, options
     case (paramsArr.length === 3 && typeof paramsArr[2] === "object"):
       header = paramsArr[0]
-      body.push(...paramsArr[1]) // creates new array to store our rows
+      appendRows(body, paramsArr[1]) // creates new array to store our rows
       options = paramsArr[2]
       break
 
     // header, rows            (rows, footer is not an option)
     case (paramsArr.length === 2 && paramsArr[1] instanceof Array):
       header = paramsArr[0]
-      body.push(...paramsArr[1]) // creates new array to store our rows
+      appendRows(body, paramsArr[1]) // creates new array to store our rows
       break
 
     // rows, options
     case (paramsArr.length === 2 && typeof paramsArr[1] === "object"):
-      body.push(...paramsArr[0]) // creates new array to store our rows
+      appendRows(body, paramsArr[0]) // creates new array to store our rows
       options = paramsArr[1]
       break
 
     // rows
     case (paramsArr.length === 1 && paramsArr[0] instanceof Array):
-      body.push(...paramsArr[0])
+      appendRows(body, paramsArr[0])
       break
 
     // adapter called: i.e. `require('tty-table')('automattic-cli-table')`
