@@ -25,6 +25,23 @@ describe("typed table core", () => {
     expect(displayWidth("e\u0301")).toBe(1)
   })
 
+  it("measures the widest line of a multi-line value, not its total length", () => {
+    expect(displayWidth("ab\n\u6f22\u5b57\u6f22\u5b57\ncd")).toBe(8)
+    expect(displayWidth("\u001b[31mone\u001b[39m\ntwo")).toBe(3)
+  })
+
+  it("scores control characters by display width, not string length", () => {
+    // \t and \r occupy no cells, so an ASCII fast path must not count them as 1
+    expect(displayWidth("a\tb")).toBe(2)
+    expect(displayWidth("ab\r")).toBe(2)
+    expect(displayWidth("a\rb")).toBe(2)
+  })
+
+  it("measures a cell with more lines than Math.max can take as arguments", () => {
+    const value = `${"x".repeat(5)}\n`.repeat(200000)
+    expect(displayWidth(value)).toBe(5)
+  })
+
   it("keeps a fixed table width when requested", () => {
     const output = Table([{ value: "name", width: 12 }], [["abcdefghijklm"]], { width: 16, truncate: "…" }).render()
     const lines = output.split("\n").filter(Boolean)
