@@ -23,7 +23,11 @@ const codePointWidth = (value: string): number => {
     const segmenter = new Segmenter(undefined, { granularity: "grapheme" })
     let total = 0
     for (const { segment } of segmenter.segment(value)) {
-      total += breakword.width(segment)
+      const widths = [...segment].map((char) => breakword.width(char))
+      // A ZWJ sequence is one terminal glyph even though it contains several
+      // emoji code points. Other graphemes retain breakword's per-code-point
+      // semantics, including combining marks and regional-indicator pairs.
+      total += segment.includes("\u200D") ? Math.max(...widths, 0) : widths.reduce((sum, width) => sum + width, 0)
     }
     return total
   }
