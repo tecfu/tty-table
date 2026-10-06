@@ -224,9 +224,10 @@ export const getColumnWidths = (config: any, rows: any[]) => {
   const availableWidth = getAvailableWidth(config)
 
   // iterate over the header if we have it, iterate over the first row
-  // if we do not (to step through the correct number of columns)
+  // if we do not (to step through the correct number of columns). Neither, for
+  // Table([], []), means there are no columns to measure at all.
   const iterable: any[] = (config.table.header[0] && config.table.header[0].length > 0)
-    ? config.table.header[0] : rows[0]
+    ? config.table.header[0] : (rows[0] || [])
 
   let widths: number[] = iterable.map((column: any, columnIndex: number) => {
     let result: number
@@ -263,7 +264,7 @@ export const getColumnWidths = (config: any, rows: any[]) => {
   })
 
   // calculate sum of all column widths (including marginLeft)
-  const totalWidth = widths.reduce((prev: number, current: number) => prev + current)
+  const totalWidth = widths.reduce((prev: number, current: number) => prev + current, 0)
 
   // proportionately resize columns when necessary
   if (totalWidth > availableWidth || config.FIXED_WIDTH) {

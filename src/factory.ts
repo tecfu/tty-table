@@ -123,15 +123,29 @@ const Factory = function (paramsArr: any[]): any {
       return load()
     }
 
-    /* istanbul ignore next */
     default:
-      console.log("Error: Bad params. \nSee docs at github.com/tecfu/tty-table")
-      process.exit()
+      // A library must not decide how the host process ends. This used to be
+      // `console.log("Error: Bad params...")` followed by `process.exit()`.
+      throw new TypeError(
+        "Bad params. Expected one of: Table(rows), Table(rows, options), Table(header, rows), " +
+        "Table(header, rows, options), Table(header, rows, footer), Table(header, rows, footer, options). " +
+        "See docs at github.com/tecfu/tty-table"
+      )
   }
 
   // for "deep" copy, use JSON.parse
   const cloneddefaults = JSON.parse(JSON.stringify(defaults))
   const config: any = Object.assign({}, cloneddefaults, options)
+
+  // The renderer indexes borderCharacters[borderStyle] blindly, so a name that is
+  // not in the table failed as "Cannot read properties of undefined (reading '0')"
+  // - or, with borderColor set, one line earlier in this function.
+  if (!(config.borderStyle in config.borderCharacters)) {
+    throw new Error(
+      `Unknown borderStyle: ${JSON.stringify(config.borderStyle)}. Available styles: ` +
+      `${Object.keys(config.borderCharacters).join(", ")}, or supply your own rows under tableOptions.borderCharacters.`
+    )
+  }
 
   // backfixes for shortened option names
   config.align = config.alignment || config.align
