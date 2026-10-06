@@ -58,6 +58,23 @@ describe("MCP render_table tool", () => {
     expect(text).toContain("Grace")
   })
 
+  it("rejects invalid typed table options at the MCP boundary", () => {
+    const result = handleRenderTable({
+      rows: [["value"]],
+      options: { width: true } as unknown as Record<string, unknown>
+    })
+    expect(result.isError).toBe(true)
+    expect(result.content[0]!.text).toMatch(/width/i)
+  })
+
+  it("preserves forward compatibility for unknown table options", () => {
+    const result = handleRenderTable({
+      rows: [["value"]],
+      options: { futureOption: "accepted" }
+    })
+    expect(result.isError).toBeUndefined()
+  })
+
   it("returns isError for invalid input that Table rejects", () => {
     // Passing a non-array/non-object as a "row" should surface an error
     const result = handleRenderTable({
