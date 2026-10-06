@@ -87,7 +87,7 @@ export const buildRow = (config: any, row: any[], rowType: string, rowIndex: num
   }
 
   const lengthDifference = config.table.columnWidths.length - row.length
-  if (lengthDifference > 0) row = row.concat(Array.apply(null, new Array(lengthDifference)).map(() => null))
+  if (lengthDifference > 0) row = row.concat(new Array(lengthDifference).fill(null))
   else if (lengthDifference < 0) row.length = config.table.columnWidths.length
 
   row = row.map((elem: any, elemIndex: number) => {
@@ -97,7 +97,7 @@ export const buildRow = (config: any, row: any[], rowType: string, rowIndex: num
   })
 
   minRowHeight = (rowType === "header") ? minRowHeight : minRowHeight + (config.paddingBottom + config.paddingTop)
-  const linedRow: any[] = Array.apply(null, { length: minRowHeight } as any).map(Function.call, () => [])
+  const linedRow: any[] = Array.from({ length: minRowHeight }, () => [])
 
   row.forEach(function (cell: string[], a: number) {
     const whitespace = " ".repeat(Math.max(config.table.columnWidths[a] - 1, 0))
