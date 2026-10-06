@@ -34,6 +34,16 @@ const withoutTty = (render: () => string) => {
 const rows = [["some text that is long enough to need a decision about wrapping"]]
 
 describe("width without a terminal", () => {
+  it("allocates a constrained width exactly without decimal rounding loss", () => {
+    const output = withoutTty(() => Table(
+      [{ value: "a" }, { value: "b" }, { value: "c" }],
+      [["a long value", "another long value", "third long value"]],
+      { width: 20 }
+    ).render())
+    const border = output.split("\n")[0]!
+    expect(border.length).toBe(20 + 1)
+  })
+
   afterEach(() => {
     if (typeof savedColumns !== "undefined") process.env.COLUMNS = savedColumns
   })
