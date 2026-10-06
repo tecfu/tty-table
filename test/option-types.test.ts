@@ -1,5 +1,5 @@
 import Table from "../src"
-import type { Options, Header } from "../src/factory"
+import type { Options, Header, Formatter } from "../src/factory"
 
 // The value of this file is checked by `npm run typecheck`, not by the runtime
 // assertions below: on master several of these constructs do not compile even
@@ -20,6 +20,20 @@ describe("public option types", () => {
     const out = Table(header, [["v"]]).render()
     expect(out).toContain("named")
     expect(out).toContain("v")
+  })
+
+  it("requires a header column to be named by value or alias", () => {
+    // @ts-expect-error neither value nor alias: nothing names this column
+    const unnamed: Header = {}
+    const named: Header = { value: "a", width: "50%" }
+    expect([unnamed, named]).toHaveLength(2)
+  })
+
+  it("types formatters by what the renderer does with them", () => {
+    // buildCell stringifies whatever comes back, so returning a non-string is
+    // legal — types.ts always said unknown; factory used to demand string.
+    const f: Formatter = (cellValue) => ({ renders: cellValue })
+    expect(typeof f("x", 0, 1, [], [])).toBe("object")
   })
 
   it("accepts the table-level options the renderer reads", () => {

@@ -1,12 +1,13 @@
 import defaults from "./defaults"
 import { stringifyData } from "./render"
 import { resetStyle, style, styleEachChar } from "./style"
-import type { Alignment, BorderCharacters, BorderStyle, ColumnOptions } from "./types"
+import type { Alignment, BorderCharacters, BorderStyle, ColumnOptions, TableOptions, Width } from "./types"
 
-// A documented literal, plus any string: the union still autocompletes the
+// A documented literal, plus any string: the union still AUTOCOMPLES the
 // allowed values, but code that builds the value at runtime (a config file, a
-// CLI flag) does not stop compiling. Unknown values are a runtime error, which
-// is where they always were.
+// CLI flag) does not stop compiling. This is an escape hatch for source
+// compatibility, not validation — an unknown value is a runtime error, which
+// is where it always was.
 type AlignInput = Alignment | (string & {})
 
 let counter = 0
@@ -32,47 +33,35 @@ const appendRows = (target: any[], source: any[]) => {
 
 export interface Formatter {
   // rowIndex is null for header and footer rows, which buildCell passes through.
-  (cellValue: any, columnIndex: number, rowIndex: number | null, rowData: any, inputData: any): any
+  // The arguments stay any-typed so a callback written against narrower values
+  // still assigns; the return is unknown because the renderer stringifies
+  // whatever comes back (this matches types.ts, which always said unknown).
+  (cellValue: any, columnIndex: number, rowIndex: number | null, rowData: any, inputData: any): unknown
 }
 
-// Every option the library reads, with the type it accepts at runtime. The
-// trailing index signature stays: options are merged wholesale into the cell
-// config, so a key not listed here is still passed through.
-export interface Options {
+// Table-level options. These are types.ts's TableOptions (which already covers
+// the per-column keys via ColumnOptions), with a small set of keys widened for
+// source compatibility: align/alignment/headerAlign/headerAlignment/footerAlign
+// and borderStyle accept any string (see AlignInput; values routinely arrive
+// from config files and CLI flags), formatter keeps any-typed arguments, and
+// width keeps arbitrary strings. The trailing index signature stays: options
+// are merged wholesale into the config, so a key not listed here is still
+// passed through — this types the known options, it does not close the set.
+export type Options = Omit<
+  TableOptions,
+  "align" | "alignment" | "borderStyle" | "footerAlign" | "formatter" | "headerAlign" | "headerAlignment" | "width"
+> & {
   align?: AlignInput
   alignment?: AlignInput
-  borderColor?: string | false | null
   borderCharacters?: Record<string, BorderCharacters[]>
-  // the documented names plus the numeric aliases (0 solid, 1 dashed, 2 none)
-  // that defaults.borderCharacters also keys; any string is still assignable so
-  // a value coming from a variable does not become a type error
+  // the documented names plus the numeric aliases (0, 1, 2) that
+  // defaults.borderCharacters also keys
   borderStyle?: BorderStyle | (string & {})
-  color?: string | false
-  columnSettings?: ColumnOptions[]
-  compact?: boolean
-  COLUMNS?: number
-  defaultErrorValue?: string
-  defaultValue?: string
-  errorOnNull?: boolean
-  FIXED_WIDTH?: boolean
   footerAlign?: AlignInput
-  footerColor?: string | false
   formatter?: Formatter
-  GUTTER?: number
   headerAlign?: AlignInput
   headerAlignment?: AlignInput
-  headerColor?: string | false
-  marginLeft?: number
-  marginTop?: number
-  paddingBottom?: number
-  paddingLeft?: number
-  paddingRight?: number
-  paddingTop?: number
-  showHeader?: boolean | null
-  table?: Record<string, unknown>
-  terminalAdapter?: boolean
-  truncate?: string | boolean
-  width?: string | number
+  width?: Width | (string & {})
   [key: string]: unknown
 }
 
@@ -240,36 +229,21 @@ const Factory = function (paramsArr: any[]): any {
   return tableObject
 }
 
-// One column definition. value and alias are both optional because buildCell
-// reads `cellOptions.alias || cellOptions.value`, so either one on its own names
-// a column; the rest are the per-column overrides wrapCellText and buildCell
-// merge over the table options.
-export interface Header {
-  alias?: string
-  align?: AlignInput
-  alignment?: AlignInput
-  color?: string | false
-  defaultValue?: string
-  defaultErrorValue?: string
-  errorOnNull?: boolean
-  footerAlign?: AlignInput
-  footerColor?: string | false
+// One column definition: types.ts's ColumnOptions (width as Width, align as
+// the Alignment union, and so on) plus the two table-level keys a header entry
+// may also carry, and the naming requirement. buildCell reads
+// `cellOptions.alias || cellOptions.value`, so either one on its own names a
+// column — but neither is not a column, hence the union instead of two
+// independent optionals.
+export type Header = Omit<ColumnOptions, "alias" | "formatter" | "value"> & {
+  footerAlign?: Alignment
   formatter?: Formatter
-  headerAlign?: AlignInput
-  headerAlignment?: AlignInput
-  headerColor?: string | false
-  isNull?: boolean
   marginLeft?: number
   marginTop?: number
-  paddingBottom?: number
-  paddingLeft?: number
-  paddingRight?: number
-  paddingTop?: number
-  reset?: boolean
-  truncate?: string | boolean
-  value?: string
-  width?: string | number
-}
+} & (
+  | { alias: string; value?: string }
+  | { value: string; alias?: string }
+)
 
 interface TtyTableFactory {
   (headers: (string | Header | Formatter)[], body: unknown[], footers: (string | Header | Formatter)[], config?: Options): Table
