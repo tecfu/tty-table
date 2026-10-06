@@ -9,7 +9,7 @@ let yargs = require("yargs")
 yargs.epilog("Copyright github.com/tecfu 2018")
 
 yargs.option("config", {
-  describe: "Specify the configuration for your table."
+  describe: "Alias of --header: path to a JSON array of header cells."
 })
 
 yargs.option("csv-delimiter", {
@@ -70,17 +70,69 @@ Object.keys(yargs).forEach(function (key) {
   }
 })
 
-// look for options passed via config file
+// look for options passed via config file (--config is the spelling used by
+// dist/cli.js; the flag this adapter grew first was --header)
 let header = []
-if (yargs.header) {
-  if (!fs.existsSync(path.resolve(yargs.header))) {
+const headerFile = yargs.header || yargs.config
+if (headerFile) {
+  if (!fs.existsSync(path.resolve(headerFile))) {
     emitError(
       "Invalid file path",
-      `Cannot find config file at: ${yargs.header}.`
+      `Cannot find config file at: ${headerFile}.`
     )
   }
-  // merge with any individually flagged options
-  header = require(path.resolve(yargs.header))
+  try {
+    // merge with any individually flagged options
+    header = require(path.resolve(headerFile))
+  } catch (error) {
+    emitError(
+      "Configuration error",
+      `Could not read the header configuration at ${headerFile}: ${error.message}`
+    )
+  }
+}
+
+// What the renderer can turn into a table: an array with at least one row, where a
+// row is an array of cells or an object keyed by the header names. Without this
+// check an empty stream or a flat JSON array died inside the renderer with a
+// TypeError and a stack trace.
+const validateRows = function (data) {
+  if (typeof data === "undefined" || data === null) {
+    emitError(
+      "No input",
+      "Nothing was piped to stdin. Try: cat data.csv | tty-table, or --format json with a JSON array of rows."
+    )
+  }
+
+  if (!Array.isArray(data)) {
+    emitError(
+      "Input error",
+      "Expected an array of rows, got " +
+      (typeof data === "object" ? "an object" : "`" + String(data) + "`") +
+      ". Rows are arrays of cells, e.g. [[1, 2], [3, 4]], or objects keyed by the header names."
+    )
+  }
+
+  if (data.length === 0) {
+    emitError(
+      "No input",
+      "The input was empty, so there is nothing to render."
+    )
+  }
+
+  const badRow = data.findIndex(function (row) {
+    return !(Array.isArray(row) || (typeof row === "object" && row !== null))
+  })
+
+  if (badRow !== -1) {
+    emitError(
+      "Input error",
+      "Row " + badRow + " is `" + JSON.stringify(data[badRow]) + "`. Rows must be " +
+      "arrays of cells or objects keyed by the header names."
+    )
+  }
+
+  return data
 }
 
 // because different dataFormats
@@ -133,7 +185,7 @@ process.stdin.on("end", function () {
           "Please check to make sure that your input data consists of JSON or specify a different format with the --format flag."
         )
       }
-      runTable(header, data)
+      runTable(header, validateRows(data))
       break
     }
     default: {
@@ -152,7 +204,7 @@ process.stdin.on("end", function () {
             "Please check to make sure that your input data consists of valid comma separated values or specify a different format with the --format flag."
           )
         }
-        runTable(header, data)
+        runTable(header, validateRows(data))
       })
     }
   }

@@ -13,8 +13,32 @@ export const stripAnsi = (value: string): string => value.replace(ANSI, "")
 const codePointWidth = (value: string): number =>
   [...value].reduce((total, char) => total + breakword.width(char), 0)
 
-export const displayWidth = (value: string): number =>
-  Math.max(0, ...stripAnsi(value).split(/\r?\n/).map(codePointWidth))
+// Every printable ASCII character occupies exactly one terminal cell, so its
+// display width is its length. Anything outside this range - including control
+// characters such as \t and \r, which breakword scores as 0 cells - has to go
+// through the per-code-point measurement.
+const PRINTABLE_ASCII = /^[\x20-\x7E]*$/
+
+/**
+ * Width of the widest line in `value`, in terminal display cells.
+ *
+ * ANSI escape sequences are ignored. The line loop replaces an earlier
+ * `Math.max(0, ...widths)`, which exhausted the argument stack for cells with
+ * more than ~125k lines.
+ */
+export const displayWidth = (value: string): number => {
+  if (PRINTABLE_ASCII.test(value)) return value.length
+
+  const stripped = stripAnsi(value)
+  let widest = 0
+
+  for (const line of stripped.split(/\r?\n/)) {
+    const width = PRINTABLE_ASCII.test(line) ? line.length : codePointWidth(line)
+    if (width > widest) widest = width
+  }
+
+  return widest
+}
 
 export const style = (value: string, ...styles: string[]): string => {
   const active = styles.map((s) => codes[s]).filter(Boolean)

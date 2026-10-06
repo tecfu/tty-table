@@ -4,6 +4,25 @@ import { resetStyle, style, styleEachChar } from "./style"
 
 let counter = 0
 
+// Where the table's own configuration is kept. This was `Symbol.config`, which is
+// not a thing - it evaluates to undefined, so the key became the string
+// "undefined" and the whole config sat on the table as an enumerable property:
+// Object.keys(table) said ["undefined", "render"], JSON.stringify(table) dumped a
+// kilobyte of internals, and anything that spreads or clones a table copies them.
+const _configKey = Symbol("config")
+
+/**
+ * Copy rows into the table's own array.
+ *
+ * `body.push(...rows)` passes every row as a call argument, and V8 refuses more
+ * than roughly 125k of them: a 200k-row dataset died with
+ * `RangeError: Maximum call stack size exceeded` before a single cell was
+ * rendered. A loop has no such limit.
+ */
+const appendRows = (target: any[], source: any[]) => {
+  for (let i = 0; i < source.length; i++) target.push(source[i])
+}
+
 export interface Formatter {
   (cellValue: any, columnIndex: number, rowIndex: number, rowData: any, inputData: any): string
 }
@@ -48,7 +67,6 @@ export interface Table extends Array<any> {
 }
 
 const Factory = function (paramsArr: any[]): any {
-  const _configKey = (Symbol as any).config // legacy quirk: evaluates to undefined; kept for behavior parity
   let header: any = []
   const body: any[] = []
   let footer: any = []
@@ -59,7 +77,7 @@ const Factory = function (paramsArr: any[]): any {
     // header, rows, footer, and options
     case (paramsArr.length === 4):
       header = paramsArr[0]
-      body.push(...paramsArr[1]) // creates new array to store our rows (body)
+      appendRows(body, paramsArr[1]) // creates new array to store our rows (body)
       footer = paramsArr[2]
       options = paramsArr[3]
       break
@@ -67,32 +85,32 @@ const Factory = function (paramsArr: any[]): any {
     // header, rows, footer
     case (paramsArr.length === 3 && paramsArr[2] instanceof Array):
       header = paramsArr[0]
-      body.push(...paramsArr[1]) // creates new array to store our rows
+      appendRows(body, paramsArr[1]) // creates new array to store our rows
       footer = paramsArr[2]
       break
 
     // header, rows, options
     case (paramsArr.length === 3 && typeof paramsArr[2] === "object"):
       header = paramsArr[0]
-      body.push(...paramsArr[1]) // creates new array to store our rows
+      appendRows(body, paramsArr[1]) // creates new array to store our rows
       options = paramsArr[2]
       break
 
     // header, rows            (rows, footer is not an option)
     case (paramsArr.length === 2 && paramsArr[1] instanceof Array):
       header = paramsArr[0]
-      body.push(...paramsArr[1]) // creates new array to store our rows
+      appendRows(body, paramsArr[1]) // creates new array to store our rows
       break
 
     // rows, options
     case (paramsArr.length === 2 && typeof paramsArr[1] === "object"):
-      body.push(...paramsArr[0]) // creates new array to store our rows
+      appendRows(body, paramsArr[0]) // creates new array to store our rows
       options = paramsArr[1]
       break
 
     // rows
     case (paramsArr.length === 1 && paramsArr[0] instanceof Array):
-      body.push(...paramsArr[0])
+      appendRows(body, paramsArr[0])
       break
 
     // adapter called: i.e. `require('tty-table')('automattic-cli-table')`
@@ -114,15 +132,29 @@ const Factory = function (paramsArr: any[]): any {
       return load()
     }
 
-    /* istanbul ignore next */
     default:
-      console.log("Error: Bad params. \nSee docs at github.com/tecfu/tty-table")
-      process.exit()
+      // A library must not decide how the host process ends. This used to be
+      // `console.log("Error: Bad params...")` followed by `process.exit()`.
+      throw new TypeError(
+        "Bad params. Expected one of: Table(rows), Table(rows, options), Table(header, rows), " +
+        "Table(header, rows, options), Table(header, rows, footer), Table(header, rows, footer, options). " +
+        "See docs at github.com/tecfu/tty-table"
+      )
   }
 
   // for "deep" copy, use JSON.parse
   const cloneddefaults = JSON.parse(JSON.stringify(defaults))
   const config: any = Object.assign({}, cloneddefaults, options)
+
+  // The renderer indexes borderCharacters[borderStyle] blindly, so a name that is
+  // not in the table failed as "Cannot read properties of undefined (reading '0')"
+  // - or, with borderColor set, one line earlier in this function.
+  if (!(config.borderStyle in config.borderCharacters)) {
+    throw new Error(
+      `Unknown borderStyle: ${JSON.stringify(config.borderStyle)}. Available styles: ` +
+      `${Object.keys(config.borderCharacters).join(", ")}, or supply your own rows under tableOptions.borderCharacters.`
+    )
+  }
 
   // backfixes for shortened option names
   config.align = config.alignment || config.align
@@ -141,6 +173,12 @@ const Factory = function (paramsArr: any[]): any {
         return obj
       })
   }
+
+  // Columns can be declared with plain strings. Every consumer of a header entry
+  // reads it as an option object (`.value` / `.alias`), so normalise here: a string
+  // header used to render no header row at all, and object rows were laid out in
+  // key insertion order instead of the declared column order.
+  header = header.map((column: any) => (typeof column === "string") ? { value: column } : column)
 
   // save a copy for merging columnSettings into cell options
   config.columnSettings = header.slice(0)
