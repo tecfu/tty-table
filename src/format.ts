@@ -186,16 +186,40 @@ export const wrapCellText = (
 export const truncate = (str: string, cellOptions: any, maxWidth: number) => {
   const stringWidth = displayWidth(str)
 
-  if (maxWidth < stringWidth) {
-    // @TODO give user option to decide if they want to break words on wrapping
-    str = smartwrap(str, {
-      width: maxWidth - displayWidth(cellOptions.truncate),
-      breakword: true
-    }).split("\n")[0]!
-    str = str + cellOptions.truncate
+  if (maxWidth >= stringWidth) return str
+
+  // Nothing fits. Handing a zero or negative width to the wrapper below returned
+  // *more* characters than were asked for, so the cell overflowed its own border
+  // and the rest of the table came out crooked.
+  if (maxWidth < 1) return ""
+
+  let marker: string = cellOptions.truncate
+  let markerWidth = displayWidth(marker)
+
+  // Same reason: a marker at least as wide as the cell left the content a
+  // non-positive width. Trim the marker down and keep one cell for content.
+  if (markerWidth >= maxWidth) {
+    if (maxWidth < 2) {
+      // a single cell cannot hold both content and a marker
+      marker = ""
+      markerWidth = 0
+    } else {
+      marker = smartwrap(marker, {
+        width: maxWidth - 1,
+        breakword: true,
+        trim: false
+      }).split("\n")[0]!
+      markerWidth = displayWidth(marker)
+    }
   }
 
-  return str
+  // @TODO give user option to decide if they want to break words on wrapping
+  str = smartwrap(str, {
+    width: maxWidth - markerWidth,
+    breakword: true
+  }).split("\n")[0]!
+
+  return str + marker
 }
 
 export const wrap = (str: string, cellOptions: any, innerWidth: number) => {
