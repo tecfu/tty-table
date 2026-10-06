@@ -2,6 +2,23 @@ import { colorizeCell, isColorEnabled, style, resetStyle } from "./style"
 import { wrapCellText, getColumnWidths } from "./format"
 import stripAnsi from "strip-ansi"
 
+// Column widths are measured once per table: measuring is the expensive half of
+// rendering, and a stream of prints has to keep one geometry. The memo used to be
+// `global.columnWidths`, keyed by `config.tableId` - an integer that counts tables
+// inside one copy of this module. Load two copies into one process (a bundler that
+// inlined tty-table next to a hoisted one, a monorepo with two versions, a test
+// runner that resets modules but not globals) and the counters collide: the second
+// copy's tables render with the first copy's widths. Entries were never removed
+// either, so every table that was ever built stayed in the heap.
+const measuredWidths = new WeakMap<object, number[]>()
+
+// Tables rendered through a terminal adapter do not increment the counter, which is
+// how successive prints of a stream were meant to share widths - a property of the
+// stream, not of the process, so it gets a slot of its own. Keying it by the shared
+// id meant an adapter table inherited the widths of whichever ordinary table
+// happened to have been created last.
+let adapterWidths: number[] | undefined
+
 export const stringifyData = (config: any, inputData: any[]) => {
   const sections: any = { header: [], body: [], footer: [] }
   const marginLeft = " ".repeat(config.marginLeft)
@@ -11,15 +28,21 @@ export const stringifyData = (config: any, inputData: any[]) => {
   const constructorType = getConstructorGeometry(inputData[0] || [], config)
   const rows = coerceConstructorGeometry(config, inputData, constructorType)
 
-  if (!(global as any).columnWidths) (global as any).columnWidths = {}
+  const isStream = config.terminalAdapter === true
+  const cached = isStream ? adapterWidths : (config.table ? measuredWidths.get(config.table) : undefined)
 
-  if ((global as any).columnWidths[config.tableId]) {
-    config.table.columnWidths = (global as any).columnWidths[config.tableId]
+  if (cached) {
+    config.table.columnWidths = cached
   } else {
     const formattedRows = rows.map((row: any[], rowIndex: number) => {
       return row.map((cell: any, cellIndex: number) => buildCell(config, cell, cellIndex, "body", rowIndex, rows, inputData, true))
     })
-    ;(global as any).columnWidths[config.tableId] = config.table.columnWidths = getColumnWidths(config, formattedRows)
+    const widths = getColumnWidths(config, formattedRows)
+
+    if (isStream) adapterWidths = widths
+    else if (config.table) measuredWidths.set(config.table, widths)
+
+    config.table.columnWidths = widths
   }
 
   switch (true) {
