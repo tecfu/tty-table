@@ -1,6 +1,15 @@
 import { truncate, wrap } from "../src/format"
 import { displayWidth } from "../src/ansi"
 
+describe("proportional column allocation", () => {
+  it("fits constrained columns to the available table width", async () => {
+    const { allocateProportionalWidths } = await import("../src/format")
+    const widths = allocateProportionalWidths([13, 17, 19], 30)
+    expect(widths.reduce((sum, width) => sum + width, 0)).toBe(30)
+    expect(widths.every((width) => width >= 2)).toBe(true)
+  })
+})
+
 describe("smartwrap v4 integration", () => {
   it("wraps text at the requested cell width", () => {
     expect(wrap("break at word", {}, 10)).toBe("break at\nword")
