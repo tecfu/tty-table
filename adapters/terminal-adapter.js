@@ -167,48 +167,58 @@ const runTable = function (header, body) {
 const chunks = []
 process.stdin.resume()
 process.stdin.setEncoding("utf8")
-process.stdin.on("data", function (chunk) {
-  chunks.push(chunk)
-})
-process.stdin.on("end", function () {
-  const stdin = chunks.join("")
 
-  // handle dataFormats
-  switch (true) {
-    case (dataFormat === "json"): {
-      let data
-      try {
-        data = JSON.parse(stdin)
-      } catch {
-        emitError(
-          "JSON parse error",
-          "Please check to make sure that your input data consists of JSON or specify a different format with the --format flag."
-        )
-      }
-      runTable(header, validateRows(data))
-      break
+// JSON remains buffered because a JSON array is not safely row-streamable without
+// changing the accepted input format. CSV, however, is record-oriented, so pipe
+// stdin directly through the parser and render each record as it arrives.
+if (dataFormat === "json") {
+  process.stdin.on("data", function (chunk) {
+    chunks.push(chunk)
+  })
+  process.stdin.on("end", function () {
+    const stdin = chunks.join("")
+    let data
+    try {
+      data = JSON.parse(stdin)
+    } catch {
+      emitError(
+        "JSON parse error",
+        "Please check to make sure that your input data consists of valid JSON or specify a different format with the --format flag."
+      )
     }
-    default: {
-      const formatterOptions = {}
-      Object.keys(yargs).forEach(function (key) {
-        if (key.slice(0, 4) === "csv-" && typeof (yargs[key]) !== "undefined") {
-          formatterOptions[key.slice(4)] = yargs[key]
-        }
-      })
+    runTable(header, validateRows(data))
+  })
+} else {
+  const formatterOptions = {}
+  Object.keys(yargs).forEach(function (key) {
+    if (key.slice(0, 4) === "csv-" && typeof (yargs[key]) !== "undefined") {
+      formatterOptions[key.slice(4)] = yargs[key]
+    }
+  })
 
-      csv.parse(stdin, formatterOptions, function (err, data) {
-      // validate csv
-        if (err || typeof data === "undefined") {
-          emitError(
-            "CSV parse error",
-            "Please check to make sure that your input data consists of valid comma separated values or specify a different format with the --format flag."
-          )
-        }
-        runTable(header, validateRows(data))
-      })
+  const csvParser = csv.parse(formatterOptions)
+  let sawRow = false
+  csvParser.on("data", function (row) {
+    sawRow = true
+    runTable(header, validateRows([row]))
+  })
+  csvParser.on("error", function () {
+    emitError(
+      "CSV parse error",
+      "Please check to make sure that your input data consists of valid comma separated values or specify a different format with the --format flag."
+    )
+  })
+  csvParser.on("end", function () {
+    if (!sawRow) {
+      emitError(
+        "No input",
+        "Nothing was piped to stdin. Try: cat data.csv | tty-table."
+      )
     }
-  }
-})
+  })
+
+  process.stdin.pipe(csvParser)
+}
 
 /* istanbul ignore next */
 if (process.platform === "win32") {
