@@ -324,7 +324,7 @@ export const getColumnWidths = (config: any, rows: any[]) => {
   // decimals. The old calculation could leave unused cells, or overflow by a
   // few cells depending on the decimal rounding.
   if (totalWidth > availableWidth || config.FIXED_WIDTH) {
-    widths = allocateProportionalWidths(widths, Math.max(0, Math.floor(availableWidth) - 1))
+    widths = allocateProportionalWidths(widths, Math.max(0, Math.floor(availableWidth)))
   } else {
     widths = widths.map(Math.floor)
   }
