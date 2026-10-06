@@ -4,6 +4,13 @@ import { resetStyle, style, styleEachChar } from "./style"
 
 let counter = 0
 
+// Where the table's own configuration is kept. This was `Symbol.config`, which is
+// not a thing - it evaluates to undefined, so the key became the string
+// "undefined" and the whole config sat on the table as an enumerable property:
+// Object.keys(table) said ["undefined", "render"], JSON.stringify(table) dumped a
+// kilobyte of internals, and anything that spreads or clones a table copies them.
+const _configKey = Symbol("config")
+
 export interface Formatter {
   (cellValue: any, columnIndex: number, rowIndex: number, rowData: any, inputData: any): string
 }
@@ -48,7 +55,6 @@ export interface Table extends Array<any> {
 }
 
 const Factory = function (paramsArr: any[]): any {
-  const _configKey = (Symbol as any).config // legacy quirk: evaluates to undefined; kept for behavior parity
   let header: any = []
   const body: any[] = []
   let footer: any = []
