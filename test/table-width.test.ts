@@ -40,7 +40,7 @@ describe("width without a terminal", () => {
       [["a long value", "another long value", "third long value"]],
       { width: 20 }
     ).render())
-    const border = output.split("\n")[0]!
+    const border = output.split("\n")[1]!
     expect(border.length).toBe(20)
   })
 
