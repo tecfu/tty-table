@@ -151,6 +151,12 @@ const Factory = function (paramsArr: any[]): any {
       })
   }
 
+  // Columns can be declared with plain strings. Every consumer of a header entry
+  // reads it as an option object (`.value` / `.alias`), so normalise here: a string
+  // header used to render no header row at all, and object rows were laid out in
+  // key insertion order instead of the declared column order.
+  header = header.map((column: any) => (typeof column === "string") ? { value: column } : column)
+
   // save a copy for merging columnSettings into cell options
   config.columnSettings = header.slice(0)
 

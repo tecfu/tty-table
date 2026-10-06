@@ -27,6 +27,21 @@ describe("MCP render_table tool", () => {
     expect(text).toContain("Grace")
   })
 
+  it("renders a table with plain string column names", () => {
+    // The input schema accepts `z.union([string, object])` for header entries, and
+    // the tool description says "column names or {value, align, width} objects".
+    const result = handleRenderTable({
+      header: ["name", "score"],
+      rows: [["Ada", 100]]
+    })
+
+    expect(result.isError).toBeUndefined()
+    const first = result.content[0]
+    expect(first).toBeDefined()
+    expect(first!.text).toContain("│ name │ score │")
+    expect(first!.text).toContain("Ada")
+  })
+
   it("renders object rows without an explicit header", () => {
     const result = handleRenderTable({
       rows: [
