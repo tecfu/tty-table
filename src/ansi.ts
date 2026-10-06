@@ -28,7 +28,11 @@ const codePointWidth = (value: string): number => {
       // sequences, regional-indicator flags, and keycap sequences each render
       // as one two-cell glyph in conventional terminals. Combining marks remain
       // zero-width through breakword's per-code-point measurement.
-      if (segment.includes("\u200D") || /\\p{Regional_Indicator}{2}/u.test(segment) || segment.includes("\u20E3")) {
+      const regionalIndicators = [...segment].filter((char) => {
+        const codePoint = char.codePointAt(0) || 0
+        return codePoint >= 0x1F1E6 && codePoint <= 0x1F1FF
+      }).length
+      if (segment.includes("\u200D") || regionalIndicators === 2 || segment.includes("\u20E3")) {
         total += 2
       } else {
         total += widths.reduce((sum: number, width: number) => sum + width, 0)
