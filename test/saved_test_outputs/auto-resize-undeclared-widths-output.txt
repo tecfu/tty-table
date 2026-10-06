@@ -1,34 +1,1272 @@
 
 ╠═ width=25 ════════════╣
+[31mTable Too Wide: target=25 widest-line=26[39m
   ┌─┬─────┬──────────────┐
   │[33mS[39m│[33m Med [39m│[33m A Very, Very [39m│
   │[33mh[39m│[33m ium [39m│[33m Long Header  [39m│
   │[33mo[39m│[33m Hea [39m│              │
+  │[33mr[39m│[33m der [39m│              │
+  │[33mt[39m│     │              │
+  ├─┼─────┼──────────────┤
+  │a│ aaa │ aaa bbb ccc  │
+  │a│ bbb │ ddd eee fff  │
+  │a│ ccc │ ggg hhh iii  │
+  │b│ ddd │ jjj kkk lll  │
+  │b│ eee │ mmm nnn ooo  │
+  │b│ fff │ ppp qqq rrr  │
+  │c│ ggg │   sss ttt    │
   │c│ hhh │              │
   │c│     │              │
   └─┴─────┴──────────────┘
 
+╠═ width=26 ═════════════╣
+[31mTable Too Wide: target=26 widest-line=27[39m
+  ┌──┬─────┬──────────────┐
+  │[33mS [39m│[33m Med [39m│[33m A Very, Very [39m│
+  │[33mh [39m│[33m ium [39m│[33m Long Header  [39m│
+  │[33mo [39m│[33m Hea [39m│              │
+  │[33mr [39m│[33m der [39m│              │
+  │[33mt [39m│     │              │
+  ├──┼─────┼──────────────┤
+  │a │ aaa │ aaa bbb ccc  │
+  │a │ bbb │ ddd eee fff  │
+  │a │ ccc │ ggg hhh iii  │
+  │b │ ddd │ jjj kkk lll  │
+  │b │ eee │ mmm nnn ooo  │
+  │b │ fff │ ppp qqq rrr  │
+  │c │ ggg │   sss ttt    │
+  │c │ hhh │              │
+  │c │     │              │
+  └──┴─────┴──────────────┘
+
+╠═ width=27 ══════════════╣
+[31mTable Too Wide: target=27 widest-line=28[39m
+  ┌──┬─────┬───────────────┐
+  │[33mS [39m│[33m Med [39m│[33m A Very, Very  [39m│
+  │[33mh [39m│[33m ium [39m│[33m  Long Header  [39m│
+  │[33mo [39m│[33m Hea [39m│               │
+  │[33mr [39m│[33m der [39m│               │
+  │[33mt [39m│     │               │
+  ├──┼─────┼───────────────┤
+  │a │ aaa │  aaa bbb ccc  │
+  │a │ bbb │  ddd eee fff  │
+  │a │ ccc │  ggg hhh iii  │
+  │b │ ddd │  jjj kkk lll  │
+  │b │ eee │  mmm nnn ooo  │
+  │b │ fff │  ppp qqq rrr  │
+  │c │ ggg │    sss ttt    │
+  │c │ hhh │               │
+  │c │     │               │
+  └──┴─────┴───────────────┘
+
+╠═ width=28 ═══════════════╣
+[31mTable Too Wide: target=28 widest-line=29[39m
+  ┌──┬──────┬───────────────┐
+  │[33mS [39m│[33m Medi [39m│[33m A Very, Very  [39m│
+  │[33mh [39m│[33m  um  [39m│[33m  Long Header  [39m│
+  │[33mo [39m│[33m Head [39m│               │
+  │[33mr [39m│[33m  er  [39m│               │
+  │[33mt [39m│      │               │
+  ├──┼──────┼───────────────┤
+  │a │ aaa  │  aaa bbb ccc  │
+  │a │ bbb  │  ddd eee fff  │
+  │a │ ccc  │  ggg hhh iii  │
+  │b │ ddd  │  jjj kkk lll  │
+  │b │ eee  │  mmm nnn ooo  │
+  │b │ fff  │  ppp qqq rrr  │
+  │c │ ggg  │    sss ttt    │
+  │c │ hhh  │               │
+  │c │      │               │
+  └──┴──────┴───────────────┘
+
+╠═ width=29 ════════════════╣
+[31mTable Too Wide: target=29 widest-line=30[39m
+  ┌──┬──────┬────────────────┐
+  │[33mS [39m│[33m Medi [39m│[33m  A Very, Very  [39m│
+  │[33mh [39m│[33m  um  [39m│[33m  Long Header   [39m│
+  │[33mo [39m│[33m Head [39m│                │
+  │[33mr [39m│[33m  er  [39m│                │
+  │[33mt [39m│      │                │
+  ├──┼──────┼────────────────┤
+  │a │ aaa  │  aaa bbb ccc   │
+  │a │ bbb  │  ddd eee fff   │
+  │a │ ccc  │  ggg hhh iii   │
+  │b │ ddd  │  jjj kkk lll   │
+  │b │ eee  │  mmm nnn ooo   │
+  │b │ fff  │  ppp qqq rrr   │
+  │c │ ggg  │    sss ttt     │
+  │c │ hhh  │                │
+  │c │      │                │
+  └──┴──────┴────────────────┘
+
+╠═ width=30 ═════════════════╣
+[31mTable Too Wide: target=30 widest-line=31[39m
   ┌──┬──────┬─────────────────┐
   │[33mS [39m│[33m Medi [39m│[33m  A Very, Very   [39m│
   │[33mh [39m│[33m  um  [39m│[33m   Long Header   [39m│
   │[33mo [39m│[33m Head [39m│                 │
+  │[33mr [39m│[33m  er  [39m│                 │
+  │[33mt [39m│      │                 │
+  ├──┼──────┼─────────────────┤
+  │a │ aaa  │ aaa bbb ccc ddd │
+  │a │ bbb  │ eee fff ggg hhh │
+  │a │ ccc  │ iii jjj kkk lll │
+  │b │ ddd  │ mmm nnn ooo ppp │
+  │b │ eee  │ qqq rrr sss ttt │
+  │b │ fff  │                 │
+  │c │ ggg  │                 │
   │c │ hhh  │                 │
   │c │      │                 │
   └──┴──────┴─────────────────┘
 
+╠═ width=31 ══════════════════╣
+[31mTable Too Wide: target=31 widest-line=32[39m
+  ┌──┬───────┬─────────────────┐
+  │[33mS [39m│[33m Mediu [39m│[33m  A Very, Very   [39m│
+  │[33mh [39m│[33m   m   [39m│[33m   Long Header   [39m│
+  │[33mo [39m│[33m Heade [39m│                 │
+  │[33mr [39m│[33m   r   [39m│                 │
+  │[33mt [39m│       │                 │
+  ├──┼───────┼─────────────────┤
+  │a │  aaa  │ aaa bbb ccc ddd │
+  │a │  bbb  │ eee fff ggg hhh │
+  │a │  ccc  │ iii jjj kkk lll │
+  │b │  ddd  │ mmm nnn ooo ppp │
+  │b │  eee  │ qqq rrr sss ttt │
+  │b │  fff  │                 │
+  │c │  ggg  │                 │
+  │c │  hhh  │                 │
+  │c │       │                 │
+  └──┴───────┴─────────────────┘
+
+╠═ width=32 ═══════════════════╣
+[31mTable Too Wide: target=32 widest-line=33[39m
   ┌──┬───────┬──────────────────┐
   │[33mS [39m│[33m Mediu [39m│[33m   A Very, Very   [39m│
   │[33mh [39m│[33m   m   [39m│[33m   Long Header    [39m│
   │[33mo [39m│[33m Heade [39m│                  │
+  │[33mr [39m│[33m   r   [39m│                  │
+  │[33mt [39m│       │                  │
+  ├──┼───────┼──────────────────┤
+  │a │  aaa  │ aaa bbb ccc ddd  │
+  │a │  bbb  │ eee fff ggg hhh  │
+  │a │  ccc  │ iii jjj kkk lll  │
+  │b │  ddd  │ mmm nnn ooo ppp  │
+  │b │  eee  │ qqq rrr sss ttt  │
+  │b │  fff  │                  │
+  │c │  ggg  │                  │
   │c │  hhh  │                  │
   │c │       │                  │
   └──┴───────┴──────────────────┘
 
+╠═ width=33 ════════════════════╣
+[31mTable Too Wide: target=33 widest-line=34[39m
   ┌──┬───────┬───────────────────┐
   │[33mS [39m│[33m Mediu [39m│[33m A Very, Very Long [39m│
   │[33mh [39m│[33m   m   [39m│[33m      Header       [39m│
   │[33mo [39m│[33m Heade [39m│                   │
+  │[33mr [39m│[33m   r   [39m│                   │
+  │[33mt [39m│       │                   │
+  ├──┼───────┼───────────────────┤
+  │a │  aaa  │  aaa bbb ccc ddd  │
+  │a │  bbb  │  eee fff ggg hhh  │
+  │a │  ccc  │  iii jjj kkk lll  │
+  │b │  ddd  │  mmm nnn ooo ppp  │
+  │b │  eee  │  qqq rrr sss ttt  │
   │b │  fff  │                   │
   │c │  ggg  │                   │
   │c │  hhh  │                   │
   │c │       │                   │
+  └──┴───────┴───────────────────┘
+
+╠═ width=34 ═════════════════════╣
+[31mTable Too Wide: target=34 widest-line=35[39m
+  ┌───┬───────┬───────────────────┐
+  │[33m S [39m│[33m Mediu [39m│[33m A Very, Very Long [39m│
+  │[33m h [39m│[33m   m   [39m│[33m      Header       [39m│
+  │[33m o [39m│[33m Heade [39m│                   │
+  │[33m r [39m│[33m   r   [39m│                   │
+  │[33m t [39m│       │                   │
+  ├───┼───────┼───────────────────┤
+  │ a │  aaa  │  aaa bbb ccc ddd  │
+  │ a │  bbb  │  eee fff ggg hhh  │
+  │ a │  ccc  │  iii jjj kkk lll  │
+  │ b │  ddd  │  mmm nnn ooo ppp  │
+  │ b │  eee  │  qqq rrr sss ttt  │
+  │ b │  fff  │                   │
+  │ c │  ggg  │                   │
+  │ c │  hhh  │                   │
+  │ c │       │                   │
+  └───┴───────┴───────────────────┘
+
+╠═ width=35 ══════════════════════╣
+[31mTable Too Wide: target=35 widest-line=36[39m
+  ┌──┬────────┬────────────────────┐
+  │[33mS [39m│[33m Medium [39m│[33m A Very, Very Long  [39m│
+  │[33mh [39m│[33m Header [39m│[33m       Header       [39m│
+  │[33mo [39m│        │                    │
+  │[33mr [39m│        │                    │
+  │[33mt [39m│        │                    │
+  ├──┼────────┼────────────────────┤
+  │a │  aaa   │  aaa bbb ccc ddd   │
+  │a │  bbb   │  eee fff ggg hhh   │
+  │a │  ccc   │  iii jjj kkk lll   │
+  │b │  ddd   │  mmm nnn ooo ppp   │
+  │b │  eee   │  qqq rrr sss ttt   │
+  │b │  fff   │                    │
+  │c │  ggg   │                    │
+  │c │  hhh   │                    │
+  │c │        │                    │
+  └──┴────────┴────────────────────┘
+
+╠═ width=36 ═══════════════════════╣
+[31mTable Too Wide: target=36 widest-line=37[39m
+  ┌───┬────────┬────────────────────┐
+  │[33m S [39m│[33m Medium [39m│[33m A Very, Very Long  [39m│
+  │[33m h [39m│[33m Header [39m│[33m       Header       [39m│
+  │[33m o [39m│        │                    │
+  │[33m r [39m│        │                    │
+  │[33m t [39m│        │                    │
+  ├───┼────────┼────────────────────┤
+  │ a │  aaa   │  aaa bbb ccc ddd   │
+  │ a │  bbb   │  eee fff ggg hhh   │
+  │ a │  ccc   │  iii jjj kkk lll   │
+  │ b │  ddd   │  mmm nnn ooo ppp   │
+  │ b │  eee   │  qqq rrr sss ttt   │
+  │ b │  fff   │                    │
+  │ c │  ggg   │                    │
+  │ c │  hhh   │                    │
+  │ c │        │                    │
+  └───┴────────┴────────────────────┘
+
+╠═ width=37 ════════════════════════╣
+[31mTable Too Wide: target=37 widest-line=38[39m
+  ┌───┬────────┬─────────────────────┐
+  │[33m S [39m│[33m Medium [39m│[33m  A Very, Very Long  [39m│
+  │[33m h [39m│[33m Header [39m│[33m       Header        [39m│
+  │[33m o [39m│        │                     │
+  │[33m r [39m│        │                     │
+  │[33m t [39m│        │                     │
+  ├───┼────────┼─────────────────────┤
+  │ a │  aaa   │ aaa bbb ccc ddd eee │
+  │ a │  bbb   │ fff ggg hhh iii jjj │
+  │ a │  ccc   │ kkk lll mmm nnn ooo │
+  │ b │  ddd   │ ppp qqq rrr sss ttt │
+  │ b │  eee   │                     │
+  │ b │  fff   │                     │
+  │ c │  ggg   │                     │
+  │ c │  hhh   │                     │
+  │ c │        │                     │
+  └───┴────────┴─────────────────────┘
+
+╠═ width=38 ═════════════════════════╣
+[31mTable Too Wide: target=38 widest-line=39[39m
+  ┌───┬────────┬──────────────────────┐
+  │[33m S [39m│[33m Medium [39m│[33m  A Very, Very Long   [39m│
+  │[33m h [39m│[33m Header [39m│[33m        Header        [39m│
+  │[33m o [39m│        │                      │
+  │[33m r [39m│        │                      │
+  │[33m t [39m│        │                      │
+  ├───┼────────┼──────────────────────┤
+  │ a │  aaa   │ aaa bbb ccc ddd eee  │
+  │ a │  bbb   │ fff ggg hhh iii jjj  │
+  │ a │  ccc   │ kkk lll mmm nnn ooo  │
+  │ b │  ddd   │ ppp qqq rrr sss ttt  │
+  │ b │  eee   │                      │
+  │ b │  fff   │                      │
+  │ c │  ggg   │                      │
+  │ c │  hhh   │                      │
+  │ c │        │                      │
+  └───┴────────┴──────────────────────┘
+
+╠═ width=39 ══════════════════════════╣
+[31mTable Too Wide: target=39 widest-line=40[39m
+  ┌───┬─────────┬──────────────────────┐
+  │[33m S [39m│[33m Medium  [39m│[33m  A Very, Very Long   [39m│
+  │[33m h [39m│[33m Header  [39m│[33m        Header        [39m│
+  │[33m o [39m│         │                      │
+  │[33m r [39m│         │                      │
+  │[33m t [39m│         │                      │
+  ├───┼─────────┼──────────────────────┤
+  │ a │ aaa bbb │ aaa bbb ccc ddd eee  │
+  │ a │ ccc ddd │ fff ggg hhh iii jjj  │
+  │ a │ eee fff │ kkk lll mmm nnn ooo  │
+  │ b │ ggg hhh │ ppp qqq rrr sss ttt  │
+  │ b │         │                      │
+  │ b │         │                      │
+  │ c │         │                      │
+  │ c │         │                      │
+  │ c │         │                      │
+  └───┴─────────┴──────────────────────┘
+
+╠═ width=40 ═══════════════════════════╣
+[31mTable Too Wide: target=40 widest-line=41[39m
+  ┌───┬─────────┬───────────────────────┐
+  │[33m S [39m│[33m Medium  [39m│[33m   A Very, Very Long   [39m│
+  │[33m h [39m│[33m Header  [39m│[33m        Header         [39m│
+  │[33m o [39m│         │                       │
+  │[33m r [39m│         │                       │
+  │[33m t [39m│         │                       │
+  ├───┼─────────┼───────────────────────┤
+  │ a │ aaa bbb │  aaa bbb ccc ddd eee  │
+  │ a │ ccc ddd │  fff ggg hhh iii jjj  │
+  │ a │ eee fff │  kkk lll mmm nnn ooo  │
+  │ b │ ggg hhh │  ppp qqq rrr sss ttt  │
+  │ b │         │                       │
+  │ b │         │                       │
+  │ c │         │                       │
+  │ c │         │                       │
+  │ c │         │                       │
+  └───┴─────────┴───────────────────────┘
+
+╠═ width=41 ════════════════════════════╣
+[31mTable Too Wide: target=41 widest-line=42[39m
+  ┌───┬─────────┬────────────────────────┐
+  │[33m S [39m│[33m Medium  [39m│[33m   A Very, Very Long    [39m│
+  │[33m h [39m│[33m Header  [39m│[33m         Header         [39m│
+  │[33m o [39m│         │                        │
+  │[33m r [39m│         │                        │
+  │[33m t [39m│         │                        │
+  ├───┼─────────┼────────────────────────┤
+  │ a │ aaa bbb │  aaa bbb ccc ddd eee   │
+  │ a │ ccc ddd │  fff ggg hhh iii jjj   │
+  │ a │ eee fff │  kkk lll mmm nnn ooo   │
+  │ b │ ggg hhh │  ppp qqq rrr sss ttt   │
+  │ b │         │                        │
+  │ b │         │                        │
+  │ c │         │                        │
+  │ c │         │                        │
+  │ c │         │                        │
+  └───┴─────────┴────────────────────────┘
+
+╠═ width=42 ═════════════════════════════╣
+[31mTable Too Wide: target=42 widest-line=43[39m
+  ┌───┬──────────┬────────────────────────┐
+  │[33m S [39m│[33m  Medium  [39m│[33m   A Very, Very Long    [39m│
+  │[33m h [39m│[33m  Header  [39m│[33m         Header         [39m│
+  │[33m o [39m│          │                        │
+  │[33m r [39m│          │                        │
+  │[33m t [39m│          │                        │
+  ├───┼──────────┼────────────────────────┤
+  │ a │ aaa bbb  │  aaa bbb ccc ddd eee   │
+  │ a │ ccc ddd  │  fff ggg hhh iii jjj   │
+  │ a │ eee fff  │  kkk lll mmm nnn ooo   │
+  │ b │ ggg hhh  │  ppp qqq rrr sss ttt   │
+  │ b │          │                        │
+  │ b │          │                        │
+  │ c │          │                        │
+  │ c │          │                        │
+  │ c │          │                        │
+  └───┴──────────┴────────────────────────┘
+
+╠═ width=43 ══════════════════════════════╣
+[31mTable Too Wide: target=43 widest-line=44[39m
+  ┌───┬──────────┬─────────────────────────┐
+  │[33m S [39m│[33m  Medium  [39m│[33m    A Very, Very Long    [39m│
+  │[33m h [39m│[33m  Header  [39m│[33m         Header          [39m│
+  │[33m o [39m│          │                         │
+  │[33m r [39m│          │                         │
+  │[33m t [39m│          │                         │
+  ├───┼──────────┼─────────────────────────┤
+  │ a │ aaa bbb  │ aaa bbb ccc ddd eee fff │
+  │ a │ ccc ddd  │ ggg hhh iii jjj kkk lll │
+  │ a │ eee fff  │ mmm nnn ooo ppp qqq rrr │
+  │ b │ ggg hhh  │         sss ttt         │
+  │ b │          │                         │
+  │ b │          │                         │
+  │ c │          │                         │
+  │ c │          │                         │
+  │ c │          │                         │
+  └───┴──────────┴─────────────────────────┘
+
+╠═ width=44 ═══════════════════════════════╣
+[31mTable Too Wide: target=44 widest-line=45[39m
+  ┌────┬──────────┬─────────────────────────┐
+  │[33m Sh [39m│[33m  Medium  [39m│[33m    A Very, Very Long    [39m│
+  │[33m or [39m│[33m  Header  [39m│[33m         Header          [39m│
+  │[33m t  [39m│          │                         │
+  ├────┼──────────┼─────────────────────────┤
+  │ aa │ aaa bbb  │ aaa bbb ccc ddd eee fff │
+  │ a  │ ccc ddd  │ ggg hhh iii jjj kkk lll │
+  │ bb │ eee fff  │ mmm nnn ooo ppp qqq rrr │
+  │ b  │ ggg hhh  │         sss ttt         │
+  │ cc │          │                         │
+  │ c  │          │                         │
+  └────┴──────────┴─────────────────────────┘
+
+╠═ width=45 ════════════════════════════════╣
+[31mTable Too Wide: target=45 widest-line=46[39m
+  ┌────┬──────────┬──────────────────────────┐
+  │[33m Sh [39m│[33m  Medium  [39m│[33m A Very, Very Long Header [39m│
+  │[33m or [39m│[33m  Header  [39m│                          │
+  │[33m t  [39m│          │                          │
+  ├────┼──────────┼──────────────────────────┤
+  │ aa │ aaa bbb  │ aaa bbb ccc ddd eee fff  │
+  │ a  │ ccc ddd  │ ggg hhh iii jjj kkk lll  │
+  │ bb │ eee fff  │ mmm nnn ooo ppp qqq rrr  │
+  │ b  │ ggg hhh  │         sss ttt          │
+  │ cc │          │                          │
+  │ c  │          │                          │
+  └────┴──────────┴──────────────────────────┘
+
+╠═ width=46 ═════════════════════════════════╣
+[31mTable Too Wide: target=46 widest-line=47[39m
+  ┌────┬──────────┬───────────────────────────┐
+  │[33m Sh [39m│[33m  Medium  [39m│[33m A Very, Very Long Header  [39m│
+  │[33m or [39m│[33m  Header  [39m│                           │
+  │[33m t  [39m│          │                           │
+  ├────┼──────────┼───────────────────────────┤
+  │ aa │ aaa bbb  │  aaa bbb ccc ddd eee fff  │
+  │ a  │ ccc ddd  │  ggg hhh iii jjj kkk lll  │
+  │ bb │ eee fff  │  mmm nnn ooo ppp qqq rrr  │
+  │ b  │ ggg hhh  │          sss ttt          │
+  │ cc │          │                           │
+  │ c  │          │                           │
+  └────┴──────────┴───────────────────────────┘
+
+╠═ width=47 ══════════════════════════════════╣
+[31mTable Too Wide: target=47 widest-line=48[39m
+  ┌────┬───────────┬───────────────────────────┐
+  │[33m Sh [39m│[33m  Medium   [39m│[33m A Very, Very Long Header  [39m│
+  │[33m or [39m│[33m  Header   [39m│                           │
+  │[33m t  [39m│           │                           │
+  ├────┼───────────┼───────────────────────────┤
+  │ aa │  aaa bbb  │  aaa bbb ccc ddd eee fff  │
+  │ a  │  ccc ddd  │  ggg hhh iii jjj kkk lll  │
+  │ bb │  eee fff  │  mmm nnn ooo ppp qqq rrr  │
+  │ b  │  ggg hhh  │          sss ttt          │
+  │ cc │           │                           │
+  │ c  │           │                           │
+  └────┴───────────┴───────────────────────────┘
+
+╠═ width=48 ═══════════════════════════════════╣
+[31mTable Too Wide: target=48 widest-line=49[39m
+  ┌────┬───────────┬────────────────────────────┐
+  │[33m Sh [39m│[33m  Medium   [39m│[33m  A Very, Very Long Header  [39m│
+  │[33m or [39m│[33m  Header   [39m│                            │
+  │[33m t  [39m│           │                            │
+  ├────┼───────────┼────────────────────────────┤
+  │ aa │  aaa bbb  │  aaa bbb ccc ddd eee fff   │
+  │ a  │  ccc ddd  │  ggg hhh iii jjj kkk lll   │
+  │ bb │  eee fff  │  mmm nnn ooo ppp qqq rrr   │
+  │ b  │  ggg hhh  │          sss ttt           │
+  │ cc │           │                            │
+  │ c  │           │                            │
+  └────┴───────────┴────────────────────────────┘
+
+╠═ width=49 ════════════════════════════════════╣
+[31mTable Too Wide: target=49 widest-line=50[39m
+  ┌────┬───────────┬─────────────────────────────┐
+  │[33m Sh [39m│[33m  Medium   [39m│[33m  A Very, Very Long Header   [39m│
+  │[33m or [39m│[33m  Header   [39m│                             │
+  │[33m t  [39m│           │                             │
+  ├────┼───────────┼─────────────────────────────┤
+  │ aa │  aaa bbb  │ aaa bbb ccc ddd eee fff ggg │
+  │ a  │  ccc ddd  │ hhh iii jjj kkk lll mmm nnn │
+  │ bb │  eee fff  │   ooo ppp qqq rrr sss ttt   │
+  │ b  │  ggg hhh  │                             │
+  │ cc │           │                             │
+  │ c  │           │                             │
+  └────┴───────────┴─────────────────────────────┘
+
+╠═ width=50 ═════════════════════════════════════╣
+[31mTable Too Wide: target=50 widest-line=51[39m
+  ┌────┬────────────┬─────────────────────────────┐
+  │[33m Sh [39m│[33m   Medium   [39m│[33m  A Very, Very Long Header   [39m│
+  │[33m or [39m│[33m   Header   [39m│                             │
+  │[33m t  [39m│            │                             │
+  ├────┼────────────┼─────────────────────────────┤
+  │ aa │  aaa bbb   │ aaa bbb ccc ddd eee fff ggg │
+  │ a  │  ccc ddd   │ hhh iii jjj kkk lll mmm nnn │
+  │ bb │  eee fff   │   ooo ppp qqq rrr sss ttt   │
+  │ b  │  ggg hhh   │                             │
+  │ cc │            │                             │
+  │ c  │            │                             │
+  └────┴────────────┴─────────────────────────────┘
+
+╠═ width=51 ══════════════════════════════════════╣
+[31mTable Too Wide: target=51 widest-line=52[39m
+  ┌────┬────────────┬──────────────────────────────┐
+  │[33m Sh [39m│[33m   Medium   [39m│[33m   A Very, Very Long Header   [39m│
+  │[33m or [39m│[33m   Header   [39m│                              │
+  │[33m t  [39m│            │                              │
+  ├────┼────────────┼──────────────────────────────┤
+  │ aa │  aaa bbb   │ aaa bbb ccc ddd eee fff ggg  │
+  │ a  │  ccc ddd   │ hhh iii jjj kkk lll mmm nnn  │
+  │ bb │  eee fff   │   ooo ppp qqq rrr sss ttt    │
+  │ b  │  ggg hhh   │                              │
+  │ cc │            │                              │
+  │ c  │            │                              │
+  └────┴────────────┴──────────────────────────────┘
+
+╠═ width=52 ═══════════════════════════════════════╣
+[31mTable Too Wide: target=52 widest-line=53[39m
+  ┌────┬────────────┬───────────────────────────────┐
+  │[33m Sh [39m│[33m   Medium   [39m│[33m   A Very, Very Long Header    [39m│
+  │[33m or [39m│[33m   Header   [39m│                               │
+  │[33m t  [39m│            │                               │
+  ├────┼────────────┼───────────────────────────────┤
+  │ aa │  aaa bbb   │  aaa bbb ccc ddd eee fff ggg  │
+  │ a  │  ccc ddd   │  hhh iii jjj kkk lll mmm nnn  │
+  │ bb │  eee fff   │    ooo ppp qqq rrr sss ttt    │
+  │ b  │  ggg hhh   │                               │
+  │ cc │            │                               │
+  │ c  │            │                               │
+  └────┴────────────┴───────────────────────────────┘
+
+╠═ width=53 ════════════════════════════════════════╣
+[31mTable Too Wide: target=53 widest-line=54[39m
+  ┌─────┬────────────┬───────────────────────────────┐
+  │[33m Sho [39m│[33m   Medium   [39m│[33m   A Very, Very Long Header    [39m│
+  │[33m rt  [39m│[33m   Header   [39m│                               │
+  ├─────┼────────────┼───────────────────────────────┤
+  │ aaa │  aaa bbb   │  aaa bbb ccc ddd eee fff ggg  │
+  │ bbb │  ccc ddd   │  hhh iii jjj kkk lll mmm nnn  │
+  │ ccc │  eee fff   │    ooo ppp qqq rrr sss ttt    │
+  │     │  ggg hhh   │                               │
+  └─────┴────────────┴───────────────────────────────┘
+
+╠═ width=54 ═════════════════════════════════════════╣
+[31mTable Too Wide: target=54 widest-line=55[39m
+  ┌─────┬────────────┬────────────────────────────────┐
+  │[33m Sho [39m│[33m   Medium   [39m│[33m    A Very, Very Long Header    [39m│
+  │[33m rt  [39m│[33m   Header   [39m│                                │
+  ├─────┼────────────┼────────────────────────────────┤
+  │ aaa │  aaa bbb   │  aaa bbb ccc ddd eee fff ggg   │
+  │ bbb │  ccc ddd   │  hhh iii jjj kkk lll mmm nnn   │
+  │ ccc │  eee fff   │    ooo ppp qqq rrr sss ttt     │
+  │     │  ggg hhh   │                                │
+  └─────┴────────────┴────────────────────────────────┘
+
+╠═ width=55 ══════════════════════════════════════════╣
+[31mTable Too Wide: target=55 widest-line=56[39m
+  ┌─────┬─────────────┬────────────────────────────────┐
+  │[33m Sho [39m│[33m   Medium    [39m│[33m    A Very, Very Long Header    [39m│
+  │[33m rt  [39m│[33m   Header    [39m│                                │
+  ├─────┼─────────────┼────────────────────────────────┤
+  │ aaa │ aaa bbb ccc │  aaa bbb ccc ddd eee fff ggg   │
+  │ bbb │ ddd eee fff │  hhh iii jjj kkk lll mmm nnn   │
+  │ ccc │   ggg hhh   │    ooo ppp qqq rrr sss ttt     │
+  └─────┴─────────────┴────────────────────────────────┘
+
+╠═ width=56 ═══════════════════════════════════════════╣
+[31mTable Too Wide: target=56 widest-line=57[39m
+  ┌─────┬─────────────┬─────────────────────────────────┐
+  │[33m Sho [39m│[33m   Medium    [39m│[33m    A Very, Very Long Header     [39m│
+  │[33m rt  [39m│[33m   Header    [39m│                                 │
+  ├─────┼─────────────┼─────────────────────────────────┤
+  │ aaa │ aaa bbb ccc │ aaa bbb ccc ddd eee fff ggg hhh │
+  │ bbb │ ddd eee fff │ iii jjj kkk lll mmm nnn ooo ppp │
+  │ ccc │   ggg hhh   │         qqq rrr sss ttt         │
+  └─────┴─────────────┴─────────────────────────────────┘
+
+╠═ width=57 ════════════════════════════════════════════╣
+[31mTable Too Wide: target=57 widest-line=58[39m
+  ┌─────┬─────────────┬──────────────────────────────────┐
+  │[33m Sho [39m│[33m   Medium    [39m│[33m     A Very, Very Long Header     [39m│
+  │[33m rt  [39m│[33m   Header    [39m│                                  │
+  ├─────┼─────────────┼──────────────────────────────────┤
+  │ aaa │ aaa bbb ccc │ aaa bbb ccc ddd eee fff ggg hhh  │
+  │ bbb │ ddd eee fff │ iii jjj kkk lll mmm nnn ooo ppp  │
+  │ ccc │   ggg hhh   │         qqq rrr sss ttt          │
+  └─────┴─────────────┴──────────────────────────────────┘
+
+╠═ width=58 ═════════════════════════════════════════════╣
+[31mTable Too Wide: target=58 widest-line=59[39m
+  ┌─────┬──────────────┬──────────────────────────────────┐
+  │[33m Sho [39m│[33m    Medium    [39m│[33m     A Very, Very Long Header     [39m│
+  │[33m rt  [39m│[33m    Header    [39m│                                  │
+  ├─────┼──────────────┼──────────────────────────────────┤
+  │ aaa │ aaa bbb ccc  │ aaa bbb ccc ddd eee fff ggg hhh  │
+  │ bbb │ ddd eee fff  │ iii jjj kkk lll mmm nnn ooo ppp  │
+  │ ccc │   ggg hhh    │         qqq rrr sss ttt          │
+  └─────┴──────────────┴──────────────────────────────────┘
+
+╠═ width=59 ══════════════════════════════════════════════╣
+[31mTable Too Wide: target=59 widest-line=60[39m
+  ┌─────┬──────────────┬───────────────────────────────────┐
+  │[33m Sho [39m│[33m    Medium    [39m│[33m     A Very, Very Long Header      [39m│
+  │[33m rt  [39m│[33m    Header    [39m│                                   │
+  ├─────┼──────────────┼───────────────────────────────────┤
+  │ aaa │ aaa bbb ccc  │  aaa bbb ccc ddd eee fff ggg hhh  │
+  │ bbb │ ddd eee fff  │  iii jjj kkk lll mmm nnn ooo ppp  │
+  │ ccc │   ggg hhh    │          qqq rrr sss ttt          │
+  └─────┴──────────────┴───────────────────────────────────┘
+
+╠═ width=60 ═══════════════════════════════════════════════╣
+[31mTable Too Wide: target=60 widest-line=61[39m
+  ┌─────┬──────────────┬────────────────────────────────────┐
+  │[33m Sho [39m│[33m    Medium    [39m│[33m      A Very, Very Long Header      [39m│
+  │[33m rt  [39m│[33m    Header    [39m│                                    │
+  ├─────┼──────────────┼────────────────────────────────────┤
+  │ aaa │ aaa bbb ccc  │  aaa bbb ccc ddd eee fff ggg hhh   │
+  │ bbb │ ddd eee fff  │  iii jjj kkk lll mmm nnn ooo ppp   │
+  │ ccc │   ggg hhh    │          qqq rrr sss ttt           │
+  └─────┴──────────────┴────────────────────────────────────┘
+
+╠═ width=61 ════════════════════════════════════════════════╣
+[31mTable Too Wide: target=61 widest-line=62[39m
+  ┌─────┬───────────────┬────────────────────────────────────┐
+  │[33m Sho [39m│[33m Medium Header [39m│[33m      A Very, Very Long Header      [39m│
+  │[33m rt  [39m│               │                                    │
+  ├─────┼───────────────┼────────────────────────────────────┤
+  │ aaa │  aaa bbb ccc  │  aaa bbb ccc ddd eee fff ggg hhh   │
+  │ bbb │  ddd eee fff  │  iii jjj kkk lll mmm nnn ooo ppp   │
+  │ ccc │    ggg hhh    │          qqq rrr sss ttt           │
+  └─────┴───────────────┴────────────────────────────────────┘
+
+╠═ width=62 ═════════════════════════════════════════════════╣
+[31mTable Too Wide: target=62 widest-line=63[39m
+  ┌─────┬───────────────┬─────────────────────────────────────┐
+  │[33m Sho [39m│[33m Medium Header [39m│[33m      A Very, Very Long Header       [39m│
+  │[33m rt  [39m│               │                                     │
+  ├─────┼───────────────┼─────────────────────────────────────┤
+  │ aaa │  aaa bbb ccc  │ aaa bbb ccc ddd eee fff ggg hhh iii │
+  │ bbb │  ddd eee fff  │ jjj kkk lll mmm nnn ooo ppp qqq rrr │
+  │ ccc │    ggg hhh    │               sss ttt               │
+  └─────┴───────────────┴─────────────────────────────────────┘
+
+╠═ width=63 ══════════════════════════════════════════════════╣
+[31mTable Too Wide: target=63 widest-line=64[39m
+  ┌──────┬───────────────┬─────────────────────────────────────┐
+  │[33m Shor [39m│[33m Medium Header [39m│[33m      A Very, Very Long Header       [39m│
+  │[33m  t   [39m│               │                                     │
+  ├──────┼───────────────┼─────────────────────────────────────┤
+  │ aaa  │  aaa bbb ccc  │ aaa bbb ccc ddd eee fff ggg hhh iii │
+  │ bbb  │  ddd eee fff  │ jjj kkk lll mmm nnn ooo ppp qqq rrr │
+  │ ccc  │    ggg hhh    │               sss ttt               │
+  └──────┴───────────────┴─────────────────────────────────────┘
+
+╠═ width=64 ═══════════════════════════════════════════════════╣
+[31mTable Too Wide: target=64 widest-line=65[39m
+  ┌──────┬───────────────┬──────────────────────────────────────┐
+  │[33m Shor [39m│[33m Medium Header [39m│[33m       A Very, Very Long Header       [39m│
+  │[33m  t   [39m│               │                                      │
+  ├──────┼───────────────┼──────────────────────────────────────┤
+  │ aaa  │  aaa bbb ccc  │ aaa bbb ccc ddd eee fff ggg hhh iii  │
+  │ bbb  │  ddd eee fff  │ jjj kkk lll mmm nnn ooo ppp qqq rrr  │
+  │ ccc  │    ggg hhh    │               sss ttt                │
+  └──────┴───────────────┴──────────────────────────────────────┘
+
+╠═ width=65 ════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=65 widest-line=66[39m
+  ┌──────┬───────────────┬───────────────────────────────────────┐
+  │[33m Shor [39m│[33m Medium Header [39m│[33m       A Very, Very Long Header        [39m│
+  │[33m  t   [39m│               │                                       │
+  ├──────┼───────────────┼───────────────────────────────────────┤
+  │ aaa  │  aaa bbb ccc  │  aaa bbb ccc ddd eee fff ggg hhh iii  │
+  │ bbb  │  ddd eee fff  │  jjj kkk lll mmm nnn ooo ppp qqq rrr  │
+  │ ccc  │    ggg hhh    │                sss ttt                │
+  └──────┴───────────────┴───────────────────────────────────────┘
+
+╠═ width=66 ═════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=66 widest-line=67[39m
+  ┌──────┬────────────────┬───────────────────────────────────────┐
+  │[33m Shor [39m│[33m Medium Header  [39m│[33m       A Very, Very Long Header        [39m│
+  │[33m  t   [39m│                │                                       │
+  ├──────┼────────────────┼───────────────────────────────────────┤
+  │ aaa  │  aaa bbb ccc   │  aaa bbb ccc ddd eee fff ggg hhh iii  │
+  │ bbb  │  ddd eee fff   │  jjj kkk lll mmm nnn ooo ppp qqq rrr  │
+  │ ccc  │    ggg hhh     │                sss ttt                │
+  └──────┴────────────────┴───────────────────────────────────────┘
+
+╠═ width=67 ══════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=67 widest-line=68[39m
+  ┌──────┬────────────────┬────────────────────────────────────────┐
+  │[33m Shor [39m│[33m Medium Header  [39m│[33m        A Very, Very Long Header        [39m│
+  │[33m  t   [39m│                │                                        │
+  ├──────┼────────────────┼────────────────────────────────────────┤
+  │ aaa  │  aaa bbb ccc   │  aaa bbb ccc ddd eee fff ggg hhh iii   │
+  │ bbb  │  ddd eee fff   │  jjj kkk lll mmm nnn ooo ppp qqq rrr   │
+  │ ccc  │    ggg hhh     │                sss ttt                 │
+  └──────┴────────────────┴────────────────────────────────────────┘
+
+╠═ width=68 ═══════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=68 widest-line=69[39m
+  ┌──────┬────────────────┬─────────────────────────────────────────┐
+  │[33m Shor [39m│[33m Medium Header  [39m│[33m        A Very, Very Long Header         [39m│
+  │[33m  t   [39m│                │                                         │
+  ├──────┼────────────────┼─────────────────────────────────────────┤
+  │ aaa  │  aaa bbb ccc   │ aaa bbb ccc ddd eee fff ggg hhh iii jjj │
+  │ bbb  │  ddd eee fff   │ kkk lll mmm nnn ooo ppp qqq rrr sss ttt │
+  │ ccc  │    ggg hhh     │                                         │
+  └──────┴────────────────┴─────────────────────────────────────────┘
+
+╠═ width=69 ════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=69 widest-line=70[39m
+  ┌──────┬─────────────────┬─────────────────────────────────────────┐
+  │[33m Shor [39m│[33m  Medium Header  [39m│[33m        A Very, Very Long Header         [39m│
+  │[33m  t   [39m│                 │                                         │
+  ├──────┼─────────────────┼─────────────────────────────────────────┤
+  │ aaa  │ aaa bbb ccc ddd │ aaa bbb ccc ddd eee fff ggg hhh iii jjj │
+  │ bbb  │ eee fff ggg hhh │ kkk lll mmm nnn ooo ppp qqq rrr sss ttt │
+  │ ccc  │                 │                                         │
+  └──────┴─────────────────┴─────────────────────────────────────────┘
+
+╠═ width=70 ═════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=70 widest-line=71[39m
+  ┌──────┬─────────────────┬──────────────────────────────────────────┐
+  │[33m Shor [39m│[33m  Medium Header  [39m│[33m         A Very, Very Long Header         [39m│
+  │[33m  t   [39m│                 │                                          │
+  ├──────┼─────────────────┼──────────────────────────────────────────┤
+  │ aaa  │ aaa bbb ccc ddd │ aaa bbb ccc ddd eee fff ggg hhh iii jjj  │
+  │ bbb  │ eee fff ggg hhh │ kkk lll mmm nnn ooo ppp qqq rrr sss ttt  │
+  │ ccc  │                 │                                          │
+  └──────┴─────────────────┴──────────────────────────────────────────┘
+
+╠═ width=71 ══════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=71 widest-line=72[39m
+  ┌──────┬─────────────────┬───────────────────────────────────────────┐
+  │[33m Shor [39m│[33m  Medium Header  [39m│[33m         A Very, Very Long Header          [39m│
+  │[33m  t   [39m│                 │                                           │
+  ├──────┼─────────────────┼───────────────────────────────────────────┤
+  │ aaa  │ aaa bbb ccc ddd │  aaa bbb ccc ddd eee fff ggg hhh iii jjj  │
+  │ bbb  │ eee fff ggg hhh │  kkk lll mmm nnn ooo ppp qqq rrr sss ttt  │
+  │ ccc  │                 │                                           │
+  └──────┴─────────────────┴───────────────────────────────────────────┘
+
+╠═ width=72 ═══════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=72 widest-line=73[39m
+  ┌───────┬─────────────────┬───────────────────────────────────────────┐
+  │[33m Short [39m│[33m  Medium Header  [39m│[33m         A Very, Very Long Header          [39m│
+  ├───────┼─────────────────┼───────────────────────────────────────────┤
+  │  aaa  │ aaa bbb ccc ddd │  aaa bbb ccc ddd eee fff ggg hhh iii jjj  │
+  │  bbb  │ eee fff ggg hhh │  kkk lll mmm nnn ooo ppp qqq rrr sss ttt  │
+  │  ccc  │                 │                                           │
+  └───────┴─────────────────┴───────────────────────────────────────────┘
+
+╠═ width=73 ════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=73 widest-line=74[39m
+  ┌───────┬─────────────────┬────────────────────────────────────────────┐
+  │[33m Short [39m│[33m  Medium Header  [39m│[33m          A Very, Very Long Header          [39m│
+  ├───────┼─────────────────┼────────────────────────────────────────────┤
+  │  aaa  │ aaa bbb ccc ddd │  aaa bbb ccc ddd eee fff ggg hhh iii jjj   │
+  │  bbb  │ eee fff ggg hhh │  kkk lll mmm nnn ooo ppp qqq rrr sss ttt   │
+  │  ccc  │                 │                                            │
+  └───────┴─────────────────┴────────────────────────────────────────────┘
+
+╠═ width=74 ═════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=74 widest-line=75[39m
+  ┌───────┬──────────────────┬────────────────────────────────────────────┐
+  │[33m Short [39m│[33m  Medium Header   [39m│[33m          A Very, Very Long Header          [39m│
+  ├───────┼──────────────────┼────────────────────────────────────────────┤
+  │  aaa  │ aaa bbb ccc ddd  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj   │
+  │  bbb  │ eee fff ggg hhh  │  kkk lll mmm nnn ooo ppp qqq rrr sss ttt   │
+  │  ccc  │                  │                                            │
+  └───────┴──────────────────┴────────────────────────────────────────────┘
+
+╠═ width=75 ══════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=75 widest-line=76[39m
+  ┌───────┬──────────────────┬─────────────────────────────────────────────┐
+  │[33m Short [39m│[33m  Medium Header   [39m│[33m          A Very, Very Long Header           [39m│
+  ├───────┼──────────────────┼─────────────────────────────────────────────┤
+  │  aaa  │ aaa bbb ccc ddd  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk │
+  │  bbb  │ eee fff ggg hhh  │     lll mmm nnn ooo ppp qqq rrr sss ttt     │
+  │  ccc  │                  │                                             │
+  └───────┴──────────────────┴─────────────────────────────────────────────┘
+
+╠═ width=76 ═══════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=76 widest-line=77[39m
+  ┌───────┬──────────────────┬──────────────────────────────────────────────┐
+  │[33m Short [39m│[33m  Medium Header   [39m│[33m           A Very, Very Long Header           [39m│
+  ├───────┼──────────────────┼──────────────────────────────────────────────┤
+  │  aaa  │ aaa bbb ccc ddd  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk  │
+  │  bbb  │ eee fff ggg hhh  │     lll mmm nnn ooo ppp qqq rrr sss ttt      │
+  │  ccc  │                  │                                              │
+  └───────┴──────────────────┴──────────────────────────────────────────────┘
+
+╠═ width=77 ════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=77 widest-line=78[39m
+  ┌───────┬───────────────────┬──────────────────────────────────────────────┐
+  │[33m Short [39m│[33m   Medium Header   [39m│[33m           A Very, Very Long Header           [39m│
+  ├───────┼───────────────────┼──────────────────────────────────────────────┤
+  │  aaa  │  aaa bbb ccc ddd  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk  │
+  │  bbb  │  eee fff ggg hhh  │     lll mmm nnn ooo ppp qqq rrr sss ttt      │
+  │  ccc  │                   │                                              │
+  └───────┴───────────────────┴──────────────────────────────────────────────┘
+
+╠═ width=78 ═════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=78 widest-line=79[39m
+  ┌───────┬───────────────────┬───────────────────────────────────────────────┐
+  │[33m Short [39m│[33m   Medium Header   [39m│[33m           A Very, Very Long Header            [39m│
+  ├───────┼───────────────────┼───────────────────────────────────────────────┤
+  │  aaa  │  aaa bbb ccc ddd  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk  │
+  │  bbb  │  eee fff ggg hhh  │      lll mmm nnn ooo ppp qqq rrr sss ttt      │
+  │  ccc  │                   │                                               │
+  └───────┴───────────────────┴───────────────────────────────────────────────┘
+
+╠═ width=79 ══════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=79 widest-line=80[39m
+  ┌───────┬───────────────────┬────────────────────────────────────────────────┐
+  │[33m Short [39m│[33m   Medium Header   [39m│[33m            A Very, Very Long Header            [39m│
+  ├───────┼───────────────────┼────────────────────────────────────────────────┤
+  │  aaa  │  aaa bbb ccc ddd  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk   │
+  │  bbb  │  eee fff ggg hhh  │      lll mmm nnn ooo ppp qqq rrr sss ttt       │
+  │  ccc  │                   │                                                │
+  └───────┴───────────────────┴────────────────────────────────────────────────┘
+
+╠═ width=80 ═══════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=80 widest-line=81[39m
+  ┌────────┬───────────────────┬────────────────────────────────────────────────┐
+  │[33m Short  [39m│[33m   Medium Header   [39m│[33m            A Very, Very Long Header            [39m│
+  ├────────┼───────────────────┼────────────────────────────────────────────────┤
+  │  aaa   │  aaa bbb ccc ddd  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk   │
+  │  bbb   │  eee fff ggg hhh  │      lll mmm nnn ooo ppp qqq rrr sss ttt       │
+  │  ccc   │                   │                                                │
+  └────────┴───────────────────┴────────────────────────────────────────────────┘
+
+╠═ width=81 ════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=81 widest-line=82[39m
+  ┌───────┬────────────────────┬─────────────────────────────────────────────────┐
+  │[33m Short [39m│[33m   Medium Header    [39m│[33m            A Very, Very Long Header             [39m│
+  ├───────┼────────────────────┼─────────────────────────────────────────────────┤
+  │  aaa  │  aaa bbb ccc ddd   │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll │
+  │  bbb  │  eee fff ggg hhh   │         mmm nnn ooo ppp qqq rrr sss ttt         │
+  │  ccc  │                    │                                                 │
+  └───────┴────────────────────┴─────────────────────────────────────────────────┘
+
+╠═ width=82 ═════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=82 widest-line=83[39m
+  ┌────────┬────────────────────┬─────────────────────────────────────────────────┐
+  │[33m Short  [39m│[33m   Medium Header    [39m│[33m            A Very, Very Long Header             [39m│
+  ├────────┼────────────────────┼─────────────────────────────────────────────────┤
+  │  aaa   │  aaa bbb ccc ddd   │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll │
+  │  bbb   │  eee fff ggg hhh   │         mmm nnn ooo ppp qqq rrr sss ttt         │
+  │  ccc   │                    │                                                 │
+  └────────┴────────────────────┴─────────────────────────────────────────────────┘
+
+╠═ width=83 ══════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=83 widest-line=84[39m
+  ┌────────┬────────────────────┬──────────────────────────────────────────────────┐
+  │[33m Short  [39m│[33m   Medium Header    [39m│[33m             A Very, Very Long Header             [39m│
+  ├────────┼────────────────────┼──────────────────────────────────────────────────┤
+  │  aaa   │  aaa bbb ccc ddd   │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll  │
+  │  bbb   │  eee fff ggg hhh   │         mmm nnn ooo ppp qqq rrr sss ttt          │
+  │  ccc   │                    │                                                  │
+  └────────┴────────────────────┴──────────────────────────────────────────────────┘
+
+╠═ width=84 ═══════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=84 widest-line=85[39m
+  ┌────────┬────────────────────┬───────────────────────────────────────────────────┐
+  │[33m Short  [39m│[33m   Medium Header    [39m│[33m             A Very, Very Long Header              [39m│
+  ├────────┼────────────────────┼───────────────────────────────────────────────────┤
+  │  aaa   │  aaa bbb ccc ddd   │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll  │
+  │  bbb   │  eee fff ggg hhh   │          mmm nnn ooo ppp qqq rrr sss ttt          │
+  │  ccc   │                    │                                                   │
+  └────────┴────────────────────┴───────────────────────────────────────────────────┘
+
+╠═ width=85 ════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=85 widest-line=86[39m
+  ┌────────┬─────────────────────┬───────────────────────────────────────────────────┐
+  │[33m Short  [39m│[33m    Medium Header    [39m│[33m             A Very, Very Long Header              [39m│
+  ├────────┼─────────────────────┼───────────────────────────────────────────────────┤
+  │  aaa   │ aaa bbb ccc ddd eee │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll  │
+  │  bbb   │     fff ggg hhh     │          mmm nnn ooo ppp qqq rrr sss ttt          │
+  │  ccc   │                     │                                                   │
+  └────────┴─────────────────────┴───────────────────────────────────────────────────┘
+
+╠═ width=86 ═════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=86 widest-line=87[39m
+  ┌────────┬─────────────────────┬────────────────────────────────────────────────────┐
+  │[33m Short  [39m│[33m    Medium Header    [39m│[33m              A Very, Very Long Header              [39m│
+  ├────────┼─────────────────────┼────────────────────────────────────────────────────┤
+  │  aaa   │ aaa bbb ccc ddd eee │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll   │
+  │  bbb   │     fff ggg hhh     │          mmm nnn ooo ppp qqq rrr sss ttt           │
+  │  ccc   │                     │                                                    │
+  └────────┴─────────────────────┴────────────────────────────────────────────────────┘
+
+╠═ width=87 ══════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=87 widest-line=88[39m
+  ┌────────┬─────────────────────┬─────────────────────────────────────────────────────┐
+  │[33m Short  [39m│[33m    Medium Header    [39m│[33m              A Very, Very Long Header               [39m│
+  ├────────┼─────────────────────┼─────────────────────────────────────────────────────┤
+  │  aaa   │ aaa bbb ccc ddd eee │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm │
+  │  bbb   │     fff ggg hhh     │             nnn ooo ppp qqq rrr sss ttt             │
+  │  ccc   │                     │                                                     │
+  └────────┴─────────────────────┴─────────────────────────────────────────────────────┘
+
+╠═ width=88 ═══════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=88 widest-line=89[39m
+  ┌────────┬──────────────────────┬─────────────────────────────────────────────────────┐
+  │[33m Short  [39m│[33m    Medium Header     [39m│[33m              A Very, Very Long Header               [39m│
+  ├────────┼──────────────────────┼─────────────────────────────────────────────────────┤
+  │  aaa   │ aaa bbb ccc ddd eee  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm │
+  │  bbb   │     fff ggg hhh      │             nnn ooo ppp qqq rrr sss ttt             │
+  │  ccc   │                      │                                                     │
+  └────────┴──────────────────────┴─────────────────────────────────────────────────────┘
+
+╠═ width=89 ════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=89 widest-line=90[39m
+  ┌────────┬──────────────────────┬──────────────────────────────────────────────────────┐
+  │[33m Short  [39m│[33m    Medium Header     [39m│[33m               A Very, Very Long Header               [39m│
+  ├────────┼──────────────────────┼──────────────────────────────────────────────────────┤
+  │  aaa   │ aaa bbb ccc ddd eee  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm  │
+  │  bbb   │     fff ggg hhh      │             nnn ooo ppp qqq rrr sss ttt              │
+  │  ccc   │                      │                                                      │
+  └────────┴──────────────────────┴──────────────────────────────────────────────────────┘
+
+╠═ width=90 ═════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=90 widest-line=91[39m
+  ┌────────┬──────────────────────┬───────────────────────────────────────────────────────┐
+  │[33m Short  [39m│[33m    Medium Header     [39m│[33m               A Very, Very Long Header                [39m│
+  ├────────┼──────────────────────┼───────────────────────────────────────────────────────┤
+  │  aaa   │ aaa bbb ccc ddd eee  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm  │
+  │  bbb   │     fff ggg hhh      │              nnn ooo ppp qqq rrr sss ttt              │
+  │  ccc   │                      │                                                       │
+  └────────┴──────────────────────┴───────────────────────────────────────────────────────┘
+
+╠═ width=91 ══════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=91 widest-line=92[39m
+  ┌─────────┬──────────────────────┬───────────────────────────────────────────────────────┐
+  │[33m  Short  [39m│[33m    Medium Header     [39m│[33m               A Very, Very Long Header                [39m│
+  ├─────────┼──────────────────────┼───────────────────────────────────────────────────────┤
+  │ aaa bbb │ aaa bbb ccc ddd eee  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm  │
+  │   ccc   │     fff ggg hhh      │              nnn ooo ppp qqq rrr sss ttt              │
+  └─────────┴──────────────────────┴───────────────────────────────────────────────────────┘
+
+╠═ width=92 ═══════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=92 widest-line=93[39m
+  ┌─────────┬──────────────────────┬────────────────────────────────────────────────────────┐
+  │[33m  Short  [39m│[33m    Medium Header     [39m│[33m                A Very, Very Long Header                [39m│
+  ├─────────┼──────────────────────┼────────────────────────────────────────────────────────┤
+  │ aaa bbb │ aaa bbb ccc ddd eee  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm   │
+  │   ccc   │     fff ggg hhh      │              nnn ooo ppp qqq rrr sss ttt               │
+  └─────────┴──────────────────────┴────────────────────────────────────────────────────────┘
+
+╠═ width=93 ════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=93 widest-line=94[39m
+  ┌─────────┬───────────────────────┬────────────────────────────────────────────────────────┐
+  │[33m  Short  [39m│[33m     Medium Header     [39m│[33m                A Very, Very Long Header                [39m│
+  ├─────────┼───────────────────────┼────────────────────────────────────────────────────────┤
+  │ aaa bbb │  aaa bbb ccc ddd eee  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm   │
+  │   ccc   │      fff ggg hhh      │              nnn ooo ppp qqq rrr sss ttt               │
+  └─────────┴───────────────────────┴────────────────────────────────────────────────────────┘
+
+╠═ width=94 ═════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=94 widest-line=95[39m
+  ┌─────────┬───────────────────────┬─────────────────────────────────────────────────────────┐
+  │[33m  Short  [39m│[33m     Medium Header     [39m│[33m                A Very, Very Long Header                 [39m│
+  ├─────────┼───────────────────────┼─────────────────────────────────────────────────────────┤
+  │ aaa bbb │  aaa bbb ccc ddd eee  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn │
+  │   ccc   │      fff ggg hhh      │                 ooo ppp qqq rrr sss ttt                 │
+  └─────────┴───────────────────────┴─────────────────────────────────────────────────────────┘
+
+╠═ width=95 ══════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=95 widest-line=96[39m
+  ┌─────────┬───────────────────────┬──────────────────────────────────────────────────────────┐
+  │[33m  Short  [39m│[33m     Medium Header     [39m│[33m                 A Very, Very Long Header                 [39m│
+  ├─────────┼───────────────────────┼──────────────────────────────────────────────────────────┤
+  │ aaa bbb │  aaa bbb ccc ddd eee  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn  │
+  │   ccc   │      fff ggg hhh      │                 ooo ppp qqq rrr sss ttt                  │
+  └─────────┴───────────────────────┴──────────────────────────────────────────────────────────┘
+
+╠═ width=96 ═══════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=96 widest-line=97[39m
+  ┌─────────┬────────────────────────┬──────────────────────────────────────────────────────────┐
+  │[33m  Short  [39m│[33m     Medium Header      [39m│[33m                 A Very, Very Long Header                 [39m│
+  ├─────────┼────────────────────────┼──────────────────────────────────────────────────────────┤
+  │ aaa bbb │  aaa bbb ccc ddd eee   │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn  │
+  │   ccc   │      fff ggg hhh       │                 ooo ppp qqq rrr sss ttt                  │
+  └─────────┴────────────────────────┴──────────────────────────────────────────────────────────┘
+
+╠═ width=97 ════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=97 widest-line=98[39m
+  ┌─────────┬────────────────────────┬───────────────────────────────────────────────────────────┐
+  │[33m  Short  [39m│[33m     Medium Header      [39m│[33m                 A Very, Very Long Header                  [39m│
+  ├─────────┼────────────────────────┼───────────────────────────────────────────────────────────┤
+  │ aaa bbb │  aaa bbb ccc ddd eee   │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn  │
+  │   ccc   │      fff ggg hhh       │                  ooo ppp qqq rrr sss ttt                  │
+  └─────────┴────────────────────────┴───────────────────────────────────────────────────────────┘
+
+╠═ width=98 ═════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=98 widest-line=99[39m
+  ┌─────────┬────────────────────────┬────────────────────────────────────────────────────────────┐
+  │[33m  Short  [39m│[33m     Medium Header      [39m│[33m                  A Very, Very Long Header                  [39m│
+  ├─────────┼────────────────────────┼────────────────────────────────────────────────────────────┤
+  │ aaa bbb │  aaa bbb ccc ddd eee   │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn   │
+  │   ccc   │      fff ggg hhh       │                  ooo ppp qqq rrr sss ttt                   │
+  └─────────┴────────────────────────┴────────────────────────────────────────────────────────────┘
+
+╠═ width=99 ══════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=99 widest-line=100[39m
+  ┌──────────┬────────────────────────┬────────────────────────────────────────────────────────────┐
+  │[33m  Short   [39m│[33m     Medium Header      [39m│[33m                  A Very, Very Long Header                  [39m│
+  ├──────────┼────────────────────────┼────────────────────────────────────────────────────────────┤
+  │ aaa bbb  │  aaa bbb ccc ddd eee   │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn   │
+  │   ccc    │      fff ggg hhh       │                  ooo ppp qqq rrr sss ttt                   │
+  └──────────┴────────────────────────┴────────────────────────────────────────────────────────────┘
+
+╠═ width=100 ══════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=100 widest-line=101[39m
+  ┌─────────┬─────────────────────────┬─────────────────────────────────────────────────────────────┐
+  │[33m  Short  [39m│[33m      Medium Header      [39m│[33m                  A Very, Very Long Header                   [39m│
+  ├─────────┼─────────────────────────┼─────────────────────────────────────────────────────────────┤
+  │ aaa bbb │ aaa bbb ccc ddd eee fff │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo │
+  │   ccc   │         ggg hhh         │                     ppp qqq rrr sss ttt                     │
+  └─────────┴─────────────────────────┴─────────────────────────────────────────────────────────────┘
+
+╠═ width=101 ═══════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=101 widest-line=102[39m
+  ┌──────────┬─────────────────────────┬─────────────────────────────────────────────────────────────┐
+  │[33m  Short   [39m│[33m      Medium Header      [39m│[33m                  A Very, Very Long Header                   [39m│
+  ├──────────┼─────────────────────────┼─────────────────────────────────────────────────────────────┤
+  │ aaa bbb  │ aaa bbb ccc ddd eee fff │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo │
+  │   ccc    │         ggg hhh         │                     ppp qqq rrr sss ttt                     │
+  └──────────┴─────────────────────────┴─────────────────────────────────────────────────────────────┘
+
+╠═ width=102 ════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=102 widest-line=103[39m
+  ┌──────────┬─────────────────────────┬──────────────────────────────────────────────────────────────┐
+  │[33m  Short   [39m│[33m      Medium Header      [39m│[33m                   A Very, Very Long Header                   [39m│
+  ├──────────┼─────────────────────────┼──────────────────────────────────────────────────────────────┤
+  │ aaa bbb  │ aaa bbb ccc ddd eee fff │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo  │
+  │   ccc    │         ggg hhh         │                     ppp qqq rrr sss ttt                      │
+  └──────────┴─────────────────────────┴──────────────────────────────────────────────────────────────┘
+
+╠═ width=103 ═════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=103 widest-line=104[39m
+  ┌──────────┬─────────────────────────┬───────────────────────────────────────────────────────────────┐
+  │[33m  Short   [39m│[33m      Medium Header      [39m│[33m                   A Very, Very Long Header                    [39m│
+  ├──────────┼─────────────────────────┼───────────────────────────────────────────────────────────────┤
+  │ aaa bbb  │ aaa bbb ccc ddd eee fff │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo  │
+  │   ccc    │         ggg hhh         │                      ppp qqq rrr sss ttt                      │
+  └──────────┴─────────────────────────┴───────────────────────────────────────────────────────────────┘
+
+╠═ width=104 ══════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=104 widest-line=105[39m
+  ┌──────────┬──────────────────────────┬───────────────────────────────────────────────────────────────┐
+  │[33m  Short   [39m│[33m      Medium Header       [39m│[33m                   A Very, Very Long Header                    [39m│
+  ├──────────┼──────────────────────────┼───────────────────────────────────────────────────────────────┤
+  │ aaa bbb  │ aaa bbb ccc ddd eee fff  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo  │
+  │   ccc    │         ggg hhh          │                      ppp qqq rrr sss ttt                      │
+  └──────────┴──────────────────────────┴───────────────────────────────────────────────────────────────┘
+
+╠═ width=105 ═══════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=105 widest-line=106[39m
+  ┌──────────┬──────────────────────────┬────────────────────────────────────────────────────────────────┐
+  │[33m  Short   [39m│[33m      Medium Header       [39m│[33m                    A Very, Very Long Header                    [39m│
+  ├──────────┼──────────────────────────┼────────────────────────────────────────────────────────────────┤
+  │ aaa bbb  │ aaa bbb ccc ddd eee fff  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo   │
+  │   ccc    │         ggg hhh          │                      ppp qqq rrr sss ttt                       │
+  └──────────┴──────────────────────────┴────────────────────────────────────────────────────────────────┘
+
+╠═ width=106 ════════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=106 widest-line=107[39m
+  ┌──────────┬──────────────────────────┬─────────────────────────────────────────────────────────────────┐
+  │[33m  Short   [39m│[33m      Medium Header       [39m│[33m                    A Very, Very Long Header                     [39m│
+  ├──────────┼──────────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ aaa bbb  │ aaa bbb ccc ddd eee fff  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp │
+  │   ccc    │         ggg hhh          │                         qqq rrr sss ttt                         │
+  └──────────┴──────────────────────────┴─────────────────────────────────────────────────────────────────┘
+
+╠═ width=107 ═════════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=107 widest-line=108[39m
+  ┌──────────┬───────────────────────────┬─────────────────────────────────────────────────────────────────┐
+  │[33m  Short   [39m│[33m       Medium Header       [39m│[33m                    A Very, Very Long Header                     [39m│
+  ├──────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ aaa bbb  │  aaa bbb ccc ddd eee fff  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp │
+  │   ccc    │          ggg hhh          │                         qqq rrr sss ttt                         │
+  └──────────┴───────────────────────────┴─────────────────────────────────────────────────────────────────┘
+
+╠═ width=108 ══════════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=108 widest-line=109[39m
+  ┌──────────┬───────────────────────────┬──────────────────────────────────────────────────────────────────┐
+  │[33m  Short   [39m│[33m       Medium Header       [39m│[33m                     A Very, Very Long Header                     [39m│
+  ├──────────┼───────────────────────────┼──────────────────────────────────────────────────────────────────┤
+  │ aaa bbb  │  aaa bbb ccc ddd eee fff  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp  │
+  │   ccc    │          ggg hhh          │                         qqq rrr sss ttt                          │
+  └──────────┴───────────────────────────┴──────────────────────────────────────────────────────────────────┘
+
+╠═ width=109 ═══════════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=109 widest-line=110[39m
+  ┌───────────┬───────────────────────────┬──────────────────────────────────────────────────────────────────┐
+  │[33m   Short   [39m│[33m       Medium Header       [39m│[33m                     A Very, Very Long Header                     [39m│
+  ├───────────┼───────────────────────────┼──────────────────────────────────────────────────────────────────┤
+  │  aaa bbb  │  aaa bbb ccc ddd eee fff  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp  │
+  │    ccc    │          ggg hhh          │                         qqq rrr sss ttt                          │
+  └───────────┴───────────────────────────┴──────────────────────────────────────────────────────────────────┘
+
+╠═ width=110 ════════════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=110 widest-line=111[39m
+  ┌───────────┬───────────────────────────┬───────────────────────────────────────────────────────────────────┐
+  │[33m   Short   [39m│[33m       Medium Header       [39m│[33m                     A Very, Very Long Header                      [39m│
+  ├───────────┼───────────────────────────┼───────────────────────────────────────────────────────────────────┤
+  │  aaa bbb  │  aaa bbb ccc ddd eee fff  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp  │
+  │    ccc    │          ggg hhh          │                          qqq rrr sss ttt                          │
+  └───────────┴───────────────────────────┴───────────────────────────────────────────────────────────────────┘
+
+╠═ width=111 ═════════════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=111 widest-line=112[39m
+  ┌───────────┬───────────────────────────┬────────────────────────────────────────────────────────────────────┐
+  │[33m   Short   [39m│[33m       Medium Header       [39m│[33m                      A Very, Very Long Header                      [39m│
+  ├───────────┼───────────────────────────┼────────────────────────────────────────────────────────────────────┤
+  │  aaa bbb  │  aaa bbb ccc ddd eee fff  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp   │
+  │    ccc    │          ggg hhh          │                          qqq rrr sss ttt                           │
+  └───────────┴───────────────────────────┴────────────────────────────────────────────────────────────────────┘
+
+╠═ width=112 ══════════════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=112 widest-line=113[39m
+  ┌───────────┬────────────────────────────┬────────────────────────────────────────────────────────────────────┐
+  │[33m   Short   [39m│[33m       Medium Header        [39m│[33m                      A Very, Very Long Header                      [39m│
+  ├───────────┼────────────────────────────┼────────────────────────────────────────────────────────────────────┤
+  │  aaa bbb  │  aaa bbb ccc ddd eee fff   │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp   │
+  │    ccc    │          ggg hhh           │                          qqq rrr sss ttt                           │
+  └───────────┴────────────────────────────┴────────────────────────────────────────────────────────────────────┘
+
+╠═ width=113 ═══════════════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=113 widest-line=114[39m
+  ┌───────────┬────────────────────────────┬─────────────────────────────────────────────────────────────────────┐
+  │[33m   Short   [39m│[33m       Medium Header        [39m│[33m                      A Very, Very Long Header                       [39m│
+  ├───────────┼────────────────────────────┼─────────────────────────────────────────────────────────────────────┤
+  │  aaa bbb  │  aaa bbb ccc ddd eee fff   │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq │
+  │    ccc    │          ggg hhh           │                             rrr sss ttt                             │
+  └───────────┴────────────────────────────┴─────────────────────────────────────────────────────────────────────┘
+
+╠═ width=114 ════════════════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=114 widest-line=115[39m
+  ┌───────────┬────────────────────────────┬──────────────────────────────────────────────────────────────────────┐
+  │[33m   Short   [39m│[33m       Medium Header        [39m│[33m                       A Very, Very Long Header                       [39m│
+  ├───────────┼────────────────────────────┼──────────────────────────────────────────────────────────────────────┤
+  │  aaa bbb  │  aaa bbb ccc ddd eee fff   │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq  │
+  │    ccc    │          ggg hhh           │                             rrr sss ttt                              │
+  └───────────┴────────────────────────────┴──────────────────────────────────────────────────────────────────────┘
+
+╠═ width=115 ═════════════════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=115 widest-line=116[39m
+  ┌───────────┬─────────────────────────────┬──────────────────────────────────────────────────────────────────────┐
+  │[33m   Short   [39m│[33m        Medium Header        [39m│[33m                       A Very, Very Long Header                       [39m│
+  ├───────────┼─────────────────────────────┼──────────────────────────────────────────────────────────────────────┤
+  │  aaa bbb  │ aaa bbb ccc ddd eee fff ggg │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq  │
+  │    ccc    │             hhh             │                             rrr sss ttt                              │
+  └───────────┴─────────────────────────────┴──────────────────────────────────────────────────────────────────────┘
+
+╠═ width=116 ══════════════════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=116 widest-line=117[39m
+  ┌───────────┬─────────────────────────────┬───────────────────────────────────────────────────────────────────────┐
+  │[33m   Short   [39m│[33m        Medium Header        [39m│[33m                       A Very, Very Long Header                        [39m│
+  ├───────────┼─────────────────────────────┼───────────────────────────────────────────────────────────────────────┤
+  │  aaa bbb  │ aaa bbb ccc ddd eee fff ggg │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq  │
+  │    ccc    │             hhh             │                              rrr sss ttt                              │
+  └───────────┴─────────────────────────────┴───────────────────────────────────────────────────────────────────────┘
+
+╠═ width=117 ═══════════════════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=117 widest-line=118[39m
+  ┌───────────┬─────────────────────────────┬────────────────────────────────────────────────────────────────────────┐
+  │[33m   Short   [39m│[33m        Medium Header        [39m│[33m                        A Very, Very Long Header                        [39m│
+  ├───────────┼─────────────────────────────┼────────────────────────────────────────────────────────────────────────┤
+  │  aaa bbb  │ aaa bbb ccc ddd eee fff ggg │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq   │
+  │    ccc    │             hhh             │                              rrr sss ttt                               │
+  └───────────┴─────────────────────────────┴────────────────────────────────────────────────────────────────────────┘
+
+╠═ width=118 ════════════════════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=118 widest-line=119[39m
+  ┌────────────┬─────────────────────────────┬────────────────────────────────────────────────────────────────────────┐
+  │[33m   Short    [39m│[33m        Medium Header        [39m│[33m                        A Very, Very Long Header                        [39m│
+  ├────────────┼─────────────────────────────┼────────────────────────────────────────────────────────────────────────┤
+  │  aaa bbb   │ aaa bbb ccc ddd eee fff ggg │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq   │
+  │    ccc     │             hhh             │                              rrr sss ttt                               │
+  └────────────┴─────────────────────────────┴────────────────────────────────────────────────────────────────────────┘
+
+╠═ width=119 ═════════════════════════════════════════════════════════════════════════════════════════════════════════╣
+[31mTable Too Wide: target=119 widest-line=120[39m
+  ┌───────────┬──────────────────────────────┬─────────────────────────────────────────────────────────────────────────┐
+  │[33m   Short   [39m│[33m        Medium Header         [39m│[33m                        A Very, Very Long Header                         [39m│
+  ├───────────┼──────────────────────────────┼─────────────────────────────────────────────────────────────────────────┤
+  │  aaa bbb  │ aaa bbb ccc ddd eee fff ggg  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq rrr │
+  │    ccc    │             hhh              │                                 sss ttt                                 │
+  └───────────┴──────────────────────────────┴─────────────────────────────────────────────────────────────────────────┘
+[31mTable Too Wide: target=25 widest-line=26[39m
+[31mTable Too Wide: target=26 widest-line=27[39m
+[31mTable Too Wide: target=27 widest-line=28[39m
+[31mTable Too Wide: target=28 widest-line=29[39m
+[31mTable Too Wide: target=29 widest-line=30[39m
+[31mTable Too Wide: target=30 widest-line=31[39m
+[31mTable Too Wide: target=31 widest-line=32[39m
+[31mTable Too Wide: target=32 widest-line=33[39m
+[31mTable Too Wide: target=33 widest-line=34[39m
+[31mTable Too Wide: target=34 widest-line=35[39m
+[31mTable Too Wide: target=35 widest-line=36[39m
+[31mTable Too Wide: target=36 widest-line=37[39m
+[31mTable Too Wide: target=37 widest-line=38[39m
+[31mTable Too Wide: target=38 widest-line=39[39m
+[31mTable Too Wide: target=39 widest-line=40[39m
+[31mTable Too Wide: target=40 widest-line=41[39m
+[31mTable Too Wide: target=41 widest-line=42[39m
+[31mTable Too Wide: target=42 widest-line=43[39m
+[31mTable Too Wide: target=43 widest-line=44[39m
+[31mTable Too Wide: target=44 widest-line=45[39m
+[31mTable Too Wide: target=45 widest-line=46[39m
+[31mTable Too Wide: target=46 widest-line=47[39m
+[31mTable Too Wide: target=47 widest-line=48[39m
+[31mTable Too Wide: target=48 widest-line=49[39m
+[31mTable Too Wide: target=49 widest-line=50[39m
+[31mTable Too Wide: target=50 widest-line=51[39m
+[31mTable Too Wide: target=51 widest-line=52[39m
+[31mTable Too Wide: target=52 widest-line=53[39m
+[31mTable Too Wide: target=53 widest-line=54[39m
+[31mTable Too Wide: target=54 widest-line=55[39m
+[31mTable Too Wide: target=55 widest-line=56[39m
+[31mTable Too Wide: target=56 widest-line=57[39m
+[31mTable Too Wide: target=57 widest-line=58[39m
+[31mTable Too Wide: target=58 widest-line=59[39m
+[31mTable Too Wide: target=59 widest-line=60[39m
+[31mTable Too Wide: target=60 widest-line=61[39m
+[31mTable Too Wide: target=61 widest-line=62[39m
+[31mTable Too Wide: target=62 widest-line=63[39m
+[31mTable Too Wide: target=63 widest-line=64[39m
+[31mTable Too Wide: target=64 widest-line=65[39m
+[31mTable Too Wide: target=65 widest-line=66[39m
+[31mTable Too Wide: target=66 widest-line=67[39m
+[31mTable Too Wide: target=67 widest-line=68[39m
+[31mTable Too Wide: target=68 widest-line=69[39m
+[31mTable Too Wide: target=69 widest-line=70[39m
+[31mTable Too Wide: target=70 widest-line=71[39m
+[31mTable Too Wide: target=71 widest-line=72[39m
+[31mTable Too Wide: target=72 widest-line=73[39m
+[31mTable Too Wide: target=73 widest-line=74[39m
+[31mTable Too Wide: target=74 widest-line=75[39m
+[31mTable Too Wide: target=75 widest-line=76[39m
+[31mTable Too Wide: target=76 widest-line=77[39m
+[31mTable Too Wide: target=77 widest-line=78[39m
+[31mTable Too Wide: target=78 widest-line=79[39m
+[31mTable Too Wide: target=79 widest-line=80[39m
+[31mTable Too Wide: target=80 widest-line=81[39m
+[31mTable Too Wide: target=81 widest-line=82[39m
+[31mTable Too Wide: target=82 widest-line=83[39m
+[31mTable Too Wide: target=83 widest-line=84[39m
+[31mTable Too Wide: target=84 widest-line=85[39m
+[31mTable Too Wide: target=85 widest-line=86[39m
+[31mTable Too Wide: target=86 widest-line=87[39m
+[31mTable Too Wide: target=87 widest-line=88[39m
+[31mTable Too Wide: target=88 widest-line=89[39m
+[31mTable Too Wide: target=89 widest-line=90[39m
+[31mTable Too Wide: target=90 widest-line=91[39m
+[31mTable Too Wide: target=91 widest-line=92[39m
+[31mTable Too Wide: target=92 widest-line=93[39m
+[31mTable Too Wide: target=93 widest-line=94[39m
+[31mTable Too Wide: target=94 widest-line=95[39m
+[31mTable Too Wide: target=95 widest-line=96[39m
+[31mTable Too Wide: target=96 widest-line=97[39m
+[31mTable Too Wide: target=97 widest-line=98[39m
+[31mTable Too Wide: target=98 widest-line=99[39m
+[31mTable Too Wide: target=99 widest-line=100[39m
+[31mTable Too Wide: target=100 widest-line=101[39m
+[31mTable Too Wide: target=101 widest-line=102[39m
+[31mTable Too Wide: target=102 widest-line=103[39m
+[31mTable Too Wide: target=103 widest-line=104[39m
+[31mTable Too Wide: target=104 widest-line=105[39m
+[31mTable Too Wide: target=105 widest-line=106[39m
+[31mTable Too Wide: target=106 widest-line=107[39m
+[31mTable Too Wide: target=107 widest-line=108[39m
+[31mTable Too Wide: target=108 widest-line=109[39m
+[31mTable Too Wide: target=109 widest-line=110[39m
+[31mTable Too Wide: target=110 widest-line=111[39m
+[31mTable Too Wide: target=111 widest-line=112[39m
+[31mTable Too Wide: target=112 widest-line=113[39m
+[31mTable Too Wide: target=113 widest-line=114[39m
+[31mTable Too Wide: target=114 widest-line=115[39m
+[31mTable Too Wide: target=115 widest-line=116[39m
+[31mTable Too Wide: target=116 widest-line=117[39m
+[31mTable Too Wide: target=117 widest-line=118[39m
+[31mTable Too Wide: target=118 widest-line=119[39m
+[31mTable Too Wide: target=119 widest-line=120[39m
