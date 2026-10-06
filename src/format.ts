@@ -89,6 +89,13 @@ export const getStringLength = (str: string) => {
   return displayWidth(str)
 }
 
+// ANSI characters that demarcate the start/end of a line. Hoisted out of
+// wrapCellText, which runs once per cell and was recompiling them every time.
+// eslint-disable-next-line no-control-regex
+const startAnsiRegexp = /^(\x1b\[[0-9;]*m)+/
+// eslint-disable-next-line no-control-regex
+const endAnsiRegexp = /(\x1b\[[0-9;]*m)+$/
+
 export const wrapCellText = (
   config: any,
   cellValue: any,
@@ -101,6 +108,20 @@ export const wrapCellText = (
   // coerce cell value to string
   let str = cellValue.toString()
 
+  // store matching ANSI characters
+  const startMatches = str.match(startAnsiRegexp) || [""]
+
+  // remove ANSI start-of-line chars
+  if (!hasInlineAnsi) str = str.replace(startAnsiRegexp, "")
+
+  // store matching ANSI characters so can be later re-attached
+  const endMatches = str.match(endAnsiRegexp) || [""]
+
+  // Inline ANSI spans need to remain in the wrapped text so the active style can
+  // cross a line boundary. Boundary-only styles retain the historical path.
+  const hasInlineAnsi = !startMatches[0] && !endMatches[0]
+  // remove ANSI end-of-line chars
+  if (!hasInlineAnsi) str = str.replace(endAnsiRegexp, "")
 
   let alignTgt: string
 
@@ -172,7 +193,8 @@ export const wrapCellText = (
       }
     }
 
-    return line
+    // put ANSI color codes BACK on the beginning and end of string
+    return hasInlineAnsi ? line : startMatches[0] + line + endMatches[0]
   })
 
   return { cell, innerWidth }

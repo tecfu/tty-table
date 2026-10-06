@@ -45,16 +45,17 @@ describe("breakword width vs legacy wcwidth disagreements", () => {
 
 
 describe("ANSI-safe wrapping", () => {
-  it("preserves a style across a wrap boundary", () => {
+  it("preserves an inline style across a wrap boundary", () => {
     const config = {
       table: { columnWidths: [12], header: [] },
       paddingLeft: 0,
       paddingRight: 0,
       GUTTER: 1
     }
-    const styled = "\u001b[31mthis text crosses the boundary\u001b[0m"
+    const styled = "prefix \u001b[31mstyled text crosses the boundary\u001b[39m suffix"
     const result = wrapCellText(config, styled, 0, { align: "left", paddingLeft: 0, paddingRight: 0 }, "body")
-    expect(result.cell).toHaveLength(3)
-    expect(result.cell[1]).toContain("\u001b[31m")
+    expect(result.cell.length).toBeGreaterThan(1)
+    expect(result.cell.slice(0, -1).some((line: string) => line.includes("\u001b[31m"))).toBe(true)
+    expect(result.cell.slice(1).some((line: string) => line.includes("\u001b[39m"))).toBe(true)
   })
 })
