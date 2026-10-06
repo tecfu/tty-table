@@ -41,7 +41,7 @@ describe("width without a terminal", () => {
       { width: 20 }
     ).render())
     const border = output.split("\n")[0]!
-    expect(border.length).toBe(20 + 1)
+    expect(border.length).toBe(20)
   })
 
   afterEach(() => {
