@@ -33,7 +33,7 @@ describe("where a table keeps its configuration", () => {
     // a table is array-like (Object.create(body)), so spreading it is only useful
     // as a property dump - which is exactly what should not carry a config blob
     const table = Table([{ value: "h" }], [["a value"]])
-    expect(Object.keys({ ...table })).toEqual(["renderTo", "render"])
+    expect(Object.keys({ ...table })).toEqual(["render"])
     expect(JSON.stringify({ ...table })).toBe("{}")
   })
 
