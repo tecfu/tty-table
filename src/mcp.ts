@@ -18,13 +18,43 @@ const headerEntry = z.union([
   })
 ])
 
+// Validate the public table options we expose through MCP while retaining
+// forward compatibility for newer tty-table options. The previous
+// z.record(z.string(), z.unknown()) accepted typos and invalid primitive types,
+// only for Table() to fail later with a renderer-specific error.
+export const tableOptionsSchema = z.object({
+  width: z.union([z.number(), z.string()]).optional(),
+  borderStyle: z.union([z.string(), z.number()]).optional(),
+  align: z.enum(["left", "center", "right"]).optional(),
+  headerAlign: z.enum(["left", "center", "right"]).optional(),
+  footerAlign: z.enum(["left", "center", "right"]).optional(),
+  compact: z.boolean().optional(),
+  marginLeft: z.number().optional(),
+  marginTop: z.number().optional(),
+  paddingLeft: z.number().optional(),
+  paddingRight: z.number().optional(),
+  paddingTop: z.number().optional(),
+  paddingBottom: z.number().optional(),
+  GUTTER: z.number().optional(),
+  COLUMNS: z.number().optional(),
+  showHeader: z.boolean().nullable().optional(),
+  truncate: z.union([z.boolean(), z.string()]).optional(),
+  errorOnNull: z.boolean().optional(),
+  defaultValue: z.string().optional(),
+  defaultErrorValue: z.string().optional(),
+  color: z.union([z.string(), z.boolean()]).optional(),
+  headerColor: z.union([z.string(), z.boolean()]).optional(),
+  footerColor: z.union([z.string(), z.boolean()]).optional(),
+  borderColor: z.union([z.string(), z.boolean()]).optional()
+}).catchall(z.unknown())
+
 /** Shared input schema for the render_table tool (used by server + tests). */
 export const renderTableInputSchema = {
   header: z.array(headerEntry).optional()
     .describe("Column definitions: names, or {value, align, width} objects"),
   rows: z.array(z.union([z.array(z.unknown()), z.record(z.string(), z.unknown())]))
     .describe("Row data: arrays of cells, or objects keyed by column name"),
-  options: z.record(z.string(), z.unknown()).optional()
+  options: tableOptionsSchema.optional()
     .describe("tty-table options, e.g. {width: 80, borderStyle: \"solid\"}")
 }
 
@@ -41,11 +71,19 @@ export type RenderTableArgs = {
  */
 export function handleRenderTable({ header, rows, options }: RenderTableArgs) {
   try {
-    const opts = (options ?? {}) as Options
+    const parsed = z.object(renderTableInputSchema).safeParse({ header, rows, options })
+    if (!parsed.success) {
+      return {
+        isError: true as const,
+        content: [{ type: "text" as const, text: parsed.error.message }]
+      }
+    }
+
+    const opts = (parsed.data.options ?? {}) as Options
     // JSON input never carries explicit undefined, so the parsed shape
     // satisfies Header despite exactOptionalPropertyTypes
-    const head = header as unknown as (string | Header)[] | undefined
-    const table = head?.length ? Table(head, rows, opts) : Table(rows, opts)
+    const head = parsed.data.header as unknown as (string | Header)[] | undefined
+    const table = head?.length ? Table(head, parsed.data.rows, opts) : Table(parsed.data.rows, opts)
     return { content: [{ type: "text" as const, text: table.render() }] }
   } catch (error) {
     return {
