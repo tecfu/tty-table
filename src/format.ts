@@ -51,35 +51,37 @@ const getMaxLength = (columnOptions: any, rows: any[], columnIndex: number) => {
  *
  */
 const getAvailableWidth = (config: any) => {
+  let viewport: number
+
   if (process && ((process.stdout && process.stdout.columns) || (process.env && process.env.COLUMNS))) {
     // forked calls that do not inherit process.stdout must use process.env
-    let viewport: any = (process.stdout && process.stdout.columns) ? process.stdout.columns : process.env.COLUMNS
-    viewport = viewport - config.marginLeft
-
-    // table width percentage of (viewport less margin)
-    if (config.width !== "auto" && /^\d+%$/.test(config.width)) {
-      return Math.min(1, (config.width.slice(0, -1) * 0.01)) * viewport
-    }
-
-    // table width fixed
-    if (config.width !== "auto" && /^\d+$/.test(config.width)) {
-      config.FIXED_WIDTH = true
-      return config.width
-    }
-
-    // table width equals viewport less margin
-    // @TODO deprecate and remove "auto", which was never documented so should not be
-    // an issue
-    return viewport
+    const columns: any = (process.stdout && process.stdout.columns) ? process.stdout.columns : process.env.COLUMNS
+    viewport = Number(columns) - config.marginLeft
+  /* istanbul ignore next */
+  } else if (typeof (globalThis as any).window !== "undefined") {
+    // browser
+    viewport = (globalThis as any).window.innerWidth
+  } else {
+    // process.stdout.columns does not exist. assume redirecting to write stream
+    // use 80 columns, which is VT200 standard
+    viewport = config.COLUMNS - config.marginLeft
   }
 
-  // browser
-  /* istanbul ignore next */
-  if (typeof (globalThis as any).window !== "undefined") return (globalThis as any).window.innerWidth
+  // table width percentage of (viewport less margin)
+  if (config.width !== "auto" && /^\d+%$/.test(config.width)) {
+    return Math.min(1, (config.width.slice(0, -1) * 0.01)) * viewport
+  }
 
-  // process.stdout.columns does not exist. assume redirecting to write stream
-  // use 80 columns, which is VT200 standard
-  return config.COLUMNS - config.marginLeft
+  // table width fixed
+  if (config.width !== "auto" && /^\d+$/.test(config.width)) {
+    config.FIXED_WIDTH = true
+    return config.width
+  }
+
+  // table width equals viewport less margin
+  // @TODO deprecate and remove "auto", which was never documented so should not be
+  // an issue
+  return viewport
 }
 
 export const getStringLength = (str: string) => {
