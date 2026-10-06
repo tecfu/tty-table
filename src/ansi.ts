@@ -10,8 +10,26 @@ const codes: Record<string, string> = {
 }
 
 export const stripAnsi = (value: string): string => value.replace(ANSI, "")
-const codePointWidth = (value: string): number =>
-  [...value].reduce((total, char) => total + breakword.width(char), 0)
+const codePointWidth = (value: string): number => {
+  // Terminal width is a grapheme property: a ZWJ emoji sequence such as a
+  // family emoji occupies one displayed glyph, not the sum of its code points.
+  // Node 22 and modern browsers provide Intl.Segmenter; keep a code-point
+  // fallback for older browser runtimes using the standalone bundle.
+  const Segmenter = (globalThis as typeof globalThis & {
+    Intl?: typeof Intl
+  }).Intl?.Segmenter
+
+  if (Segmenter) {
+    const segmenter = new Segmenter(undefined, { granularity: "grapheme" })
+    let total = 0
+    for (const { segment } of segmenter.segment(value)) {
+      total += breakword.width(segment)
+    }
+    return total
+  }
+
+  return [...value].reduce((total, char) => total + breakword.width(char), 0)
+}
 
 // Every printable ASCII character occupies exactly one terminal cell, so its
 // display width is its length. Anything outside this range - including control

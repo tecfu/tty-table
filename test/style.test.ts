@@ -54,3 +54,14 @@ describe("chalk color compatibility", () => {
     expect(colorizeCell("value", { footerColor: "yellow" }, "footer")).toContain("\u001b[33m")
   })
 })
+
+
+describe("grapheme display width", () => {
+  it("measures ZWJ emoji sequences as one terminal glyph", () => {
+    expect(displayWidth("👨‍👩‍👧‍👦")).toBe(2)
+  })
+
+  it("keeps combining marks attached to their base character", () => {
+    expect(displayWidth("e\u0301")).toBe(1)
+  })
+})
