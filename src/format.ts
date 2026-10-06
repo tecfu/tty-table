@@ -324,7 +324,10 @@ export const getColumnWidths = (config: any, rows: any[]) => {
   // decimals. The old calculation could leave unused cells, or overflow by a
   // few cells depending on the decimal rounding.
   if (totalWidth > availableWidth || config.FIXED_WIDTH) {
-    widths = allocateProportionalWidths(widths, Math.max(0, Math.floor(availableWidth)))
+    // The renderer reserves one cell outside the column allocation for its
+    // table edge/gutter geometry, so allocate only the inner viewport width.
+    const innerAvailableWidth = Math.max(0, Math.floor(availableWidth) - 1)
+    widths = allocateProportionalWidths(widths, innerAvailableWidth)
   } else {
     widths = widths.map(Math.floor)
   }
