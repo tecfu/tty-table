@@ -32,7 +32,11 @@ const codePointWidth = (value: string): number => {
         const codePoint = char.codePointAt(0) || 0
         return codePoint >= 0x1F1E6 && codePoint <= 0x1F1FF
       }).length
-      if (segment.includes("\u200D") || regionalIndicators === 2 || segment.includes("\u20E3")) {
+      const hasEmojiModifier = [...segment].some((char) => {
+        const codePoint = char.codePointAt(0) || 0
+        return codePoint >= 0x1F3FB && codePoint <= 0x1F3FF
+      })
+      if (segment.includes("\u200D") || regionalIndicators === 2 || hasEmojiModifier || segment.includes("\u20E3")) {
         total += 2
       } else {
         total += widths.reduce((sum: number, width: number) => sum + width, 0)
