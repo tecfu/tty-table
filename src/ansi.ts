@@ -24,10 +24,15 @@ const codePointWidth = (value: string): number => {
     let total = 0
     for (const { segment } of segmenter.segment(value)) {
       const widths = [...segment].map((char) => breakword.width(char))
-      // A ZWJ sequence is one terminal glyph even though it contains several
-      // emoji code points. Other graphemes retain breakword's per-code-point
-      // semantics, including combining marks and regional-indicator pairs.
-      total += segment.includes("\u200D") ? Math.max(...widths, 0) : widths.reduce((sum: number, width: number) => sum + width, 0)
+      // Terminal cell width is not identical to code-point count. ZWJ emoji
+      // sequences, regional-indicator flags, and keycap sequences each render
+      // as one two-cell glyph in conventional terminals. Combining marks remain
+      // zero-width through breakword's per-code-point measurement.
+      if (segment.includes("\u200D") || /\\p{Regional_Indicator}{2}/u.test(segment) || segment.includes("\u20E3")) {
+        total += 2
+      } else {
+        total += widths.reduce((sum: number, width: number) => sum + width, 0)
+      }
     }
     return total
   }
