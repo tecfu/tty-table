@@ -73,5 +73,4 @@ describe("ANSI-safe wrapping", () => {
     expect(continuation.length).toBeGreaterThan(0)
     expect(continuation.every((line: string) => line.includes("\u001b[31m"))).toBe(true)
   })
-  })
 })
