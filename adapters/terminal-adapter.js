@@ -245,6 +245,6 @@ process.on("SIGINT", function () {
 })
 
 process.on("exit", function () {
-  // show cursor
-  console.log("\u001b[?25h")
+  // Only an interactive terminal has a cursor to restore.
+  if (process.stdout.isTTY) console.log("\u001b[?25h")
 })
