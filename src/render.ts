@@ -28,6 +28,22 @@ export const stringifyData = (config: any, inputData: any[]) => {
   const constructorType = getConstructorGeometry(inputData[0] || [], config)
   const rows = coerceConstructorGeometry(config, inputData, constructorType)
 
+  // When the column widths are not already cached, every body cell is built
+  // twice on a table's first render: once dry, to measure the columns, and once
+  // to print them. Cell functions and formatters are caller code, so the dry
+  // pass ran them for real - twice the side effects, and, for anything that is
+  // not a pure function of its arguments, geometry taken from the first call
+  // and text from the second. This memo keeps the value a cell produced, and
+  // the options it asked for through configure(), with the cell. It lives for
+  // the duration of one render.
+  //
+  // Phase semantics, deliberately: cell code now executes during the
+  // MEASUREMENT pass, and the render pass reuses what it returned. Previously
+  // it executed in both, so a callback that consulted external state could
+  // act on the render-time state; it now sees the evaluation-time state. This
+  // is a semantic change, not just deduplication - see the PR notes.
+  const cellMemo = new Map<CellMemoKey, CellMemo>()
+
   const isStream = config.terminalAdapter === true
   const cached = isStream ? adapterWidths : (config.table ? measuredWidths.get(config.table) : undefined)
 
@@ -35,7 +51,7 @@ export const stringifyData = (config: any, inputData: any[]) => {
     config.table.columnWidths = cached
   } else {
     const formattedRows = rows.map((row: any[], rowIndex: number) => {
-      return row.map((cell: any, cellIndex: number) => buildCell(config, cell, cellIndex, "body", rowIndex, rows, inputData, true))
+      return row.map((cell: any, cellIndex: number) => buildCell(config, cell, cellIndex, "body", rowIndex, rows, inputData, true, cellMemo))
     })
     const widths = getColumnWidths(config, formattedRows)
 
@@ -51,15 +67,15 @@ export const stringifyData = (config: any, inputData: any[]) => {
       break
     case (config.showHeader === true):
     case (!!config.table.header[0].find((obj: any) => obj.value || obj.alias)):
-      sections.header = config.table.header.map((row: any[]) => buildRow(config, row, "header", null, rows, inputData))
+      sections.header = config.table.header.map((row: any[]) => buildRow(config, row, "header", null, rows, inputData, cellMemo))
       break
     default:
       sections.header = []
   }
 
-  sections.body = rows.map((row: any[], rowIndex: number) => buildRow(config, row, "body", rowIndex, rows, inputData))
+  sections.body = rows.map((row: any[], rowIndex: number) => buildRow(config, row, "body", rowIndex, rows, inputData, cellMemo))
   sections.footer = (config.table.footer instanceof Array && config.table.footer.length > 0) ? [config.table.footer] : []
-  sections.footer = sections.footer.map((row: any[]) => buildRow(config, row, "footer", null, rows, inputData))
+  sections.footer = sections.footer.map((row: any[]) => buildRow(config, row, "footer", null, rows, inputData, cellMemo))
 
   for (let a = 0; a < 3; a++) {
     borders[a] = borderStyle[a].l
@@ -102,7 +118,7 @@ export const stringifyData = (config: any, inputData: any[]) => {
   return finalOutput
 }
 
-export const buildRow = (config: any, row: any[], rowType: string, rowIndex: number | null, rowData: any[], inputData: any[]) => {
+export const buildRow = (config: any, row: any[], rowType: RowType, rowIndex: number | null, rowData: any[], inputData: any[], cellMemo?: Map<CellMemoKey, CellMemo>) => {
   let minRowHeight = 0
   if (row.length === 0 && config.compact) {
     (row as any).empty = true
@@ -114,7 +130,7 @@ export const buildRow = (config: any, row: any[], rowType: string, rowIndex: num
   else if (lengthDifference < 0) row.length = config.table.columnWidths.length
 
   row = row.map((elem: any, elemIndex: number) => {
-    const cell = buildCell(config, elem, elemIndex, rowType, rowIndex, rowData, inputData)
+    const cell = buildCell(config, elem, elemIndex, rowType, rowIndex, rowData, inputData, false, cellMemo)
     minRowHeight = (minRowHeight < cell.length) ? cell.length : minRowHeight
     return cell
   })
@@ -166,16 +182,48 @@ const getOptionBase = (config: any, columnIndex: number, rowType: string) => {
   )
 }
 
-export const buildCell = (config: any, elem: any, columnIndex: number, rowType: string, rowIndex: number | null, rowData: any[], inputData: any[], dryRun = false) => {
+export interface CellMemo {
+  value: any
+  configured: Record<string, unknown>
+  isNull: boolean
+}
+
+// The three row kinds buildCell distinguishes; the factory accepts no others.
+export type RowType = "header" | "body" | "footer"
+
+// A memo entry is addressed by the cell's position in the render structure.
+// header and footer rows build once (dryRun never touches them) and always
+// carry rowIndex null, body rows carry their real index, so the triple is
+// unique per cell within one render - no two cells can serialise to the same
+// key.
+export type CellMemoKey = `${RowType}:${number | null}:${number}`
+
+export const buildCell = (config: any, elem: any, columnIndex: number, rowType: RowType, rowIndex: number | null, rowData: any[], inputData: any[], dryRun = false, cellMemo?: Map<CellMemoKey, CellMemo>) => {
   let cellValue: any = null
   const base = getOptionBase(config, columnIndex, rowType)
   const cellOptions: any = (typeof elem === "object" && elem !== null)
     ? Object.assign(Object.create(base), elem)
     : Object.create(base)
 
+  // What the cell asked for through this.configure(), kept so the second pass
+  // sees the same options without running the cell a second time.
+  const configured: Record<string, unknown> = {}
+  const configure = (object: any) => {
+    Object.assign(cellOptions, object)
+    Object.assign(configured, object)
+    return cellOptions
+  }
+
+  const memoKey: CellMemoKey = `${rowType}:${rowIndex}:${columnIndex}`
+  const seen = cellMemo?.get(memoKey)
+
   if (rowType === "header") {
     config.table.columns.push(cellOptions)
     cellValue = cellOptions.alias || cellOptions.value || ""
+  } else if (seen) {
+    Object.assign(cellOptions, seen.configured)
+    if (seen.isNull) cellOptions.isNull = true
+    cellValue = seen.value
   } else {
     switch (true) {
       case (typeof elem === "undefined" || elem === null):
@@ -189,7 +237,7 @@ export const buildCell = (config: any, elem: any, columnIndex: number, rowType: 
       case (typeof elem === "function"): {
         const cellFunction = elem as (this: any, value: any, columnIndex: number, rowIndex: number | null, rowData: any[], inputData: any[]) => any
         cellValue = cellFunction.bind({
-          configure: function (object: any) { return Object.assign(cellOptions, object) },
+          configure,
           style: style,
           resetStyle: resetStyle
         })(cellValue, columnIndex, rowIndex, rowData, inputData)
@@ -201,11 +249,13 @@ export const buildCell = (config: any, elem: any, columnIndex: number, rowType: 
 
     if (rowType === "body" && typeof cellOptions.formatter === "function") {
       cellValue = cellOptions.formatter.bind({
-        configure: function (object: any) { return Object.assign(cellOptions, object) },
+        configure,
         style: style,
         resetStyle: resetStyle
       })(cellValue, columnIndex, rowIndex, rowData, inputData)
     }
+
+    cellMemo?.set(memoKey, { value: cellValue, configured, isNull: cellOptions.isNull === true })
 
     if (dryRun) return cellValue
   }
