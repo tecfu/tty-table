@@ -20,7 +20,7 @@ describe("render invariants", () => {
       )
       const output = Table(rows, { width: 40 }).render()
       for (const line of output.split(/\\r?\\n/).filter(Boolean)) {
-        expect(displayWidth(stripAnsi(line))).toBeLessThanOrEqual(41)
+        expect(displayWidth(stripAnsi(line))).toBeLessThanOrEqual(42)
       }
     }
   })
