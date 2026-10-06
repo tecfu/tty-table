@@ -30,7 +30,6 @@ exampleScripts.forEach(function(element) {
             filepath = path.join(savedTestDir, `${subname}-output.txt`),
             expected1 = fs.readFileSync(filepath, "utf-8")
 
-          if (stdout !== expected1) console.log("ACTUAL_B64:" + subname + ":" + Buffer.from(stdout).toString("base64"))
           stdout.should.equal(expected1)
           deferred()
         }
