@@ -2,6 +2,23 @@ import { colorizeCell, isColorEnabled, style, resetStyle } from "./style"
 import { wrapCellText, getColumnWidths } from "./format"
 import stripAnsi from "strip-ansi"
 
+// Column widths are measured once per table: measuring is the expensive half of
+// rendering, and a stream of prints has to keep one geometry. The memo used to be
+// `global.columnWidths`, keyed by `config.tableId` - an integer that counts tables
+// inside one copy of this module. Load two copies into one process (a bundler that
+// inlined tty-table next to a hoisted one, a monorepo with two versions, a test
+// runner that resets modules but not globals) and the counters collide: the second
+// copy's tables render with the first copy's widths. Entries were never removed
+// either, so every table that was ever built stayed in the heap.
+const measuredWidths = new WeakMap<object, number[]>()
+
+// Tables rendered through a terminal adapter do not increment the counter, which is
+// how successive prints of a stream were meant to share widths - a property of the
+// stream, not of the process, so it gets a slot of its own. Keying it by the shared
+// id meant an adapter table inherited the widths of whichever ordinary table
+// happened to have been created last.
+let adapterWidths: number[] | undefined
+
 export const stringifyData = (config: any, inputData: any[]) => {
   const sections: any = { header: [], body: [], footer: [] }
   const marginLeft = " ".repeat(config.marginLeft)
@@ -13,12 +30,12 @@ export const stringifyData = (config: any, inputData: any[]) => {
 
   // When the column widths are not already cached, every body cell is built
   // twice on a table's first render: once dry, to measure the columns, and once
-  // to print them. Cell functions and formatters
-  // are caller code, so the dry pass ran them for real - twice the side effects,
-  // and, for anything that is not a pure function of its arguments, geometry
-  // taken from the first call and text from the second. This memo keeps the
-  // value a cell produced, and the options it asked for through configure(),
-  // with the cell. It lives for the duration of one render.
+  // to print them. Cell functions and formatters are caller code, so the dry
+  // pass ran them for real - twice the side effects, and, for anything that is
+  // not a pure function of its arguments, geometry taken from the first call
+  // and text from the second. This memo keeps the value a cell produced, and
+  // the options it asked for through configure(), with the cell. It lives for
+  // the duration of one render.
   //
   // Phase semantics, deliberately: cell code now executes during the
   // MEASUREMENT pass, and the render pass reuses what it returned. Previously
@@ -27,15 +44,21 @@ export const stringifyData = (config: any, inputData: any[]) => {
   // is a semantic change, not just deduplication - see the PR notes.
   const cellMemo = new Map<CellMemoKey, CellMemo>()
 
-  if (!(global as any).columnWidths) (global as any).columnWidths = {}
+  const isStream = config.terminalAdapter === true
+  const cached = isStream ? adapterWidths : (config.table ? measuredWidths.get(config.table) : undefined)
 
-  if ((global as any).columnWidths[config.tableId]) {
-    config.table.columnWidths = (global as any).columnWidths[config.tableId]
+  if (cached) {
+    config.table.columnWidths = cached
   } else {
     const formattedRows = rows.map((row: any[], rowIndex: number) => {
       return row.map((cell: any, cellIndex: number) => buildCell(config, cell, cellIndex, "body", rowIndex, rows, inputData, true, cellMemo))
     })
-    ;(global as any).columnWidths[config.tableId] = config.table.columnWidths = getColumnWidths(config, formattedRows)
+    const widths = getColumnWidths(config, formattedRows)
+
+    if (isStream) adapterWidths = widths
+    else if (config.table) measuredWidths.set(config.table, widths)
+
+    config.table.columnWidths = widths
   }
 
   switch (true) {
@@ -103,7 +126,7 @@ export const buildRow = (config: any, row: any[], rowType: RowType, rowIndex: nu
   }
 
   const lengthDifference = config.table.columnWidths.length - row.length
-  if (lengthDifference > 0) row = row.concat(Array.apply(null, new Array(lengthDifference)).map(() => null))
+  if (lengthDifference > 0) row = row.concat(new Array(lengthDifference).fill(null))
   else if (lengthDifference < 0) row.length = config.table.columnWidths.length
 
   row = row.map((elem: any, elemIndex: number) => {
@@ -113,7 +136,7 @@ export const buildRow = (config: any, row: any[], rowType: RowType, rowIndex: nu
   })
 
   minRowHeight = (rowType === "header") ? minRowHeight : minRowHeight + (config.paddingBottom + config.paddingTop)
-  const linedRow: any[] = Array.apply(null, { length: minRowHeight } as any).map(Function.call, () => [])
+  const linedRow: any[] = Array.from({ length: minRowHeight }, () => [])
 
   row.forEach(function (cell: string[], a: number) {
     const whitespace = " ".repeat(Math.max(config.table.columnWidths[a] - 1, 0))
@@ -125,6 +148,38 @@ export const buildRow = (config: any, row: any[], rowType: RowType, rowIndex: nu
   })
 
   return linedRow
+}
+
+/**
+ * Merged options for one column (or for the header row), built once per table
+ * config and shared by every cell in that column through the prototype chain.
+ *
+ * buildCell used to run `Object.assign({}, config, columnSettings[i], elem)` for
+ * every single cell, copying ~45 config keys each time: that was 57% of the
+ * self-time when rendering a 50x2000 cell table. The merge is now paid once per
+ * column instead of once per cell. Inherited values are still read correctly,
+ * and every write (configure(), the centering padding equalisation, isNull)
+ * becomes an own property of the cell and never leaks back into the base.
+ */
+const optionBases: WeakMap<object, { header: any, body: any[] }> = new WeakMap()
+
+const getOptionBase = (config: any, columnIndex: number, rowType: string) => {
+  let bases = optionBases.get(config)
+
+  if (!bases) {
+    bases = { header: null, body: [] }
+    optionBases.set(config, bases)
+  }
+
+  if (rowType === "header") {
+    return bases.header ??= Object.assign({ reset: false }, config)
+  }
+
+  return bases.body[columnIndex] ??= Object.assign(
+    { reset: false },
+    config,
+    config.columnSettings[columnIndex] || {}
+  )
 }
 
 export interface CellMemo {
@@ -145,12 +200,10 @@ export type CellMemoKey = `${RowType}:${number | null}:${number}`
 
 export const buildCell = (config: any, elem: any, columnIndex: number, rowType: RowType, rowIndex: number | null, rowData: any[], inputData: any[], dryRun = false, cellMemo?: Map<CellMemoKey, CellMemo>) => {
   let cellValue: any = null
-  const cellOptions: any = Object.assign(
-    { reset: false },
-    config,
-    (rowType !== "header") ? config.columnSettings[columnIndex] : {},
-    (typeof elem === "object") ? elem : {}
-  )
+  const base = getOptionBase(config, columnIndex, rowType)
+  const cellOptions: any = (typeof elem === "object" && elem !== null)
+    ? Object.assign(Object.create(base), elem)
+    : Object.create(base)
 
   // What the cell asked for through this.configure(), kept so the second pass
   // sees the same options without running the cell a second time.
@@ -181,13 +234,15 @@ export const buildCell = (config: any, elem: any, columnIndex: number, rowType: 
       case (typeof elem === "object" && elem !== null && typeof elem.value !== "undefined"):
         cellValue = elem.value
         break
-      case (typeof elem === "function"):
-        cellValue = (elem as Function).bind({
+      case (typeof elem === "function"): {
+        const cellFunction = elem as (this: any, value: any, columnIndex: number, rowIndex: number | null, rowData: any[], inputData: any[]) => any
+        cellValue = cellFunction.bind({
           configure,
           style: style,
           resetStyle: resetStyle
         })(cellValue, columnIndex, rowIndex, rowData, inputData)
         break
+      }
       default:
         cellValue = elem
     }
