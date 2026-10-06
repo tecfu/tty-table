@@ -27,7 +27,7 @@ const codePointWidth = (value: string): number => {
       // A ZWJ sequence is one terminal glyph even though it contains several
       // emoji code points. Other graphemes retain breakword's per-code-point
       // semantics, including combining marks and regional-indicator pairs.
-      total += segment.includes("\u200D") ? Math.max(...widths, 0) : widths.reduce((sum, width) => sum + width, 0)
+      total += segment.includes("\u200D") ? Math.max(...widths, 0) : widths.reduce((sum: number, width: number) => sum + width, 0)
     }
     return total
   }
