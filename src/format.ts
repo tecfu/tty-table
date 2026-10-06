@@ -111,15 +111,15 @@ export const wrapCellText = (
   // store matching ANSI characters
   const startMatches = str.match(startAnsiRegexp) || [""]
 
-  // remove ANSI start-of-line chars
-  if (!hasInlineAnsi) str = str.replace(startAnsiRegexp, "")
-
   // store matching ANSI characters so can be later re-attached
   const endMatches = str.match(endAnsiRegexp) || [""]
 
   // Inline ANSI spans need to remain in the wrapped text so the active style can
   // cross a line boundary. Boundary-only styles retain the historical path.
   const hasInlineAnsi = !startMatches[0] && !endMatches[0]
+
+  // remove ANSI start-of-line chars
+  if (!hasInlineAnsi) str = str.replace(startAnsiRegexp, "")
   // remove ANSI end-of-line chars
   if (!hasInlineAnsi) str = str.replace(endAnsiRegexp, "")
 
