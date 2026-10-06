@@ -101,11 +101,14 @@ const Factory = function (paramsArr: any[]): any {
       // a dynamic require(`../adapters/${name}`) fallback would make esbuild
       // eagerly bundle every adapters/* file (candidate scanning), which then
       // fails on their ../dist/index.js requires at build time
+      /* eslint-disable @typescript-eslint/no-require-imports -- these must stay require() calls:
+         as imports the bundler would eagerly pull the adapters in (see comment above) */
       const adapters: Record<string, () => any> = {
         "automattic-cli-table": () => require("../adapters/automattic-cli-table.js"),
         "default-adapter": () => require("../adapters/default-adapter.js"),
         "terminal-adapter": () => require("../adapters/terminal-adapter.js")
       }
+      /* eslint-enable @typescript-eslint/no-require-imports */
       const load = adapters[paramsArr[0]]
       if (!load) throw new Error(`Unknown adapter: "${paramsArr[0]}". Available adapters: ${Object.keys(adapters).join(", ")}`)
       return load()

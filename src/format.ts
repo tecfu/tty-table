@@ -89,7 +89,9 @@ export const wrapCellText = (
   rowType: string
 ) => {
   // ANSI chararacters that demarcate the start/end of a line
+  // eslint-disable-next-line no-control-regex -- matching the ESC byte is the point of this code
   const startAnsiRegexp = /^(\x1b\[[0-9;]*m)+/
+  // eslint-disable-next-line no-control-regex
   const endAnsiRegexp = /(\x1b\[[0-9;]*m)+$/
 
   // coerce cell value to string
@@ -154,7 +156,7 @@ export const wrapCellText = (
       let emptySpace = columnWidth - lineLength
 
       switch (true) {
-        case (cellOptions[alignTgt] === "center"):
+        case (cellOptions[alignTgt] === "center"): {
           emptySpace--
           const padBoth = Math.floor(emptySpace / 2)
           const padRemainder = emptySpace % 2
@@ -162,6 +164,7 @@ export const wrapCellText = (
             + line
             + " ".repeat(padBoth + padRemainder)
           break
+        }
 
         case (cellOptions[alignTgt] === "right"):
           line = " ".repeat(emptySpace - cellOptions.paddingRight - 1)

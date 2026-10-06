@@ -87,7 +87,7 @@ export const buildRow = (config: any, row: any[], rowType: string, rowIndex: num
   }
 
   const lengthDifference = config.table.columnWidths.length - row.length
-  if (lengthDifference > 0) row = row.concat(Array.apply(null, new Array(lengthDifference)).map(() => null))
+  if (lengthDifference > 0) row = row.concat(Array.from({ length: lengthDifference }, () => null))
   else if (lengthDifference < 0) row.length = config.table.columnWidths.length
 
   row = row.map((elem: any, elemIndex: number) => {
@@ -97,7 +97,7 @@ export const buildRow = (config: any, row: any[], rowType: string, rowIndex: num
   })
 
   minRowHeight = (rowType === "header") ? minRowHeight : minRowHeight + (config.paddingBottom + config.paddingTop)
-  const linedRow: any[] = Array.apply(null, { length: minRowHeight } as any).map(Function.call, () => [])
+  const linedRow: any[] = Array.from({ length: minRowHeight }, () => [])
 
   row.forEach(function (cell: string[], a: number) {
     const whitespace = " ".repeat(Math.max(config.table.columnWidths[a] - 1, 0))
@@ -133,13 +133,15 @@ export const buildCell = (config: any, elem: any, columnIndex: number, rowType: 
       case (typeof elem === "object" && elem !== null && typeof elem.value !== "undefined"):
         cellValue = elem.value
         break
-      case (typeof elem === "function"):
-        cellValue = (elem as Function).bind({
+      case (typeof elem === "function"): {
+        const cellFunction = elem as (this: any, value: any, columnIndex: number, rowIndex: number | null, rowData: any[], inputData: any[]) => any
+        cellValue = cellFunction.bind({
           configure: function (object: any) { return Object.assign(cellOptions, object) },
           style: style,
           resetStyle: resetStyle
         })(cellValue, columnIndex, rowIndex, rowData, inputData)
         break
+      }
       default:
         cellValue = elem
     }
