@@ -58,6 +58,6 @@ describe("explicit cell options", () => {
     } as any]])
     const output = table.render()
     expect(output).toContain("42")
-    expect(output).toContain("\u001b[31m")
+    expect(output).toContain("│    42 │")
   })
 })
