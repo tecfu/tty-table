@@ -1,6 +1,14 @@
 import defaults from "./defaults"
 import { stringifyData } from "./render"
 import { resetStyle, style, styleEachChar } from "./style"
+import type { Alignment, BorderCharacters, BorderStyle, ColumnOptions, TableOptions, Width } from "./types"
+
+// A documented literal, plus any string: the union still AUTOCOMPLES the
+// allowed values, but code that builds the value at runtime (a config file, a
+// CLI flag) does not stop compiling. This is an escape hatch for source
+// compatibility, not validation — an unknown value is a runtime error, which
+// is where it always was.
+type AlignInput = Alignment | (string & {})
 
 let counter = 0
 
@@ -24,39 +32,36 @@ const appendRows = (target: any[], source: any[]) => {
 }
 
 export interface Formatter {
-  (cellValue: any, columnIndex: number, rowIndex: number, rowData: any, inputData: any): string
+  // rowIndex is null for header and footer rows, which buildCell passes through.
+  // The arguments stay any-typed so a callback written against narrower values
+  // still assigns; the return is unknown because the renderer stringifies
+  // whatever comes back (this matches types.ts, which always said unknown).
+  (cellValue: any, columnIndex: number, rowIndex: number | null, rowData: any, inputData: any): unknown
 }
 
-export interface Header {
-  alias?: string
-  align?: string
-  color?: string
-  footerAlign?: string
-  footerColor?: string
+// Table-level options. These are types.ts's TableOptions (which already covers
+// the per-column keys via ColumnOptions), with a small set of keys widened for
+// source compatibility: align/alignment/headerAlign/headerAlignment/footerAlign
+// and borderStyle accept any string (see AlignInput; values routinely arrive
+// from config files and CLI flags), formatter keeps any-typed arguments, and
+// width keeps arbitrary strings. The trailing index signature stays: options
+// are merged wholesale into the config, so a key not listed here is still
+// passed through — this types the known options, it does not close the set.
+export type Options = Omit<
+  TableOptions,
+  "align" | "alignment" | "borderStyle" | "footerAlign" | "formatter" | "headerAlign" | "headerAlignment" | "width"
+> & {
+  align?: AlignInput
+  alignment?: AlignInput
+  borderCharacters?: Record<string, BorderCharacters[]>
+  // the documented names plus the numeric aliases (0, 1, 2) that
+  // defaults.borderCharacters also keys
+  borderStyle?: BorderStyle | (string & {})
+  footerAlign?: AlignInput
   formatter?: Formatter
-  headerAlign?: string
-  headerColor?: string
-  marginLeft?: number
-  marginTop?: number
-  paddingBottom?: number
-  paddingLeft?: number
-  paddingRight?: number
-  paddingTop?: number
-  value: string
-  width?: string | number
-}
-
-export interface Options {
-  borderStyle?: string
-  borderColor?: string
-  color?: string
-  compact?: boolean
-  defaultErrorValue?: string
-  defaultValue?: string
-  errorOnNull?: boolean
-  truncate?: string | boolean
-  width?: string | number
-  footerColor?: string
+  headerAlign?: AlignInput
+  headerAlignment?: AlignInput
+  width?: Width | (string & {})
   [key: string]: unknown
 }
 
@@ -223,6 +228,22 @@ const Factory = function (paramsArr: any[]): any {
 
   return tableObject
 }
+
+// One column definition: types.ts's ColumnOptions (width as Width, align as
+// the Alignment union, and so on) plus the two table-level keys a header entry
+// may also carry, and the naming requirement. buildCell reads
+// `cellOptions.alias || cellOptions.value`, so either one on its own names a
+// column — but neither is not a column, hence the union instead of two
+// independent optionals.
+export type Header = Omit<ColumnOptions, "alias" | "formatter" | "value"> & {
+  footerAlign?: Alignment
+  formatter?: Formatter
+  marginLeft?: number
+  marginTop?: number
+} & (
+  | { alias: string; value?: string }
+  | { value: string; alias?: string }
+)
 
 interface TtyTableFactory {
   (headers: (string | Header | Formatter)[], body: unknown[], footers: (string | Header | Formatter)[], config?: Options): Table
