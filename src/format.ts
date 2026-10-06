@@ -28,12 +28,18 @@ const getMaxLength = (columnOptions: any, rows: any[], columnIndex: number) => {
   }
 
   for (const row of rows) {
-    if (row[columnIndex]) {
-      // check cell value is object or scalar
-      const value = (row[columnIndex].value) ? row[columnIndex].value : row[columnIndex]
-      const width = getDisplayWidth(value)
-      if (width > widest) widest = width
-    }
+    const cell = row[columnIndex]
+
+    // A cell has to be *present*, not truthy: false, 0 and "" all render text, and
+    // skipping them left the column one cell wide, so "false" came out stacked
+    // vertically one character per line. Only undefined and null are excluded -
+    // buildCell has already replaced them with defaultValue for the measurement run.
+    if (typeof cell === "undefined" || cell === null) continue
+
+    // check cell value is object or scalar
+    const value = (typeof cell === "object" && typeof cell.value !== "undefined") ? cell.value : cell
+    const width = getDisplayWidth(value)
+    if (width > widest) widest = width
   }
 
   return widest
@@ -45,41 +51,50 @@ const getMaxLength = (columnOptions: any, rows: any[], columnIndex: number) => {
  *
  */
 const getAvailableWidth = (config: any) => {
+  let viewport: number
+
   if (process && ((process.stdout && process.stdout.columns) || (process.env && process.env.COLUMNS))) {
     // forked calls that do not inherit process.stdout must use process.env
-    let viewport: any = (process.stdout && process.stdout.columns) ? process.stdout.columns : process.env.COLUMNS
-    viewport = viewport - config.marginLeft
-
-    // table width percentage of (viewport less margin)
-    if (config.width !== "auto" && /^\d+%$/.test(config.width)) {
-      return Math.min(1, (config.width.slice(0, -1) * 0.01)) * viewport
-    }
-
-    // table width fixed
-    if (config.width !== "auto" && /^\d+$/.test(config.width)) {
-      config.FIXED_WIDTH = true
-      return config.width
-    }
-
-    // table width equals viewport less margin
-    // @TODO deprecate and remove "auto", which was never documented so should not be
-    // an issue
-    return viewport
+    const columns: any = (process.stdout && process.stdout.columns) ? process.stdout.columns : process.env.COLUMNS
+    viewport = Number(columns) - config.marginLeft
+  /* istanbul ignore next */
+  } else if (typeof (globalThis as any).window !== "undefined") {
+    // browser
+    viewport = (globalThis as any).window.innerWidth
+  } else {
+    // process.stdout.columns does not exist. assume redirecting to write stream
+    // use 80 columns, which is VT200 standard
+    viewport = config.COLUMNS - config.marginLeft
   }
 
-  // browser
-  /* istanbul ignore next */
-  if (typeof (globalThis as any).window !== "undefined") return (globalThis as any).window.innerWidth
+  // table width percentage of (viewport less margin)
+  if (config.width !== "auto" && /^\d+%$/.test(config.width)) {
+    return Math.min(1, (config.width.slice(0, -1) * 0.01)) * viewport
+  }
 
-  // process.stdout.columns does not exist. assume redirecting to write stream
-  // use 80 columns, which is VT200 standard
-  return config.COLUMNS - config.marginLeft
+  // table width fixed
+  if (config.width !== "auto" && /^\d+$/.test(config.width)) {
+    config.FIXED_WIDTH = true
+    return config.width
+  }
+
+  // table width equals viewport less margin
+  // @TODO deprecate and remove "auto", which was never documented so should not be
+  // an issue
+  return viewport
 }
 
 export const getStringLength = (str: string) => {
   // stripAnsi(string.replace(/[^\x00-\xff]/g,'XX')).length
   return displayWidth(str)
 }
+
+// ANSI characters that demarcate the start/end of a line. Hoisted out of
+// wrapCellText, which runs once per cell and was recompiling them every time.
+// eslint-disable-next-line no-control-regex
+const startAnsiRegexp = /^(\x1b\[[0-9;]*m)+/
+// eslint-disable-next-line no-control-regex
+const endAnsiRegexp = /(\x1b\[[0-9;]*m)+$/
 
 export const wrapCellText = (
   config: any,
@@ -88,10 +103,6 @@ export const wrapCellText = (
   cellOptions: any,
   rowType: string
 ) => {
-  // ANSI chararacters that demarcate the start/end of a line
-  const startAnsiRegexp = /^(\x1b\[[0-9;]*m)+/
-  const endAnsiRegexp = /(\x1b\[[0-9;]*m)+$/
-
   // coerce cell value to string
   let str = cellValue.toString()
 
@@ -186,16 +197,40 @@ export const wrapCellText = (
 export const truncate = (str: string, cellOptions: any, maxWidth: number) => {
   const stringWidth = displayWidth(str)
 
-  if (maxWidth < stringWidth) {
-    // @TODO give user option to decide if they want to break words on wrapping
-    str = smartwrap(str, {
-      width: maxWidth - displayWidth(cellOptions.truncate),
-      breakword: true
-    }).split("\n")[0]!
-    str = str + cellOptions.truncate
+  if (maxWidth >= stringWidth) return str
+
+  // Nothing fits. Handing a zero or negative width to the wrapper below returned
+  // *more* characters than were asked for, so the cell overflowed its own border
+  // and the rest of the table came out crooked.
+  if (maxWidth < 1) return ""
+
+  let marker: string = cellOptions.truncate
+  let markerWidth = displayWidth(marker)
+
+  // Same reason: a marker at least as wide as the cell left the content a
+  // non-positive width. Trim the marker down and keep one cell for content.
+  if (markerWidth >= maxWidth) {
+    if (maxWidth < 2) {
+      // a single cell cannot hold both content and a marker
+      marker = ""
+      markerWidth = 0
+    } else {
+      marker = smartwrap(marker, {
+        width: maxWidth - 1,
+        breakword: true,
+        trim: false
+      }).split("\n")[0]!
+      markerWidth = displayWidth(marker)
+    }
   }
 
-  return str
+  // @TODO give user option to decide if they want to break words on wrapping
+  str = smartwrap(str, {
+    width: maxWidth - markerWidth,
+    breakword: true
+  }).split("\n")[0]!
+
+  return str + marker
 }
 
 export const wrap = (str: string, cellOptions: any, innerWidth: number) => {
@@ -213,9 +248,10 @@ export const getColumnWidths = (config: any, rows: any[]) => {
   const availableWidth = getAvailableWidth(config)
 
   // iterate over the header if we have it, iterate over the first row
-  // if we do not (to step through the correct number of columns)
+  // if we do not (to step through the correct number of columns). Neither, for
+  // Table([], []), means there are no columns to measure at all.
   const iterable: any[] = (config.table.header[0] && config.table.header[0].length > 0)
-    ? config.table.header[0] : rows[0]
+    ? config.table.header[0] : (rows[0] || [])
 
   let widths: number[] = iterable.map((column: any, columnIndex: number) => {
     let result: number
@@ -252,7 +288,7 @@ export const getColumnWidths = (config: any, rows: any[]) => {
   })
 
   // calculate sum of all column widths (including marginLeft)
-  const totalWidth = widths.reduce((prev: number, current: number) => prev + current)
+  const totalWidth = widths.reduce((prev: number, current: number) => prev + current, 0)
 
   // proportionately resize columns when necessary
   if (totalWidth > availableWidth || config.FIXED_WIDTH) {

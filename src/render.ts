@@ -2,6 +2,23 @@ import { colorizeCell, isColorEnabled, style, resetStyle } from "./style"
 import { wrapCellText, getColumnWidths } from "./format"
 import stripAnsi from "strip-ansi"
 
+// Column widths are measured once per table: measuring is the expensive half of
+// rendering, and a stream of prints has to keep one geometry. The memo used to be
+// `global.columnWidths`, keyed by `config.tableId` - an integer that counts tables
+// inside one copy of this module. Load two copies into one process (a bundler that
+// inlined tty-table next to a hoisted one, a monorepo with two versions, a test
+// runner that resets modules but not globals) and the counters collide: the second
+// copy's tables render with the first copy's widths. Entries were never removed
+// either, so every table that was ever built stayed in the heap.
+const measuredWidths = new WeakMap<object, number[]>()
+
+// Tables rendered through a terminal adapter do not increment the counter, which is
+// how successive prints of a stream were meant to share widths - a property of the
+// stream, not of the process, so it gets a slot of its own. Keying it by the shared
+// id meant an adapter table inherited the widths of whichever ordinary table
+// happened to have been created last.
+let adapterWidths: number[] | undefined
+
 export const stringifyData = (config: any, inputData: any[]) => {
   const sections: any = { header: [], body: [], footer: [] }
   const marginLeft = " ".repeat(config.marginLeft)
@@ -11,15 +28,21 @@ export const stringifyData = (config: any, inputData: any[]) => {
   const constructorType = getConstructorGeometry(inputData[0] || [], config)
   const rows = coerceConstructorGeometry(config, inputData, constructorType)
 
-  if (!(global as any).columnWidths) (global as any).columnWidths = {}
+  const isStream = config.terminalAdapter === true
+  const cached = isStream ? adapterWidths : (config.table ? measuredWidths.get(config.table) : undefined)
 
-  if ((global as any).columnWidths[config.tableId]) {
-    config.table.columnWidths = (global as any).columnWidths[config.tableId]
+  if (cached) {
+    config.table.columnWidths = cached
   } else {
     const formattedRows = rows.map((row: any[], rowIndex: number) => {
       return row.map((cell: any, cellIndex: number) => buildCell(config, cell, cellIndex, "body", rowIndex, rows, inputData, true))
     })
-    ;(global as any).columnWidths[config.tableId] = config.table.columnWidths = getColumnWidths(config, formattedRows)
+    const widths = getColumnWidths(config, formattedRows)
+
+    if (isStream) adapterWidths = widths
+    else if (config.table) measuredWidths.set(config.table, widths)
+
+    config.table.columnWidths = widths
   }
 
   switch (true) {
@@ -87,7 +110,7 @@ export const buildRow = (config: any, row: any[], rowType: string, rowIndex: num
   }
 
   const lengthDifference = config.table.columnWidths.length - row.length
-  if (lengthDifference > 0) row = row.concat(Array.apply(null, new Array(lengthDifference)).map(() => null))
+  if (lengthDifference > 0) row = row.concat(new Array(lengthDifference).fill(null))
   else if (lengthDifference < 0) row.length = config.table.columnWidths.length
 
   row = row.map((elem: any, elemIndex: number) => {
@@ -97,7 +120,7 @@ export const buildRow = (config: any, row: any[], rowType: string, rowIndex: num
   })
 
   minRowHeight = (rowType === "header") ? minRowHeight : minRowHeight + (config.paddingBottom + config.paddingTop)
-  const linedRow: any[] = Array.apply(null, { length: minRowHeight } as any).map(Function.call, () => [])
+  const linedRow: any[] = Array.from({ length: minRowHeight }, () => [])
 
   row.forEach(function (cell: string[], a: number) {
     const whitespace = " ".repeat(Math.max(config.table.columnWidths[a] - 1, 0))
@@ -111,14 +134,44 @@ export const buildRow = (config: any, row: any[], rowType: string, rowIndex: num
   return linedRow
 }
 
-export const buildCell = (config: any, elem: any, columnIndex: number, rowType: string, rowIndex: number | null, rowData: any[], inputData: any[], dryRun = false) => {
-  let cellValue: any = null
-  const cellOptions: any = Object.assign(
+/**
+ * Merged options for one column (or for the header row), built once per table
+ * config and shared by every cell in that column through the prototype chain.
+ *
+ * buildCell used to run `Object.assign({}, config, columnSettings[i], elem)` for
+ * every single cell, copying ~45 config keys each time: that was 57% of the
+ * self-time when rendering a 50x2000 cell table. The merge is now paid once per
+ * column instead of once per cell. Inherited values are still read correctly,
+ * and every write (configure(), the centering padding equalisation, isNull)
+ * becomes an own property of the cell and never leaks back into the base.
+ */
+const optionBases: WeakMap<object, { header: any, body: any[] }> = new WeakMap()
+
+const getOptionBase = (config: any, columnIndex: number, rowType: string) => {
+  let bases = optionBases.get(config)
+
+  if (!bases) {
+    bases = { header: null, body: [] }
+    optionBases.set(config, bases)
+  }
+
+  if (rowType === "header") {
+    return bases.header ??= Object.assign({ reset: false }, config)
+  }
+
+  return bases.body[columnIndex] ??= Object.assign(
     { reset: false },
     config,
-    (rowType !== "header") ? config.columnSettings[columnIndex] : {},
-    (typeof elem === "object") ? elem : {}
+    config.columnSettings[columnIndex] || {}
   )
+}
+
+export const buildCell = (config: any, elem: any, columnIndex: number, rowType: string, rowIndex: number | null, rowData: any[], inputData: any[], dryRun = false) => {
+  let cellValue: any = null
+  const base = getOptionBase(config, columnIndex, rowType)
+  const cellOptions: any = (typeof elem === "object" && elem !== null)
+    ? Object.assign(Object.create(base), elem)
+    : Object.create(base)
 
   if (rowType === "header") {
     config.table.columns.push(cellOptions)
