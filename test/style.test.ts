@@ -65,4 +65,16 @@ describe("grapheme display width", () => {
   it("keeps combining marks attached to their base character", () => {
     expect(displayWidth("e\u0301")).toBe(1)
   })
+
+  it("measures regional-indicator flags as two cells", () => {
+    expect(displayWidth("🇺🇸")).toBe(2)
+  })
+
+  it("measures keycap sequences as two cells", () => {
+    expect(displayWidth("1️⃣")).toBe(2)
+  })
+
+  it("measures emoji modifier sequences as two cells", () => {
+    expect(displayWidth("👍🏽")).toBe(2)
+  })
 })
