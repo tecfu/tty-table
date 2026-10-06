@@ -28,12 +28,18 @@ const getMaxLength = (columnOptions: any, rows: any[], columnIndex: number) => {
   }
 
   for (const row of rows) {
-    if (row[columnIndex]) {
-      // check cell value is object or scalar
-      const value = (row[columnIndex].value) ? row[columnIndex].value : row[columnIndex]
-      const width = getDisplayWidth(value)
-      if (width > widest) widest = width
-    }
+    const cell = row[columnIndex]
+
+    // A cell has to be *present*, not truthy: false, 0 and "" all render text, and
+    // skipping them left the column one cell wide, so "false" came out stacked
+    // vertically one character per line. Only undefined and null are excluded -
+    // buildCell has already replaced them with defaultValue for the measurement run.
+    if (typeof cell === "undefined" || cell === null) continue
+
+    // check cell value is object or scalar
+    const value = (typeof cell === "object" && typeof cell.value !== "undefined") ? cell.value : cell
+    const width = getDisplayWidth(value)
+    if (width > widest) widest = width
   }
 
   return widest
