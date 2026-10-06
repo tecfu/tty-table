@@ -11,6 +11,13 @@ export const stringifyData = (config: any, inputData: any[]) => {
   const constructorType = getConstructorGeometry(inputData[0] || [], config)
   const rows = coerceConstructorGeometry(config, inputData, constructorType)
 
+  // Both are rebuilt from the header cells during this render (see buildCell).
+  // Nothing resets them, so a table that is rendered repeatedly - a status line,
+  // a stream that redraws on every tick - kept every previous render's entries:
+  // one object per column per render, held for the life of the table.
+  config.table.columns = []
+  config.table.columnInnerWidths = []
+
   if (!(global as any).columnWidths) (global as any).columnWidths = {}
 
   if ((global as any).columnWidths[config.tableId]) {
