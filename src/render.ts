@@ -18,7 +18,13 @@ export const stringifyData = (config: any, inputData: any[]) => {
   // taken from the first call and text from the second. This memo keeps the
   // value a cell produced, and the options it asked for through configure(),
   // with the cell. It lives for the duration of one render.
-  const cellMemo = new Map<string, CellMemo>()
+  //
+  // Phase semantics, deliberately: cell code now executes during the
+  // MEASUREMENT pass, and the render pass reuses what it returned. Previously
+  // it executed in both, so a callback that consulted external state could
+  // act on the render-time state; it now sees the evaluation-time state. This
+  // is a semantic change, not just deduplication - see the PR notes.
+  const cellMemo = new Map<CellMemoKey, CellMemo>()
 
   if (!(global as any).columnWidths) (global as any).columnWidths = {}
 
@@ -88,7 +94,7 @@ export const stringifyData = (config: any, inputData: any[]) => {
   return finalOutput
 }
 
-export const buildRow = (config: any, row: any[], rowType: string, rowIndex: number | null, rowData: any[], inputData: any[], cellMemo?: Map<string, CellMemo>) => {
+export const buildRow = (config: any, row: any[], rowType: RowType, rowIndex: number | null, rowData: any[], inputData: any[], cellMemo?: Map<CellMemoKey, CellMemo>) => {
   let minRowHeight = 0
   if (row.length === 0 && config.compact) {
     (row as any).empty = true
@@ -126,7 +132,17 @@ export interface CellMemo {
   isNull: boolean
 }
 
-export const buildCell = (config: any, elem: any, columnIndex: number, rowType: string, rowIndex: number | null, rowData: any[], inputData: any[], dryRun = false, cellMemo?: Map<string, CellMemo>) => {
+// The three row kinds buildCell distinguishes; the factory accepts no others.
+export type RowType = "header" | "body" | "footer"
+
+// A memo entry is addressed by the cell's position in the render structure.
+// header and footer rows build once (dryRun never touches them) and always
+// carry rowIndex null, body rows carry their real index, so the triple is
+// unique per cell within one render - no two cells can serialise to the same
+// key.
+export type CellMemoKey = `${RowType}:${number | null}:${number}`
+
+export const buildCell = (config: any, elem: any, columnIndex: number, rowType: RowType, rowIndex: number | null, rowData: any[], inputData: any[], dryRun = false, cellMemo?: Map<CellMemoKey, CellMemo>) => {
   let cellValue: any = null
   const cellOptions: any = Object.assign(
     { reset: false },
@@ -144,7 +160,7 @@ export const buildCell = (config: any, elem: any, columnIndex: number, rowType: 
     return cellOptions
   }
 
-  const memoKey = rowType + ":" + String(rowIndex) + ":" + String(columnIndex)
+  const memoKey: CellMemoKey = `${rowType}:${rowIndex}:${columnIndex}`
   const seen = cellMemo?.get(memoKey)
 
   if (rowType === "header") {
