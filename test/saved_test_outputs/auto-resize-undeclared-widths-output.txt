@@ -1,12 +1,12 @@
 
 ╠═ width=25 ════════════╣
   ┌─┬────┬────────────┐
-  │[33mS│ [33mMe │  [33mA Very,   │
-  │h│ di │ Very Long  │
-  │o│ um │   Header[39m   │
-  │r│ He │            │
-  │t[39m│ ad │            │
-  │ │ er[39m │            │
+  │[33mS[39m│[33m Me [39m│[33m  A Very,   [39m│
+  │[33mh[39m│[33m di [39m│[33m Very Long  [39m│
+  │[33mo[39m│[33m um [39m│[33m   Header   [39m│
+  │[33mr[39m│[33m He [39m│            │
+  │[33mt[39m│[33m ad [39m│            │
+  │ │[33m er [39m│            │
   ├─┼────┼────────────┤
   │a│ aa │  aaa bbb   │
   │a│ a  │  ccc ddd   │
@@ -28,12 +28,12 @@
 
 ╠═ width=26 ═════════════╣
   ┌─┬────┬────────────┐
-  │[33mS│ [33mMe │  [33mA Very,   │
-  │h│ di │ Very Long  │
-  │o│ um │   Header[39m   │
-  │r│ He │            │
-  │t[39m│ ad │            │
-  │ │ er[39m │            │
+  │[33mS[39m│[33m Me [39m│[33m  A Very,   [39m│
+  │[33mh[39m│[33m di [39m│[33m Very Long  [39m│
+  │[33mo[39m│[33m um [39m│[33m   Header   [39m│
+  │[33mr[39m│[33m He [39m│            │
+  │[33mt[39m│[33m ad [39m│            │
+  │ │[33m er [39m│            │
   ├─┼────┼────────────┤
   │a│ aa │  aaa bbb   │
   │a│ a  │  ccc ddd   │
@@ -55,11 +55,11 @@
 
 ╠═ width=27 ══════════════╣
   ┌─┬─────┬─────────────┐
-  │[33mS│ [33mMed │   [33mA Very,   │
-  │h│ ium │  Very Long  │
-  │o│ Hea │   Header[39m    │
-  │r│ der[39m │             │
-  │t[39m│     │             │
+  │[33mS[39m│[33m Med [39m│[33m   A Very,   [39m│
+  │[33mh[39m│[33m ium [39m│[33m  Very Long  [39m│
+  │[33mo[39m│[33m Hea [39m│[33m   Header    [39m│
+  │[33mr[39m│[33m der [39m│             │
+  │[33mt[39m│     │             │
   ├─┼─────┼─────────────┤
   │a│ aaa │ aaa bbb ccc │
   │a│ bbb │ ddd eee fff │
@@ -74,11 +74,11 @@
 
 ╠═ width=28 ═══════════════╣
   ┌─┬─────┬──────────────┐
-  │[33mS│ [33mMed │ [33mA Very, Very │
-  │h│ ium │ Long Header[39m  │
-  │o│ Hea │              │
-  │r│ der[39m │              │
-  │t[39m│     │              │
+  │[33mS[39m│[33m Med [39m│[33m A Very, Very [39m│
+  │[33mh[39m│[33m ium [39m│[33m Long Header  [39m│
+  │[33mo[39m│[33m Hea [39m│              │
+  │[33mr[39m│[33m der [39m│              │
+  │[33mt[39m│     │              │
   ├─┼─────┼──────────────┤
   │a│ aaa │ aaa bbb ccc  │
   │a│ bbb │ ddd eee fff  │
@@ -93,11 +93,11 @@
 
 ╠═ width=29 ════════════════╣
   ┌─┬─────┬───────────────┐
-  │[33mS│ [33mMed │ [33mA Very, Very  │
-  │h│ ium │  Long Header[39m  │
-  │o│ Hea │               │
-  │r│ der[39m │               │
-  │t[39m│     │               │
+  │[33mS[39m│[33m Med [39m│[33m A Very, Very  [39m│
+  │[33mh[39m│[33m ium [39m│[33m  Long Header  [39m│
+  │[33mo[39m│[33m Hea [39m│               │
+  │[33mr[39m│[33m der [39m│               │
+  │[33mt[39m│     │               │
   ├─┼─────┼───────────────┤
   │a│ aaa │  aaa bbb ccc  │
   │a│ bbb │  ddd eee fff  │
@@ -112,11 +112,11 @@
 
 ╠═ width=30 ═════════════════╣
   ┌─┬──────┬────────────────┐
-  │[33mS│ [33mMedi │  [33mA Very, Very  │
-  │h│  um  │  Long Header[39m   │
-  │o│ Head │                │
-  │r│  er[39m  │                │
-  │t[39m│      │                │
+  │[33mS[39m│[33m Medi [39m│[33m  A Very, Very  [39m│
+  │[33mh[39m│[33m  um  [39m│[33m  Long Header   [39m│
+  │[33mo[39m│[33m Head [39m│                │
+  │[33mr[39m│[33m  er  [39m│                │
+  │[33mt[39m│      │                │
   ├─┼──────┼────────────────┤
   │a│ aaa  │  aaa bbb ccc   │
   │a│ bbb  │  ddd eee fff   │
@@ -131,11 +131,11 @@
 
 ╠═ width=31 ══════════════════╣
   ┌─┬──────┬────────────────┐
-  │[33mS│ [33mMedi │  [33mA Very, Very  │
-  │h│  um  │  Long Header[39m   │
-  │o│ Head │                │
-  │r│  er[39m  │                │
-  │t[39m│      │                │
+  │[33mS[39m│[33m Medi [39m│[33m  A Very, Very  [39m│
+  │[33mh[39m│[33m  um  [39m│[33m  Long Header   [39m│
+  │[33mo[39m│[33m Head [39m│                │
+  │[33mr[39m│[33m  er  [39m│                │
+  │[33mt[39m│      │                │
   ├─┼──────┼────────────────┤
   │a│ aaa  │  aaa bbb ccc   │
   │a│ bbb  │  ddd eee fff   │
@@ -150,11 +150,11 @@
 
 ╠═ width=32 ═══════════════════╣
   ┌──┬──────┬─────────────────┐
-  │[33mS │ [33mMedi │  [33mA Very, Very   │
-  │h │  um  │   Long Header[39m   │
-  │o │ Head │                 │
-  │r │  er[39m  │                 │
-  │t[39m │      │                 │
+  │[33mS [39m│[33m Medi [39m│[33m  A Very, Very   [39m│
+  │[33mh [39m│[33m  um  [39m│[33m   Long Header   [39m│
+  │[33mo [39m│[33m Head [39m│                 │
+  │[33mr [39m│[33m  er  [39m│                 │
+  │[33mt [39m│      │                 │
   ├──┼──────┼─────────────────┤
   │a │ aaa  │ aaa bbb ccc ddd │
   │a │ bbb  │ eee fff ggg hhh │
@@ -169,11 +169,11 @@
 
 ╠═ width=33 ════════════════════╣
   ┌──┬──────┬─────────────────┐
-  │[33mS │ [33mMedi │  [33mA Very, Very   │
-  │h │  um  │   Long Header[39m   │
-  │o │ Head │                 │
-  │r │  er[39m  │                 │
-  │t[39m │      │                 │
+  │[33mS [39m│[33m Medi [39m│[33m  A Very, Very   [39m│
+  │[33mh [39m│[33m  um  [39m│[33m   Long Header   [39m│
+  │[33mo [39m│[33m Head [39m│                 │
+  │[33mr [39m│[33m  er  [39m│                 │
+  │[33mt [39m│      │                 │
   ├──┼──────┼─────────────────┤
   │a │ aaa  │ aaa bbb ccc ddd │
   │a │ bbb  │ eee fff ggg hhh │
@@ -188,11 +188,11 @@
 
 ╠═ width=34 ═════════════════════╣
   ┌──┬───────┬──────────────────┐
-  │[33mS │ [33mMediu │   [33mA Very, Very   │
-  │h │   m   │   Long Header[39m    │
-  │o │ Heade │                  │
-  │r │   r[39m   │                  │
-  │t[39m │       │                  │
+  │[33mS [39m│[33m Mediu [39m│[33m   A Very, Very   [39m│
+  │[33mh [39m│[33m   m   [39m│[33m   Long Header    [39m│
+  │[33mo [39m│[33m Heade [39m│                  │
+  │[33mr [39m│[33m   r   [39m│                  │
+  │[33mt [39m│       │                  │
   ├──┼───────┼──────────────────┤
   │a │  aaa  │ aaa bbb ccc ddd  │
   │a │  bbb  │ eee fff ggg hhh  │
@@ -207,11 +207,11 @@
 
 ╠═ width=35 ══════════════════════╣
   ┌──┬───────┬──────────────────┐
-  │[33mS │ [33mMediu │   [33mA Very, Very   │
-  │h │   m   │   Long Header[39m    │
-  │o │ Heade │                  │
-  │r │   r[39m   │                  │
-  │t[39m │       │                  │
+  │[33mS [39m│[33m Mediu [39m│[33m   A Very, Very   [39m│
+  │[33mh [39m│[33m   m   [39m│[33m   Long Header    [39m│
+  │[33mo [39m│[33m Heade [39m│                  │
+  │[33mr [39m│[33m   r   [39m│                  │
+  │[33mt [39m│       │                  │
   ├──┼───────┼──────────────────┤
   │a │  aaa  │ aaa bbb ccc ddd  │
   │a │  bbb  │ eee fff ggg hhh  │
@@ -226,11 +226,11 @@
 
 ╠═ width=36 ═══════════════════════╣
   ┌──┬───────┬───────────────────┐
-  │[33mS │ [33mMediu │ [33mA Very, Very Long │
-  │h │   m   │      Header[39m       │
-  │o │ Heade │                   │
-  │r │   r[39m   │                   │
-  │t[39m │       │                   │
+  │[33mS [39m│[33m Mediu [39m│[33m A Very, Very Long [39m│
+  │[33mh [39m│[33m   m   [39m│[33m      Header       [39m│
+  │[33mo [39m│[33m Heade [39m│                   │
+  │[33mr [39m│[33m   r   [39m│                   │
+  │[33mt [39m│       │                   │
   ├──┼───────┼───────────────────┤
   │a │  aaa  │  aaa bbb ccc ddd  │
   │a │  bbb  │  eee fff ggg hhh  │
@@ -245,11 +245,11 @@
 
 ╠═ width=37 ════════════════════════╣
   ┌──┬───────┬────────────────────┐
-  │[33mS │ [33mMediu │ [33mA Very, Very Long  │
-  │h │   m   │       Header[39m       │
-  │o │ Heade │                    │
-  │r │   r[39m   │                    │
-  │t[39m │       │                    │
+  │[33mS [39m│[33m Mediu [39m│[33m A Very, Very Long  [39m│
+  │[33mh [39m│[33m   m   [39m│[33m       Header       [39m│
+  │[33mo [39m│[33m Heade [39m│                    │
+  │[33mr [39m│[33m   r   [39m│                    │
+  │[33mt [39m│       │                    │
   ├──┼───────┼────────────────────┤
   │a │  aaa  │  aaa bbb ccc ddd   │
   │a │  bbb  │  eee fff ggg hhh   │
@@ -264,11 +264,11 @@
 
 ╠═ width=38 ═════════════════════════╣
   ┌──┬────────┬─────────────────────┐
-  │[33mS │ [33mMedium │  [33mA Very, Very Long  │
-  │h │ Header[39m │       Header[39m        │
-  │o │        │                     │
-  │r │        │                     │
-  │t[39m │        │                     │
+  │[33mS [39m│[33m Medium [39m│[33m  A Very, Very Long  [39m│
+  │[33mh [39m│[33m Header [39m│[33m       Header        [39m│
+  │[33mo [39m│        │                     │
+  │[33mr [39m│        │                     │
+  │[33mt [39m│        │                     │
   ├──┼────────┼─────────────────────┤
   │a │  aaa   │ aaa bbb ccc ddd eee │
   │a │  bbb   │ fff ggg hhh iii jjj │
@@ -283,11 +283,11 @@
 
 ╠═ width=39 ══════════════════════════╣
   ┌──┬────────┬─────────────────────┐
-  │[33mS │ [33mMedium │  [33mA Very, Very Long  │
-  │h │ Header[39m │       Header[39m        │
-  │o │        │                     │
-  │r │        │                     │
-  │t[39m │        │                     │
+  │[33mS [39m│[33m Medium [39m│[33m  A Very, Very Long  [39m│
+  │[33mh [39m│[33m Header [39m│[33m       Header        [39m│
+  │[33mo [39m│        │                     │
+  │[33mr [39m│        │                     │
+  │[33mt [39m│        │                     │
   ├──┼────────┼─────────────────────┤
   │a │  aaa   │ aaa bbb ccc ddd eee │
   │a │  bbb   │ fff ggg hhh iii jjj │
@@ -302,11 +302,11 @@
 
 ╠═ width=40 ═══════════════════════════╣
   ┌──┬────────┬─────────────────────┐
-  │[33mS │ [33mMedium │  [33mA Very, Very Long  │
-  │h │ Header[39m │       Header[39m        │
-  │o │        │                     │
-  │r │        │                     │
-  │t[39m │        │                     │
+  │[33mS [39m│[33m Medium [39m│[33m  A Very, Very Long  [39m│
+  │[33mh [39m│[33m Header [39m│[33m       Header        [39m│
+  │[33mo [39m│        │                     │
+  │[33mr [39m│        │                     │
+  │[33mt [39m│        │                     │
   ├──┼────────┼─────────────────────┤
   │a │  aaa   │ aaa bbb ccc ddd eee │
   │a │  bbb   │ fff ggg hhh iii jjj │
@@ -321,11 +321,11 @@
 
 ╠═ width=41 ════════════════════════════╣
   ┌───┬────────┬──────────────────────┐
-  │ [33mS │ [33mMedium │  [33mA Very, Very Long   │
-  │ h │ Header[39m │        Header[39m        │
-  │ o │        │                      │
-  │ r │        │                      │
-  │ t[39m │        │                      │
+  │[33m S [39m│[33m Medium [39m│[33m  A Very, Very Long   [39m│
+  │[33m h [39m│[33m Header [39m│[33m        Header        [39m│
+  │[33m o [39m│        │                      │
+  │[33m r [39m│        │                      │
+  │[33m t [39m│        │                      │
   ├───┼────────┼──────────────────────┤
   │ a │  aaa   │ aaa bbb ccc ddd eee  │
   │ a │  bbb   │ fff ggg hhh iii jjj  │
@@ -340,11 +340,11 @@
 
 ╠═ width=42 ═════════════════════════════╣
   ┌───┬─────────┬───────────────────────┐
-  │ [33mS │ [33mMedium  │   [33mA Very, Very Long   │
-  │ h │ Header[39m  │        Header[39m         │
-  │ o │         │                       │
-  │ r │         │                       │
-  │ t[39m │         │                       │
+  │[33m S [39m│[33m Medium  [39m│[33m   A Very, Very Long   [39m│
+  │[33m h [39m│[33m Header  [39m│[33m        Header         [39m│
+  │[33m o [39m│         │                       │
+  │[33m r [39m│         │                       │
+  │[33m t [39m│         │                       │
   ├───┼─────────┼───────────────────────┤
   │ a │ aaa bbb │  aaa bbb ccc ddd eee  │
   │ a │ ccc ddd │  fff ggg hhh iii jjj  │
@@ -359,11 +359,11 @@
 
 ╠═ width=43 ══════════════════════════════╣
   ┌───┬─────────┬────────────────────────┐
-  │ [33mS │ [33mMedium  │   [33mA Very, Very Long    │
-  │ h │ Header[39m  │         Header[39m         │
-  │ o │         │                        │
-  │ r │         │                        │
-  │ t[39m │         │                        │
+  │[33m S [39m│[33m Medium  [39m│[33m   A Very, Very Long    [39m│
+  │[33m h [39m│[33m Header  [39m│[33m         Header         [39m│
+  │[33m o [39m│         │                        │
+  │[33m r [39m│         │                        │
+  │[33m t [39m│         │                        │
   ├───┼─────────┼────────────────────────┤
   │ a │ aaa bbb │  aaa bbb ccc ddd eee   │
   │ a │ ccc ddd │  fff ggg hhh iii jjj   │
@@ -378,11 +378,11 @@
 
 ╠═ width=44 ═══════════════════════════════╣
   ┌───┬─────────┬────────────────────────┐
-  │ [33mS │ [33mMedium  │   [33mA Very, Very Long    │
-  │ h │ Header[39m  │         Header[39m         │
-  │ o │         │                        │
-  │ r │         │                        │
-  │ t[39m │         │                        │
+  │[33m S [39m│[33m Medium  [39m│[33m   A Very, Very Long    [39m│
+  │[33m h [39m│[33m Header  [39m│[33m         Header         [39m│
+  │[33m o [39m│         │                        │
+  │[33m r [39m│         │                        │
+  │[33m t [39m│         │                        │
   ├───┼─────────┼────────────────────────┤
   │ a │ aaa bbb │  aaa bbb ccc ddd eee   │
   │ a │ ccc ddd │  fff ggg hhh iii jjj   │
@@ -397,11 +397,11 @@
 
 ╠═ width=45 ════════════════════════════════╣
   ┌───┬─────────┬─────────────────────────┐
-  │ [33mS │ [33mMedium  │    [33mA Very, Very Long    │
-  │ h │ Header[39m  │         Header[39m          │
-  │ o │         │                         │
-  │ r │         │                         │
-  │ t[39m │         │                         │
+  │[33m S [39m│[33m Medium  [39m│[33m    A Very, Very Long    [39m│
+  │[33m h [39m│[33m Header  [39m│[33m         Header          [39m│
+  │[33m o [39m│         │                         │
+  │[33m r [39m│         │                         │
+  │[33m t [39m│         │                         │
   ├───┼─────────┼─────────────────────────┤
   │ a │ aaa bbb │ aaa bbb ccc ddd eee fff │
   │ a │ ccc ddd │ ggg hhh iii jjj kkk lll │
@@ -416,11 +416,11 @@
 
 ╠═ width=46 ═════════════════════════════════╣
   ┌───┬──────────┬──────────────────────────┐
-  │ [33mS │  [33mMedium  │ [33mA Very, Very Long Header[39m │
-  │ h │  Header[39m  │                          │
-  │ o │          │                          │
-  │ r │          │                          │
-  │ t[39m │          │                          │
+  │[33m S [39m│[33m  Medium  [39m│[33m A Very, Very Long Header [39m│
+  │[33m h [39m│[33m  Header  [39m│                          │
+  │[33m o [39m│          │                          │
+  │[33m r [39m│          │                          │
+  │[33m t [39m│          │                          │
   ├───┼──────────┼──────────────────────────┤
   │ a │ aaa bbb  │ aaa bbb ccc ddd eee fff  │
   │ a │ ccc ddd  │ ggg hhh iii jjj kkk lll  │
@@ -435,11 +435,11 @@
 
 ╠═ width=47 ══════════════════════════════════╣
   ┌───┬──────────┬──────────────────────────┐
-  │ [33mS │  [33mMedium  │ [33mA Very, Very Long Header[39m │
-  │ h │  Header[39m  │                          │
-  │ o │          │                          │
-  │ r │          │                          │
-  │ t[39m │          │                          │
+  │[33m S [39m│[33m  Medium  [39m│[33m A Very, Very Long Header [39m│
+  │[33m h [39m│[33m  Header  [39m│                          │
+  │[33m o [39m│          │                          │
+  │[33m r [39m│          │                          │
+  │[33m t [39m│          │                          │
   ├───┼──────────┼──────────────────────────┤
   │ a │ aaa bbb  │ aaa bbb ccc ddd eee fff  │
   │ a │ ccc ddd  │ ggg hhh iii jjj kkk lll  │
@@ -454,11 +454,11 @@
 
 ╠═ width=48 ═══════════════════════════════════╣
   ┌───┬──────────┬──────────────────────────┐
-  │ [33mS │  [33mMedium  │ [33mA Very, Very Long Header[39m │
-  │ h │  Header[39m  │                          │
-  │ o │          │                          │
-  │ r │          │                          │
-  │ t[39m │          │                          │
+  │[33m S [39m│[33m  Medium  [39m│[33m A Very, Very Long Header [39m│
+  │[33m h [39m│[33m  Header  [39m│                          │
+  │[33m o [39m│          │                          │
+  │[33m r [39m│          │                          │
+  │[33m t [39m│          │                          │
   ├───┼──────────┼──────────────────────────┤
   │ a │ aaa bbb  │ aaa bbb ccc ddd eee fff  │
   │ a │ ccc ddd  │ ggg hhh iii jjj kkk lll  │
@@ -473,11 +473,11 @@
 
 ╠═ width=49 ════════════════════════════════════╣
   ┌───┬──────────┬───────────────────────────┐
-  │ [33mS │  [33mMedium  │ [33mA Very, Very Long Header[39m  │
-  │ h │  Header[39m  │                           │
-  │ o │          │                           │
-  │ r │          │                           │
-  │ t[39m │          │                           │
+  │[33m S [39m│[33m  Medium  [39m│[33m A Very, Very Long Header  [39m│
+  │[33m h [39m│[33m  Header  [39m│                           │
+  │[33m o [39m│          │                           │
+  │[33m r [39m│          │                           │
+  │[33m t [39m│          │                           │
   ├───┼──────────┼───────────────────────────┤
   │ a │ aaa bbb  │  aaa bbb ccc ddd eee fff  │
   │ a │ ccc ddd  │  ggg hhh iii jjj kkk lll  │
@@ -492,9 +492,9 @@
 
 ╠═ width=50 ═════════════════════════════════════╣
   ┌────┬───────────┬────────────────────────────┐
-  │ [33mSh │  [33mMedium   │  [33mA Very, Very Long Header[39m  │
-  │ or │  Header[39m   │                            │
-  │ t[39m  │           │                            │
+  │[33m Sh [39m│[33m  Medium   [39m│[33m  A Very, Very Long Header  [39m│
+  │[33m or [39m│[33m  Header   [39m│                            │
+  │[33m t  [39m│           │                            │
   ├────┼───────────┼────────────────────────────┤
   │ aa │  aaa bbb  │  aaa bbb ccc ddd eee fff   │
   │ a  │  ccc ddd  │  ggg hhh iii jjj kkk lll   │
@@ -506,9 +506,9 @@
 
 ╠═ width=51 ══════════════════════════════════════╣
   ┌────┬───────────┬─────────────────────────────┐
-  │ [33mSh │  [33mMedium   │  [33mA Very, Very Long Header[39m   │
-  │ or │  Header[39m   │                             │
-  │ t[39m  │           │                             │
+  │[33m Sh [39m│[33m  Medium   [39m│[33m  A Very, Very Long Header   [39m│
+  │[33m or [39m│[33m  Header   [39m│                             │
+  │[33m t  [39m│           │                             │
   ├────┼───────────┼─────────────────────────────┤
   │ aa │  aaa bbb  │ aaa bbb ccc ddd eee fff ggg │
   │ a  │  ccc ddd  │ hhh iii jjj kkk lll mmm nnn │
@@ -520,9 +520,9 @@
 
 ╠═ width=52 ═══════════════════════════════════════╣
   ┌────┬───────────┬─────────────────────────────┐
-  │ [33mSh │  [33mMedium   │  [33mA Very, Very Long Header[39m   │
-  │ or │  Header[39m   │                             │
-  │ t[39m  │           │                             │
+  │[33m Sh [39m│[33m  Medium   [39m│[33m  A Very, Very Long Header   [39m│
+  │[33m or [39m│[33m  Header   [39m│                             │
+  │[33m t  [39m│           │                             │
   ├────┼───────────┼─────────────────────────────┤
   │ aa │  aaa bbb  │ aaa bbb ccc ddd eee fff ggg │
   │ a  │  ccc ddd  │ hhh iii jjj kkk lll mmm nnn │
@@ -534,9 +534,9 @@
 
 ╠═ width=53 ════════════════════════════════════════╣
   ┌────┬───────────┬──────────────────────────────┐
-  │ [33mSh │  [33mMedium   │   [33mA Very, Very Long Header[39m   │
-  │ or │  Header[39m   │                              │
-  │ t[39m  │           │                              │
+  │[33m Sh [39m│[33m  Medium   [39m│[33m   A Very, Very Long Header   [39m│
+  │[33m or [39m│[33m  Header   [39m│                              │
+  │[33m t  [39m│           │                              │
   ├────┼───────────┼──────────────────────────────┤
   │ aa │  aaa bbb  │ aaa bbb ccc ddd eee fff ggg  │
   │ a  │  ccc ddd  │ hhh iii jjj kkk lll mmm nnn  │
@@ -548,9 +548,9 @@
 
 ╠═ width=54 ═════════════════════════════════════════╣
   ┌────┬────────────┬──────────────────────────────┐
-  │ [33mSh │   [33mMedium   │   [33mA Very, Very Long Header[39m   │
-  │ or │   Header[39m   │                              │
-  │ t[39m  │            │                              │
+  │[33m Sh [39m│[33m   Medium   [39m│[33m   A Very, Very Long Header   [39m│
+  │[33m or [39m│[33m   Header   [39m│                              │
+  │[33m t  [39m│            │                              │
   ├────┼────────────┼──────────────────────────────┤
   │ aa │  aaa bbb   │ aaa bbb ccc ddd eee fff ggg  │
   │ a  │  ccc ddd   │ hhh iii jjj kkk lll mmm nnn  │
@@ -562,9 +562,9 @@
 
 ╠═ width=55 ══════════════════════════════════════════╣
   ┌────┬────────────┬───────────────────────────────┐
-  │ [33mSh │   [33mMedium   │   [33mA Very, Very Long Header[39m    │
-  │ or │   Header[39m   │                               │
-  │ t[39m  │            │                               │
+  │[33m Sh [39m│[33m   Medium   [39m│[33m   A Very, Very Long Header    [39m│
+  │[33m or [39m│[33m   Header   [39m│                               │
+  │[33m t  [39m│            │                               │
   ├────┼────────────┼───────────────────────────────┤
   │ aa │  aaa bbb   │  aaa bbb ccc ddd eee fff ggg  │
   │ a  │  ccc ddd   │  hhh iii jjj kkk lll mmm nnn  │
@@ -576,9 +576,9 @@
 
 ╠═ width=56 ═══════════════════════════════════════════╣
   ┌────┬────────────┬────────────────────────────────┐
-  │ [33mSh │   [33mMedium   │    [33mA Very, Very Long Header[39m    │
-  │ or │   Header[39m   │                                │
-  │ t[39m  │            │                                │
+  │[33m Sh [39m│[33m   Medium   [39m│[33m    A Very, Very Long Header    [39m│
+  │[33m or [39m│[33m   Header   [39m│                                │
+  │[33m t  [39m│            │                                │
   ├────┼────────────┼────────────────────────────────┤
   │ aa │  aaa bbb   │  aaa bbb ccc ddd eee fff ggg   │
   │ a  │  ccc ddd   │  hhh iii jjj kkk lll mmm nnn   │
@@ -590,9 +590,9 @@
 
 ╠═ width=57 ════════════════════════════════════════════╣
   ┌────┬────────────┬────────────────────────────────┐
-  │ [33mSh │   [33mMedium   │    [33mA Very, Very Long Header[39m    │
-  │ or │   Header[39m   │                                │
-  │ t[39m  │            │                                │
+  │[33m Sh [39m│[33m   Medium   [39m│[33m    A Very, Very Long Header    [39m│
+  │[33m or [39m│[33m   Header   [39m│                                │
+  │[33m t  [39m│            │                                │
   ├────┼────────────┼────────────────────────────────┤
   │ aa │  aaa bbb   │  aaa bbb ccc ddd eee fff ggg   │
   │ a  │  ccc ddd   │  hhh iii jjj kkk lll mmm nnn   │
@@ -604,9 +604,9 @@
 
 ╠═ width=58 ═════════════════════════════════════════════╣
   ┌────┬─────────────┬─────────────────────────────────┐
-  │ [33mSh │   [33mMedium    │    [33mA Very, Very Long Header[39m     │
-  │ or │   Header[39m    │                                 │
-  │ t[39m  │             │                                 │
+  │[33m Sh [39m│[33m   Medium    [39m│[33m    A Very, Very Long Header     [39m│
+  │[33m or [39m│[33m   Header    [39m│                                 │
+  │[33m t  [39m│             │                                 │
   ├────┼─────────────┼─────────────────────────────────┤
   │ aa │ aaa bbb ccc │ aaa bbb ccc ddd eee fff ggg hhh │
   │ a  │ ddd eee fff │ iii jjj kkk lll mmm nnn ooo ppp │
@@ -618,8 +618,8 @@
 
 ╠═ width=59 ══════════════════════════════════════════════╣
   ┌─────┬─────────────┬──────────────────────────────────┐
-  │ [33mSho │   [33mMedium    │     [33mA Very, Very Long Header[39m     │
-  │ rt[39m  │   Header[39m    │                                  │
+  │[33m Sho [39m│[33m   Medium    [39m│[33m     A Very, Very Long Header     [39m│
+  │[33m rt  [39m│[33m   Header    [39m│                                  │
   ├─────┼─────────────┼──────────────────────────────────┤
   │ aaa │ aaa bbb ccc │ aaa bbb ccc ddd eee fff ggg hhh  │
   │ bbb │ ddd eee fff │ iii jjj kkk lll mmm nnn ooo ppp  │
@@ -628,8 +628,8 @@
 
 ╠═ width=60 ═══════════════════════════════════════════════╣
   ┌─────┬─────────────┬───────────────────────────────────┐
-  │ [33mSho │   [33mMedium    │     [33mA Very, Very Long Header[39m      │
-  │ rt[39m  │   Header[39m    │                                   │
+  │[33m Sho [39m│[33m   Medium    [39m│[33m     A Very, Very Long Header      [39m│
+  │[33m rt  [39m│[33m   Header    [39m│                                   │
   ├─────┼─────────────┼───────────────────────────────────┤
   │ aaa │ aaa bbb ccc │  aaa bbb ccc ddd eee fff ggg hhh  │
   │ bbb │ ddd eee fff │  iii jjj kkk lll mmm nnn ooo ppp  │
@@ -638,8 +638,8 @@
 
 ╠═ width=61 ════════════════════════════════════════════════╣
   ┌─────┬─────────────┬───────────────────────────────────┐
-  │ [33mSho │   [33mMedium    │     [33mA Very, Very Long Header[39m      │
-  │ rt[39m  │   Header[39m    │                                   │
+  │[33m Sho [39m│[33m   Medium    [39m│[33m     A Very, Very Long Header      [39m│
+  │[33m rt  [39m│[33m   Header    [39m│                                   │
   ├─────┼─────────────┼───────────────────────────────────┤
   │ aaa │ aaa bbb ccc │  aaa bbb ccc ddd eee fff ggg hhh  │
   │ bbb │ ddd eee fff │  iii jjj kkk lll mmm nnn ooo ppp  │
@@ -648,8 +648,8 @@
 
 ╠═ width=62 ═════════════════════════════════════════════════╣
   ┌─────┬──────────────┬───────────────────────────────────┐
-  │ [33mSho │    [33mMedium    │     [33mA Very, Very Long Header[39m      │
-  │ rt[39m  │    Header[39m    │                                   │
+  │[33m Sho [39m│[33m    Medium    [39m│[33m     A Very, Very Long Header      [39m│
+  │[33m rt  [39m│[33m    Header    [39m│                                   │
   ├─────┼──────────────┼───────────────────────────────────┤
   │ aaa │ aaa bbb ccc  │  aaa bbb ccc ddd eee fff ggg hhh  │
   │ bbb │ ddd eee fff  │  iii jjj kkk lll mmm nnn ooo ppp  │
@@ -658,8 +658,8 @@
 
 ╠═ width=63 ══════════════════════════════════════════════════╣
   ┌─────┬──────────────┬────────────────────────────────────┐
-  │ [33mSho │    [33mMedium    │      [33mA Very, Very Long Header[39m      │
-  │ rt[39m  │    Header[39m    │                                    │
+  │[33m Sho [39m│[33m    Medium    [39m│[33m      A Very, Very Long Header      [39m│
+  │[33m rt  [39m│[33m    Header    [39m│                                    │
   ├─────┼──────────────┼────────────────────────────────────┤
   │ aaa │ aaa bbb ccc  │  aaa bbb ccc ddd eee fff ggg hhh   │
   │ bbb │ ddd eee fff  │  iii jjj kkk lll mmm nnn ooo ppp   │
@@ -668,8 +668,8 @@
 
 ╠═ width=64 ═══════════════════════════════════════════════════╣
   ┌─────┬──────────────┬─────────────────────────────────────┐
-  │ [33mSho │    [33mMedium    │      [33mA Very, Very Long Header[39m       │
-  │ rt[39m  │    Header[39m    │                                     │
+  │[33m Sho [39m│[33m    Medium    [39m│[33m      A Very, Very Long Header       [39m│
+  │[33m rt  [39m│[33m    Header    [39m│                                     │
   ├─────┼──────────────┼─────────────────────────────────────┤
   │ aaa │ aaa bbb ccc  │ aaa bbb ccc ddd eee fff ggg hhh iii │
   │ bbb │ ddd eee fff  │ jjj kkk lll mmm nnn ooo ppp qqq rrr │
@@ -678,8 +678,8 @@
 
 ╠═ width=65 ════════════════════════════════════════════════════╣
   ┌─────┬──────────────┬─────────────────────────────────────┐
-  │ [33mSho │    [33mMedium    │      [33mA Very, Very Long Header[39m       │
-  │ rt[39m  │    Header[39m    │                                     │
+  │[33m Sho [39m│[33m    Medium    [39m│[33m      A Very, Very Long Header       [39m│
+  │[33m rt  [39m│[33m    Header    [39m│                                     │
   ├─────┼──────────────┼─────────────────────────────────────┤
   │ aaa │ aaa bbb ccc  │ aaa bbb ccc ddd eee fff ggg hhh iii │
   │ bbb │ ddd eee fff  │ jjj kkk lll mmm nnn ooo ppp qqq rrr │
@@ -688,8 +688,8 @@
 
 ╠═ width=66 ═════════════════════════════════════════════════════╣
   ┌─────┬───────────────┬──────────────────────────────────────┐
-  │ [33mSho │ [33mMedium Header[39m │       [33mA Very, Very Long Header[39m       │
-  │ rt[39m  │               │                                      │
+  │[33m Sho [39m│[33m Medium Header [39m│[33m       A Very, Very Long Header       [39m│
+  │[33m rt  [39m│               │                                      │
   ├─────┼───────────────┼──────────────────────────────────────┤
   │ aaa │  aaa bbb ccc  │ aaa bbb ccc ddd eee fff ggg hhh iii  │
   │ bbb │  ddd eee fff  │ jjj kkk lll mmm nnn ooo ppp qqq rrr  │
@@ -698,8 +698,8 @@
 
 ╠═ width=67 ══════════════════════════════════════════════════════╣
   ┌─────┬───────────────┬───────────────────────────────────────┐
-  │ [33mSho │ [33mMedium Header[39m │       [33mA Very, Very Long Header[39m        │
-  │ rt[39m  │               │                                       │
+  │[33m Sho [39m│[33m Medium Header [39m│[33m       A Very, Very Long Header        [39m│
+  │[33m rt  [39m│               │                                       │
   ├─────┼───────────────┼───────────────────────────────────────┤
   │ aaa │  aaa bbb ccc  │  aaa bbb ccc ddd eee fff ggg hhh iii  │
   │ bbb │  ddd eee fff  │  jjj kkk lll mmm nnn ooo ppp qqq rrr  │
@@ -708,8 +708,8 @@
 
 ╠═ width=68 ═══════════════════════════════════════════════════════╣
   ┌──────┬────────────────┬────────────────────────────────────────┐
-  │ [33mShor │ [33mMedium Header[39m  │        [33mA Very, Very Long Header[39m        │
-  │  t[39m   │                │                                        │
+  │[33m Shor [39m│[33m Medium Header  [39m│[33m        A Very, Very Long Header        [39m│
+  │[33m  t   [39m│                │                                        │
   ├──────┼────────────────┼────────────────────────────────────────┤
   │ aaa  │  aaa bbb ccc   │  aaa bbb ccc ddd eee fff ggg hhh iii   │
   │ bbb  │  ddd eee fff   │  jjj kkk lll mmm nnn ooo ppp qqq rrr   │
@@ -718,8 +718,8 @@
 
 ╠═ width=69 ════════════════════════════════════════════════════════╣
   ┌──────┬────────────────┬────────────────────────────────────────┐
-  │ [33mShor │ [33mMedium Header[39m  │        [33mA Very, Very Long Header[39m        │
-  │  t[39m   │                │                                        │
+  │[33m Shor [39m│[33m Medium Header  [39m│[33m        A Very, Very Long Header        [39m│
+  │[33m  t   [39m│                │                                        │
   ├──────┼────────────────┼────────────────────────────────────────┤
   │ aaa  │  aaa bbb ccc   │  aaa bbb ccc ddd eee fff ggg hhh iii   │
   │ bbb  │  ddd eee fff   │  jjj kkk lll mmm nnn ooo ppp qqq rrr   │
@@ -728,8 +728,8 @@
 
 ╠═ width=70 ═════════════════════════════════════════════════════════╣
   ┌──────┬────────────────┬────────────────────────────────────────┐
-  │ [33mShor │ [33mMedium Header[39m  │        [33mA Very, Very Long Header[39m        │
-  │  t[39m   │                │                                        │
+  │[33m Shor [39m│[33m Medium Header  [39m│[33m        A Very, Very Long Header        [39m│
+  │[33m  t   [39m│                │                                        │
   ├──────┼────────────────┼────────────────────────────────────────┤
   │ aaa  │  aaa bbb ccc   │  aaa bbb ccc ddd eee fff ggg hhh iii   │
   │ bbb  │  ddd eee fff   │  jjj kkk lll mmm nnn ooo ppp qqq rrr   │
@@ -738,8 +738,8 @@
 
 ╠═ width=71 ══════════════════════════════════════════════════════════╣
   ┌──────┬────────────────┬─────────────────────────────────────────┐
-  │ [33mShor │ [33mMedium Header[39m  │        [33mA Very, Very Long Header[39m         │
-  │  t[39m   │                │                                         │
+  │[33m Shor [39m│[33m Medium Header  [39m│[33m        A Very, Very Long Header         [39m│
+  │[33m  t   [39m│                │                                         │
   ├──────┼────────────────┼─────────────────────────────────────────┤
   │ aaa  │  aaa bbb ccc   │ aaa bbb ccc ddd eee fff ggg hhh iii jjj │
   │ bbb  │  ddd eee fff   │ kkk lll mmm nnn ooo ppp qqq rrr sss ttt │
@@ -748,8 +748,8 @@
 
 ╠═ width=72 ═══════════════════════════════════════════════════════════╣
   ┌──────┬─────────────────┬──────────────────────────────────────────┐
-  │ [33mShor │  [33mMedium Header[39m  │         [33mA Very, Very Long Header[39m         │
-  │  t[39m   │                 │                                          │
+  │[33m Shor [39m│[33m  Medium Header  [39m│[33m         A Very, Very Long Header         [39m│
+  │[33m  t   [39m│                 │                                          │
   ├──────┼─────────────────┼──────────────────────────────────────────┤
   │ aaa  │ aaa bbb ccc ddd │ aaa bbb ccc ddd eee fff ggg hhh iii jjj  │
   │ bbb  │ eee fff ggg hhh │ kkk lll mmm nnn ooo ppp qqq rrr sss ttt  │
@@ -758,8 +758,8 @@
 
 ╠═ width=73 ════════════════════════════════════════════════════════════╣
   ┌──────┬─────────────────┬───────────────────────────────────────────┐
-  │ [33mShor │  [33mMedium Header[39m  │         [33mA Very, Very Long Header[39m          │
-  │  t[39m   │                 │                                           │
+  │[33m Shor [39m│[33m  Medium Header  [39m│[33m         A Very, Very Long Header          [39m│
+  │[33m  t   [39m│                 │                                           │
   ├──────┼─────────────────┼───────────────────────────────────────────┤
   │ aaa  │ aaa bbb ccc ddd │  aaa bbb ccc ddd eee fff ggg hhh iii jjj  │
   │ bbb  │ eee fff ggg hhh │  kkk lll mmm nnn ooo ppp qqq rrr sss ttt  │
@@ -768,8 +768,8 @@
 
 ╠═ width=74 ═════════════════════════════════════════════════════════════╣
   ┌──────┬─────────────────┬───────────────────────────────────────────┐
-  │ [33mShor │  [33mMedium Header[39m  │         [33mA Very, Very Long Header[39m          │
-  │  t[39m   │                 │                                           │
+  │[33m Shor [39m│[33m  Medium Header  [39m│[33m         A Very, Very Long Header          [39m│
+  │[33m  t   [39m│                 │                                           │
   ├──────┼─────────────────┼───────────────────────────────────────────┤
   │ aaa  │ aaa bbb ccc ddd │  aaa bbb ccc ddd eee fff ggg hhh iii jjj  │
   │ bbb  │ eee fff ggg hhh │  kkk lll mmm nnn ooo ppp qqq rrr sss ttt  │
@@ -778,8 +778,8 @@
 
 ╠═ width=75 ══════════════════════════════════════════════════════════════╣
   ┌──────┬─────────────────┬────────────────────────────────────────────┐
-  │ [33mShor │  [33mMedium Header[39m  │          [33mA Very, Very Long Header[39m          │
-  │  t[39m   │                 │                                            │
+  │[33m Shor [39m│[33m  Medium Header  [39m│[33m          A Very, Very Long Header          [39m│
+  │[33m  t   [39m│                 │                                            │
   ├──────┼─────────────────┼────────────────────────────────────────────┤
   │ aaa  │ aaa bbb ccc ddd │  aaa bbb ccc ddd eee fff ggg hhh iii jjj   │
   │ bbb  │ eee fff ggg hhh │  kkk lll mmm nnn ooo ppp qqq rrr sss ttt   │
@@ -788,8 +788,8 @@
 
 ╠═ width=76 ═══════════════════════════════════════════════════════════════╣
   ┌──────┬──────────────────┬────────────────────────────────────────────┐
-  │ [33mShor │  [33mMedium Header[39m   │          [33mA Very, Very Long Header[39m          │
-  │  t[39m   │                  │                                            │
+  │[33m Shor [39m│[33m  Medium Header   [39m│[33m          A Very, Very Long Header          [39m│
+  │[33m  t   [39m│                  │                                            │
   ├──────┼──────────────────┼────────────────────────────────────────────┤
   │ aaa  │ aaa bbb ccc ddd  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj   │
   │ bbb  │ eee fff ggg hhh  │  kkk lll mmm nnn ooo ppp qqq rrr sss ttt   │
@@ -798,8 +798,8 @@
 
 ╠═ width=77 ════════════════════════════════════════════════════════════════╣
   ┌──────┬──────────────────┬─────────────────────────────────────────────┐
-  │ [33mShor │  [33mMedium Header[39m   │          [33mA Very, Very Long Header[39m           │
-  │  t[39m   │                  │                                             │
+  │[33m Shor [39m│[33m  Medium Header   [39m│[33m          A Very, Very Long Header           [39m│
+  │[33m  t   [39m│                  │                                             │
   ├──────┼──────────────────┼─────────────────────────────────────────────┤
   │ aaa  │ aaa bbb ccc ddd  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk │
   │ bbb  │ eee fff ggg hhh  │     lll mmm nnn ooo ppp qqq rrr sss ttt     │
@@ -808,8 +808,8 @@
 
 ╠═ width=78 ═════════════════════════════════════════════════════════════════╣
   ┌──────┬──────────────────┬─────────────────────────────────────────────┐
-  │ [33mShor │  [33mMedium Header[39m   │          [33mA Very, Very Long Header[39m           │
-  │  t[39m   │                  │                                             │
+  │[33m Shor [39m│[33m  Medium Header   [39m│[33m          A Very, Very Long Header           [39m│
+  │[33m  t   [39m│                  │                                             │
   ├──────┼──────────────────┼─────────────────────────────────────────────┤
   │ aaa  │ aaa bbb ccc ddd  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk │
   │ bbb  │ eee fff ggg hhh  │     lll mmm nnn ooo ppp qqq rrr sss ttt     │
@@ -818,7 +818,7 @@
 
 ╠═ width=79 ══════════════════════════════════════════════════════════════════╣
   ┌───────┬──────────────────┬──────────────────────────────────────────────┐
-  │ [33mShort[39m │  [33mMedium Header[39m   │           [33mA Very, Very Long Header[39m           │
+  │[33m Short [39m│[33m  Medium Header   [39m│[33m           A Very, Very Long Header           [39m│
   ├───────┼──────────────────┼──────────────────────────────────────────────┤
   │  aaa  │ aaa bbb ccc ddd  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk  │
   │  bbb  │ eee fff ggg hhh  │     lll mmm nnn ooo ppp qqq rrr sss ttt      │
@@ -827,7 +827,7 @@
 
 ╠═ width=80 ═══════════════════════════════════════════════════════════════════╣
   ┌───────┬───────────────────┬───────────────────────────────────────────────┐
-  │ [33mShort[39m │   [33mMedium Header[39m   │           [33mA Very, Very Long Header[39m            │
+  │[33m Short [39m│[33m   Medium Header   [39m│[33m           A Very, Very Long Header            [39m│
   ├───────┼───────────────────┼───────────────────────────────────────────────┤
   │  aaa  │  aaa bbb ccc ddd  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk  │
   │  bbb  │  eee fff ggg hhh  │      lll mmm nnn ooo ppp qqq rrr sss ttt      │
@@ -836,7 +836,7 @@
 
 ╠═ width=81 ════════════════════════════════════════════════════════════════════╣
   ┌───────┬───────────────────┬────────────────────────────────────────────────┐
-  │ [33mShort[39m │   [33mMedium Header[39m   │            [33mA Very, Very Long Header[39m            │
+  │[33m Short [39m│[33m   Medium Header   [39m│[33m            A Very, Very Long Header            [39m│
   ├───────┼───────────────────┼────────────────────────────────────────────────┤
   │  aaa  │  aaa bbb ccc ddd  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk   │
   │  bbb  │  eee fff ggg hhh  │      lll mmm nnn ooo ppp qqq rrr sss ttt       │
@@ -845,7 +845,7 @@
 
 ╠═ width=82 ═════════════════════════════════════════════════════════════════════╣
   ┌───────┬───────────────────┬─────────────────────────────────────────────────┐
-  │ [33mShort[39m │   [33mMedium Header[39m   │            [33mA Very, Very Long Header[39m             │
+  │[33m Short [39m│[33m   Medium Header   [39m│[33m            A Very, Very Long Header             [39m│
   ├───────┼───────────────────┼─────────────────────────────────────────────────┤
   │  aaa  │  aaa bbb ccc ddd  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll │
   │  bbb  │  eee fff ggg hhh  │         mmm nnn ooo ppp qqq rrr sss ttt         │
@@ -854,7 +854,7 @@
 
 ╠═ width=83 ══════════════════════════════════════════════════════════════════════╣
   ┌───────┬───────────────────┬─────────────────────────────────────────────────┐
-  │ [33mShort[39m │   [33mMedium Header[39m   │            [33mA Very, Very Long Header[39m             │
+  │[33m Short [39m│[33m   Medium Header   [39m│[33m            A Very, Very Long Header             [39m│
   ├───────┼───────────────────┼─────────────────────────────────────────────────┤
   │  aaa  │  aaa bbb ccc ddd  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll │
   │  bbb  │  eee fff ggg hhh  │         mmm nnn ooo ppp qqq rrr sss ttt         │
@@ -863,7 +863,7 @@
 
 ╠═ width=84 ═══════════════════════════════════════════════════════════════════════╣
   ┌───────┬────────────────────┬─────────────────────────────────────────────────┐
-  │ [33mShort[39m │   [33mMedium Header[39m    │            [33mA Very, Very Long Header[39m             │
+  │[33m Short [39m│[33m   Medium Header    [39m│[33m            A Very, Very Long Header             [39m│
   ├───────┼────────────────────┼─────────────────────────────────────────────────┤
   │  aaa  │  aaa bbb ccc ddd   │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll │
   │  bbb  │  eee fff ggg hhh   │         mmm nnn ooo ppp qqq rrr sss ttt         │
@@ -872,7 +872,7 @@
 
 ╠═ width=85 ════════════════════════════════════════════════════════════════════════╣
   ┌───────┬────────────────────┬──────────────────────────────────────────────────┐
-  │ [33mShort[39m │   [33mMedium Header[39m    │             [33mA Very, Very Long Header[39m             │
+  │[33m Short [39m│[33m   Medium Header    [39m│[33m             A Very, Very Long Header             [39m│
   ├───────┼────────────────────┼──────────────────────────────────────────────────┤
   │  aaa  │  aaa bbb ccc ddd   │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll  │
   │  bbb  │  eee fff ggg hhh   │         mmm nnn ooo ppp qqq rrr sss ttt          │
@@ -881,7 +881,7 @@
 
 ╠═ width=86 ═════════════════════════════════════════════════════════════════════════╣
   ┌───────┬────────────────────┬───────────────────────────────────────────────────┐
-  │ [33mShort[39m │   [33mMedium Header[39m    │             [33mA Very, Very Long Header[39m              │
+  │[33m Short [39m│[33m   Medium Header    [39m│[33m             A Very, Very Long Header              [39m│
   ├───────┼────────────────────┼───────────────────────────────────────────────────┤
   │  aaa  │  aaa bbb ccc ddd   │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll  │
   │  bbb  │  eee fff ggg hhh   │          mmm nnn ooo ppp qqq rrr sss ttt          │
@@ -890,7 +890,7 @@
 
 ╠═ width=87 ══════════════════════════════════════════════════════════════════════════╣
   ┌───────┬────────────────────┬───────────────────────────────────────────────────┐
-  │ [33mShort[39m │   [33mMedium Header[39m    │             [33mA Very, Very Long Header[39m              │
+  │[33m Short [39m│[33m   Medium Header    [39m│[33m             A Very, Very Long Header              [39m│
   ├───────┼────────────────────┼───────────────────────────────────────────────────┤
   │  aaa  │  aaa bbb ccc ddd   │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll  │
   │  bbb  │  eee fff ggg hhh   │          mmm nnn ooo ppp qqq rrr sss ttt          │
@@ -899,7 +899,7 @@
 
 ╠═ width=88 ═══════════════════════════════════════════════════════════════════════════╣
   ┌────────┬─────────────────────┬────────────────────────────────────────────────────┐
-  │ [33mShort[39m  │    [33mMedium Header[39m    │              [33mA Very, Very Long Header[39m              │
+  │[33m Short  [39m│[33m    Medium Header    [39m│[33m              A Very, Very Long Header              [39m│
   ├────────┼─────────────────────┼────────────────────────────────────────────────────┤
   │  aaa   │ aaa bbb ccc ddd eee │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll   │
   │  bbb   │     fff ggg hhh     │          mmm nnn ooo ppp qqq rrr sss ttt           │
@@ -908,7 +908,7 @@
 
 ╠═ width=89 ════════════════════════════════════════════════════════════════════════════╣
   ┌────────┬─────────────────────┬─────────────────────────────────────────────────────┐
-  │ [33mShort[39m  │    [33mMedium Header[39m    │              [33mA Very, Very Long Header[39m               │
+  │[33m Short  [39m│[33m    Medium Header    [39m│[33m              A Very, Very Long Header               [39m│
   ├────────┼─────────────────────┼─────────────────────────────────────────────────────┤
   │  aaa   │ aaa bbb ccc ddd eee │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm │
   │  bbb   │     fff ggg hhh     │             nnn ooo ppp qqq rrr sss ttt             │
@@ -917,7 +917,7 @@
 
 ╠═ width=90 ═════════════════════════════════════════════════════════════════════════════╣
   ┌────────┬─────────────────────┬─────────────────────────────────────────────────────┐
-  │ [33mShort[39m  │    [33mMedium Header[39m    │              [33mA Very, Very Long Header[39m               │
+  │[33m Short  [39m│[33m    Medium Header    [39m│[33m              A Very, Very Long Header               [39m│
   ├────────┼─────────────────────┼─────────────────────────────────────────────────────┤
   │  aaa   │ aaa bbb ccc ddd eee │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm │
   │  bbb   │     fff ggg hhh     │             nnn ooo ppp qqq rrr sss ttt             │
@@ -926,7 +926,7 @@
 
 ╠═ width=91 ══════════════════════════════════════════════════════════════════════════════╣
   ┌────────┬─────────────────────┬─────────────────────────────────────────────────────┐
-  │ [33mShort[39m  │    [33mMedium Header[39m    │              [33mA Very, Very Long Header[39m               │
+  │[33m Short  [39m│[33m    Medium Header    [39m│[33m              A Very, Very Long Header               [39m│
   ├────────┼─────────────────────┼─────────────────────────────────────────────────────┤
   │  aaa   │ aaa bbb ccc ddd eee │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm │
   │  bbb   │     fff ggg hhh     │             nnn ooo ppp qqq rrr sss ttt             │
@@ -935,7 +935,7 @@
 
 ╠═ width=92 ═══════════════════════════════════════════════════════════════════════════════╣
   ┌────────┬──────────────────────┬──────────────────────────────────────────────────────┐
-  │ [33mShort[39m  │    [33mMedium Header[39m     │               [33mA Very, Very Long Header[39m               │
+  │[33m Short  [39m│[33m    Medium Header     [39m│[33m               A Very, Very Long Header               [39m│
   ├────────┼──────────────────────┼──────────────────────────────────────────────────────┤
   │  aaa   │ aaa bbb ccc ddd eee  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm  │
   │  bbb   │     fff ggg hhh      │             nnn ooo ppp qqq rrr sss ttt              │
@@ -944,7 +944,7 @@
 
 ╠═ width=93 ════════════════════════════════════════════════════════════════════════════════╣
   ┌────────┬──────────────────────┬───────────────────────────────────────────────────────┐
-  │ [33mShort[39m  │    [33mMedium Header[39m     │               [33mA Very, Very Long Header[39m                │
+  │[33m Short  [39m│[33m    Medium Header     [39m│[33m               A Very, Very Long Header                [39m│
   ├────────┼──────────────────────┼───────────────────────────────────────────────────────┤
   │  aaa   │ aaa bbb ccc ddd eee  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm  │
   │  bbb   │     fff ggg hhh      │              nnn ooo ppp qqq rrr sss ttt              │
@@ -953,7 +953,7 @@
 
 ╠═ width=94 ═════════════════════════════════════════════════════════════════════════════════╣
   ┌────────┬──────────────────────┬────────────────────────────────────────────────────────┐
-  │ [33mShort[39m  │    [33mMedium Header[39m     │                [33mA Very, Very Long Header[39m                │
+  │[33m Short  [39m│[33m    Medium Header     [39m│[33m                A Very, Very Long Header                [39m│
   ├────────┼──────────────────────┼────────────────────────────────────────────────────────┤
   │  aaa   │ aaa bbb ccc ddd eee  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm   │
   │  bbb   │     fff ggg hhh      │              nnn ooo ppp qqq rrr sss ttt               │
@@ -962,7 +962,7 @@
 
 ╠═ width=95 ══════════════════════════════════════════════════════════════════════════════════╣
   ┌────────┬───────────────────────┬─────────────────────────────────────────────────────────┐
-  │ [33mShort[39m  │     [33mMedium Header[39m     │                [33mA Very, Very Long Header[39m                 │
+  │[33m Short  [39m│[33m     Medium Header     [39m│[33m                A Very, Very Long Header                 [39m│
   ├────────┼───────────────────────┼─────────────────────────────────────────────────────────┤
   │  aaa   │  aaa bbb ccc ddd eee  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn │
   │  bbb   │      fff ggg hhh      │                 ooo ppp qqq rrr sss ttt                 │
@@ -971,7 +971,7 @@
 
 ╠═ width=96 ═══════════════════════════════════════════════════════════════════════════════════╣
   ┌────────┬───────────────────────┬─────────────────────────────────────────────────────────┐
-  │ [33mShort[39m  │     [33mMedium Header[39m     │                [33mA Very, Very Long Header[39m                 │
+  │[33m Short  [39m│[33m     Medium Header     [39m│[33m                A Very, Very Long Header                 [39m│
   ├────────┼───────────────────────┼─────────────────────────────────────────────────────────┤
   │  aaa   │  aaa bbb ccc ddd eee  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn │
   │  bbb   │      fff ggg hhh      │                 ooo ppp qqq rrr sss ttt                 │
@@ -980,7 +980,7 @@
 
 ╠═ width=97 ════════════════════════════════════════════════════════════════════════════════════╣
   ┌─────────┬───────────────────────┬──────────────────────────────────────────────────────────┐
-  │  [33mShort[39m  │     [33mMedium Header[39m     │                 [33mA Very, Very Long Header[39m                 │
+  │[33m  Short  [39m│[33m     Medium Header     [39m│[33m                 A Very, Very Long Header                 [39m│
   ├─────────┼───────────────────────┼──────────────────────────────────────────────────────────┤
   │ aaa bbb │  aaa bbb ccc ddd eee  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn  │
   │   ccc   │      fff ggg hhh      │                 ooo ppp qqq rrr sss ttt                  │
@@ -988,7 +988,7 @@
 
 ╠═ width=98 ═════════════════════════════════════════════════════════════════════════════════════╣
   ┌─────────┬───────────────────────┬──────────────────────────────────────────────────────────┐
-  │  [33mShort[39m  │     [33mMedium Header[39m     │                 [33mA Very, Very Long Header[39m                 │
+  │[33m  Short  [39m│[33m     Medium Header     [39m│[33m                 A Very, Very Long Header                 [39m│
   ├─────────┼───────────────────────┼──────────────────────────────────────────────────────────┤
   │ aaa bbb │  aaa bbb ccc ddd eee  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn  │
   │   ccc   │      fff ggg hhh      │                 ooo ppp qqq rrr sss ttt                  │
@@ -996,7 +996,7 @@
 
 ╠═ width=99 ══════════════════════════════════════════════════════════════════════════════════════╣
   ┌─────────┬────────────────────────┬───────────────────────────────────────────────────────────┐
-  │  [33mShort[39m  │     [33mMedium Header[39m      │                 [33mA Very, Very Long Header[39m                  │
+  │[33m  Short  [39m│[33m     Medium Header      [39m│[33m                 A Very, Very Long Header                  [39m│
   ├─────────┼────────────────────────┼───────────────────────────────────────────────────────────┤
   │ aaa bbb │  aaa bbb ccc ddd eee   │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn  │
   │   ccc   │      fff ggg hhh       │                  ooo ppp qqq rrr sss ttt                  │
@@ -1004,7 +1004,7 @@
 
 ╠═ width=100 ══════════════════════════════════════════════════════════════════════════════════════╣
   ┌─────────┬────────────────────────┬───────────────────────────────────────────────────────────┐
-  │  [33mShort[39m  │     [33mMedium Header[39m      │                 [33mA Very, Very Long Header[39m                  │
+  │[33m  Short  [39m│[33m     Medium Header      [39m│[33m                 A Very, Very Long Header                  [39m│
   ├─────────┼────────────────────────┼───────────────────────────────────────────────────────────┤
   │ aaa bbb │  aaa bbb ccc ddd eee   │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn  │
   │   ccc   │      fff ggg hhh       │                  ooo ppp qqq rrr sss ttt                  │
@@ -1012,7 +1012,7 @@
 
 ╠═ width=101 ═══════════════════════════════════════════════════════════════════════════════════════╣
   ┌─────────┬────────────────────────┬────────────────────────────────────────────────────────────┐
-  │  [33mShort[39m  │     [33mMedium Header[39m      │                  [33mA Very, Very Long Header[39m                  │
+  │[33m  Short  [39m│[33m     Medium Header      [39m│[33m                  A Very, Very Long Header                  [39m│
   ├─────────┼────────────────────────┼────────────────────────────────────────────────────────────┤
   │ aaa bbb │  aaa bbb ccc ddd eee   │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn   │
   │   ccc   │      fff ggg hhh       │                  ooo ppp qqq rrr sss ttt                   │
@@ -1020,7 +1020,7 @@
 
 ╠═ width=102 ════════════════════════════════════════════════════════════════════════════════════════╣
   ┌─────────┬────────────────────────┬─────────────────────────────────────────────────────────────┐
-  │  [33mShort[39m  │     [33mMedium Header[39m      │                  [33mA Very, Very Long Header[39m                   │
+  │[33m  Short  [39m│[33m     Medium Header      [39m│[33m                  A Very, Very Long Header                   [39m│
   ├─────────┼────────────────────────┼─────────────────────────────────────────────────────────────┤
   │ aaa bbb │  aaa bbb ccc ddd eee   │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo │
   │   ccc   │      fff ggg hhh       │                     ppp qqq rrr sss ttt                     │
@@ -1028,7 +1028,7 @@
 
 ╠═ width=103 ═════════════════════════════════════════════════════════════════════════════════════════╣
   ┌─────────┬─────────────────────────┬──────────────────────────────────────────────────────────────┐
-  │  [33mShort[39m  │      [33mMedium Header[39m      │                   [33mA Very, Very Long Header[39m                   │
+  │[33m  Short  [39m│[33m      Medium Header      [39m│[33m                   A Very, Very Long Header                   [39m│
   ├─────────┼─────────────────────────┼──────────────────────────────────────────────────────────────┤
   │ aaa bbb │ aaa bbb ccc ddd eee fff │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo  │
   │   ccc   │         ggg hhh         │                     ppp qqq rrr sss ttt                      │
@@ -1036,7 +1036,7 @@
 
 ╠═ width=104 ══════════════════════════════════════════════════════════════════════════════════════════╣
   ┌─────────┬─────────────────────────┬──────────────────────────────────────────────────────────────┐
-  │  [33mShort[39m  │      [33mMedium Header[39m      │                   [33mA Very, Very Long Header[39m                   │
+  │[33m  Short  [39m│[33m      Medium Header      [39m│[33m                   A Very, Very Long Header                   [39m│
   ├─────────┼─────────────────────────┼──────────────────────────────────────────────────────────────┤
   │ aaa bbb │ aaa bbb ccc ddd eee fff │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo  │
   │   ccc   │         ggg hhh         │                     ppp qqq rrr sss ttt                      │
@@ -1044,7 +1044,7 @@
 
 ╠═ width=105 ═══════════════════════════════════════════════════════════════════════════════════════════╣
   ┌─────────┬─────────────────────────┬──────────────────────────────────────────────────────────────┐
-  │  [33mShort[39m  │      [33mMedium Header[39m      │                   [33mA Very, Very Long Header[39m                   │
+  │[33m  Short  [39m│[33m      Medium Header      [39m│[33m                   A Very, Very Long Header                   [39m│
   ├─────────┼─────────────────────────┼──────────────────────────────────────────────────────────────┤
   │ aaa bbb │ aaa bbb ccc ddd eee fff │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo  │
   │   ccc   │         ggg hhh         │                     ppp qqq rrr sss ttt                      │
@@ -1052,7 +1052,7 @@
 
 ╠═ width=106 ════════════════════════════════════════════════════════════════════════════════════════════╣
   ┌──────────┬─────────────────────────┬───────────────────────────────────────────────────────────────┐
-  │  [33mShort[39m   │      [33mMedium Header[39m      │                   [33mA Very, Very Long Header[39m                    │
+  │[33m  Short   [39m│[33m      Medium Header      [39m│[33m                   A Very, Very Long Header                    [39m│
   ├──────────┼─────────────────────────┼───────────────────────────────────────────────────────────────┤
   │ aaa bbb  │ aaa bbb ccc ddd eee fff │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo  │
   │   ccc    │         ggg hhh         │                      ppp qqq rrr sss ttt                      │
@@ -1060,7 +1060,7 @@
 
 ╠═ width=107 ═════════════════════════════════════════════════════════════════════════════════════════════╣
   ┌──────────┬──────────────────────────┬────────────────────────────────────────────────────────────────┐
-  │  [33mShort[39m   │      [33mMedium Header[39m       │                    [33mA Very, Very Long Header[39m                    │
+  │[33m  Short   [39m│[33m      Medium Header       [39m│[33m                    A Very, Very Long Header                    [39m│
   ├──────────┼──────────────────────────┼────────────────────────────────────────────────────────────────┤
   │ aaa bbb  │ aaa bbb ccc ddd eee fff  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo   │
   │   ccc    │         ggg hhh          │                      ppp qqq rrr sss ttt                       │
@@ -1068,7 +1068,7 @@
 
 ╠═ width=108 ══════════════════════════════════════════════════════════════════════════════════════════════╣
   ┌──────────┬──────────────────────────┬─────────────────────────────────────────────────────────────────┐
-  │  [33mShort[39m   │      [33mMedium Header[39m       │                    [33mA Very, Very Long Header[39m                     │
+  │[33m  Short   [39m│[33m      Medium Header       [39m│[33m                    A Very, Very Long Header                     [39m│
   ├──────────┼──────────────────────────┼─────────────────────────────────────────────────────────────────┤
   │ aaa bbb  │ aaa bbb ccc ddd eee fff  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp │
   │   ccc    │         ggg hhh          │                         qqq rrr sss ttt                         │
@@ -1076,7 +1076,7 @@
 
 ╠═ width=109 ═══════════════════════════════════════════════════════════════════════════════════════════════╣
   ┌──────────┬──────────────────────────┬─────────────────────────────────────────────────────────────────┐
-  │  [33mShort[39m   │      [33mMedium Header[39m       │                    [33mA Very, Very Long Header[39m                     │
+  │[33m  Short   [39m│[33m      Medium Header       [39m│[33m                    A Very, Very Long Header                     [39m│
   ├──────────┼──────────────────────────┼─────────────────────────────────────────────────────────────────┤
   │ aaa bbb  │ aaa bbb ccc ddd eee fff  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp │
   │   ccc    │         ggg hhh          │                         qqq rrr sss ttt                         │
@@ -1084,7 +1084,7 @@
 
 ╠═ width=110 ════════════════════════════════════════════════════════════════════════════════════════════════╣
   ┌──────────┬──────────────────────────┬──────────────────────────────────────────────────────────────────┐
-  │  [33mShort[39m   │      [33mMedium Header[39m       │                     [33mA Very, Very Long Header[39m                     │
+  │[33m  Short   [39m│[33m      Medium Header       [39m│[33m                     A Very, Very Long Header                     [39m│
   ├──────────┼──────────────────────────┼──────────────────────────────────────────────────────────────────┤
   │ aaa bbb  │ aaa bbb ccc ddd eee fff  │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp  │
   │   ccc    │         ggg hhh          │                         qqq rrr sss ttt                          │
@@ -1092,7 +1092,7 @@
 
 ╠═ width=111 ═════════════════════════════════════════════════════════════════════════════════════════════════╣
   ┌──────────┬───────────────────────────┬───────────────────────────────────────────────────────────────────┐
-  │  [33mShort[39m   │       [33mMedium Header[39m       │                     [33mA Very, Very Long Header[39m                      │
+  │[33m  Short   [39m│[33m       Medium Header       [39m│[33m                     A Very, Very Long Header                      [39m│
   ├──────────┼───────────────────────────┼───────────────────────────────────────────────────────────────────┤
   │ aaa bbb  │  aaa bbb ccc ddd eee fff  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp  │
   │   ccc    │          ggg hhh          │                          qqq rrr sss ttt                          │
@@ -1100,7 +1100,7 @@
 
 ╠═ width=112 ══════════════════════════════════════════════════════════════════════════════════════════════════╣
   ┌──────────┬───────────────────────────┬───────────────────────────────────────────────────────────────────┐
-  │  [33mShort[39m   │       [33mMedium Header[39m       │                     [33mA Very, Very Long Header[39m                      │
+  │[33m  Short   [39m│[33m       Medium Header       [39m│[33m                     A Very, Very Long Header                      [39m│
   ├──────────┼───────────────────────────┼───────────────────────────────────────────────────────────────────┤
   │ aaa bbb  │  aaa bbb ccc ddd eee fff  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp  │
   │   ccc    │          ggg hhh          │                          qqq rrr sss ttt                          │
@@ -1108,7 +1108,7 @@
 
 ╠═ width=113 ═══════════════════════════════════════════════════════════════════════════════════════════════════╣
   ┌──────────┬───────────────────────────┬───────────────────────────────────────────────────────────────────┐
-  │  [33mShort[39m   │       [33mMedium Header[39m       │                     [33mA Very, Very Long Header[39m                      │
+  │[33m  Short   [39m│[33m       Medium Header       [39m│[33m                     A Very, Very Long Header                      [39m│
   ├──────────┼───────────────────────────┼───────────────────────────────────────────────────────────────────┤
   │ aaa bbb  │  aaa bbb ccc ddd eee fff  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp  │
   │   ccc    │          ggg hhh          │                          qqq rrr sss ttt                          │
@@ -1116,7 +1116,7 @@
 
 ╠═ width=114 ════════════════════════════════════════════════════════════════════════════════════════════════════╣
   ┌──────────┬───────────────────────────┬────────────────────────────────────────────────────────────────────┐
-  │  [33mShort[39m   │       [33mMedium Header[39m       │                      [33mA Very, Very Long Header[39m                      │
+  │[33m  Short   [39m│[33m       Medium Header       [39m│[33m                      A Very, Very Long Header                      [39m│
   ├──────────┼───────────────────────────┼────────────────────────────────────────────────────────────────────┤
   │ aaa bbb  │  aaa bbb ccc ddd eee fff  │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp   │
   │   ccc    │          ggg hhh          │                          qqq rrr sss ttt                           │
@@ -1124,7 +1124,7 @@
 
 ╠═ width=115 ═════════════════════════════════════════════════════════════════════════════════════════════════════╣
   ┌───────────┬────────────────────────────┬─────────────────────────────────────────────────────────────────────┐
-  │   [33mShort[39m   │       [33mMedium Header[39m        │                      [33mA Very, Very Long Header[39m                       │
+  │[33m   Short   [39m│[33m       Medium Header        [39m│[33m                      A Very, Very Long Header                       [39m│
   ├───────────┼────────────────────────────┼─────────────────────────────────────────────────────────────────────┤
   │  aaa bbb  │  aaa bbb ccc ddd eee fff   │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq │
   │    ccc    │          ggg hhh           │                             rrr sss ttt                             │
@@ -1132,7 +1132,7 @@
 
 ╠═ width=116 ══════════════════════════════════════════════════════════════════════════════════════════════════════╣
   ┌───────────┬────────────────────────────┬──────────────────────────────────────────────────────────────────────┐
-  │   [33mShort[39m   │       [33mMedium Header[39m        │                       [33mA Very, Very Long Header[39m                       │
+  │[33m   Short   [39m│[33m       Medium Header        [39m│[33m                       A Very, Very Long Header                       [39m│
   ├───────────┼────────────────────────────┼──────────────────────────────────────────────────────────────────────┤
   │  aaa bbb  │  aaa bbb ccc ddd eee fff   │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq  │
   │    ccc    │          ggg hhh           │                             rrr sss ttt                              │
@@ -1140,7 +1140,7 @@
 
 ╠═ width=117 ═══════════════════════════════════════════════════════════════════════════════════════════════════════╣
   ┌───────────┬────────────────────────────┬──────────────────────────────────────────────────────────────────────┐
-  │   [33mShort[39m   │       [33mMedium Header[39m        │                       [33mA Very, Very Long Header[39m                       │
+  │[33m   Short   [39m│[33m       Medium Header        [39m│[33m                       A Very, Very Long Header                       [39m│
   ├───────────┼────────────────────────────┼──────────────────────────────────────────────────────────────────────┤
   │  aaa bbb  │  aaa bbb ccc ddd eee fff   │ aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq  │
   │    ccc    │          ggg hhh           │                             rrr sss ttt                              │
@@ -1148,7 +1148,7 @@
 
 ╠═ width=118 ════════════════════════════════════════════════════════════════════════════════════════════════════════╣
   ┌───────────┬────────────────────────────┬───────────────────────────────────────────────────────────────────────┐
-  │   [33mShort[39m   │       [33mMedium Header[39m        │                       [33mA Very, Very Long Header[39m                        │
+  │[33m   Short   [39m│[33m       Medium Header        [39m│[33m                       A Very, Very Long Header                        [39m│
   ├───────────┼────────────────────────────┼───────────────────────────────────────────────────────────────────────┤
   │  aaa bbb  │  aaa bbb ccc ddd eee fff   │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq  │
   │    ccc    │          ggg hhh           │                              rrr sss ttt                              │
@@ -1156,7 +1156,7 @@
 
 ╠═ width=119 ═════════════════════════════════════════════════════════════════════════════════════════════════════════╣
   ┌───────────┬─────────────────────────────┬───────────────────────────────────────────────────────────────────────┐
-  │   [33mShort[39m   │        [33mMedium Header[39m        │                       [33mA Very, Very Long Header[39m                        │
+  │[33m   Short   [39m│[33m        Medium Header        [39m│[33m                       A Very, Very Long Header                        [39m│
   ├───────────┼─────────────────────────────┼───────────────────────────────────────────────────────────────────────┤
   │  aaa bbb  │ aaa bbb ccc ddd eee fff ggg │  aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq  │
   │    ccc    │             hhh             │                              rrr sss ttt                              │
