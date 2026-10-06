@@ -66,3 +66,15 @@ describe("typed table core", () => {
     expect(first!.indexOf("aa")).toBeGreaterThan(second!.indexOf("bb"))
   })
 })
+
+
+describe("object factory API", () => {
+  it("creates a table from an explicit options object", () => {
+    const table = Table.create({
+      header: ["name"],
+      rows: [["Ada"]],
+      options: { width: 30 }
+    })
+    expect(table.render()).toContain("Ada")
+  })
+})
