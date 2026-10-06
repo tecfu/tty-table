@@ -48,3 +48,16 @@ describe("falsy cell values", () => {
     expect(output).toContain("│ N/A │")
   })
 })
+
+
+describe("explicit cell options", () => {
+  it("supports options nested separately from the cell value", () => {
+    const table = Table([{ value: "score" }], [[{
+      value: 42,
+      options: { align: "right", color: "red" }
+    } as any]])
+    const output = table.render()
+    expect(output).toContain("42")
+    expect(output).toContain("\u001b[31m")
+  })
+})
