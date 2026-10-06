@@ -1,5 +1,6 @@
 import { truncate, wrap } from "../src/format"
 import { displayWidth } from "../src/ansi"
+import { wrapCellText } from "../src/format"
 
 describe("smartwrap v4 integration", () => {
   it("wraps text at the requested cell width", () => {
@@ -39,5 +40,37 @@ describe("breakword width vs legacy wcwidth disagreements", () => {
     const lines = out.split("\n")
     expect(lines.every((line) => displayWidth(line) <= 4)).toBe(true)
     expect(out).toContain("⚡")
+  })
+})
+
+
+describe("ANSI-safe wrapping", () => {
+  it("preserves an inline style across a wrap boundary", () => {
+    const config = {
+      table: { columnWidths: [12], header: [] },
+      paddingLeft: 0,
+      paddingRight: 0,
+      GUTTER: 1
+    }
+    const styled = "prefix \u001b[31mstyled text crosses the boundary\u001b[39m suffix"
+    const result = wrapCellText(config, styled, 0, { align: "left", paddingLeft: 0, paddingRight: 0 }, "body")
+    expect(result.cell.length).toBeGreaterThan(1)
+    const continuation = result.cell.slice(1).filter((line: string) => line.includes("styled"))
+    expect(continuation.length).toBeGreaterThan(0)
+    expect(continuation.every((line: string) => line.includes("\u001b[31m"))).toBe(true)
+  })
+
+  it("preserves the active style when boundary and inline ANSI are mixed", () => {
+    const config = {
+      table: { columnWidths: [12], header: [] },
+      paddingLeft: 0,
+      paddingRight: 0,
+      GUTTER: 1
+    }
+    const styled = "\u001b[31mprefix \u001b[1mstyled text crosses the boundary\u001b[22m suffix\u001b[39m"
+    const result = wrapCellText(config, styled, 0, { align: "left", paddingLeft: 0, paddingRight: 0 }, "body")
+    const continuation = result.cell.slice(1).filter((line: string) => line.includes("styled"))
+    expect(continuation.length).toBeGreaterThan(0)
+    expect(continuation.every((line: string) => line.includes("\u001b[31m"))).toBe(true)
   })
 })
