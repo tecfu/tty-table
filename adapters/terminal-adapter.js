@@ -197,10 +197,13 @@ if (dataFormat === "json") {
   })
 
   const csvParser = csv.parse(formatterOptions)
-  let sawRow = false
+  const rows = []
   csvParser.on("data", function (row) {
-    sawRow = true
-    runTable(header, validateRows([row]))
+    if (process.stdout.isTTY) {
+      runTable(header, validateRows([row]))
+    } else {
+      rows.push(row)
+    }
   })
   csvParser.on("error", function () {
     emitError(
@@ -209,11 +212,14 @@ if (dataFormat === "json") {
     )
   })
   csvParser.on("end", function () {
-    if (!sawRow) {
+    if (rows.length === 0 && !process.stdout.isTTY) {
       emitError(
         "No input",
         "Nothing was piped to stdin. Try: cat data.csv | tty-table."
       )
+    }
+    if (!process.stdout.isTTY) {
+      runTable(header, validateRows(rows))
     }
   })
 
