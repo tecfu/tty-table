@@ -11,8 +11,9 @@ export const stringifyData = (config: any, inputData: any[]) => {
   const constructorType = getConstructorGeometry(inputData[0] || [], config)
   const rows = coerceConstructorGeometry(config, inputData, constructorType)
 
-  // Every body cell is built twice on a table's first render: once dry, to
-  // measure the columns, and once to print them. Cell functions and formatters
+  // When the column widths are not already cached, every body cell is built
+  // twice on a table's first render: once dry, to measure the columns, and once
+  // to print them. Cell functions and formatters
   // are caller code, so the dry pass ran them for real - twice the side effects,
   // and, for anything that is not a pure function of its arguments, geometry
   // taken from the first call and text from the second. This memo keeps the
