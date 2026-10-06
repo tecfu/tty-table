@@ -1,5 +1,6 @@
 import chalk from "chalk"
 import { colorizeCell, resetStyle, style } from "../src/style"
+import { displayWidth } from "../src/ansi"
 
 describe("chalk color compatibility", () => {
   const colors = [
