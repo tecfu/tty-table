@@ -220,6 +220,11 @@ const Factory = function (paramsArr: any[]): any {
    * console.log(str); //outputs table
    * ```
   */
+  tableObject.renderTo = function (this: any, target: { write(chunk: string): unknown }) {
+    stringifyData(this[_configKey], this.slice(0), (chunk) => { target.write(chunk) })
+    tableObject.height = this[_configKey].height
+  }
+
   tableObject.render = function (this: any) {
     const output = stringifyData(this[_configKey], this.slice(0)) // get string output
     tableObject.height = this[_configKey].height
