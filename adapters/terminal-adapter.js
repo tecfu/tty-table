@@ -142,21 +142,21 @@ const runTable = function (header, body) {
   options.terminalAdapter = true
   const t1 = Table(header, body, options)
 
-  // hide cursor
-  console.log("\u001b[?25l")
+  const interactive = Boolean(process.stdout.isTTY)
 
-  // wipe existing if already rendered
-  if (alreadyRendered) {
-    // move cursor up number to the top of the previous print
-    // before deleting
-    console.log(`\u001b[${previousHeight + 3}A`)
+  if (interactive) {
+    console.log("\u001b[?25l")
 
-    // delete to end of terminal
-    console.log("\u001b[0J")
-  } else {
-    alreadyRendered = true
+    if (alreadyRendered) {
+      console.log("\u001b[" + (previousHeight + 3) + "A")
+      console.log("\u001b[0J")
+    } else {
+      alreadyRendered = true
+    }
   }
 
+  // Redirected stdout gets one ordinary table frame; interactive terminals get
+  // the incremental redraw behavior used by the streaming adapter.
   console.log(t1.render())
 
   // reset the previous height to the height of this output
@@ -167,48 +167,64 @@ const runTable = function (header, body) {
 const chunks = []
 process.stdin.resume()
 process.stdin.setEncoding("utf8")
-process.stdin.on("data", function (chunk) {
-  chunks.push(chunk)
-})
-process.stdin.on("end", function () {
-  const stdin = chunks.join("")
 
-  // handle dataFormats
-  switch (true) {
-    case (dataFormat === "json"): {
-      let data
-      try {
-        data = JSON.parse(stdin)
-      } catch {
-        emitError(
-          "JSON parse error",
-          "Please check to make sure that your input data consists of JSON or specify a different format with the --format flag."
-        )
-      }
-      runTable(header, validateRows(data))
-      break
+// JSON remains buffered because a JSON array is not safely row-streamable without
+// changing the accepted input format. CSV, however, is record-oriented, so pipe
+// stdin directly through the parser and render each record as it arrives.
+if (dataFormat === "json") {
+  process.stdin.on("data", function (chunk) {
+    chunks.push(chunk)
+  })
+  process.stdin.on("end", function () {
+    const stdin = chunks.join("")
+    let data
+    try {
+      data = JSON.parse(stdin)
+    } catch {
+      emitError(
+        "JSON parse error",
+        "Please check to make sure that your input data consists of valid JSON or specify a different format with the --format flag."
+      )
     }
-    default: {
-      const formatterOptions = {}
-      Object.keys(yargs).forEach(function (key) {
-        if (key.slice(0, 4) === "csv-" && typeof (yargs[key]) !== "undefined") {
-          formatterOptions[key.slice(4)] = yargs[key]
-        }
-      })
+    runTable(header, validateRows(data))
+  })
+} else {
+  const formatterOptions = {}
+  Object.keys(yargs).forEach(function (key) {
+    if (key.slice(0, 4) === "csv-" && typeof (yargs[key]) !== "undefined") {
+      formatterOptions[key.slice(4)] = yargs[key]
+    }
+  })
 
-      csv.parse(stdin, formatterOptions, function (err, data) {
-      // validate csv
-        if (err || typeof data === "undefined") {
-          emitError(
-            "CSV parse error",
-            "Please check to make sure that your input data consists of valid comma separated values or specify a different format with the --format flag."
-          )
-        }
-        runTable(header, validateRows(data))
-      })
+  const csvParser = csv.parse(formatterOptions)
+  const rows = []
+  csvParser.on("data", function (row) {
+    if (process.stdout.isTTY) {
+      runTable(header, validateRows([row]))
+    } else {
+      rows.push(row)
     }
-  }
-})
+  })
+  csvParser.on("error", function () {
+    emitError(
+      "CSV parse error",
+      "Please check to make sure that your input data consists of valid comma separated values or specify a different format with the --format flag."
+    )
+  })
+  csvParser.on("end", function () {
+    if (rows.length === 0 && !process.stdout.isTTY) {
+      emitError(
+        "No input",
+        "Nothing was piped to stdin. Try: cat data.csv | tty-table."
+      )
+    }
+    if (!process.stdout.isTTY) {
+      runTable(header, validateRows(rows))
+    }
+  })
+
+  process.stdin.pipe(csvParser)
+}
 
 /* istanbul ignore next */
 if (process.platform === "win32") {
@@ -229,6 +245,6 @@ process.on("SIGINT", function () {
 })
 
 process.on("exit", function () {
-  // show cursor
-  console.log("\u001b[?25h")
+  // Only an interactive terminal has a cursor to restore.
+  if (process.stdout.isTTY) console.log("\u001b[?25h")
 })
