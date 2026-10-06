@@ -16,7 +16,7 @@ const withoutTty = (render: () => string) => {
   delete process.env.COLUMNS
   try {
     process.stdout.columns = undefined as unknown as number
-  } catch (error) {
+  } catch {
     // a getter-only stdout (some CI harnesses): COLUMNS is already deleted above
   }
   try {
@@ -25,7 +25,7 @@ const withoutTty = (render: () => string) => {
     if (typeof savedColumns !== "undefined") process.env.COLUMNS = savedColumns
     try {
       process.stdout.columns = savedTerminal
-    } catch (error) {
+    } catch {
       // ignore
     }
   }

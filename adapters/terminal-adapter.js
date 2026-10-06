@@ -175,11 +175,11 @@ process.stdin.on("end", function () {
 
   // handle dataFormats
   switch (true) {
-    case (dataFormat === "json"):
+    case (dataFormat === "json"): {
       let data
       try {
         data = JSON.parse(stdin)
-      } catch (e) {
+      } catch {
         emitError(
           "JSON parse error",
           "Please check to make sure that your input data consists of JSON or specify a different format with the --format flag."
@@ -187,7 +187,8 @@ process.stdin.on("end", function () {
       }
       runTable(header, validateRows(data))
       break
-    default:
+    }
+    default: {
       const formatterOptions = {}
       Object.keys(yargs).forEach(function (key) {
         if (key.slice(0, 4) === "csv-" && typeof (yargs[key]) !== "undefined") {
@@ -205,6 +206,7 @@ process.stdin.on("end", function () {
         }
         runTable(header, validateRows(data))
       })
+    }
   }
 })
 

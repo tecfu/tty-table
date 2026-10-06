@@ -186,13 +186,15 @@ export const buildCell = (config: any, elem: any, columnIndex: number, rowType: 
       case (typeof elem === "object" && elem !== null && typeof elem.value !== "undefined"):
         cellValue = elem.value
         break
-      case (typeof elem === "function"):
-        cellValue = (elem as Function).bind({
+      case (typeof elem === "function"): {
+        const cellFunction = elem as (this: any, value: any, columnIndex: number, rowIndex: number | null, rowData: any[], inputData: any[]) => any
+        cellValue = cellFunction.bind({
           configure: function (object: any) { return Object.assign(cellOptions, object) },
           style: style,
           resetStyle: resetStyle
         })(cellValue, columnIndex, rowIndex, rowData, inputData)
         break
+      }
       default:
         cellValue = elem
     }

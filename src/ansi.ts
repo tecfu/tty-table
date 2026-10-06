@@ -1,6 +1,7 @@
 import breakword from "breakword"
 
-const ANSI = /\u001B\[[0-?]*[ -\/]*[@-~]/g
+// eslint-disable-next-line no-control-regex -- matching the ESC CSI sequence is the point of this module
+const ANSI = /\u001B\[[0-?]*[ -/]*[@-~]/g
 
 const codes: Record<string, string> = {
   reset: "0", bold: "1", dim: "2", italic: "3", underline: "4", inverse: "7", hidden: "8", strikethrough: "9",

@@ -103,6 +103,8 @@ export const wrapCellText = (
   cellOptions: any,
   rowType: string
 ) => {
+  // the line-boundary ANSI regexes are hoisted to module scope above
+
   // coerce cell value to string
   let str = cellValue.toString()
 
@@ -165,7 +167,7 @@ export const wrapCellText = (
       let emptySpace = columnWidth - lineLength
 
       switch (true) {
-        case (cellOptions[alignTgt] === "center"):
+        case (cellOptions[alignTgt] === "center"): {
           emptySpace--
           const padBoth = Math.floor(emptySpace / 2)
           const padRemainder = emptySpace % 2
@@ -173,6 +175,7 @@ export const wrapCellText = (
             + line
             + " ".repeat(padBoth + padRemainder)
           break
+        }
 
         case (cellOptions[alignTgt] === "right"):
           line = " ".repeat(emptySpace - cellOptions.paddingRight - 1)

@@ -12,6 +12,7 @@ import Table from "../src"
 // so a line that looks short can still be too wide for its box.
 const WIDE = /[\u1100-\u115F\u2E80-\u303E\u3041-\u33FF\u3400-\u4DBF\u4E00-\u9FFF\uA000-\uA4CF\uAC00-\uD7A3\uF900-\uFAFF\uFE30-\uFE6F\uFF00-\uFF60\uFFE0-\uFFE6\u{1F300}-\u{1FAFF}]/u
 const cells = (line: string) =>
+  // eslint-disable-next-line no-control-regex -- matching the ESC byte is the point
   [...line.replace(/\u001b\[[0-9;]*m/g, "")].reduce((total, char) => total + (WIDE.test(char) ? 2 : 1), 0)
 
 const rectangular = (output: string) => new Set(output.split("\n").filter((line) => line.length).map(cells)).size === 1

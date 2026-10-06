@@ -19,7 +19,6 @@ const viewExclude = [
   "auto-resize-undeclared-widths.js",
   "example-script.js"
 ]
-debugger
 const exclude = (mode === "test") ? testExclude : viewExclude
 const list = all.filter(file => !exclude.includes(file.split("/").pop()))
 

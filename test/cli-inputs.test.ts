@@ -15,6 +15,7 @@ const cli = path.join(root, "adapters", "terminal-adapter.js")
 const run = (input: string, args: string[] = []) => {
   const result = spawnSync(process.execPath, [cli, ...args], { input, cwd: root, encoding: "utf8", timeout: 30000 })
   // strip the cursor hide/show the adapter prints for want of a tty
+  // eslint-disable-next-line no-control-regex -- matching the ESC byte is the point
   return { output: (result.stdout + result.stderr).replace(/\u001b\[[0-9;?]*[A-Za-z]/g, ""), status: result.status }
 }
 
