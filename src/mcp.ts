@@ -73,11 +73,19 @@ export type RenderTableArgs = {
  */
 export function handleRenderTable({ header, rows, options }: RenderTableArgs) {
   try {
-    const opts = (options ?? {}) as Options
+    const parsed = z.object(renderTableInputSchema).safeParse({ header, rows, options })
+    if (!parsed.success) {
+      return {
+        isError: true as const,
+        content: [{ type: "text" as const, text: parsed.error.message }]
+      }
+    }
+
+    const opts = (parsed.data.options ?? {}) as Options
     // JSON input never carries explicit undefined, so the parsed shape
     // satisfies Header despite exactOptionalPropertyTypes
-    const head = header as unknown as (string | Header)[] | undefined
-    const table = head?.length ? Table(head, rows, opts) : Table(rows, opts)
+    const head = parsed.data.header as unknown as (string | Header)[] | undefined
+    const table = head?.length ? Table(head, parsed.data.rows, opts) : Table(parsed.data.rows, opts)
     return { content: [{ type: "text" as const, text: table.render() }] }
   } catch (error) {
     return {
