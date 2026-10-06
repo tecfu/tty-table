@@ -1,11 +1,5 @@
 /* globals describe, it */
 const chai = require("chai"),
-  // eslint-disable-next-line no-unused-vars
-  expect = chai.expect,
-  // eslint-disable-next-line no-unused-vars
-  assert = chai.assert,
-  // eslint-disable-next-line no-unused-vars
-  should = chai.should(),
   fs = require("fs"),
   path = require("path"),
   glob = require("glob"),

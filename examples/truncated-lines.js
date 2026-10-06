@@ -39,6 +39,7 @@ console.log(str1)
 // test truncation with long value
 const t2 = Table(header, [], options)
 t2.push(
+  // eslint-disable-next-line no-loss-of-precision -- a value too wide for the column is the point
   ["pound cake", 123456789123456789, "no"]
 )
 const str2 = t2.render()
@@ -50,6 +51,7 @@ options3.paddingLeft = 2
 options3.paddingRight = 2
 const t3 = Table(header, [], options3)
 t3.push(
+  // eslint-disable-next-line no-loss-of-precision -- a value too wide for the column is the point
   ["pound cake", 123456789123456789, "no"]
 )
 const str3 = t3.render()
