@@ -101,17 +101,6 @@ export const wrapCellText = (
   // coerce cell value to string
   let str = cellValue.toString()
 
-  // store matching ANSI characters
-  const startMatches = str.match(startAnsiRegexp) || [""]
-
-  // remove ANSI start-of-line chars
-  str = str.replace(startAnsiRegexp, "")
-
-  // store matching ANSI characters so can be later re-attached
-  const endMatches = str.match(endAnsiRegexp) || [""]
-
-  // remove ANSI end-of-line chars
-  str = str.replace(endAnsiRegexp, "")
 
   let alignTgt: string
 
