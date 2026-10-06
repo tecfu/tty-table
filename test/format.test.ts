@@ -41,3 +41,19 @@ describe("breakword width vs legacy wcwidth disagreements", () => {
     expect(out).toContain("⚡")
   })
 })
+
+
+describe("ANSI-safe wrapping", () => {
+  it("preserves a style across a wrap boundary", () => {
+    const config = {
+      table: { columnWidths: [12], header: [] },
+      paddingLeft: 0,
+      paddingRight: 0,
+      GUTTER: 1
+    }
+    const styled = "\u001b[31mthis text crosses the boundary\u001b[0m"
+    const result = wrapCellText(config, styled, 0, { align: "left", paddingLeft: 0, paddingRight: 0 }, "body")
+    expect(result.cell).toHaveLength(3)
+    expect(result.cell[1]).toContain("\u001b[31m")
+  })
+})

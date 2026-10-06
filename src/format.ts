@@ -89,13 +89,6 @@ export const getStringLength = (str: string) => {
   return displayWidth(str)
 }
 
-// ANSI characters that demarcate the start/end of a line. Hoisted out of
-// wrapCellText, which runs once per cell and was recompiling them every time.
-// eslint-disable-next-line no-control-regex
-const startAnsiRegexp = /^(\x1b\[[0-9;]*m)+/
-// eslint-disable-next-line no-control-regex
-const endAnsiRegexp = /(\x1b\[[0-9;]*m)+$/
-
 export const wrapCellText = (
   config: any,
   cellValue: any,
@@ -190,8 +183,7 @@ export const wrapCellText = (
       }
     }
 
-    // put ANSI color codes BACK on the beginning and end of string
-    return startMatches[0] + line + endMatches[0]
+    return line
   })
 
   return { cell, innerWidth }
