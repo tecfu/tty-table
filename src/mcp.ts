@@ -18,8 +18,6 @@ const headerEntry = z.union([
   })
 ])
 
-const optionValue = z.union([z.string(), z.number(), z.boolean()])
-
 // Validate the public table options we expose through MCP while retaining
 // forward compatibility for newer tty-table options. The previous
 // z.record(z.string(), z.unknown()) accepted typos and invalid primitive types,
