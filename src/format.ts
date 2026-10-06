@@ -247,6 +247,32 @@ export const wrap = (str: string, cellOptions: any, innerWidth: number) => {
   return outstring
 }
 
+export const allocateProportionalWidths = (widths: number[], targetWidth: number, minimumWidth = 2) => {
+  if (widths.length === 0 || targetWidth <= 0) return widths.map(() => minimumWidth)
+
+  const minimumTotal = minimumWidth * widths.length
+  if (minimumTotal > targetWidth) return widths.map(() => minimumWidth)
+
+  const total = widths.reduce((sum, width) => sum + width, 0)
+  if (total <= 0) return widths.map(() => minimumWidth)
+
+  const exact = widths.map(width => width * targetWidth / total)
+  const allocated = exact.map(width => Math.max(minimumWidth, Math.floor(width)))
+  let remaining = targetWidth - allocated.reduce((sum, width) => sum + width, 0)
+
+  // Give leftover cells to the largest fractional remainders. Ties retain the
+  // original column order, making the result deterministic.
+  const order = exact
+    .map((width, index) => ({ index, remainder: width - Math.floor(width) }))
+    .sort((a, b) => b.remainder - a.remainder || a.index - b.index)
+
+  for (let i = 0; i < order.length && remaining > 0; i++, remaining--) {
+    allocated[order[i]!.index]!++
+  }
+
+  return allocated
+}
+
 export const getColumnWidths = (config: any, rows: any[]) => {
   const availableWidth = getAvailableWidth(config)
 
@@ -293,18 +319,15 @@ export const getColumnWidths = (config: any, rows: any[]) => {
   // calculate sum of all column widths (including marginLeft)
   const totalWidth = widths.reduce((prev: number, current: number) => prev + current, 0)
 
-  // proportionately resize columns when necessary
+  // proportionately resize columns when necessary. Allocate integer display
+  // cells directly instead of rounding a floating-point proportion to two
+  // decimals. The old calculation could leave unused cells, or overflow by a
+  // few cells depending on the decimal rounding.
   if (totalWidth > availableWidth || config.FIXED_WIDTH) {
-    // proportion wont be exact fit, but this method keeps us safe
-    const proportion = (availableWidth / totalWidth).toFixed(2) as unknown as number - 0.01
-    const relativeWidths = widths.map((value: number) => Math.max(2, Math.floor(proportion * value)))
-    if (config.FIXED_WIDTH) return relativeWidths
-
-    // when proportion < 0 column cant be resized and totalWidth must overflow viewport
-    if (proportion > 0) {
-      const totalRelativeWidths = relativeWidths.reduce((prev: number, current: number) => prev + current)
-      widths = (totalRelativeWidths < totalWidth) ? relativeWidths : widths
-    }
+    // The renderer reserves one cell outside the column allocation for its
+    // table edge/gutter geometry, so allocate only the inner viewport width.
+    const innerAvailableWidth = Math.max(0, Math.floor(availableWidth) - 1)
+    widths = allocateProportionalWidths(widths, innerAvailableWidth)
   } else {
     widths = widths.map(Math.floor)
   }

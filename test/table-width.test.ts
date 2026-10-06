@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest"
 import Table from "../src"
+import { allocateProportionalWidths } from "../src/format"
 
 /**
  * Without a TTY (piping to a file, a CI log, a forked child) the viewport falls back
@@ -34,6 +35,12 @@ const withoutTty = (render: () => string) => {
 const rows = [["some text that is long enough to need a decision about wrapping"]]
 
 describe("width without a terminal", () => {
+  it("allocates a constrained width exactly without decimal rounding loss", () => {
+    const widths = allocateProportionalWidths([13, 17, 19], 30)
+    expect(widths.reduce((sum, width) => sum + width, 0)).toBe(30)
+    expect(widths.every((width) => width >= 2)).toBe(true)
+  })
+
   afterEach(() => {
     if (typeof savedColumns !== "undefined") process.env.COLUMNS = savedColumns
   })

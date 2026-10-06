@@ -30,7 +30,6 @@ exampleScripts.forEach(function(element) {
             filepath = path.join(savedTestDir, `${subname}-output.txt`),
             expected1 = fs.readFileSync(filepath, "utf-8")
 
-          // example result should match saved output
           stdout.should.equal(expected1)
           deferred()
         }
