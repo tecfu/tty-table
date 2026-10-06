@@ -1,6 +1,13 @@
 import defaults from "./defaults"
 import { stringifyData } from "./render"
 import { resetStyle, style, styleEachChar } from "./style"
+import type { Alignment, BorderCharacters, BorderStyle, ColumnOptions } from "./types"
+
+// A documented literal, plus any string: the union still autocompletes the
+// allowed values, but code that builds the value at runtime (a config file, a
+// CLI flag) does not stop compiling. Unknown values are a runtime error, which
+// is where they always were.
+type AlignInput = Alignment | (string & {})
 
 let counter = 0
 
@@ -24,39 +31,48 @@ const appendRows = (target: any[], source: any[]) => {
 }
 
 export interface Formatter {
-  (cellValue: any, columnIndex: number, rowIndex: number, rowData: any, inputData: any): string
+  // rowIndex is null for header and footer rows, which buildCell passes through.
+  (cellValue: any, columnIndex: number, rowIndex: number | null, rowData: any, inputData: any): any
 }
 
-export interface Header {
-  alias?: string
-  align?: string
-  color?: string
-  footerAlign?: string
-  footerColor?: string
+// Every option the library reads, with the type it accepts at runtime. The
+// trailing index signature stays: options are merged wholesale into the cell
+// config, so a key not listed here is still passed through.
+export interface Options {
+  align?: AlignInput
+  alignment?: AlignInput
+  borderColor?: string | false | null
+  borderCharacters?: Record<string, BorderCharacters[]>
+  // the documented names plus the numeric aliases (0 solid, 1 dashed, 2 none)
+  // that defaults.borderCharacters also keys; any string is still assignable so
+  // a value coming from a variable does not become a type error
+  borderStyle?: BorderStyle | (string & {})
+  color?: string | false
+  columnSettings?: ColumnOptions[]
+  compact?: boolean
+  COLUMNS?: number
+  defaultErrorValue?: string
+  defaultValue?: string
+  errorOnNull?: boolean
+  FIXED_WIDTH?: boolean
+  footerAlign?: AlignInput
+  footerColor?: string | false
   formatter?: Formatter
-  headerAlign?: string
-  headerColor?: string
+  GUTTER?: number
+  headerAlign?: AlignInput
+  headerAlignment?: AlignInput
+  headerColor?: string | false
   marginLeft?: number
   marginTop?: number
   paddingBottom?: number
   paddingLeft?: number
   paddingRight?: number
   paddingTop?: number
-  value: string
-  width?: string | number
-}
-
-export interface Options {
-  borderStyle?: string
-  borderColor?: string
-  color?: string
-  compact?: boolean
-  defaultErrorValue?: string
-  defaultValue?: string
-  errorOnNull?: boolean
+  showHeader?: boolean | null
+  table?: Record<string, unknown>
+  terminalAdapter?: boolean
   truncate?: string | boolean
   width?: string | number
-  footerColor?: string
   [key: string]: unknown
 }
 
@@ -222,6 +238,37 @@ const Factory = function (paramsArr: any[]): any {
   }
 
   return tableObject
+}
+
+// One column definition. value and alias are both optional because buildCell
+// reads `cellOptions.alias || cellOptions.value`, so either one on its own names
+// a column; the rest are the per-column overrides wrapCellText and buildCell
+// merge over the table options.
+export interface Header {
+  alias?: string
+  align?: AlignInput
+  alignment?: AlignInput
+  color?: string | false
+  defaultValue?: string
+  defaultErrorValue?: string
+  errorOnNull?: boolean
+  footerAlign?: AlignInput
+  footerColor?: string | false
+  formatter?: Formatter
+  headerAlign?: AlignInput
+  headerAlignment?: AlignInput
+  headerColor?: string | false
+  isNull?: boolean
+  marginLeft?: number
+  marginTop?: number
+  paddingBottom?: number
+  paddingLeft?: number
+  paddingRight?: number
+  paddingTop?: number
+  reset?: boolean
+  truncate?: string | boolean
+  value?: string
+  width?: string | number
 }
 
 interface TtyTableFactory {
