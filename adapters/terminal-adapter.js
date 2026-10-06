@@ -142,21 +142,21 @@ const runTable = function (header, body) {
   options.terminalAdapter = true
   const t1 = Table(header, body, options)
 
-  // hide cursor
-  console.log("\u001b[?25l")
+  const interactive = Boolean(process.stdout.isTTY)
 
-  // wipe existing if already rendered
-  if (alreadyRendered) {
-    // move cursor up number to the top of the previous print
-    // before deleting
-    console.log(`\u001b[${previousHeight + 3}A`)
+  if (interactive) {
+    console.log("\u001b[?25l")
 
-    // delete to end of terminal
-    console.log("\u001b[0J")
-  } else {
-    alreadyRendered = true
+    if (alreadyRendered) {
+      console.log("\u001b[" + (previousHeight + 3) + "A")
+      console.log("\u001b[0J")
+    } else {
+      alreadyRendered = true
+    }
   }
 
+  // Redirected stdout gets one ordinary table frame; interactive terminals get
+  // the incremental redraw behavior used by the streaming adapter.
   console.log(t1.render())
 
   // reset the previous height to the height of this output
