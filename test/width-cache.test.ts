@@ -48,6 +48,21 @@ describe("column width memoization", () => {
     expect(chunkWidths(b).size).toBe(1)
   })
 
+  it("invalidates auto-width measurements when the terminal is resized", () => {
+    const original = process.stdout.columns
+    try {
+      process.stdout.columns = 30
+      const table = Table([{ value: "description" }], [["a value that needs wrapping"]])
+      const narrow = table.render()
+      process.stdout.columns = 80
+      const wide = table.render()
+      expect(wide).not.toBe(narrow)
+      expect(wide).toContain("a value that needs wrapping")
+    } finally {
+      process.stdout.columns = original
+    }
+  })
+
   it("re-renders the same table identically", () => {
     const table = Table([{ value: "h" }], [["value that sets the width"]])
     expect(table.render()).toBe(table.render())

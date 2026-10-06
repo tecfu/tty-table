@@ -1,5 +1,5 @@
 import { colorizeCell, isColorEnabled, style, resetStyle } from "./style"
-import { wrapCellText, getColumnWidths } from "./format"
+import { wrapCellText, getColumnWidths, getAvailableWidth } from "./format"
 import stripAnsi from "strip-ansi"
 
 // Column widths are measured once per table: measuring is the expensive half of
@@ -10,7 +10,7 @@ import stripAnsi from "strip-ansi"
 // runner that resets modules but not globals) and the counters collide: the second
 // copy's tables render with the first copy's widths. Entries were never removed
 // either, so every table that was ever built stayed in the heap.
-const measuredWidths = new WeakMap<object, number[]>()
+const measuredWidths = new WeakMap<object, { widths: number[], availableWidth: number }>()
 
 // Tables rendered through a terminal adapter do not increment the counter, which is
 // how successive prints of a stream were meant to share widths - a property of the
@@ -52,7 +52,9 @@ export const stringifyData = (config: any, inputData: any[]) => {
   const cellMemo = new Map<CellMemoKey, CellMemo>()
 
   const isStream = config.terminalAdapter === true
-  const cached = isStream ? adapterWidths : (config.table ? measuredWidths.get(config.table) : undefined)
+  const availableWidth = getAvailableWidth(config)
+  const cachedEntry = isStream ? undefined : (config.table ? measuredWidths.get(config.table) : undefined)
+  const cached = cachedEntry && cachedEntry.availableWidth === availableWidth ? cachedEntry.widths : undefined
 
   if (cached) {
     config.table.columnWidths = cached
@@ -63,7 +65,7 @@ export const stringifyData = (config: any, inputData: any[]) => {
     const widths = getColumnWidths(config, formattedRows)
 
     if (isStream) adapterWidths = widths
-    else if (config.table) measuredWidths.set(config.table, widths)
+    else if (config.table) measuredWidths.set(config.table, { widths, availableWidth })
 
     config.table.columnWidths = widths
   }
