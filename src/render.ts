@@ -28,6 +28,13 @@ export const stringifyData = (config: any, inputData: any[]) => {
   const constructorType = getConstructorGeometry(inputData[0] || [], config)
   const rows = coerceConstructorGeometry(config, inputData, constructorType)
 
+  // Both are rebuilt from the header cells during this render (see buildCell).
+  // Nothing resets them, so a table that is rendered repeatedly - a status line,
+  // a stream that redraws on every tick - kept every previous render's entries:
+  // one object per column per render, held for the life of the table.
+  config.table.columns = []
+  config.table.columnInnerWidths = []
+
   // When the column widths are not already cached, every body cell is built
   // twice on a table's first render: once dry, to measure the columns, and once
   // to print them. Cell functions and formatters are caller code, so the dry
