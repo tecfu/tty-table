@@ -1,5 +1,6 @@
 import { truncate, wrap } from "../src/format"
 import { displayWidth } from "../src/ansi"
+import { wrapCellText } from "../src/format"
 
 describe("smartwrap v4 integration", () => {
   it("wraps text at the requested cell width", () => {
