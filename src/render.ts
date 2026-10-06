@@ -17,7 +17,7 @@ const measuredWidths = new WeakMap<object, { widths: number[], availableWidth: n
 // stream, not of the process, so it gets a slot of its own. Keying it by the shared
 // id meant an adapter table inherited the widths of whichever ordinary table
 // happened to have been created last.
-let adapterWidths: number[] | undefined
+let adapterWidths: { widths: number[], availableWidth: number } | undefined
 
 export const stringifyData = (config: any, inputData: any[]) => {
   const sections: any = { header: [], body: [], footer: [] }
@@ -53,7 +53,7 @@ export const stringifyData = (config: any, inputData: any[]) => {
 
   const isStream = config.terminalAdapter === true
   const availableWidth = getAvailableWidth(config)
-  const cachedEntry = isStream ? undefined : (config.table ? measuredWidths.get(config.table) : undefined)
+  const cachedEntry = isStream ? adapterWidths : (config.table ? measuredWidths.get(config.table) : undefined)
   const cached = cachedEntry && cachedEntry.availableWidth === availableWidth ? cachedEntry.widths : undefined
 
   if (cached) {
@@ -64,7 +64,7 @@ export const stringifyData = (config: any, inputData: any[]) => {
     })
     const widths = getColumnWidths(config, formattedRows)
 
-    if (isStream) adapterWidths = widths
+    if (isStream) adapterWidths = { widths, availableWidth }
     else if (config.table) measuredWidths.set(config.table, { widths, availableWidth })
 
     config.table.columnWidths = widths
