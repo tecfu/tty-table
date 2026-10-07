@@ -75,6 +75,8 @@ describe("object factory API", () => {
       rows: [["Ada"]],
       options: { width: 30 }
     })
-    expect(table.render()).toContain("Ada")
+    const nested = table.render()
+    const positional = Table(["name"], [["Ada"]], { width: 30 }).render()
+    expect(nested).toBe(positional)
   })
 })
