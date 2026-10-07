@@ -60,4 +60,14 @@ describe("explicit cell options", () => {
     expect(output).toContain("42")
     expect(output).toContain("│    42 │")
   })
+
+  it("gives nested options precedence over legacy flat cell options", () => {
+    const table = Table([{ value: "score" }], [[{
+      value: 42,
+      align: "left",
+      options: { align: "right" }
+    } as any]])
+    const output = table.render()
+    expect(output).toContain("│    42 │")
+  })
 })
