@@ -1,5 +1,6 @@
 import chalk from "chalk"
 import { colorizeCell, resetStyle, style } from "../src/style"
+import { displayWidth } from "../src/ansi"
 
 describe("chalk color compatibility", () => {
   const colors = [
@@ -52,5 +53,32 @@ describe("chalk color compatibility", () => {
     expect(colorizeCell("value", { color: "red" }, "body")).toContain("\u001b[31m")
     expect(colorizeCell("value", { headerColor: "cyan" }, "header")).toContain("\u001b[36m")
     expect(colorizeCell("value", { footerColor: "yellow" }, "footer")).toContain("\u001b[33m")
+  })
+})
+
+
+describe("grapheme display width", () => {
+  it("measures ZWJ emoji sequences as one terminal glyph", () => {
+    expect(displayWidth("👨‍👩‍👧‍👦")).toBe(2)
+  })
+
+  it("keeps combining marks attached to their base character", () => {
+    expect(displayWidth("e\u0301")).toBe(1)
+  })
+
+  it("measures regional-indicator flags as two cells", () => {
+    expect(displayWidth("🇺🇸")).toBe(2)
+  })
+
+  it("measures keycap sequences as two cells", () => {
+    expect(displayWidth("1️⃣")).toBe(2)
+  })
+
+  it("measures emoji modifier sequences as two cells", () => {
+    expect(displayWidth("👍🏽")).toBe(2)
+  })
+
+  it("measures variation-selector emoji as two cells", () => {
+    expect(displayWidth("☕️")).toBe(2)
   })
 })
