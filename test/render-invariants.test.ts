@@ -19,7 +19,7 @@ describe("render invariants", () => {
         Array.from({ length: 1 + Math.floor(random() * 4) }, randomCell)
       )
       const output = Table(rows, { width: 40 }).render()
-      for (const line of output.split(/\\r?\\n/).filter(Boolean)) {
+      for (const line of output.split(/\r?\n/).filter(Boolean)) {
         expect(displayWidth(stripAnsi(line))).toBeLessThanOrEqual(42)
       }
     }
