@@ -77,4 +77,8 @@ describe("grapheme display width", () => {
   it("measures emoji modifier sequences as two cells", () => {
     expect(displayWidth("👍🏽")).toBe(2)
   })
+
+  it("measures variation-selector emoji as two cells", () => {
+    expect(displayWidth("☕️")).toBe(2)
+  })
 })
