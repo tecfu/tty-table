@@ -19,7 +19,7 @@ const measuredWidths = new WeakMap<object, number[]>()
 // happened to have been created last.
 let adapterWidths: number[] | undefined
 
-export const stringifyData = (config: any, inputData: any[]) => {
+export const stringifyData = (config: any, inputData: any[], write?: (chunk: string) => void) => {
   const sections: any = { header: [], body: [], footer: [] }
   const marginLeft = " ".repeat(config.marginLeft)
   const borderStyle = config.borderCharacters[config.borderStyle]
@@ -94,14 +94,18 @@ export const stringifyData = (config: any, inputData: any[]) => {
     borders[a] = (a < 2) ? `${marginLeft + borders[a]}\n` : marginLeft + borders[a]
   }
 
-  const output: string[] = [borders[0]]
+  const output: string[] = []
+  const emit = write ?? ((chunk: string) => output.push(chunk))
+  let lineCount = config.marginTop + 1
+  emit("\n".repeat(config.marginTop) + borders[0])
 
   for (const [sectionIndex, sectionName] of Object.keys(sections).entries()) {
     const section = sections[sectionName]
     for (let rowIndex = 0; rowIndex < section.length; rowIndex++) {
       const row = section[rowIndex]
       row.forEach((line: string[]) => {
-        output.push(marginLeft + borderStyle[1].v + line.join(borderStyle[1].v) + borderStyle[1].v + "\n")
+        emit(marginLeft + borderStyle[1].v + line.join(borderStyle[1].v) + borderStyle[1].v + "\n")
+        lineCount++
       })
 
       switch (true) {
@@ -114,15 +118,15 @@ export const stringifyData = (config: any, inputData: any[]) => {
         case (config.borderStyle === "none" && config.compact):
           break
         default:
-          output.push(borders[1])
+          emit(borders[1])
+          lineCount++
       }
     }
   }
 
-  output.push(borders[2])
-  const finalOutput = "\n".repeat(config.marginTop) + output.join("")
-  config.height = finalOutput.split(/\r\n|\r|\n/).length
-  return finalOutput
+  emit(borders[2])
+  config.height = lineCount + 1
+  return write ? "" : output.join("")
 }
 
 export const buildRow = (config: any, row: any[], rowType: RowType, rowIndex: number | null, rowData: any[], inputData: any[], cellMemo?: Map<CellMemoKey, CellMemo>) => {

@@ -67,6 +67,7 @@ export type Options = Omit<
 
 export interface Table extends Array<any> {
   render(): string
+  renderTo(target: { write(chunk: string): unknown }): void
   height?: number
   [key: string]: any
 }
@@ -220,6 +221,14 @@ const Factory = function (paramsArr: any[]): any {
    * console.log(str); //outputs table
    * ```
   */
+  Object.defineProperty(tableObject, "renderTo", {
+    enumerable: false,
+    value: function (this: any, target: { write(chunk: string): unknown }) {
+    stringifyData(this[_configKey], this.slice(0), (chunk) => { target.write(chunk) })
+    tableObject.height = this[_configKey].height
+    }
+  })
+
   tableObject.render = function (this: any) {
     const output = stringifyData(this[_configKey], this.slice(0)) // get string output
     tableObject.height = this[_configKey].height
