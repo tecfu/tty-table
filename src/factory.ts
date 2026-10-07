@@ -67,6 +67,7 @@ export type Options = Omit<
 
 export interface Table extends Array<any> {
   render(): string
+  renderTo(target: { write(chunk: string): unknown }): void
   height?: number
   [key: string]: any
 }
