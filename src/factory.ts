@@ -245,12 +245,20 @@ export type Header = Omit<ColumnOptions, "alias" | "formatter" | "value"> & {
   | { value: string; alias?: string }
 )
 
+export interface TableCreateOptions {
+  header?: (string | Header | Formatter)[]
+  rows: unknown[]
+  footer?: (string | Header | Formatter)[]
+  options?: Options
+}
+
 interface TtyTableFactory {
   (headers: (string | Header | Formatter)[], body: unknown[], footers: (string | Header | Formatter)[], config?: Options): Table
   (header: (string | Header | Formatter)[], body: unknown[], config?: Options): Table
   (body: unknown[], config?: Options): Table
   resetStyle(str: string): string
   style(str: string, ...colors: string[]): string
+  create(input: TableCreateOptions): Table
 }
 
 const Table = function (...params: any[]) {
@@ -259,5 +267,11 @@ const Table = function (...params: any[]) {
 
 Table.resetStyle = resetStyle
 Table.style = styleEachChar
+Table.create = function (input: TableCreateOptions) {
+  const { header = [], rows, footer = [], options = {} } = input
+  if (footer.length > 0) return Factory([header, rows, footer, options])
+  if (header.length > 0) return Factory([header, rows, options])
+  return Factory([rows, options])
+}
 
 export default Table
