@@ -76,5 +76,7 @@ describe("stream output", () => {
     expect(chunks.length).toBeGreaterThan(1)
     expect(chunks.join("")).toBe(table.render())
     expect(table.height).toBeGreaterThan(0)
+    expect(chunks.some((chunk) => chunk.includes("Ada"))).toBe(true)
+    expect(chunks.some((chunk) => chunk.includes("Grace"))).toBe(true)
   })
 })
