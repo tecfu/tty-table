@@ -209,7 +209,7 @@ export const buildCell = (config: any, elem: any, columnIndex: number, rowType: 
   let cellValue: any = null
   const base = getOptionBase(config, columnIndex, rowType)
   const cellOptions: any = (typeof elem === "object" && elem !== null)
-    ? Object.assign(Object.create(base), elem)
+    ? Object.assign(Object.create(base), elem, elem.options || {})
     : Object.create(base)
 
   // What the cell asked for through this.configure(), kept so the second pass
