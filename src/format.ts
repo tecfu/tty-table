@@ -111,13 +111,13 @@ export const wrapCellText = (
   // store matching ANSI characters
   const startMatches = str.match(startAnsiRegexp) || [""]
 
-  // remove ANSI start-of-line chars
-  str = str.replace(startAnsiRegexp, "")
-
-  // store matching ANSI characters so can be later re-attached
+  // store matching ANSI characters so they can be re-attached after wrapping.
   const endMatches = str.match(endAnsiRegexp) || [""]
 
-  // remove ANSI end-of-line chars
+  // Strip only boundary ANSI. Keep every interior sequence in the text so
+  // smartwrap can carry the active style state across a line boundary. This
+  // also handles strings that have both boundary styles and inline styles.
+  str = str.replace(startAnsiRegexp, "")
   str = str.replace(endAnsiRegexp, "")
 
   let alignTgt: string
