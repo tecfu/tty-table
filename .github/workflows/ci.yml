@@ -9,6 +9,33 @@ permissions:
   contents: read
 
 jobs:
+  commit-hygiene:
+    name: Commit hygiene
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Reject churn commits
+        run: |
+          git fetch --no-tags origin "$GITHUB_BASE_REF"
+          subjects=$(git log --format=%s "origin/$GITHUB_BASE_REF..HEAD")
+          fail=0
+          dupes=$(printf '%s\n' "$subjects" | sort | uniq -d)
+          if [ -n "$dupes" ]; then
+            echo "::error::Duplicate commit messages in this PR. Fold them into the commit they fix (git commit --fixup=<sha>, then git rebase -i --autosquash <base>):"
+            printf '%s\n' "$dupes" | sed 's/^/  /'
+            fail=1
+          fi
+          churn=$(printf '%s\n' "$subjects" | grep -Ei '^(WIP+|lint|fix|fixup!*)$|save (actual|exact).*(output)|update .*golden.*output|normalize .*output|retrigger' || true)
+          if [ -n "$churn" ]; then
+            echo "::error::CI-churn commit messages found. Squash them into the commit they repair, or record the debugging narrative in the PR conversation instead:"
+            printf '%s\n' "$churn" | sed 's/^/  /'
+            fail=1
+          fi
+          exit $fail
   test:
     name: Test (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
