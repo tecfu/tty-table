@@ -80,5 +80,11 @@ describe("grapheme display width", () => {
 
   it("measures variation-selector emoji as two cells", () => {
     expect(displayWidth("☕️")).toBe(2)
+    // Narrow bases whose per-code-point width is 1: only the VS16 rule
+    // makes these measure 2, so they cannot pass for the wrong reason.
+    expect(displayWidth("❤️")).toBe(2)
+    expect(displayWidth("☺️")).toBe(2)
+    expect(displayWidth("✂️")).toBe(2)
+    expect(displayWidth("✔️")).toBe(2)
   })
 })

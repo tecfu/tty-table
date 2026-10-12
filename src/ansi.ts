@@ -10,24 +10,37 @@ const codes: Record<string, string> = {
 }
 
 export const stripAnsi = (value: string): string => value.replace(ANSI, "")
-const codePointWidth = (value: string): number => {
-  // Terminal width is a grapheme property: a ZWJ emoji sequence such as a
-  // family emoji occupies one displayed glyph, not the sum of its code points.
-  // Node 22 and modern browsers provide Intl.Segmenter; keep a code-point
-  // fallback for older browser runtimes using the standalone bundle.
-  const Segmenter = (globalThis as typeof globalThis & {
-    Intl?: typeof Intl
-  }).Intl?.Segmenter
 
-  if (Segmenter) {
-    const segmenter = new Segmenter(undefined, { granularity: "grapheme" })
+// Terminal width is a grapheme property: a ZWJ emoji sequence such as a
+// family emoji occupies one displayed glyph, not the sum of its code points.
+// Node 22 and modern browsers provide Intl.Segmenter; keep a code-point
+// fallback for older browser runtimes using the standalone bundle.
+// Constructed once, not per call: codePointWidth runs once per non-ASCII cell.
+let graphemeSegmenter: { segment(input: string): Iterable<{ segment: string }> } | undefined
+const getGraphemeSegmenter = () => {
+  if (graphemeSegmenter === undefined) {
+    const Segmenter = (globalThis as typeof globalThis & {
+      Intl?: typeof Intl
+    }).Intl?.Segmenter
+    graphemeSegmenter = Segmenter
+      ? new Segmenter(undefined, { granularity: "grapheme" })
+      : undefined
+  }
+  return graphemeSegmenter
+}
+
+const codePointWidth = (value: string): number => {
+  const segmenter = getGraphemeSegmenter()
+
+  if (segmenter) {
     let total = 0
     for (const { segment } of segmenter.segment(value)) {
       const widths = [...segment].map((char) => breakword.width(char))
       // Terminal cell width is not identical to code-point count. ZWJ emoji
-      // sequences, regional-indicator flags, and keycap sequences each render
-      // as one two-cell glyph in conventional terminals. Combining marks remain
-      // zero-width through breakword's per-code-point measurement.
+      // sequences, regional-indicator flags, keycap sequences, and any emoji
+      // presented with U+FE0F each render as one two-cell glyph in
+      // conventional terminals. Combining marks remain zero-width through
+      // breakword's per-code-point measurement.
       const regionalIndicators = [...segment].filter((char) => {
         const codePoint = char.codePointAt(0) || 0
         return codePoint >= 0x1F1E6 && codePoint <= 0x1F1FF
@@ -36,7 +49,7 @@ const codePointWidth = (value: string): number => {
         const codePoint = char.codePointAt(0) || 0
         return codePoint >= 0x1F3FB && codePoint <= 0x1F3FF
       })
-      if (segment.includes("\u200D") || regionalIndicators === 2 || hasEmojiModifier || segment.includes("\u20E3")) {
+      if (segment.includes("\u200D") || regionalIndicators === 2 || hasEmojiModifier || segment.includes("\u20E3") || segment.includes("\uFE0F")) {
         total += 2
       } else {
         total += widths.reduce((sum: number, width: number) => sum + width, 0)
