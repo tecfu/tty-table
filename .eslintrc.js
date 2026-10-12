@@ -1,4 +1,5 @@
 module.exports = {
+	"root": true,
   "env": {
     "commonjs": true,
     "es6": true,
@@ -14,9 +15,9 @@ module.exports = {
   },
   "rules": {
     "brace-style": "error",
-    
+
     "comma-spacing": ["error", {"before": false, "after": true}],
-   
+
     "indent": [
       "error",
       2,

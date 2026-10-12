@@ -28,7 +28,16 @@ exampleScripts.forEach(function(element) {
 
   describe(element, function() {
     it(`Should match ${savedTestPath}`, function(deferred) {
-      exec(`COLUMNS=${pkg.defaultTestColumns} node ${element} --color=always`,
+      // Pin the ANSI level and column count so the goldens do not depend on the
+      // caller's environment: `--color=always` alone is overridden by an ambient
+      // FORCE_COLOR/NO_COLOR, which made the same tests pass under a pipe and
+      // fail on a developer's terminal.
+      const childEnv = Object.assign({}, process.env, {
+        COLUMNS: String(pkg.defaultTestColumns),
+        FORCE_COLOR: "1"
+      })
+      delete childEnv.NO_COLOR
+      exec(`node ${element} --color=always`, { env: childEnv },
         function (error, stdout /* , stderr */) {
           if (error !== null) {
             grunt.log.error(`Exec error: ${error}`)

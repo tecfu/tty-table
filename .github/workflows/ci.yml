@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [4.x]
+  pull_request:
+    branches: [4.x]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18, 20, 22]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Lint examples
+        run: npm run lint-examples
+      - name: Build browser bundles
+        run: npm run dist
+      - name: Example golden tests and regression tests
+        run: npm test

@@ -1821,7 +1821,7 @@ var source = chalk;
 
 let FORCE_COLOR, NODE_DISABLE_COLORS, NO_COLOR, TERM, isTTY=true;
 if (typeof {} !== 'undefined') {
-	({ FORCE_COLOR, NODE_DISABLE_COLORS, NO_COLOR, TERM } = {});
+	({ FORCE_COLOR, NODE_DISABLE_COLORS, NO_COLOR, TERM } = {} || {});
 	isTTY = {}.stdout ;
 }
 
@@ -1933,7 +1933,7 @@ var kleur = /*#__PURE__*/Object.freeze({
 
 var ansiRegex = ({onlyFirst = false} = {}) => {
 	const pattern = [
-		'[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
+		'[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
 		'(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))'
 	].join('|');
 
@@ -2358,8 +2358,6 @@ var main = function (input, breakAtLength) {
   return indexOfLastFitChar;
 };
 
-var stripAnsi$1 = string => typeof string === 'string' ? string.replace(ansiRegex(), '') : string;
-
 var toStr = Object.prototype.toString;
 
 var isArguments = function isArguments(value) {
@@ -2587,43 +2585,75 @@ var defineProperties_1 = defineProperties;
 /* eslint no-invalid-this: 1 */
 
 var ERROR_MESSAGE = 'Function.prototype.bind called on incompatible ';
-var slice$1 = Array.prototype.slice;
 var toStr$3 = Object.prototype.toString;
+var max = Math.max;
 var funcType = '[object Function]';
+
+var concatty = function concatty(a, b) {
+    var arr = [];
+
+    for (var i = 0; i < a.length; i += 1) {
+        arr[i] = a[i];
+    }
+    for (var j = 0; j < b.length; j += 1) {
+        arr[j + a.length] = b[j];
+    }
+
+    return arr;
+};
+
+var slicy = function slicy(arrLike, offset) {
+    var arr = [];
+    for (var i = offset || 0, j = 0; i < arrLike.length; i += 1, j += 1) {
+        arr[j] = arrLike[i];
+    }
+    return arr;
+};
+
+var joiny = function (arr, joiner) {
+    var str = '';
+    for (var i = 0; i < arr.length; i += 1) {
+        str += arr[i];
+        if (i + 1 < arr.length) {
+            str += joiner;
+        }
+    }
+    return str;
+};
 
 var implementation$1 = function bind(that) {
     var target = this;
-    if (typeof target !== 'function' || toStr$3.call(target) !== funcType) {
+    if (typeof target !== 'function' || toStr$3.apply(target) !== funcType) {
         throw new TypeError(ERROR_MESSAGE + target);
     }
-    var args = slice$1.call(arguments, 1);
+    var args = slicy(arguments, 1);
 
     var bound;
     var binder = function () {
         if (this instanceof bound) {
             var result = target.apply(
                 this,
-                args.concat(slice$1.call(arguments))
+                concatty(args, arguments)
             );
             if (Object(result) === result) {
                 return result;
             }
             return this;
-        } else {
-            return target.apply(
-                that,
-                args.concat(slice$1.call(arguments))
-            );
         }
+        return target.apply(
+            that,
+            concatty(args, arguments)
+        );
+
     };
 
-    var boundLength = Math.max(0, target.length - args.length);
+    var boundLength = max(0, target.length - args.length);
     var boundArgs = [];
     for (var i = 0; i < boundLength; i++) {
-        boundArgs.push('$' + i);
+        boundArgs[i] = '$' + i;
     }
 
-    bound = Function('binder', 'return function (' + boundArgs.join(',') + '){ return binder.apply(this,arguments); }')(binder);
+    bound = Function('binder', 'return function (' + joiny(boundArgs, ',') + '){ return binder.apply(this,arguments); }')(binder);
 
     if (target.prototype) {
         var Empty = function Empty() {};
@@ -4378,7 +4408,7 @@ const wrap = (input, options) => {
     if(config.splitAt.indexOf("\t")!==-1) {
       // split at both spaces and tabs
       words = text.split(/ |\t/i);
-    } else{
+    } else {
       // split at whitespace
       words = text.split(" ");
     }
@@ -4563,7 +4593,7 @@ var main$1 = (input, options) => {
     const savedANSI = splitAnsiInput(string);
 
     // strip ANSI
-    string = stripAnsi$1(string);
+    string = stripAnsi(string);
 
     // add newlines to string
     string = wrap(string, options);
@@ -4588,6 +4618,33 @@ const addPadding = (config, width) => {
   return width + config.paddingLeft + config.paddingRight
 };
 
+// Every printable ASCII character occupies exactly one terminal cell, so its
+// display width is its length. Anything outside this range - including control
+// characters such as \t and \r, which wcwidth scores as 0 cells - has to go
+// through the per-line measurement.
+const PRINTABLE_ASCII = /^[\x20-\x7E]*$/;
+
+/**
+ * Width of the widest line in `value`, in terminal display cells.
+ *
+ * ANSI escape sequences are ignored. The line loop replaces an earlier
+ * `Math.max(...widths)`, which exhausted the argument stack for values with more
+ * than ~125k lines.
+ */
+const displayWidth = value => {
+  if (PRINTABLE_ASCII.test(value)) return value.length
+
+  const stripped = stripAnsi(value);
+  let widest = 0;
+
+  for (const line of stripped.split(/[\n\r]/)) {
+    const width = PRINTABLE_ASCII.test(line) ? line.length : wcwidth_1(line);
+    if (width > widest) widest = width;
+  }
+
+  return widest
+};
+
 /**
  * Returns the widest cell give a collection of rows
  *
@@ -4597,35 +4654,32 @@ const addPadding = (config, width) => {
  * @returns string
  */
 const getMaxLength = (columnOptions, rows, columnIndex) => {
-  let iterable;
+  let widest = 0;
 
   // add header value, alias to calculate width when applicable
   if (columnOptions && (columnOptions.value || columnOptions.alias)) {
-    // string we use from header
-    let val = columnOptions.alias || columnOptions.value;
-    val = val.toString();
-    // create a row with value in the current columnIndex
-    const headerRow = Array(rows[0].length);
-    headerRow[columnIndex] = val;
-    // add header row to new array we will check for max value width
-    iterable = rows.slice();
-    iterable.push(headerRow);
-  } else {
-    // no header value, just use rows to derive max width
-    iterable = rows;
+    widest = displayWidth((columnOptions.alias || columnOptions.value).toString());
   }
 
-  const widest = iterable.reduce((prev, row) => {
-    if (row[columnIndex]) {
-      // check cell value is object or scalar
-      const value = (row[columnIndex].value) ? row[columnIndex].value : row[columnIndex];
-      const width = Math.max(
-        ...stripAnsi(value.toString()).split(/[\n\r]/).map((s) => wcwidth_1(s))
-      );
-      return (width > prev) ? width : prev
-    }
-    return prev
-  }, 0);
+  for (let i = 0; i < rows.length; i++) {
+    const cell = rows[i][columnIndex];
+
+    // null and undefined are replaced with the placeholder during rendering and
+    // must not be measured as the word "null". Scalar falsy values (0, false, "")
+    // render as the empty string in buildCell (`elem || ""`), so they contribute
+    // no width either.
+    if (typeof cell === "undefined" || cell === null) continue
+
+    // check cell value is object or scalar. Unwrap by presence, not truthiness: an
+    // object holding false/0/"" renders its string form, so the column must not be
+    // sized from the string "[object Object]".
+    const isObject = (typeof cell === "object");
+    const value = (isObject && typeof cell.value !== "undefined") ? cell.value : cell;
+    if (!isObject && !value) continue
+
+    const width = displayWidth(value.toString());
+    if (width > widest) widest = width;
+  }
 
   return widest
 };
@@ -4636,41 +4690,49 @@ const getMaxLength = (columnOptions, rows, columnIndex) => {
  *
  */
 const getAvailableWidth = config => {
+  let viewport;
+
   if ({} && ( ({} && {}.COLUMNS))) {
     // forked calls that do not inherit {}.stdout must use {}
-    let viewport =  {}.COLUMNS;
-    viewport = viewport - config.marginLeft;
-
-    // table width percentage of (viewport less margin)
-    if (config.width !== "auto" && /^\d+%$/.test(config.width)) {
-      return Math.min(1, (config.width.slice(0, -1) * 0.01)) * viewport
-    }
-
-    // table width fixed
-    if (config.width !== "auto" && /^\d+$/.test(config.width)) {
-      config.FIXED_WIDTH = true;
-      return config.width
-    }
-
-    // table width equals viewport less margin
-    // @TODO deprecate and remove "auto", which was never documented so should not be
-    // an issue
-    return viewport
+    const columns =  {}.COLUMNS;
+    viewport = Number(columns) - config.marginLeft;
+  /* istanbul ignore next */
+  } else if (typeof window !== "undefined") {
+    // browser
+    viewport = window.innerWidth;
+  } else {
+    // {}.stdout.columns does not exist. assume redirecting to write stream
+    // use 80 columns, which is VT200 standard
+    viewport = config.COLUMNS - config.marginLeft;
   }
 
-  // browser
-  /* istanbul ignore next */
-  if (typeof window !== "undefined") return window.innerWidth // eslint-disable-line
+  // table width percentage of (viewport less margin)
+  if (config.width !== "auto" && /^\d+%$/.test(config.width)) {
+    return Math.min(1, (config.width.slice(0, -1) * 0.01)) * viewport
+  }
 
-  // {}.stdout.columns does not exist. assume redirecting to write stream
-  // use 80 columns, which is VT200 standard
-  return config.COLUMNS - config.marginLeft
+  // table width fixed
+  if (config.width !== "auto" && /^\d+$/.test(config.width)) {
+    config.FIXED_WIDTH = true;
+    return config.width
+  }
+
+  // table width equals viewport less margin
+  // @TODO deprecate and remove "auto", which was never documented so should not be
+  // an issue
+  return viewport
 };
+
+module.exports.getAvailableWidth = getAvailableWidth;
 
 module.exports.getStringLength = string => {
-  // stripAnsi(string.replace(/[^\x00-\xff]/g,'XX')).length
-  return wcwidth_1(stripAnsi(string))
+  return displayWidth(string)
 };
+
+// ANSI characters that demarcate the start/end of a line. Hoisted out of
+// wrapCellText, which runs once per cell and was recompiling them every time.
+const startAnsiRegexp = /^(\033\[[0-9;]*m)+/;
+const endAnsiRegexp = /(\033\[[0-9;]*m)+$/;
 
 module.exports.wrapCellText = (
   config,
@@ -4679,10 +4741,6 @@ module.exports.wrapCellText = (
   cellOptions,
   rowType
 ) => {
-  // ANSI chararacters that demarcate the start/end of a line
-  const startAnsiRegexp = /^(\033\[[0-9;]*m)+/;
-  const endAnsiRegexp = /(\033\[[0-9;]*m)+$/;
-
   // coerce cell value to string
   let string = cellValue.toString();
 
@@ -4775,18 +4833,42 @@ module.exports.wrapCellText = (
 };
 
 module.exports.truncate = (string, cellOptions, maxWidth) => {
-  const stringWidth = wcwidth_1(string);
+  const stringWidth = displayWidth(string);
 
-  if (maxWidth < stringWidth) {
-    // @TODO give user option to decide if they want to break words on wrapping
-    string = main$1(string, {
-      width: maxWidth - cellOptions.truncate.length,
-      breakword: true
-    }).split("\n")[0];
-    string = string + cellOptions.truncate;
+  if (maxWidth >= stringWidth) return string
+
+  // Nothing fits. Handing a zero or negative width to the wrapper below returned
+  // *more* characters than were asked for, so the cell overflowed its own border
+  // and the rest of the table came out crooked.
+  if (maxWidth < 1) return ""
+
+  let marker = cellOptions.truncate;
+  let markerWidth = displayWidth(marker);
+
+  // A marker at least as wide as the cell left the content a non-positive width.
+  // Trim the marker down and keep one cell for content.
+  if (markerWidth >= maxWidth) {
+    if (maxWidth < 2) {
+      // a single cell cannot hold both content and a marker
+      marker = "";
+      markerWidth = 0;
+    } else {
+      marker = main$1(marker, {
+        width: maxWidth - 1,
+        breakword: true,
+        trim: false
+      }).split("\n")[0];
+      markerWidth = displayWidth(marker);
+    }
   }
 
-  return string
+  // @TODO give user option to decide if they want to break words on wrapping
+  string = main$1(string, {
+    width: maxWidth - markerWidth,
+    breakword: true
+  }).split("\n")[0];
+
+  return string + marker
 };
 
 module.exports.wrap = (string, cellOptions, innerWidth) => {
@@ -4805,8 +4887,10 @@ module.exports.getColumnWidths = (config, rows) => {
 
   // iterate over the header if we have it, iterate over the first row
   // if we do not (to step through the correct number of columns)
+  // Neither header nor rows, for Table([], []), means there are no columns to
+  // measure at all.
   const iterable = (config.table.header[0] && config.table.header[0].length > 0)
-    ? config.table.header[0] : rows[0];
+    ? config.table.header[0] : (rows[0] || []);
 
   let widths = iterable.map((column, columnIndex) => {
     let result;
@@ -4842,7 +4926,7 @@ module.exports.getColumnWidths = (config, rows) => {
   });
 
   // calculate sum of all column widths (including marginLeft)
-  const totalWidth = widths.reduce((prev, current) => prev + current);
+  const totalWidth = widths.reduce((prev, current) => prev + current, 0);
 
   // proportionately resize columns when necessary
   if (totalWidth > availableWidth || config.FIXED_WIDTH) {
@@ -4861,13 +4945,31 @@ module.exports.getColumnWidths = (config, rows) => {
   return widths
 };
 });
-var format_1 = format.getStringLength;
-var format_2 = format.wrapCellText;
-var format_3 = format.truncate;
-var format_4 = format.wrap;
-var format_5 = format.getColumnWidths;
+var format_1 = format.getAvailableWidth;
+var format_2 = format.getStringLength;
+var format_3 = format.wrapCellText;
+var format_4 = format.truncate;
+var format_5 = format.wrap;
+var format_6 = format.getColumnWidths;
 
 var render = createCommonjsModule(function (module, exports) {
+// Column widths are measured once per table: measuring is the expensive half of
+// rendering, and a stream of prints has to keep one geometry. The memo used to be
+// `global.columnWidths`, keyed by `config.tableId` - an integer that counts tables
+// inside one copy of this module. Load two copies into one {} (a bundler that
+// inlined tty-table next to a hoisted one, a monorepo with two versions, a test
+// runner that resets modules but not globals) and the counters collide: the second
+// copy's tables render with the first copy's widths. Entries were never removed
+// either, so every table that was ever built stayed in the heap.
+const measuredWidths = new WeakMap();
+
+// Tables rendered through a terminal adapter do not increment the counter, which is
+// how successive prints of a stream were meant to share widths - a property of the
+// stream, not of the {}, so it gets a slot of its own. Keying it by the shared
+// id meant an adapter table inherited the widths of whichever ordinary table
+// happened to have been created last.
+let adapterWidths;
+
 /**
  * Converts arrays of data into arrays of cell strings
  * @param {TtyTable.Config} config
@@ -4889,16 +4991,31 @@ module.exports.stringifyData = (config, inputData) => {
   const constructorType = exports.getConstructorGeometry(inputData[0] || [], config);
   const rows = exports.coerceConstructorGeometry(config, inputData, constructorType);
 
+  // Both are rebuilt from the header cells during this render (see buildCell).
+  // Nothing resets them, so a table that is rendered repeatedly - a status line,
+  // a stream that redraws on every tick - kept every previous render's entries.
+  config.table.columns = [];
+  config.table.columnInnerWidths = [];
+
   // when streaming values to tty-table, we don't want column widths to change
   // from one rows set to the next, so we save the first set of widths and reuse
-  if (!commonjsGlobal.columnWidths) {
-    commonjsGlobal.columnWidths = {};
-  }
+  // them while the available terminal width is unchanged. A resize invalidates
+  // the measurement, which is otherwise stale for the life of the table.
+  const isStream = config.terminalAdapter === true;
+  const availableWidth = format.getAvailableWidth(config);
+  const cachedEntry = isStream ? adapterWidths : measuredWidths.get(config.table);
+  const cached = (cachedEntry && cachedEntry.availableWidth === availableWidth)
+    ? cachedEntry.widths : undefined;
 
-  if (commonjsGlobal.columnWidths[config.tableId]) {
-    config.table.columnWidths = commonjsGlobal.columnWidths[config.tableId];
+  if (cached) {
+    config.table.columnWidths = cached;
   } else {
-    commonjsGlobal.columnWidths[config.tableId] = config.table.columnWidths = format.getColumnWidths(config, rows);
+    const widths = format.getColumnWidths(config, rows);
+
+    if (isStream) adapterWidths = { widths, availableWidth };
+    else measuredWidths.set(config.table, { widths, availableWidth });
+
+    config.table.columnWidths = widths;
   }
 
   // stringify header cells
@@ -5026,8 +5143,9 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
   // force row to have correct number of columns
   const lengthDifference = config.table.columnWidths.length - row.length;
   if (lengthDifference > 0) {
-    // array (row) lacks elements, add until equal
-    row = row.concat(Array.apply(null, new Array(lengthDifference)).map(() => null));
+    // array (row) lacks elements, add until equal. `Array.apply(null, new
+    // Array(n))` passed one argument per element and hit V8's ~125k ceiling.
+    row = row.concat(new Array(lengthDifference).fill(null));
   } else if (lengthDifference < 0) {
     // array (row) has too many elements, remove until equal
     row.length = config.table.columnWidths.length;
@@ -5044,8 +5162,7 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
   minRowHeight = (rowType === "header") ? minRowHeight
     : minRowHeight + (config.paddingBottom + config.paddingTop);
 
-  const linedRow = Array.apply(null, { length: minRowHeight })
-    .map(Function.call, () => []);
+  const linedRow = Array.from({ length: minRowHeight }, () => []);
 
   row.forEach(function (cell, a) {
     const whitespace = Array(config.table.columnWidths[a]).join(" ");
@@ -5074,15 +5191,52 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
   return linedRow
 };
 
+/**
+ * Merged options for one column (or for the header/footer row), built once per
+ * table config and shared by every cell in that column through the prototype
+ * chain.
+ *
+ * buildCell used to run `Object.assign({}, config, columnSettings[i], elem)` for
+ * every single cell, copying ~45 config keys each time: that was 57% of the
+ * self-time on a 50x2000 cell table. The merge is now paid once per column
+ * instead of once per cell. Inherited values are still read correctly, and every
+ * write (configure(), the centering padding equalisation, isNull) becomes an own
+ * property of the cell and never leaks back into the shared base.
+ */
+const optionBases = new WeakMap();
+
+const getOptionBase = (config, columnIndex, rowType) => {
+  let bases = optionBases.get(config);
+
+  if (!bases) {
+    bases = { header: null, footer: null, body: [] };
+    optionBases.set(config, bases);
+  }
+
+  // 4.x ignores columnSettings for header and footer rows; keep that contract.
+  if (rowType === "header") {
+    if (!bases.header) bases.header = Object.assign({ reset: false }, config);
+    return bases.header
+  }
+
+  if (rowType === "footer") {
+    if (!bases.footer) bases.footer = Object.assign({ reset: false }, config);
+    return bases.footer
+  }
+
+  if (!bases.body[columnIndex]) {
+    bases.body[columnIndex] = Object.assign({ reset: false }, config, config.columnSettings[columnIndex] || {});
+  }
+  return bases.body[columnIndex]
+};
+
 module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowData, inputData) => {
   let cellValue = null;
 
-  const cellOptions = Object.assign(
-    { reset: false },
-    config,
-    (rowType === "body") ? config.columnSettings[columnIndex] : {}, // ignore columnSettings for footer
-    (typeof elem === "object") ? elem : {}
-  );
+  const base = getOptionBase(config, columnIndex, rowType);
+  const cellOptions = (typeof elem === "object" && elem !== null)
+    ? Object.assign(Object.create(base), elem)
+    : Object.create(base);
 
   if (rowType === "header") {
     config.table.columns.push(cellOptions);
@@ -5270,6 +5424,18 @@ var render_5 = render.coerceConstructorGeometry;
 
 let counter = 0;
 
+/**
+ * Copy rows into the table's own array.
+ *
+ * `body.push(...rows)` passes every row as a call argument, and V8 refuses more
+ * than roughly 125k of them: a 200k-row dataset died with
+ * `RangeError: Maximum call stack size exceeded` before a single cell was
+ * rendered. A loop has no such limit.
+ */
+const appendRows = (target, source) => {
+  for (let i = 0; i < source.length; i++) target.push(source[i]);
+};
+
 const Factory = function (paramsArr) {
   const _configKey = Symbol.config;
   let header = [];
@@ -5282,7 +5448,7 @@ const Factory = function (paramsArr) {
     // header, rows, footer, and options
     case (paramsArr.length === 4):
       header = paramsArr[0];
-      body.push(...paramsArr[1]); // creates new array to store our rows (body)
+      appendRows(body, paramsArr[1]); // creates new array to store our rows (body)
       footer = paramsArr[2];
       options = paramsArr[3];
       break
@@ -5290,47 +5456,58 @@ const Factory = function (paramsArr) {
     // header, rows, footer
     case (paramsArr.length === 3 && paramsArr[2] instanceof Array):
       header = paramsArr[0];
-      body.push(...paramsArr[1]); // creates new array to store our rows
+      appendRows(body, paramsArr[1]); // creates new array to store our rows
       footer = paramsArr[2];
       break
 
     // header, rows, options
     case (paramsArr.length === 3 && typeof paramsArr[2] === "object"):
       header = paramsArr[0];
-      body.push(...paramsArr[1]); // creates new array to store our rows
+      appendRows(body, paramsArr[1]); // creates new array to store our rows
       options = paramsArr[2];
       break
 
     // header, rows            (rows, footer is not an option)
     case (paramsArr.length === 2 && paramsArr[1] instanceof Array):
       header = paramsArr[0];
-      body.push(...paramsArr[1]); // creates new array to store our rows
+      appendRows(body, paramsArr[1]); // creates new array to store our rows
       break
 
     // rows, options
     case (paramsArr.length === 2 && typeof paramsArr[1] === "object"):
-      body.push(...paramsArr[0]); // creates new array to store our rows
+      appendRows(body, paramsArr[0]); // creates new array to store our rows
       options = paramsArr[1];
       break
 
     // rows
     case (paramsArr.length === 1 && paramsArr[0] instanceof Array):
-      body.push(...paramsArr[0]);
+      appendRows(body, paramsArr[0]);
       break
 
     // adapter called: i.e. `require('tty-table')('automattic-cli')`
     case (paramsArr.length === 1 && typeof paramsArr[0] === "string"):
       return commonjsRequire(`../adapters/${paramsArr[0]}`)
 
-    /* istanbul ignore next */
     default:
-      console.log("Error: Bad params. \nSee docs at github.com/tecfu/tty-table")
-      ()();
+      // A library must not decide how the host {} ends. This used to be
+      // `console.log("Error: Bad params...")` followed by `()()`.
+      throw new TypeError(
+        "Bad params. Expected one of: Table(rows), Table(rows, options), Table(header, rows), Table(header, rows, options), Table(header, rows, footer), Table(header, rows, footer, options). See docs at github.com/tecfu/tty-table"
+      )
   }
 
   // for "deep" copy, use JSON.parse
   const cloneddefaults = JSON.parse(JSON.stringify(defaults_1));
   const config = Object.assign({}, cloneddefaults, options);
+
+  // The renderer indexes borderCharacters[borderStyle] blindly, so a name that is
+  // not in the table failed as "Cannot read properties of undefined (reading '0')"
+  // - or, with borderColor set, one line earlier in this function.
+  if (!(config.borderStyle in config.borderCharacters)) {
+    throw new Error(
+      `Unknown borderStyle: ${JSON.stringify(config.borderStyle)}. Available styles: ${Object.keys(config.borderCharacters).join(", ")}, or supply your own rows under tableOptions.borderCharacters.`
+    )
+  }
 
   // backfixes for shortened option names
   config.align = config.alignment || config.align;
@@ -5349,6 +5526,12 @@ const Factory = function (paramsArr) {
         return obj
       });
   }
+
+  // Columns can be declared with plain strings. Every consumer of a header entry
+  // reads it as an option object (`.value` / `.alias`), so normalise here: a string
+  // header used to render no header row at all, and object rows were laid out in
+  // key insertion order instead of the declared column order.
+  header = header.map(column => (typeof column === "string") ? { value: column } : column);
 
   // save a copy for merging columnSettings into cell options
   config.columnSettings = header.slice(0);

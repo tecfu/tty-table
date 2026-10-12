@@ -1,6 +1,23 @@
 const Style = require("./style.js")
 const Format = require("./format.js")
 
+// Column widths are measured once per table: measuring is the expensive half of
+// rendering, and a stream of prints has to keep one geometry. The memo used to be
+// `global.columnWidths`, keyed by `config.tableId` - an integer that counts tables
+// inside one copy of this module. Load two copies into one process (a bundler that
+// inlined tty-table next to a hoisted one, a monorepo with two versions, a test
+// runner that resets modules but not globals) and the counters collide: the second
+// copy's tables render with the first copy's widths. Entries were never removed
+// either, so every table that was ever built stayed in the heap.
+const measuredWidths = new WeakMap()
+
+// Tables rendered through a terminal adapter do not increment the counter, which is
+// how successive prints of a stream were meant to share widths - a property of the
+// stream, not of the process, so it gets a slot of its own. Keying it by the shared
+// id meant an adapter table inherited the widths of whichever ordinary table
+// happened to have been created last.
+let adapterWidths
+
 /**
  * Converts arrays of data into arrays of cell strings
  * @param {TtyTable.Config} config
@@ -22,16 +39,31 @@ module.exports.stringifyData = (config, inputData) => {
   const constructorType = exports.getConstructorGeometry(inputData[0] || [], config)
   const rows = exports.coerceConstructorGeometry(config, inputData, constructorType)
 
+  // Both are rebuilt from the header cells during this render (see buildCell).
+  // Nothing resets them, so a table that is rendered repeatedly - a status line,
+  // a stream that redraws on every tick - kept every previous render's entries.
+  config.table.columns = []
+  config.table.columnInnerWidths = []
+
   // when streaming values to tty-table, we don't want column widths to change
   // from one rows set to the next, so we save the first set of widths and reuse
-  if (!global.columnWidths) {
-    global.columnWidths = {}
-  }
+  // them while the available terminal width is unchanged. A resize invalidates
+  // the measurement, which is otherwise stale for the life of the table.
+  const isStream = config.terminalAdapter === true
+  const availableWidth = Format.getAvailableWidth(config)
+  const cachedEntry = isStream ? adapterWidths : measuredWidths.get(config.table)
+  const cached = (cachedEntry && cachedEntry.availableWidth === availableWidth)
+    ? cachedEntry.widths : undefined
 
-  if (global.columnWidths[config.tableId]) {
-    config.table.columnWidths = global.columnWidths[config.tableId]
+  if (cached) {
+    config.table.columnWidths = cached
   } else {
-    global.columnWidths[config.tableId] = config.table.columnWidths = Format.getColumnWidths(config, rows)
+    const widths = Format.getColumnWidths(config, rows)
+
+    if (isStream) adapterWidths = { widths, availableWidth }
+    else measuredWidths.set(config.table, { widths, availableWidth })
+
+    config.table.columnWidths = widths
   }
 
   // stringify header cells
@@ -159,8 +191,9 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
   // force row to have correct number of columns
   const lengthDifference = config.table.columnWidths.length - row.length
   if (lengthDifference > 0) {
-    // array (row) lacks elements, add until equal
-    row = row.concat(Array.apply(null, new Array(lengthDifference)).map(() => null))
+    // array (row) lacks elements, add until equal. `Array.apply(null, new
+    // Array(n))` passed one argument per element and hit V8's ~125k ceiling.
+    row = row.concat(new Array(lengthDifference).fill(null))
   } else if (lengthDifference < 0) {
     // array (row) has too many elements, remove until equal
     row.length = config.table.columnWidths.length
@@ -177,8 +210,7 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
   minRowHeight = (rowType === "header") ? minRowHeight
     : minRowHeight + (config.paddingBottom + config.paddingTop)
 
-  const linedRow = Array.apply(null, { length: minRowHeight })
-    .map(Function.call, () => [])
+  const linedRow = Array.from({ length: minRowHeight }, () => [])
 
   row.forEach(function (cell, a) {
     const whitespace = Array(config.table.columnWidths[a]).join(" ")
@@ -207,15 +239,52 @@ module.exports.buildRow = (config, row, rowType, rowIndex, rowData, inputData) =
   return linedRow
 }
 
+/**
+ * Merged options for one column (or for the header/footer row), built once per
+ * table config and shared by every cell in that column through the prototype
+ * chain.
+ *
+ * buildCell used to run `Object.assign({}, config, columnSettings[i], elem)` for
+ * every single cell, copying ~45 config keys each time: that was 57% of the
+ * self-time on a 50x2000 cell table. The merge is now paid once per column
+ * instead of once per cell. Inherited values are still read correctly, and every
+ * write (configure(), the centering padding equalisation, isNull) becomes an own
+ * property of the cell and never leaks back into the shared base.
+ */
+const optionBases = new WeakMap()
+
+const getOptionBase = (config, columnIndex, rowType) => {
+  let bases = optionBases.get(config)
+
+  if (!bases) {
+    bases = { header: null, footer: null, body: [] }
+    optionBases.set(config, bases)
+  }
+
+  // 4.x ignores columnSettings for header and footer rows; keep that contract.
+  if (rowType === "header") {
+    if (!bases.header) bases.header = Object.assign({ reset: false }, config)
+    return bases.header
+  }
+
+  if (rowType === "footer") {
+    if (!bases.footer) bases.footer = Object.assign({ reset: false }, config)
+    return bases.footer
+  }
+
+  if (!bases.body[columnIndex]) {
+    bases.body[columnIndex] = Object.assign({ reset: false }, config, config.columnSettings[columnIndex] || {})
+  }
+  return bases.body[columnIndex]
+}
+
 module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowData, inputData) => {
   let cellValue = null
 
-  const cellOptions = Object.assign(
-    { reset: false },
-    config,
-    (rowType === "body") ? config.columnSettings[columnIndex] : {}, // ignore columnSettings for footer
-    (typeof elem === "object") ? elem : {}
-  )
+  const base = getOptionBase(config, columnIndex, rowType)
+  const cellOptions = (typeof elem === "object" && elem !== null)
+    ? Object.assign(Object.create(base), elem)
+    : Object.create(base)
 
   if (rowType === "header") {
     config.table.columns.push(cellOptions)
