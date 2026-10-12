@@ -28,7 +28,7 @@ declare namespace TtyTable {
     paddingRight?: number;
     paddingTop?: number;
     value: string;
-    width: string | number;
+    width?: string | number;
   }
 
   export interface Options {
@@ -41,6 +41,7 @@ declare namespace TtyTable {
     errorOnNull?: boolean;
     truncate?: string | boolean;
     width?: string;
+    footerColor?: string;
   }
 
   export interface Config extends Options {
