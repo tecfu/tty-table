@@ -66,3 +66,30 @@ describe("typed table core", () => {
     expect(first!.indexOf("aa")).toBeGreaterThan(second!.indexOf("bb"))
   })
 })
+
+
+describe("object factory API", () => {
+  it("creates a table from an explicit options object", () => {
+    const table = Table.create({
+      header: ["name"],
+      rows: [["Ada"]],
+      options: { width: 30 }
+    })
+    const nested = table.render()
+    const positional = Table(["name"], [["Ada"]], { width: 30 }).render()
+    expect(nested).toBe(positional)
+  })
+})
+
+describe("stream output", () => {
+  it("writes render output incrementally without changing render semantics", () => {
+    const table = Table([{ value: "name" }], [["Ada"], ["Grace"]])
+    const chunks: string[] = []
+    table.renderTo({ write: (chunk: string) => chunks.push(chunk) })
+    expect(chunks.length).toBeGreaterThan(1)
+    expect(chunks.join("")).toBe(table.render())
+    expect(table.height).toBeGreaterThan(0)
+    expect(chunks.some((chunk) => chunk.includes("Ada"))).toBe(true)
+    expect(chunks.some((chunk) => chunk.includes("Grace"))).toBe(true)
+  })
+})

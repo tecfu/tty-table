@@ -78,3 +78,10 @@ export interface RenderConfig extends Required<Pick<TableOptions, "align" | "bor
   height: number
   tableId: number
 }
+
+
+/** Explicit cell shape for new integrations; legacy flat cell objects remain supported. */
+export interface Cell {
+  value: unknown
+  options?: Partial<ColumnOptions>
+}
