@@ -50,7 +50,7 @@ const getMaxLength = (columnOptions: any, rows: any[], columnIndex: number) => {
  *
  *
  */
-const getAvailableWidth = (config: any) => {
+export const getAvailableWidth = (config: any) => {
   let viewport: number
 
   if (process && ((process.stdout && process.stdout.columns) || (process.env && process.env.COLUMNS))) {
