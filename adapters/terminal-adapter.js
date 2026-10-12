@@ -197,12 +197,14 @@ if (dataFormat === "json") {
   })
 
   const csvParser = csv.parse(formatterOptions)
+  // Accumulate every parsed record: interactive terminals redraw the growing
+  // table so earlier rows stay visible, redirected stdout prints exactly one
+  // frame when the stream ends.
   const rows = []
   csvParser.on("data", function (row) {
+    rows.push(row)
     if (process.stdout.isTTY) {
-      runTable(header, validateRows([row]))
-    } else {
-      rows.push(row)
+      runTable(header, validateRows(rows))
     }
   })
   csvParser.on("error", function () {
@@ -212,7 +214,7 @@ if (dataFormat === "json") {
     )
   })
   csvParser.on("end", function () {
-    if (rows.length === 0 && !process.stdout.isTTY) {
+    if (rows.length === 0) {
       emitError(
         "No input",
         "Nothing was piped to stdin. Try: cat data.csv | tty-table."
