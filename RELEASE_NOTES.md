@@ -1,5 +1,28 @@
 # Release Notes
 
+## 7.2.0 (2026-10-12)
+
+### Added
+
+- **Incremental output to a stream.** `table.renderTo(target)` writes the rendered table to any object with a `write()` method (a `fs` stream, `process.stdout`, a socket), emitting row content instead of returning one big string. It is non-enumerable like the rest of the table's internals (so spread/`Object.keys` still see only user data) and exposed on the public `Table` type (#130).
+- **Object-form construction.** The factory accepts a plain options object in addition to the positional array forms; a parity test pins the two to identical renders (#135).
+- **Explicit nested cell options.** A cell value may carry its own options object nested inside it, with precedence over the column's settings locked by tests (#134).
+
+### Changed
+
+- **Exact column-width allocation.** Width distribution no longer goes through floating-point rounding: constrained widths are allocated against the table viewport and the closing border cell and table edges are reserved, so a table declared `width: N` renders exactly N columns wide instead of occasionally one cell over (#127).
+- **MCP options are validated at the door.** `render_table` arguments run through schema validation in the direct handler as well as over the transport, so bad option types fail with a clear message instead of mid-render (#129).
+
+### Fixed
+
+- The column-width cache is invalidated after a terminal resize while the adapter retains its cached width, so streaming tables reflow correctly when the window changes instead of keeping stale geometry (#126).
+- ANSI styles survive wrapping. Boundary (border/padding) styling and inline cell styling no longer clobber each other across wrapped lines, and inline spans continue their style onto the continuation instead of resetting (#132).
+
+### Other
+
+- A randomized render-invariants suite now renders generated tables and asserts box well-formedness and width compliance (margin-aware) on every run (#133).
+- CI gained a commit-hygiene gate (duplicate/churn commit subjects fail a PR) and CONTRIBUTING.md documents the `--fixup` / `--autosquash` workflow it enforces (#136).
+
 ## 7.1.0 (2026-10-06)
 
 ### Changed
