@@ -1,5 +1,33 @@
 # Changelog
 
+## 4.2.4
+
+Corrective release on the 4.x line. Version **4.1.7** (2026-10-12) was published in
+error from the 4.1.6 base instead of the 4.2.3 line, so it omitted the fixes that
+shipped in 4.2.0–4.2.3. This release is that maintenance work re-landed on top of
+4.2.3; it is deprecated on npm. Upgrade from 4.1.7 or 4.2.3 to 4.2.4.
+
+### Fixed (4.2.x behavior preserved, missing from 4.1.7)
+
+- Scalar falsy cells (`false`, `0`) render their string form again (#71) and are
+  measured for column width, so they no longer collapse or truncate.
+- CLI stdin input is buffered to completion before parsing, fixing chunk-boundary
+  corruption on large piped input (#96, shipped in 4.2.1).
+- Column widths are coerced to integers before rendering (#95, shipped in 4.2.2).
+- `footerColor` is declared in the published type file (#134-era type, shipped in 4.2.3).
+
+### Maintenance (carried over from the 4.1.7 work)
+
+- Dependencies refreshed within the same majors: `csv`, `kleur`, `strip-ansi`,
+  `yargs`, and dev tooling.
+- Performance: printable-ASCII fast path for display width, module-level ANSI
+  regexes, per-column option bases, per-table width memoization, column state
+  reset per render.
+- Bug fixes: argument-stack limits on very large inputs, string-header rendering,
+  resize invalidation of the width cache, truncate-marker overflow.
+- CI workflow (`.github/workflows/ci.yml`) running lint, example goldens and the
+  regression suite on Node 18/20/22.
+
 ## 4.1.7
 
 Maintenance release on the 4.x line. No public API signature changed. The

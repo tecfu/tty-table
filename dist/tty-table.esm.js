@@ -4664,10 +4664,10 @@ const getMaxLength = (columnOptions, rows, columnIndex) => {
   for (let i = 0; i < rows.length; i++) {
     const cell = rows[i][columnIndex];
 
-    // null and undefined are replaced with the placeholder during rendering and
-    // must not be measured as the word "null". Scalar falsy values (0, false, "")
-    // render as the empty string in buildCell (`elem || ""`), so they contribute
-    // no width either.
+    // A cell has to be *present*, not truthy: false, 0 and "" all render text
+    // (buildCell passes scalers through), so they must contribute their
+    // measured width. Only undefined and null are excluded - they are replaced
+    // with the placeholder during rendering, not before measurement.
     if (typeof cell === "undefined" || cell === null) continue
 
     // check cell value is object or scalar. Unwrap by presence, not truthiness: an
@@ -4675,7 +4675,6 @@ const getMaxLength = (columnOptions, rows, columnIndex) => {
     // sized from the string "[object Object]".
     const isObject = (typeof cell === "object");
     const value = (isObject && typeof cell.value !== "undefined") ? cell.value : cell;
-    if (!isObject && !value) continue
 
     const width = displayWidth(value.toString());
     if (width > widest) widest = width;
@@ -4940,6 +4939,8 @@ module.exports.getColumnWidths = (config, rows) => {
       const totalRelativeWidths = relativeWidths.reduce((prev, current) => prev + current);
       widths = (totalRelativeWidths < totalWidth) ? relativeWidths : widths;
     }
+  } else {
+    widths = widths.map(Math.floor);
   }
 
   return widths
@@ -5273,7 +5274,7 @@ module.exports.buildCell = (config, elem, columnIndex, rowType, rowIndex, rowDat
 
       default:
         // elem is assumed to be a scalar
-        cellValue = elem || "";
+        cellValue = elem;
     }
 
     // run formatter

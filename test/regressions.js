@@ -98,11 +98,10 @@ describe("cell width measurement", () => {
     expect(plain(output)).to.contain("│ false │")
   })
 
-  it("leaves scalar falsy cells empty, matching buildCell's rendering", () => {
+  it("renders scalar falsy cells by their string value, per the 4.2.x fix of #71", () => {
     const output = withColumns(90, () => Table([{ value: "a" }], [[false], ["xx"]]).render())
-    expect(lines(output)[3]).to.equal("  │    │")
-    expect(plain(output)).to.contain("│ xx │")
-    expect(plain(output)).not.to.contain("false")
+    expect(plain(output)).to.contain("│ false │")
+    expect(plain(output)).to.match(/│\s+xx\s+│/)
   })
 })
 
