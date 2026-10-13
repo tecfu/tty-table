@@ -1,5 +1,13 @@
 # Release Notes
 
+## 7.2.1 (2026-10-12)
+
+### Fixed
+
+- **Unicode cells are measured as the terminal draws them.** Column widths now come from grapheme clusters instead of code-point sums: ZWJ sequences (family emoji), regional-indicator flags, keycaps, skin-tone modifiers, and emoji presented with a variation selector (❤️, ☺️, ✂️) occupy their true two cells. Previously a family emoji reserved up to eight columns and misaligned the whole table (#128).
+- **Streaming tables keep every row.** The CLI adapter accumulates parsed records, so a table watched in a terminal ends on the complete output instead of redrawing a one-row ticker that erases earlier records (#131).
+- **Piped output is plain text.** Redirected stdout (`tty-table < data.csv > out.txt`) receives exactly one table frame with no cursor-control escape sequences; those codes are now emitted only on interactive terminals, where they belong. Empty input likewise reports the "No input" explanation on a TTY again, not just when redirected (#131).
+
 ## 7.2.0 (2026-10-12)
 
 ### Added
