@@ -82,3 +82,38 @@ describe("width without a terminal", () => {
     expect(output).toBe(withoutTty(() => Table([{ value: "a" }], rows, { width: "100%" }).render()))
   })
 })
+
+describe("columns squeezed by a long cell", () => {
+  // One long value forces the proportional allocation to shrink the other
+  // columns down to two cells, which leaves no room for the cell padding. The
+  // left/right aligned padding count went negative, so render() threw
+  // "RangeError: Invalid count value: -1".
+  const header = ["expiresUTC", "expiresRel", "appid", "userid", "type", "value", "note"]
+    .map((value) => ({ value }))
+  const longRow = [{
+    expiresUTC: "2030-01-01 00:00",
+    expiresRel: "in 5 years",
+    appid: "app",
+    userid: "alice@example.com",
+    type: "cookie",
+    value: `Session=${"a".repeat(128)}`,
+    note: ""
+  }]
+
+  afterEach(() => {
+    if (typeof savedColumns !== "undefined") process.env.COLUMNS = savedColumns
+    else delete process.env.COLUMNS
+  })
+
+  for (const align of ["left", "right", "center"] as const) {
+    it(`renders ${align} aligned cells without throwing at 80 columns`, () => {
+      process.env.COLUMNS = "80"
+      const output = Table(header, longRow, { align, headerAlign: align }).render()
+      const lines = output.split("\n").filter((line) => line.trim())
+      expect(widestLine(output)).toBeLessThanOrEqual(80)
+      // every row, including the squeezed cells, lines up with the borders
+      expect(new Set(lines.map((line) => line.length)).size).toBe(1)
+      expect(output).toContain("aaaa")
+    })
+  }
+})

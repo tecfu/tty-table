@@ -177,16 +177,24 @@ export const wrapCellText = (
           break
         }
 
-        case (cellOptions[alignTgt] === "right"):
-          line = " ".repeat(emptySpace - cellOptions.paddingRight - 1)
+        // A column squeezed narrower than its padding (e.g. by one very long
+        // column) only has emptySpace - 1 cells left beside the text. Like the
+        // centered case, give up padding rather than overflow the column or
+        // pass a negative count to repeat().
+        case (cellOptions[alignTgt] === "right"): {
+          const paddingRight = Math.min(cellOptions.paddingRight, emptySpace - 1)
+          line = " ".repeat(emptySpace - paddingRight - 1)
             + line
-            + " ".repeat(cellOptions.paddingRight)
+            + " ".repeat(paddingRight)
           break
+        }
 
-        default:
-          line = " ".repeat(cellOptions.paddingLeft)
+        default: {
+          const paddingLeft = Math.min(cellOptions.paddingLeft, emptySpace - 1)
+          line = " ".repeat(paddingLeft)
             + line
-            + " ".repeat(emptySpace - cellOptions.paddingLeft - 1)
+            + " ".repeat(emptySpace - paddingLeft - 1)
+        }
       }
     }
 
