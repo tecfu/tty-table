@@ -1,5 +1,14 @@
 # Release Notes
 
+## 7.2.2 (2026-11-16)
+
+### Fixed
+
+- **Squeezed columns no longer crash.** Left- and right-aligned cells now give up padding when proportional resizing leaves too little space, instead of throwing a `RangeError` (#137).
+- **Narrow cells retain visible text.** Padding is reduced before truncation, so a squeezed nonempty column can show a character rather than becoming blank. One-cell columns replace graphemes that cannot fit instead of allowing emoji and other wide characters to overflow their borders; ANSI styles and empty cells are covered by regression tests (#137).
+
+Narrow-column output intentionally changes in these cases; ordinary wider-cell behavior is preserved. Thanks to @rf-molsson for reporting the regression and contributing the fix.
+
 ## 7.2.1 (2026-10-12)
 
 ### Fixed
