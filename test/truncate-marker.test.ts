@@ -21,13 +21,13 @@ describe("truncate markers that do not fit", () => {
   it("keeps the box intact when the marker is wider than the column", () => {
     const output = Table([{ value: "x", width: 6 }], [["0123456789abcdefghij"]], { truncate: "<<<<<<<" }).render()
     expect(rectangular(output)).toBe(true)
-    expect(output).toContain("│ 0<<< │")
+    expect(output).toContain("│01<<< ")
   })
 
-  it("reserves a cell for content when the marker must be shortened", () => {
+  it("gives the content the only cell when a two cell column cannot hold the marker", () => {
     const output = Table([{ value: "x", width: 4 }], [["0123456789"]], { truncate: "..." }).render()
     expect(rectangular(output)).toBe(true)
-    expect(output).toContain("│ 0. │")
+    expect(output).toContain("│01..")
   })
 
   it("counts a wide character marker by its cells, not its code points", () => {

@@ -245,7 +245,6 @@ export const truncate = (str: string, cellOptions: any, maxWidth: number) => {
     } else {
       marker = smartwrap(marker, {
         width: maxWidth - 1,
-        minWidth: 1,
         breakword: true,
         trim: false
       }).split("\n")[0]!
@@ -256,7 +255,9 @@ export const truncate = (str: string, cellOptions: any, maxWidth: number) => {
   // @TODO give user option to decide if they want to break words on wrapping
   str = smartwrap(str, {
     width: maxWidth - markerWidth,
-    minWidth: 1,
+    // smartwrap defaults to two cells. Only override that when the whole
+    // text area is one cell; wider cells retain their existing output.
+    minWidth: maxWidth === 1 ? 1 : 2,
     breakword: true
   }).split("\n")[0]!
 
