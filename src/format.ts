@@ -1,5 +1,5 @@
 import smartwrap from "smartwrap"
-import { displayWidth } from "./ansi"
+import { displayWidth, fitGraphemesToOneCell, replaceVisible } from "./ansi"
 
 const addPadding = (config: any, width: number) => {
   return width + config.paddingLeft + config.paddingRight
@@ -150,8 +150,9 @@ export const wrapCellText = (
   // Drop padding before wrapping or truncating, not just when aligning the
   // result. Otherwise a squeezed column has a non-positive inner width and
   // truncation silently erases its content even when one display cell fits.
-  const paddingBudget = Math.max(0, columnWidth - config.GUTTER - 1)
-  if (getStringLength(str) > 0 && paddingLeft + paddingRight > paddingBudget) {
+  const textSpace = getStringLength(str) > 0 ? 1 : 0
+  const paddingBudget = Math.max(0, columnWidth - config.GUTTER - textSpace)
+  if (paddingLeft + paddingRight > paddingBudget) {
     if (cellOptions[alignTgt] === "center") {
       paddingLeft = Math.min(paddingLeft, Math.ceil(paddingBudget / 2))
       paddingRight = Math.min(paddingRight, paddingBudget - paddingLeft)
@@ -167,6 +168,17 @@ export const wrapCellText = (
   // innerWidth is the width available for text within the cell
   const innerWidth = columnWidth - paddingLeft - paddingRight - config.GUTTER
 
+  // smartwrap measures code points rather than graphemes. In one cell an
+  // emoji sequence can otherwise overflow or be split into several lines.
+  let replacement = "�"
+  if (innerWidth === 1) {
+    if (typeof config.truncate !== "string") {
+      const configuredError = [...String(cellOptions.defaultErrorValue || "�")][0] || "�"
+      if (getStringLength(configuredError) === 1) replacement = configuredError
+    }
+    str = fitGraphemesToOneCell(str, replacement)
+  }
+
   if (typeof config.truncate === "string") {
     str = truncate(str, cellOptions, innerWidth)
   } else {
@@ -177,6 +189,8 @@ export const wrapCellText = (
   const cell = str.split("\n").map((line: string) => {
     line = line.trim()
 
+    // Also guard the code-point fallback used in browsers without Segmenter.
+    if (innerWidth === 1 && getStringLength(line) > 1) line = replaceVisible(line, replacement)
     const lineLength = getStringLength(line)
 
     // alignment

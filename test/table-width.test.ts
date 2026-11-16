@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 import Table from "../src"
 import { allocateProportionalWidths, wrapCellText } from "../src/format"
 import { displayWidth } from "../src/ansi"
@@ -126,7 +126,7 @@ describe("columns squeezed by a long cell", () => {
       const lines = output.split("\n").filter((line) => line.trim())
       expect(widestLine(output)).toBeLessThanOrEqual(80)
       // every row, including the squeezed cells, lines up with the borders
-      expect(new Set(lines.map((line) => line.length)).size).toBe(1)
+      expect(new Set(lines.map(displayWidth)).size).toBe(1)
       expect(output).toContain("aaaa")
     })
   }
@@ -152,6 +152,65 @@ describe("padding budget for text", () => {
     const styled = wrapCellText(config, "\u001b[31mxyz\u001b[0m", 0, options, "body")
     expect(styled.cell).toEqual(["\u001b[31mx\u001b[0m"])
     expect(displayWidth(styled.cell[0]!)).toBe(1)
+  })
+
+  for (const align of ["left", "right", "center"] as const) {
+    for (const truncate of [false, "", "…"] as const) {
+      it(`keeps empty ${align} cells within their width with truncate ${truncate}`, () => {
+        const config = { table: { columnWidths: [2] }, GUTTER: 1, truncate }
+        const options = { align, paddingLeft: 1, paddingRight: 1, truncate, defaultErrorValue: "�" }
+        const { cell, innerWidth } = wrapCellText(config, "", 0, options, "body")
+        expect(innerWidth).toBeGreaterThanOrEqual(0)
+        expect(cell).toEqual([" "])
+      })
+    }
+  }
+
+  for (const truncate of [false, true, "…"] as const) {
+    for (const value of ["漢", "❤️", "👩‍💻", "e\u0301", "\u001b[31ma\u001b[32m❤️\u001b[0m"]) {
+      it(`keeps ${JSON.stringify(value)} inside a one-cell column with truncate ${truncate}`, () => {
+        const output = Table([{ value: "x", width: 1 }], [[value]], {
+          align: "left", headerAlign: "left", truncate
+        }).render()
+        const lines = output.split("\n").filter((line) => line.trim())
+        expect(new Set(lines.map(displayWidth)).size).toBe(1)
+      })
+    }
+  }
+
+  it("keeps graphemes intact when wrapping into one cell", () => {
+    const config = { table: { columnWidths: [2] }, GUTTER: 1, truncate: false }
+    const options = { align: "left", paddingLeft: 1, paddingRight: 1, defaultErrorValue: "?" }
+    expect(wrapCellText(config, "ae\u0301👩‍💻b", 0, options, "body").cell).toEqual(["a", "e\u0301", "?", "b"])
+  })
+
+  it("keeps one-cell output safe without Intl.Segmenter", async () => {
+    const originalIntl = Intl
+    vi.resetModules()
+    vi.stubGlobal("Intl", Object.assign(Object.create(originalIntl), { Segmenter: undefined }))
+    try {
+      const { wrapCellText: wrapWithoutSegmenter } = await import("../src/format")
+      for (const truncate of [false, "…"] as const) {
+        const config = { table: { columnWidths: [2] }, GUTTER: 1, truncate }
+        const options = { align: "left", paddingLeft: 1, paddingRight: 1, truncate, defaultErrorValue: "�" }
+        const { cell } = wrapWithoutSegmenter(config, "❤️", 0, options, "body")
+        expect(cell.every((line: string) => displayWidth(line) === 1)).toBe(true)
+        expect(cell.join("")).not.toContain("❤️")
+        expect(wrapWithoutSegmenter(config, "é", 0, options, "body").cell).toEqual(["é"])
+      }
+    } finally {
+      vi.unstubAllGlobals()
+      vi.resetModules()
+    }
+  })
+
+  it("keeps ANSI styling when replacing an over-wide single-cell result", () => {
+    const config = { table: { columnWidths: [2] }, GUTTER: 1, truncate: "…" }
+    const options = { align: "left", paddingLeft: 1, paddingRight: 1, truncate: "…" }
+    const { cell } = wrapCellText(config, "\u001b[31m❤\u001b[32m️\u001b[0m", 0, options, "body")
+    expect(displayWidth(cell[0]!)).toBe(1)
+    expect(cell[0]).toContain("\u001b[31m")
+    expect(cell[0]).toContain("\u001b[0m")
   })
 
   it("does not reduce padding when there is already room for text", () => {
