@@ -88,6 +88,69 @@ export const displayWidth = (value: string): number => {
   return widest
 }
 
+// Preserve CSI sequences while working in the visible string's grapheme
+// coordinates, including when a style change occurs inside a grapheme.
+// eslint-disable-next-line no-control-regex -- matching ANSI CSI sequences
+const ANSI_PART = /(\u001B\[[0-?]*[ -/]*[@-~])/g
+
+/** Replace graphemes too wide for a one-cell column without splitting them. */
+export const fitGraphemesToOneCell = (value: string, replacement: string): string => {
+  const visible = stripAnsi(value)
+  if (PRINTABLE_ASCII.test(visible)) return value
+
+  const segmenter = getGraphemeSegmenter()
+  // Without segmentation, a variation selector or ZWJ can make an otherwise
+  // narrow code point occupy two cells. Replace non-ASCII conservatively when
+  // such a sequence is present, but preserve ordinary one-cell characters.
+  const uncertain = !segmenter && [...visible].some(char => {
+    const code = char.codePointAt(0) || 0
+    return code === 0xFE0F || code === 0x200D || code === 0x20E3
+      || (code >= 0x1F1E6 && code <= 0x1F1FF) || (code >= 0x1F3FB && code <= 0x1F3FF)
+  })
+  const segments = segmenter ? segmenter.segment(visible) : Array.from(visible, segment => ({ segment }))
+  const iterator = segments[Symbol.iterator]()
+  let current = iterator.next()
+  let end = 0
+  let offset = 0
+  let replace = false
+  let inserted = false
+  let output = ""
+
+  for (const [index, part] of value.split(ANSI_PART).entries()) {
+    if (index % 2 === 1) {
+      output += part
+      continue
+    }
+    for (const char of part) {
+      if (offset >= end && !current.done) {
+        end += current.value.segment.length
+        replace = uncertain
+          ? (current.value.segment.codePointAt(0) || 0) > 127
+          : displayWidth(current.value.segment) > 1
+        inserted = false
+        current = iterator.next()
+      }
+      if (replace) {
+        if (!inserted) output += replacement
+        inserted = true
+      } else output += char
+      offset += char.length
+    }
+  }
+  return output
+}
+
+/** Replace an unexpectedly over-wide wrapped line while retaining ANSI codes. */
+export const replaceVisible = (value: string, replacement: string): string => {
+  let inserted = false
+  return value.split(ANSI_PART).map((part, index) => {
+    if (index % 2 === 1 || !part) return part
+    if (inserted) return ""
+    inserted = true
+    return replacement
+  }).join("")
+}
+
 export const style = (value: string, ...styles: string[]): string => {
   const active = styles.map((s) => codes[s]).filter(Boolean)
   return active.length ? `\u001b[${active.join(";")}m${value}\u001b[0m` : value

@@ -1,5 +1,5 @@
 import smartwrap from "smartwrap"
-import { displayWidth } from "./ansi"
+import { displayWidth, fitGraphemesToOneCell, replaceVisible } from "./ansi"
 
 const addPadding = (config: any, width: number) => {
   return width + config.paddingLeft + config.paddingRight
@@ -144,11 +144,40 @@ export const wrapCellText = (
 
   const columnWidth = config.table.columnWidths[columnIndex]
 
+  let paddingLeft = cellOptions.paddingLeft
+  let paddingRight = cellOptions.paddingRight
+
+  // Drop padding before wrapping or truncating, not just when aligning the
+  // result. Otherwise a squeezed column has a non-positive inner width and
+  // truncation silently erases its content even when one display cell fits.
+  const textSpace = getStringLength(str) > 0 ? 1 : 0
+  const paddingBudget = Math.max(0, columnWidth - config.GUTTER - textSpace)
+  if (paddingLeft + paddingRight > paddingBudget) {
+    if (cellOptions[alignTgt] === "center") {
+      paddingLeft = Math.min(paddingLeft, Math.ceil(paddingBudget / 2))
+      paddingRight = Math.min(paddingRight, paddingBudget - paddingLeft)
+    } else if (cellOptions[alignTgt] === "right") {
+      paddingRight = Math.min(paddingRight, paddingBudget)
+      paddingLeft = Math.min(paddingLeft, paddingBudget - paddingRight)
+    } else {
+      paddingLeft = Math.min(paddingLeft, paddingBudget)
+      paddingRight = Math.min(paddingRight, paddingBudget - paddingLeft)
+    }
+  }
+
   // innerWidth is the width available for text within the cell
-  const innerWidth = columnWidth
-    - cellOptions.paddingLeft
-    - cellOptions.paddingRight
-    - config.GUTTER
+  const innerWidth = columnWidth - paddingLeft - paddingRight - config.GUTTER
+
+  // smartwrap measures code points rather than graphemes. In one cell an
+  // emoji sequence can otherwise overflow or be split into several lines.
+  let replacement = "�"
+  if (innerWidth === 1) {
+    if (typeof config.truncate !== "string") {
+      const configuredError = [...String(cellOptions.defaultErrorValue || "�")][0] || "�"
+      if (getStringLength(configuredError) === 1) replacement = configuredError
+    }
+    str = fitGraphemesToOneCell(str, replacement)
+  }
 
   if (typeof config.truncate === "string") {
     str = truncate(str, cellOptions, innerWidth)
@@ -160,6 +189,8 @@ export const wrapCellText = (
   const cell = str.split("\n").map((line: string) => {
     line = line.trim()
 
+    // Also guard the code-point fallback used in browsers without Segmenter.
+    if (innerWidth === 1 && getStringLength(line) > 1) line = replaceVisible(line, replacement)
     const lineLength = getStringLength(line)
 
     // alignment
@@ -177,16 +208,24 @@ export const wrapCellText = (
           break
         }
 
-        case (cellOptions[alignTgt] === "right"):
-          line = " ".repeat(emptySpace - cellOptions.paddingRight - 1)
+        // A column squeezed narrower than its padding (e.g. by one very long
+        // column) only has emptySpace - 1 cells left beside the text. Like the
+        // centered case, give up padding rather than overflow the column or
+        // pass a negative count to repeat().
+        case (cellOptions[alignTgt] === "right"): {
+          const linePaddingRight = Math.min(paddingRight, emptySpace - 1)
+          line = " ".repeat(emptySpace - linePaddingRight - 1)
             + line
-            + " ".repeat(cellOptions.paddingRight)
+            + " ".repeat(linePaddingRight)
           break
+        }
 
-        default:
-          line = " ".repeat(cellOptions.paddingLeft)
+        default: {
+          const linePaddingLeft = Math.min(paddingLeft, emptySpace - 1)
+          line = " ".repeat(linePaddingLeft)
             + line
-            + " ".repeat(emptySpace - cellOptions.paddingLeft - 1)
+            + " ".repeat(emptySpace - linePaddingLeft - 1)
+        }
       }
     }
 
@@ -230,6 +269,9 @@ export const truncate = (str: string, cellOptions: any, maxWidth: number) => {
   // @TODO give user option to decide if they want to break words on wrapping
   str = smartwrap(str, {
     width: maxWidth - markerWidth,
+    // smartwrap defaults to two cells. Only override that when the whole
+    // text area is one cell; wider cells retain their existing output.
+    minWidth: maxWidth === 1 ? 1 : 2,
     breakword: true
   }).split("\n")[0]!
 
