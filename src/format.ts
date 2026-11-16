@@ -144,11 +144,28 @@ export const wrapCellText = (
 
   const columnWidth = config.table.columnWidths[columnIndex]
 
+  let paddingLeft = cellOptions.paddingLeft
+  let paddingRight = cellOptions.paddingRight
+
+  // Drop padding before wrapping or truncating, not just when aligning the
+  // result. Otherwise a squeezed column has a non-positive inner width and
+  // truncation silently erases its content even when one display cell fits.
+  const paddingBudget = Math.max(0, columnWidth - config.GUTTER - 1)
+  if (getStringLength(str) > 0 && paddingLeft + paddingRight > paddingBudget) {
+    if (cellOptions[alignTgt] === "center") {
+      paddingLeft = Math.min(paddingLeft, Math.ceil(paddingBudget / 2))
+      paddingRight = Math.min(paddingRight, paddingBudget - paddingLeft)
+    } else if (cellOptions[alignTgt] === "right") {
+      paddingRight = Math.min(paddingRight, paddingBudget)
+      paddingLeft = Math.min(paddingLeft, paddingBudget - paddingRight)
+    } else {
+      paddingLeft = Math.min(paddingLeft, paddingBudget)
+      paddingRight = Math.min(paddingRight, paddingBudget - paddingLeft)
+    }
+  }
+
   // innerWidth is the width available for text within the cell
-  const innerWidth = columnWidth
-    - cellOptions.paddingLeft
-    - cellOptions.paddingRight
-    - config.GUTTER
+  const innerWidth = columnWidth - paddingLeft - paddingRight - config.GUTTER
 
   if (typeof config.truncate === "string") {
     str = truncate(str, cellOptions, innerWidth)
@@ -182,18 +199,18 @@ export const wrapCellText = (
         // centered case, give up padding rather than overflow the column or
         // pass a negative count to repeat().
         case (cellOptions[alignTgt] === "right"): {
-          const paddingRight = Math.min(cellOptions.paddingRight, emptySpace - 1)
-          line = " ".repeat(emptySpace - paddingRight - 1)
+          const linePaddingRight = Math.min(paddingRight, emptySpace - 1)
+          line = " ".repeat(emptySpace - linePaddingRight - 1)
             + line
-            + " ".repeat(paddingRight)
+            + " ".repeat(linePaddingRight)
           break
         }
 
         default: {
-          const paddingLeft = Math.min(cellOptions.paddingLeft, emptySpace - 1)
-          line = " ".repeat(paddingLeft)
+          const linePaddingLeft = Math.min(paddingLeft, emptySpace - 1)
+          line = " ".repeat(linePaddingLeft)
             + line
-            + " ".repeat(emptySpace - paddingLeft - 1)
+            + " ".repeat(emptySpace - linePaddingLeft - 1)
         }
       }
     }
@@ -228,6 +245,7 @@ export const truncate = (str: string, cellOptions: any, maxWidth: number) => {
     } else {
       marker = smartwrap(marker, {
         width: maxWidth - 1,
+        minWidth: 1,
         breakword: true,
         trim: false
       }).split("\n")[0]!
@@ -238,6 +256,7 @@ export const truncate = (str: string, cellOptions: any, maxWidth: number) => {
   // @TODO give user option to decide if they want to break words on wrapping
   str = smartwrap(str, {
     width: maxWidth - markerWidth,
+    minWidth: 1,
     breakword: true
   }).split("\n")[0]!
 
